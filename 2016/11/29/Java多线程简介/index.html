@@ -1,0 +1,1075 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java多线程简介," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Java多线程简介Java中内置了对多线程的支持，让多线程的开发方便很多，但同时也带来了另外的复杂，线程间的交互以及很多的不确定性让多线程又显得很复杂。在此只是针对Java中多线程的基础做些说明，有关线程和进程的区别，以及多线程的好处和更深层的暂不多说。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java多线程简介">
+<meta property="og:url" content="http://dachengxi.github.com/2016/11/29/Java多线程简介/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="Java多线程简介Java中内置了对多线程的支持，让多线程的开发方便很多，但同时也带来了另外的复杂，线程间的交互以及很多的不确定性让多线程又显得很复杂。在此只是针对Java中多线程的基础做些说明，有关线程和进程的区别，以及多线程的好处和更深层的暂不多说。">
+<meta property="og:image" content="http://dachengxi.github.com/ThreadLifeCycle.png">
+<meta property="og:updated_time" content="2016-11-30T06:48:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java多线程简介">
+<meta name="twitter:description" content="Java多线程简介Java中内置了对多线程的支持，让多线程的开发方便很多，但同时也带来了另外的复杂，线程间的交互以及很多的不确定性让多线程又显得很复杂。在此只是针对Java中多线程的基础做些说明，有关线程和进程的区别，以及多线程的好处和更深层的暂不多说。">
+<meta name="twitter:image" content="http://dachengxi.github.com/ThreadLifeCycle.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2016/11/29/Java多线程简介/"/>
+
+
+
+
+
+  <title> Java多线程简介 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/11/29/Java多线程简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java多线程简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-29T21:40:15+08:00">
+                2016-11-29 21:40:15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java线程/" itemprop="url" rel="index">
+                    <span itemprop="name">Java线程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/11/29/Java多线程简介/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/29/Java多线程简介/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Java多线程简介"><a href="#Java多线程简介" class="headerlink" title="Java多线程简介"></a>Java多线程简介</h1><p>Java中内置了对多线程的支持，让多线程的开发方便很多，但同时也带来了另外的复杂，线程间的交互以及很多的不确定性让多线程又显得很复杂。在此只是针对Java中多线程的基础做些说明，有关线程和进程的区别，以及多线程的好处和更深层的暂不多说。</p>
+<a id="more"></a>
+<h1 id="线程的状态"><a href="#线程的状态" class="headerlink" title="线程的状态"></a>线程的状态</h1><p>线程的状态定义在Thread类中一个State枚举类型：</p>
+<ul>
+<li>新建状态（NEW），通过<code>new Thread</code>新建的线程处于新建状态，通常会调用start()方法来启动线程。</li>
+<li>就绪状态（RUNNABLE），此时线程并没有在执行，而是可执行，在等待CPU调度去真正执行。就绪状态的线程有可能是刚调用start()方法进入就绪队列的线程，也有可能是等待其他资源的状态的线程。</li>
+<li>阻塞状态（BLOCKED），等待锁的线程会处于阻塞状态，线程等待进入synchronized块或方法时候处于阻塞状态；线程调用了wait()方法后等待重新获取锁的时候也会处于阻塞状态。</li>
+<li>等待状态（WAITING），线程调用了wait()方法并且没有设置超时时间会一直处于等待状态；线程调用了join()方法并且没有设置超时时间会一直处于等待状态；线程调用了LockSupport.park()方法会处于等待状态。</li>
+<li>有等待时间的等待状态（TIMED_WAITING），线程调用了以下方法，并且设置了等待的时间，会处于等待状态：1. Thread.sleep;2. wait(long)设置了超时时间；3. join(long)设置了超时时间；4. LockSupport.parkNanos()方法；5. LockSupport.parkUntil()方法。</li>
+<li>终止状态（TERMINATED），线程处于终止状态，已经完成了执行。</li>
+</ul>
+<h1 id="线程的生命周期"><a href="#线程的生命周期" class="headerlink" title="线程的生命周期"></a>线程的生命周期</h1><p>线程的生命周期分为：新建（New），就绪（Runnable），运行（Running），阻塞（Blocked），死亡（Dead）五个阶段。</p>
+<p>生命周期五个阶段之间的转换如图所示：<br><img src="ThreadLifeCycle.png" alt=""></p>
+<h2 id="新建（New）"><a href="#新建（New）" class="headerlink" title="新建（New）"></a>新建（New）</h2><p>使用new关键字和Thread类创建一个线程之后，该线程就处于新建状态。新建跟普通Java对象的创建一样，由虚拟机分配内存，初始化成员变量等。接下来就等待调用start()方法。</p>
+<h2 id="就绪（Runnable）"><a href="#就绪（Runnable）" class="headerlink" title="就绪（Runnable）"></a>就绪（Runnable）</h2><p>当已经新建的线程对象调用了start()方法，该线程就处于就绪状态。此时线程并没有直接运行，而是处于就绪队列中，需要等待JVM线程调度器的调用。</p>
+<h2 id="运行状态（Running）"><a href="#运行状态（Running）" class="headerlink" title="运行状态（Running）"></a>运行状态（Running）</h2><p>处于就绪状态的线程如果获取到了CPU，就可以执行进入运行状态。此时线程可以变成阻塞状态，就绪状态，死亡状态。</p>
+<p>从运行状态转换到其他状态的几个条件：</p>
+<ul>
+<li>失去CPU资源或者调用了yield()方法后线程进入就绪状态。</li>
+<li>调用了sleep()方法，调用了阻塞IO方法，试图获取同步锁，等待通知notify或者调用了线程的suspend()方法后线程进入阻塞状态。</li>
+<li>调用了stop()方法，遇到错误Error，遇到异常Exception，或者线程执行完成后线程进入死亡状态。</li>
+</ul>
+<h2 id="阻塞状态"><a href="#阻塞状态" class="headerlink" title="阻塞状态"></a>阻塞状态</h2><p>当线程调用了sleep()方法，调用了阻塞IO方法，试图获取同步锁，等待通知notify或者调用了线程的suspend()方法后，线程进入阻塞状态。被阻塞的线程会进入就绪状态，等待CPU调度重新进入运行状态。</p>
+<p>从阻塞状态进入到就绪状态的几个条件：</p>
+<ul>
+<li>调用了sleep()方法后时间已经到了。</li>
+<li>调用的IO操作已经完成。</li>
+<li>获取到了同步锁。</li>
+<li>获得到了通知。</li>
+<li>调用到了resume()方法。</li>
+</ul>
+<h2 id="死亡状态"><a href="#死亡状态" class="headerlink" title="死亡状态"></a>死亡状态</h2><ul>
+<li>遇到Error或者Exception，线程死亡</li>
+<li>直接调用了stop()方法</li>
+<li>线程执行完成，正常结束</li>
+</ul>
+<h1 id="Thread源码分析"><a href="#Thread源码分析" class="headerlink" title="Thread源码分析"></a>Thread源码分析</h1><blockquote>
+<p>源码版本：jdk7u80</p>
+</blockquote>
+<p><code>yield()</code> 字面意思是让出，让步。使当前线程从运行状态变成就绪状态。调用此方法之后，当前线程会把CPU执行时间让出去，供其他线程或者自己去获得CPU运行。</p>
+<p><code>sleep(long millis)</code>，<code>sleep(long millis, int nanos)</code> sleep方法强制使当前正在执行的方法暂停执行，会阻塞当前线程，让出CPU。这样可以让其他线程获取执行的机会。当睡眠时间到了之后，线程进入就绪状态。</p>
+<p>在一个synchronized块中调用sleep()方法，对象持有的锁不会被释放，仍然占有该锁。</p>
+<p><code>currentThread()</code> 返回当前正在执行的线程对象。</p>
+<p><code>start()</code>该方法用来启动一个线程，线程启动后会执行run()方法中的代码。start()方法不能被重复调用。</p>
+<p><code>stop()</code>该方法可以用来停止一个线程的执行。该方法已经被弃用。</p>
+<p><code>interrupt()</code>该方法用来中断线程，设置中断状态为true。并没有被直接中断，而是设置了中断状态。</p>
+<p><code>interrupted()</code>测试当前线程是否已经中断，该方法还负责清除中断状态。</p>
+<p><code>isInterrupted()</code>判断中断状态。</p>
+<p><code>isAlive()</code>测试线程是否处于活动的状态。</p>
+<p><code>suspend()</code>把一个线程挂起，使线程处于阻塞状态，必须调用对应的resume()方法才能使线程进入可执行状态。已被废弃。</p>
+<p><code>resume()</code>把一个挂起的线程恢复执行。已被废弃。</p>
+<p><code>setPriority()</code>设置线程的优先级。</p>
+<p><code>getPriority()</code>获取线程的优先级。</p>
+<p><code>setName(String)</code>设置线程的名字。</p>
+<p><code>getName()</code>获取线程的名字。</p>
+<p><code>getThreadGroup()</code>获取线程组。</p>
+<p><code>activeCount()</code>获取当前线程所在线程组中活跃的线程数。</p>
+<p><code>join(),join(long),join(long,int)</code> 该方法可以把指定的线程加入到当前线程中。比如在线程A中调用线程B的join()方法，线程A会阻塞，直到线程B完成后，线程A才能继续执行。</p>
+<p><code>setDaemon(boolean)</code> 标记此线程为守护线程，此方法必须在start()方法之前调用。</p>
+<p><code>isDaemon()</code>判断是否是守护线程。</p>
+<p><code>holdsLock(Object)</code> 判断当前线程是否持有给定对象的锁。</p>
+<p><code>getId()</code>获得线程的id。</p>
+<p><code>getState()</code>获得当前线程的状态。</p>
+<h1 id="创建线程的方法"><a href="#创建线程的方法" class="headerlink" title="创建线程的方法"></a>创建线程的方法</h1><p>主要有三种方法：</p>
+<ol>
+<li>继承Thread类来创建线程，继承Thread类重写run方法，创建子类实例，调用start方法。</li>
+<li>实现Runnable接口来创建线程，实现Runnable接口并实现run方法，创建Runnable实现类的实例，new一个Thread的实例，并以Runnable实现类的实例作为target，调用thread的start方法。</li>
+<li>使用Callable和Future来创建线程，实现Callable接口并实现call方法，创建Callable实现类的实例并使用FutureTask类来包装Callable对象，使用FutureTask对象作为Thread的target创建启动新线程，最后调用FutureTask对象的get方法来获得子线程执行结束后的返回值。</li>
+</ol>
+<p>前面两个不再举例子，最后一种代码如下：</p>
+<p>CallableDemo：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class CallableDemo implements Callable&lt;Integer&gt;&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public Integer call() throws Exception &#123;</span><br><span class="line">        return new Random().nextInt(1000);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>CallableAndFutureTest：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class CallableAndFutureTest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Callable&lt;Integer&gt; callable = new CallableDemo();</span><br><span class="line">        FutureTask&lt;Integer&gt; futureTask = new FutureTask&lt;Integer&gt;(callable);</span><br><span class="line">        new Thread(futureTask).start();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(5000);</span><br><span class="line">            System.out.println(futureTask.get());</span><br><span class="line">        &#125;catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (ExecutionException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="线程间协作"><a href="#线程间协作" class="headerlink" title="线程间协作"></a>线程间协作</h1><p>线程之间的通信协作可以使用Object对象中的wait()方法，notify()方法，notifyAll()方法来实现。</p>
+<p><code>wait(),wait(long),wait(long,int)</code> 该方法将当前线程进入休眠状态，wait()方法只能使用在同步方法或者同步块中调用。调用wait()方法后，当前线程释放锁。该线程处于该对象的等待池中。</p>
+<p><code>notify()，notifyAll()</code> 该方法用来通知那些可能在等待该对象的对象锁的其他线程。notify()方法必须在同步方法或代码块中调用。被唤醒的对象进入该对象的锁池中，锁池中的线程会去竞争该对象锁。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java多线程简介/" rel="tag"># Java多线程简介</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/28/MVC简介/" rel="next" title="MVC简介">
+                <i class="fa fa-chevron-left"></i> MVC简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/30/Java同步简介/" rel="prev" title="Java同步简介">
+                Java同步简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java多线程简介"><span class="nav-number">1.</span> <span class="nav-text">Java多线程简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程的状态"><span class="nav-number">2.</span> <span class="nav-text">线程的状态</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程的生命周期"><span class="nav-number">3.</span> <span class="nav-text">线程的生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新建（New）"><span class="nav-number">3.1.</span> <span class="nav-text">新建（New）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#就绪（Runnable）"><span class="nav-number">3.2.</span> <span class="nav-text">就绪（Runnable）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行状态（Running）"><span class="nav-number">3.3.</span> <span class="nav-text">运行状态（Running）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞状态"><span class="nav-number">3.4.</span> <span class="nav-text">阻塞状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死亡状态"><span class="nav-number">3.5.</span> <span class="nav-text">死亡状态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Thread源码分析"><span class="nav-number">4.</span> <span class="nav-text">Thread源码分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建线程的方法"><span class="nav-number">5.</span> <span class="nav-text">创建线程的方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程间协作"><span class="nav-number">6.</span> <span class="nav-text">线程间协作</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2016/11/29/Java多线程简介/';
+
+      var disqus_title = "Java多线程简介";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

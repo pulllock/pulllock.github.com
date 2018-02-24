@@ -1,0 +1,915 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="dubbo源码,dubbo请求响应过程," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="服务提供者初始化完成之后，对外暴露Exporter。服务消费者初始化完成之后，得到的是Proxy代理，方法调用的时候就是调用代理。
+服务消费者经过初始化之后，得到的是一个动态代理类，InvokerInvocationHandler，包含MockClusterInvoker，MockClusterInvoker包含一个RegistryDirectory和FailoverClusterInvoker。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo中服务消费者和服务提供者之间的请求和响应过程">
+<meta property="og:url" content="http://dachengxi.github.com/2017/03/20/Dubbo中服务消费者和服务提供者之间的请求和响应过程/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="服务提供者初始化完成之后，对外暴露Exporter。服务消费者初始化完成之后，得到的是Proxy代理，方法调用的时候就是调用代理。
+服务消费者经过初始化之后，得到的是一个动态代理类，InvokerInvocationHandler，包含MockClusterInvoker，MockClusterInvoker包含一个RegistryDirectory和FailoverClusterInvoker。">
+<meta property="og:updated_time" content="2017-03-22T10:59:44.225Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dubbo中服务消费者和服务提供者之间的请求和响应过程">
+<meta name="twitter:description" content="服务提供者初始化完成之后，对外暴露Exporter。服务消费者初始化完成之后，得到的是Proxy代理，方法调用的时候就是调用代理。
+服务消费者经过初始化之后，得到的是一个动态代理类，InvokerInvocationHandler，包含MockClusterInvoker，MockClusterInvoker包含一个RegistryDirectory和FailoverClusterInvoker。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '13027929',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2017/03/20/Dubbo中服务消费者和服务提供者之间的请求和响应过程/"/>
+
+
+
+
+
+  <title> Dubbo中服务消费者和服务提供者之间的请求和响应过程 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/03/20/Dubbo中服务消费者和服务提供者之间的请求和响应过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Dubbo中服务消费者和服务提供者之间的请求和响应过程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-20T23:58:13+08:00">
+                2017-03-20 23:58:13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/dubbo/" itemprop="url" rel="index">
+                    <span itemprop="name">dubbo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/20/Dubbo中服务消费者和服务提供者之间的请求和响应过程/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/20/Dubbo中服务消费者和服务提供者之间的请求和响应过程/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>服务提供者初始化完成之后，对外暴露Exporter。服务消费者初始化完成之后，得到的是Proxy代理，方法调用的时候就是调用代理。</p>
+<p>服务消费者经过初始化之后，得到的是一个动态代理类，InvokerInvocationHandler，包含MockClusterInvoker，MockClusterInvoker包含一个RegistryDirectory和FailoverClusterInvoker。</p>
+<a id="more"></a>
+<p>Java动态代理，每一个动态代理类都必须要实现InvocationHandler这个接口，并且每一个代理类的实例都关联到了一个handler，当我们通过代理对象调用一个方法的时候，这个方法就会被转发为由实现了InvocationHandler这个接口的类的invoke方法来进行调用。</p>
+<h1 id="服务消费者发起调用请求"><a href="#服务消费者发起调用请求" class="headerlink" title="服务消费者发起调用请求"></a>服务消费者发起调用请求</h1><p>InvokerInvocationHandler实现了InvocationHandler接口，当我们调用<code>helloService.sayHello();</code>的时候，实际上会调用invoke()方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">//proxy是代理的真实对象</span><br><span class="line">//method调用真实对象的方法</span><br><span class="line">//args调用真实对象的方法的参数</span><br><span class="line">public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">	//方法名sayHello</span><br><span class="line">    String methodName = method.getName();</span><br><span class="line">    //参数类型</span><br><span class="line">    Class&lt;?&gt;[] parameterTypes = method.getParameterTypes();</span><br><span class="line">    if (method.getDeclaringClass() == Object.class) &#123;</span><br><span class="line">        return method.invoke(invoker, args);</span><br><span class="line">    &#125;</span><br><span class="line">    if (&quot;toString&quot;.equals(methodName) &amp;&amp; parameterTypes.length == 0) &#123;</span><br><span class="line">        return invoker.toString();</span><br><span class="line">    &#125;</span><br><span class="line">    if (&quot;hashCode&quot;.equals(methodName) &amp;&amp; parameterTypes.length == 0) &#123;</span><br><span class="line">        return invoker.hashCode();</span><br><span class="line">    &#125;</span><br><span class="line">    if (&quot;equals&quot;.equals(methodName) &amp;&amp; parameterTypes.length == 1) &#123;</span><br><span class="line">        return invoker.equals(args[0]);</span><br><span class="line">    &#125;</span><br><span class="line">    //invoker是MockClusterInvoker</span><br><span class="line">    //首先new RpcInvocation</span><br><span class="line">    //然后invoker.invoke</span><br><span class="line">    //最后recreate</span><br><span class="line">    //返回结果</span><br><span class="line">    return invoker.invoke(new RpcInvocation(method, args)).recreate();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先看下<code>new RpcInvocation</code>，Invocation是会话域，它持有调用过程中的变量，比如方法名，参数类型等。</p>
+<p>接着是invoker.invoke()，这里invoker是MockClusterInvoker，进入MockClusterInvoker.invoker()：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public Result invoke(Invocation invocation) throws RpcException &#123;</span><br><span class="line">    Result result = null;</span><br><span class="line">	//获取mock属性的值，我们没有配置，默认false</span><br><span class="line">    String value = directory.getUrl().getMethodParameter(invocation.getMethodName(), Constants.MOCK_KEY, Boolean.FALSE.toString()).trim(); </span><br><span class="line">    if (value.length() == 0 || value.equalsIgnoreCase(&quot;false&quot;))&#123;</span><br><span class="line">        //这里invoker是FailoverClusterInvoker</span><br><span class="line">        result = this.invoker.invoke(invocation);</span><br><span class="line">    &#125; else if (value.startsWith(&quot;force&quot;)) &#123;</span><br><span class="line">        //force:direct mock</span><br><span class="line">        result = doMockInvoke(invocation, null);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        //fail-mock</span><br><span class="line">        try &#123;</span><br><span class="line">            result = this.invoker.invoke(invocation);</span><br><span class="line">        &#125;catch (RpcException e) &#123;</span><br><span class="line">            if (e.isBiz()) &#123;</span><br><span class="line">                throw e;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                result = doMockInvoke(invocation, e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>result = this.invoker.invoke(invocation);</code>这里invoker是FailoverClusterInvoker，会首先进入AbstractClusterInvoker的invoke方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public Result invoke(final Invocation invocation) throws RpcException &#123;</span><br><span class="line">	//检查是否被销毁</span><br><span class="line">    checkWheatherDestoried();</span><br><span class="line">    LoadBalance loadbalance;</span><br><span class="line">	//根据invocation中的参数来获取所有的invoker列表</span><br><span class="line">    List&lt;Invoker&lt;T&gt;&gt; invokers = list(invocation);</span><br><span class="line">    if (invokers != null &amp;&amp; invokers.size() &gt; 0) &#123;</span><br><span class="line">    	//我们没有配置负载均衡的参数，默认使用random</span><br><span class="line">        //这里得到的是RandomLoadBalance</span><br><span class="line">        loadbalance = ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(invokers.get(0).getUrl()</span><br><span class="line">                .getMethodParameter(invocation.getMethodName(),Constants.LOADBALANCE_KEY, Constants.DEFAULT_LOADBALANCE));</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        loadbalance = ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(Constants.DEFAULT_LOADBALANCE);</span><br><span class="line">    &#125;</span><br><span class="line">    //如果是异步操作默认添加invocation id</span><br><span class="line">    RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);</span><br><span class="line">    //这里是子类实现，FailoverClusterInvoker中，执行调用</span><br><span class="line">    return doInvoke(invocation, invokers, loadbalance);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>FailoverClusterInvoker.doInvoke()：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">public Result doInvoke(Invocation invocation, final List&lt;Invoker&lt;T&gt;&gt; invokers, LoadBalance loadbalance) throws RpcException &#123;</span><br><span class="line">    List&lt;Invoker&lt;T&gt;&gt; copyinvokers = invokers;</span><br><span class="line">    //检查invokers是否为空</span><br><span class="line">    checkInvokers(copyinvokers, invocation);</span><br><span class="line">    //重试次数</span><br><span class="line">    int len = getUrl().getMethodParameter(invocation.getMethodName(), Constants.RETRIES_KEY, Constants.DEFAULT_RETRIES) + 1;</span><br><span class="line">    if (len &lt;= 0) &#123;</span><br><span class="line">        len = 1;</span><br><span class="line">    &#125;</span><br><span class="line">    // retry loop.</span><br><span class="line">    RpcException le = null; // last exception.</span><br><span class="line">    //已经调用过的invoker</span><br><span class="line">    List&lt;Invoker&lt;T&gt;&gt; invoked = new ArrayList&lt;Invoker&lt;T&gt;&gt;(copyinvokers.size()); // invoked invokers.</span><br><span class="line">    Set&lt;String&gt; providers = new HashSet&lt;String&gt;(len);</span><br><span class="line">    for (int i = 0; i &lt; len; i++) &#123;</span><br><span class="line">        //重试时，进行重新选择，避免重试时invoker列表已发生变化.</span><br><span class="line">        //注意：如果列表发生了变化，那么invoked判断会失效，因为invoker示例已经改变</span><br><span class="line">        if (i &gt; 0) &#123;</span><br><span class="line">            checkWheatherDestoried();</span><br><span class="line">            copyinvokers = list(invocation);</span><br><span class="line">            //重新检查一下</span><br><span class="line">            checkInvokers(copyinvokers, invocation);</span><br><span class="line">        &#125;</span><br><span class="line">        //使用负载均衡选择invoker.（负载均衡咱先不做解释）</span><br><span class="line">        Invoker&lt;T&gt; invoker = select(loadbalance, invocation, copyinvokers, invoked);</span><br><span class="line">        invoked.add(invoker);</span><br><span class="line">        //添加到以调用过的列表中</span><br><span class="line">        RpcContext.getContext().setInvokers((List)invoked);</span><br><span class="line">        try &#123;</span><br><span class="line">        	//开始调用，返回结果</span><br><span class="line">            Result result = invoker.invoke(invocation);</span><br><span class="line">            return result;</span><br><span class="line">        &#125; catch (RpcException e) &#123;。。。 &#125; finally &#123;</span><br><span class="line">            providers.add(invoker.getUrl().getAddress());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    throw new RpcException(。。。);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Result result = invoker.invoke(invocation);</code>调用并返回结果，会首先进入InvokerWrapper，然后进入ListenerInvokerWrapper的invoke方法，接着进入AbstractInvoker的invoke：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public Result invoke(Invocation inv) throws RpcException &#123;</span><br><span class="line">    if(destroyed) &#123;</span><br><span class="line">        throw new RpcException(。。。);</span><br><span class="line">    &#125;</span><br><span class="line">    //转成RpcInvocation</span><br><span class="line">    RpcInvocation invocation = (RpcInvocation) inv;</span><br><span class="line">    invocation.setInvoker(this);</span><br><span class="line">    if (attachment != null &amp;&amp; attachment.size() &gt; 0) &#123;</span><br><span class="line">        invocation.addAttachmentsIfAbsent(attachment);</span><br><span class="line">    &#125;</span><br><span class="line">    Map&lt;String, String&gt; context = RpcContext.getContext().getAttachments();</span><br><span class="line">    if (context != null) &#123;</span><br><span class="line">        invocation.addAttachmentsIfAbsent(context);</span><br><span class="line">    &#125;</span><br><span class="line">    if (getUrl().getMethodParameter(invocation.getMethodName(), Constants.ASYNC_KEY, false))&#123;</span><br><span class="line">        invocation.setAttachment(Constants.ASYNC_KEY, Boolean.TRUE.toString());</span><br><span class="line">    &#125;</span><br><span class="line">    //异步的话，需要添加id</span><br><span class="line">    RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);</span><br><span class="line">    try &#123;</span><br><span class="line">    	//这里是DubboInvoker</span><br><span class="line">        return doInvoke(invocation);</span><br><span class="line">    &#125; catch (InvocationTargetException e) &#123; &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>DubboInvoker.doInvoke()：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">protected Result doInvoke(final Invocation invocation) throws Throwable &#123;</span><br><span class="line">    RpcInvocation inv = (RpcInvocation) invocation;</span><br><span class="line">    final String methodName = RpcUtils.getMethodName(invocation);</span><br><span class="line">    inv.setAttachment(Constants.PATH_KEY, getUrl().getPath());</span><br><span class="line">    inv.setAttachment(Constants.VERSION_KEY, version);</span><br><span class="line"></span><br><span class="line">    ExchangeClient currentClient;</span><br><span class="line">    //在初始化的时候，引用服务的过程中会保存一个连接到服务端的Client</span><br><span class="line">    if (clients.length == 1) &#123;</span><br><span class="line">        currentClient = clients[0];</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        currentClient = clients[index.getAndIncrement() % clients.length];</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">    	//异步标志</span><br><span class="line">        boolean isAsync = RpcUtils.isAsync(getUrl(), invocation);</span><br><span class="line">        //单向标志</span><br><span class="line">        boolean isOneway = RpcUtils.isOneway(getUrl(), invocation);</span><br><span class="line">        int timeout = getUrl().getMethodParameter(methodName, Constants.TIMEOUT_KEY,Constants.DEFAULT_TIMEOUT);</span><br><span class="line">        //单向的，反送完不管结果</span><br><span class="line">        if (isOneway) &#123;</span><br><span class="line">            boolean isSent = getUrl().getMethodParameter(methodName, Constants.SENT_KEY, false);</span><br><span class="line">            currentClient.send(inv, isSent);</span><br><span class="line">            RpcContext.getContext().setFuture(null);</span><br><span class="line">            return new RpcResult();</span><br><span class="line">        &#125; else if (isAsync) &#123;//异步的，发送完需要得到Future</span><br><span class="line">            ResponseFuture future = currentClient.request(inv, timeout) ;</span><br><span class="line">            RpcContext.getContext().setFuture(new FutureAdapter&lt;Object&gt;(future));</span><br><span class="line">            return new RpcResult();</span><br><span class="line">        &#125; else &#123;//同步调用，我们这里使用的这种方式</span><br><span class="line">            RpcContext.getContext().setFuture(null);</span><br><span class="line">            //HeaderExchangeClient</span><br><span class="line">            return (Result) currentClient.request(inv, timeout).get();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (TimeoutException e) &#123;。。。&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们这里使用的是同步调用，看<code>(Result) currentClient.request(inv, timeout).get();</code>方法，这里的client是ReferenceCountExchangeClient，直接调用HeaderExchangeClient的request方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public ResponseFuture request(Object request, int timeout) throws RemotingException &#123;</span><br><span class="line">	//这里的Channel是HeaderExchangeChannel</span><br><span class="line">    return channel.request(request, timeout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入HeaderExchangeChannel的request方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public ResponseFuture request(Object request, int timeout) throws RemotingException &#123;</span><br><span class="line">    if (closed) &#123;</span><br><span class="line">        throw new RemotingException(。。。);</span><br><span class="line">    &#125;</span><br><span class="line">    //创建一个请求头</span><br><span class="line">    Request req = new Request();</span><br><span class="line">    req.setVersion(&quot;2.0.0&quot;);</span><br><span class="line">    req.setTwoWay(true);</span><br><span class="line">    //这里request参数里面保存着</span><br><span class="line">    //methodName = &quot;sayHello&quot;</span><br><span class="line">	//parameterTypes = &#123;Class[0]@2814&#125; </span><br><span class="line">	//arguments = &#123;Object[0]@2768&#125; </span><br><span class="line">	//attachments = &#123;HashMap@2822&#125;  size = 4</span><br><span class="line">	//invoker = &#123;DubboInvoker@2658&#125;</span><br><span class="line">    req.setData(request);</span><br><span class="line">    DefaultFuture future = new DefaultFuture(channel, req, timeout);</span><br><span class="line">    try&#123;</span><br><span class="line">    	//这里的channel是NettyClient</span><br><span class="line">        //发送请求</span><br><span class="line">        channel.send(req);</span><br><span class="line">    &#125;catch (RemotingException e) &#123;</span><br><span class="line">        future.cancel();</span><br><span class="line">        throw e;</span><br><span class="line">    &#125;</span><br><span class="line">    return future;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>channel.send(req)</code>，首先会调用AbstractPeer的send方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//子类处理，接着是AbstractClient执行发送</span><br><span class="line">public void send(Object message) throws RemotingException &#123;</span><br><span class="line">    send(message, url.getParameter(Constants.SENT_KEY, false));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>AbstractClient执行发送：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public void send(Object message, boolean sent) throws RemotingException &#123;</span><br><span class="line">	//重连</span><br><span class="line">    if (send_reconnect &amp;&amp; !isConnected())&#123;</span><br><span class="line">        connect();</span><br><span class="line">    &#125;</span><br><span class="line">    //先获取Channel，是在NettyClient中实现的</span><br><span class="line">    Channel channel = getChannel();</span><br><span class="line">    //TODO getChannel返回的状态是否包含null需要改进</span><br><span class="line">    if (channel == null || ! channel.isConnected()) &#123;</span><br><span class="line">      throw new RemotingException(this, &quot;message can not send, because channel is closed . url:&quot; + getUrl());</span><br><span class="line">    &#125;</span><br><span class="line">    channel是NettyChannel</span><br><span class="line">    channel.send(message, sent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>channel.send(message, sent);</code>首先经过AbstractChannel的send方法处理，只是判断是否关闭了，然后是NettyChannel的send来继续处理，这里就把消息发送到服务端了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public void send(Object message, boolean sent) throws RemotingException &#123;</span><br><span class="line">    super.send(message, sent);</span><br><span class="line"></span><br><span class="line">    boolean success = true;</span><br><span class="line">    int timeout = 0;</span><br><span class="line">    try &#123;</span><br><span class="line">    	//交给netty处理</span><br><span class="line">        ChannelFuture future = channel.write(message);</span><br><span class="line">        if (sent) &#123;</span><br><span class="line">            timeout = getUrl().getPositiveParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);</span><br><span class="line">            success = future.await(timeout);</span><br><span class="line">        &#125;</span><br><span class="line">        Throwable cause = future.getCause();</span><br><span class="line">        if (cause != null) &#123;</span><br><span class="line">            throw cause;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        throw new RemotingException(this, &quot;Failed to send message &quot; + message + &quot; to &quot; + getRemoteAddress() + &quot;, cause: &quot; + e.getMessage(), e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if(! success) &#123;</span><br><span class="line">        throw new RemotingException(this, &quot;Failed to send message &quot; + message + &quot; to &quot; + getRemoteAddress()</span><br><span class="line">                + &quot;in timeout(&quot; + timeout + &quot;ms) limit&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="服务提供者处理并响应请求"><a href="#服务提供者处理并响应请求" class="headerlink" title="服务提供者处理并响应请求"></a>服务提供者处理并响应请求</h1><p>服务端已经打开端口并监听请求的到来，当服务消费者发送调用请求的时候，经过Netty的处理后会到dubbo中的codec相关方法中先进行解码，入口是<code>NettyCodecAdapter.messageReceived()</code>，关于这个方法的代码在dubbo编解码的那篇文章中已经分析过，不再重复。经过解码之后，会进入到NettyHandler.messageReceived()方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception &#123;</span><br><span class="line">	//获取channel</span><br><span class="line">    NettyChannel channel = NettyChannel.getOrAddChannel(ctx.getChannel(), url, handler);</span><br><span class="line">    try &#123;</span><br><span class="line">    	//这里handler是NettyServer</span><br><span class="line">        handler.received(channel, e.getMessage());</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        NettyChannel.removeChannelIfDisconnected(ctx.getChannel());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着会进入AbstractPeer的received方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel ch, Object msg) throws RemotingException &#123;</span><br><span class="line">    if (closed) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    //这里是MultiMessageHandler</span><br><span class="line">    handler.received(ch, msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入MultiMessageHandler的received方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">	//是多消息的话，使用多消息处理器处理</span><br><span class="line">    if (message instanceof MultiMessage) &#123;</span><br><span class="line">        MultiMessage list = (MultiMessage)message;</span><br><span class="line">        for(Object obj : list) &#123;</span><br><span class="line">            handler.received(channel, obj);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">    	//这里是HeartbeatHandler</span><br><span class="line">        handler.received(channel, message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入HeartbeatHandler的received方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">    setReadTimestamp(channel);</span><br><span class="line">    //心跳请求处理</span><br><span class="line">    if (isHeartbeatRequest(message)) &#123;</span><br><span class="line">        Request req = (Request) message;</span><br><span class="line">        if (req.isTwoWay()) &#123;</span><br><span class="line">            Response res = new Response(req.getId(), req.getVersion());</span><br><span class="line">            res.setEvent(Response.HEARTBEAT_EVENT);</span><br><span class="line">            channel.send(res);</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    //心跳回应消息处理</span><br><span class="line">    if (isHeartbeatResponse(message)) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    //这里是AllChannelHandler</span><br><span class="line">    handler.received(channel, message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>继续进入AllChannelHandler的received方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">	//获取线程池执行</span><br><span class="line">    ExecutorService cexecutor = getExecutorService();</span><br><span class="line">    try &#123;</span><br><span class="line">    	//handler是DecodeHandler</span><br><span class="line">        cexecutor.execute(new ChannelEventRunnable(channel, handler, ChannelState.RECEIVED, message));</span><br><span class="line">    &#125; catch (Throwable t) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里会去启动新线程执行ChannelEventRunnable的run方法，接着去调用DecodeHandler的received方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">	//不清楚啥意思</span><br><span class="line">    if (message instanceof Decodeable) &#123;</span><br><span class="line">        decode(message);</span><br><span class="line">    &#125;</span><br><span class="line">	//解码请求类型</span><br><span class="line">    if (message instanceof Request) &#123;</span><br><span class="line">        decode(((Request)message).getData());</span><br><span class="line">    &#125;</span><br><span class="line">	//解码响应类型</span><br><span class="line">    if (message instanceof Response) &#123;</span><br><span class="line">        decode( ((Response)message).getResult());</span><br><span class="line">    &#125;</span><br><span class="line">	//解码之后到HeaderExchangeHandler中处理</span><br><span class="line">    handler.received(channel, message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解码之后到HeaderExchangeHandler的received方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">    channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());</span><br><span class="line">    ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);</span><br><span class="line">    try &#123;</span><br><span class="line">    	//request类型的消息</span><br><span class="line">        if (message instanceof Request) &#123;</span><br><span class="line">            Request request = (Request) message;</span><br><span class="line">            if (request.isEvent()) &#123;//判断心跳还是正常请求</span><br><span class="line">            	//	处理心跳</span><br><span class="line">                handlerEvent(channel, request);</span><br><span class="line">            &#125; else &#123;//正常的请求</span><br><span class="line">            	//需要返回</span><br><span class="line">                if (request.isTwoWay()) &#123;</span><br><span class="line">                	//处理请求，并构造响应信息</span><br><span class="line">                    Response response = handleRequest(exchangeChannel, request);</span><br><span class="line">                    //NettyChannel，发送响应信息</span><br><span class="line">                    channel.send(response);</span><br><span class="line">                &#125; else &#123;//不需要返回的处理</span><br><span class="line">                    handler.received(exchangeChannel, request.getData());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else if (message instanceof Response) &#123;//response类型的消息</span><br><span class="line">            handleResponse(channel, (Response) message);</span><br><span class="line">        &#125; else if (message instanceof String) &#123;</span><br><span class="line">            if (isClientSide(channel)) &#123;</span><br><span class="line">                Exception e = new Exception(&quot;Dubbo client can not supported string message: &quot; + message + &quot; in channel: &quot; + channel + &quot;, url: &quot; + channel.getUrl());</span><br><span class="line">            &#125; else &#123;//telnet类型</span><br><span class="line">                String echo = handler.telnet(channel, (String) message);</span><br><span class="line">                if (echo != null &amp;&amp; echo.length() &gt; 0) &#123;</span><br><span class="line">                    channel.send(echo);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            handler.received(exchangeChannel, message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        HeaderExchangeChannel.removeChannelIfDisconnected(channel);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先看下处理请求，并构造响应信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Response handleRequest(ExchangeChannel channel, Request req) throws RemotingException &#123;</span><br><span class="line">    Response res = new Response(req.getId(), req.getVersion());</span><br><span class="line">    if (req.isBroken()) &#123;</span><br><span class="line">        Object data = req.getData();</span><br><span class="line"></span><br><span class="line">        String msg;</span><br><span class="line">        if (data == null) msg = null;</span><br><span class="line">        else if (data instanceof Throwable) msg = StringUtils.toString((Throwable) data);</span><br><span class="line">        else msg = data.toString();</span><br><span class="line">        res.setErrorMessage(&quot;Fail to decode request due to: &quot; + msg);</span><br><span class="line">        res.setStatus(Response.BAD_REQUEST);</span><br><span class="line"></span><br><span class="line">        return res;</span><br><span class="line">    &#125;</span><br><span class="line">    // find handler by message class.</span><br><span class="line">    Object msg = req.getData();</span><br><span class="line">    try &#123;</span><br><span class="line">        //处理请求数据，handler是DubboProtocol中的new的一个ExchangeHandlerAdapter</span><br><span class="line">        Object result = handler.reply(channel, msg);</span><br><span class="line">        res.setStatus(Response.OK);</span><br><span class="line">        res.setResult(result);</span><br><span class="line">    &#125; catch (Throwable e) &#123; &#125;</span><br><span class="line">    return res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入DubboProtocol中的ExchangeHandlerAdapter的replay方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public Object reply(ExchangeChannel channel, Object message) throws RemotingException &#123;</span><br><span class="line">        if (message instanceof Invocation) &#123;</span><br><span class="line">        	//Invocation中保存着方法名等</span><br><span class="line">            Invocation inv = (Invocation) message;</span><br><span class="line">            //获取Invoker</span><br><span class="line">            Invoker&lt;?&gt; invoker = getInvoker(channel, inv);</span><br><span class="line">            //如果是callback 需要处理高版本调用低版本的问题</span><br><span class="line">            if (Boolean.TRUE.toString().equals(inv.getAttachments().get(IS_CALLBACK_SERVICE_INVOKE)))&#123;</span><br><span class="line">                String methodsStr = invoker.getUrl().getParameters().get(&quot;methods&quot;);</span><br><span class="line">                boolean hasMethod = false;</span><br><span class="line">                if (methodsStr == null || methodsStr.indexOf(&quot;,&quot;) == -1)&#123;</span><br><span class="line">                    hasMethod = inv.getMethodName().equals(methodsStr);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    String[] methods = methodsStr.split(&quot;,&quot;);</span><br><span class="line">                    for (String method : methods)&#123;</span><br><span class="line">                        if (inv.getMethodName().equals(method))&#123;</span><br><span class="line">                            hasMethod = true;</span><br><span class="line">                            break;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                if (!hasMethod)&#123;</span><br><span class="line">                    return null;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            RpcContext.getContext().setRemoteAddress(channel.getRemoteAddress());</span><br><span class="line">            //执行调用，然后返回结果</span><br><span class="line">            return invoker.invoke(inv);</span><br><span class="line">        &#125;</span><br><span class="line">        throw new RemotingException(。。。);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>先看下getInvoker获取Invoker：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">Invoker&lt;?&gt; getInvoker(Channel channel, Invocation inv) throws RemotingException&#123;</span><br><span class="line">    boolean isCallBackServiceInvoke = false;</span><br><span class="line">    boolean isStubServiceInvoke = false;</span><br><span class="line">    int port = channel.getLocalAddress().getPort();</span><br><span class="line">    String path = inv.getAttachments().get(Constants.PATH_KEY);</span><br><span class="line">    //如果是客户端的回调服务.</span><br><span class="line">    isStubServiceInvoke = Boolean.TRUE.toString().equals(inv.getAttachments().get(Constants.STUB_EVENT_KEY));</span><br><span class="line">    if (isStubServiceInvoke)&#123;</span><br><span class="line">        port = channel.getRemoteAddress().getPort();</span><br><span class="line">    &#125;</span><br><span class="line">    //callback</span><br><span class="line">    isCallBackServiceInvoke = isClientSide(channel) &amp;&amp; !isStubServiceInvoke;</span><br><span class="line">    if(isCallBackServiceInvoke)&#123;</span><br><span class="line">        path = inv.getAttachments().get(Constants.PATH_KEY)+&quot;.&quot;+inv.getAttachments().get(Constants.CALLBACK_SERVICE_KEY);</span><br><span class="line">        inv.getAttachments().put(IS_CALLBACK_SERVICE_INVOKE, Boolean.TRUE.toString());</span><br><span class="line">    &#125;</span><br><span class="line">    String serviceKey = serviceKey(port, path, inv.getAttachments().get(Constants.VERSION_KEY), inv.getAttachments().get(Constants.GROUP_KEY));</span><br><span class="line">	//从之前缓存的exporterMap中查找Exporter</span><br><span class="line">    //key：dubbo.common.hello.service.HelloService:20880</span><br><span class="line">    DubboExporter&lt;?&gt; exporter = (DubboExporter&lt;?&gt;) exporterMap.get(serviceKey);</span><br><span class="line"></span><br><span class="line">    if (exporter == null)</span><br><span class="line">        throw new RemotingException(。。。）;</span><br><span class="line">	//得到Invoker，返回</span><br><span class="line">    return exporter.getInvoker();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再看执行调用<code>invoker.invoke(inv);</code>，会先进入InvokerWrapper：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public Result invoke(Invocation invocation) throws RpcException &#123;</span><br><span class="line">    return invoker.invoke(invocation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着进入AbstractProxyInvoker：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public Result invoke(Invocation invocation) throws RpcException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">    	//先doInvoke</span><br><span class="line">        //然后封装成结果返回</span><br><span class="line">        return new RpcResult(doInvoke(proxy, invocation.getMethodName(), invocation.getParameterTypes(), invocation.getArguments()));</span><br><span class="line">    &#125; catch (InvocationTargetException e) &#123;。。。&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的doInvoke是在JavassistProxyFactory中的AbstractProxyInvoker实例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; getInvoker(T proxy, Class&lt;T&gt; type, URL url) &#123;</span><br><span class="line">    // TODO Wrapper类不能正确处理带$的类名</span><br><span class="line">    final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf(&apos;$&apos;) &lt; 0 ? proxy.getClass() : type);</span><br><span class="line">    return new AbstractProxyInvoker&lt;T&gt;(proxy, type, url) &#123;</span><br><span class="line">        @Override</span><br><span class="line">        protected Object doInvoke(T proxy, String methodName, </span><br><span class="line">                                  Class&lt;?&gt;[] parameterTypes, </span><br><span class="line">                                  Object[] arguments) throws Throwable &#123;</span><br><span class="line">                                  //这里就调用了具体的方法</span><br><span class="line">            return wrapper.invokeMethod(proxy, methodName, parameterTypes, arguments);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消息处理完后返回到HeaderExchangeHandler的received方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">    channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());</span><br><span class="line">    ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);</span><br><span class="line">    try &#123;</span><br><span class="line">    	//request类型的消息</span><br><span class="line">        if (message instanceof Request) &#123;</span><br><span class="line">            Request request = (Request) message;</span><br><span class="line">            if (request.isEvent()) &#123;//判断心跳还是正常请求</span><br><span class="line">            	//	处理心跳</span><br><span class="line">                handlerEvent(channel, request);</span><br><span class="line">            &#125; else &#123;//正常的请求</span><br><span class="line">            	//需要返回</span><br><span class="line">                if (request.isTwoWay()) &#123;</span><br><span class="line">                	//处理请求，并构造响应信息，这在上面已经解析过了</span><br><span class="line">                    Response response = handleRequest(exchangeChannel, request);</span><br><span class="line">                    //NettyChannel，发送响应信息</span><br><span class="line">                    channel.send(response);</span><br><span class="line">                &#125; else &#123;//不需要返回的处理</span><br><span class="line">                    handler.received(exchangeChannel, request.getData());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else if (message instanceof Response) &#123;//response类型的消息</span><br><span class="line">            handleResponse(channel, (Response) message);</span><br><span class="line">        &#125; else if (message instanceof String) &#123;</span><br><span class="line">            if (isClientSide(channel)) &#123;</span><br><span class="line">                Exception e = new Exception(&quot;Dubbo client can not supported string message: &quot; + message + &quot; in channel: &quot; + channel + &quot;, url: &quot; + channel.getUrl());</span><br><span class="line">            &#125; else &#123;//telnet类型</span><br><span class="line">                String echo = handler.telnet(channel, (String) message);</span><br><span class="line">                if (echo != null &amp;&amp; echo.length() &gt; 0) &#123;</span><br><span class="line">                    channel.send(echo);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            handler.received(exchangeChannel, message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        HeaderExchangeChannel.removeChannelIfDisconnected(channel);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解析完请求，构造完响应消息，就开始发送响应了,<code>channel.send(response);</code>，先经过AbstractPeer:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public void send(Object message) throws RemotingException &#123;</span><br><span class="line">	//NettyChannel</span><br><span class="line">    send(message, url.getParameter(Constants.SENT_KEY, false));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入NettyChannel中，进行响应消息的发送：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public void send(Object message, boolean sent) throws RemotingException &#123;</span><br><span class="line">	//AbstractChannel的处理</span><br><span class="line">    super.send(message, sent);</span><br><span class="line"></span><br><span class="line">    boolean success = true;</span><br><span class="line">    int timeout = 0;</span><br><span class="line">    try &#123;</span><br><span class="line">        ChannelFuture future = channel.write(message);</span><br><span class="line">        if (sent) &#123;</span><br><span class="line">            timeout = getUrl().getPositiveParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);</span><br><span class="line">            success = future.await(timeout);</span><br><span class="line">        &#125;</span><br><span class="line">        Throwable cause = future.getCause();</span><br><span class="line">        if (cause != null) &#123;</span><br><span class="line">            throw cause;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        throw new RemotingException(this, &quot;Failed to send message &quot; + message + &quot; to &quot; + getRemoteAddress() + &quot;, cause: &quot; + e.getMessage(), e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if(! success) &#123;</span><br><span class="line">        throw new RemotingException(this, &quot;Failed to send message &quot; + message + &quot; to &quot; + getRemoteAddress()</span><br><span class="line">                + &quot;in timeout(&quot; + timeout + &quot;ms) limit&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="消费者接受到服务端返回的响应后的处理"><a href="#消费者接受到服务端返回的响应后的处理" class="headerlink" title="消费者接受到服务端返回的响应后的处理"></a>消费者接受到服务端返回的响应后的处理</h1><p>服务提供者端接收到消费者端的请求并处理之后，返回给消费者端，消费者这边接受响应的入口跟提供者差不多，也是NettyCodecAdapter.messageReceived()，经过解码，到NettyHandler.messageReceived()处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception &#123;</span><br><span class="line">    NettyChannel channel = NettyChannel.getOrAddChannel(ctx.getChannel(), url, handler);</span><br><span class="line">    try &#123;</span><br><span class="line">    	//NettyClient</span><br><span class="line">        handler.received(channel, e.getMessage());</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        NettyChannel.removeChannelIfDisconnected(ctx.getChannel());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先经过AbstractPeer的received方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel ch, Object msg) throws RemotingException &#123;</span><br><span class="line">    if (closed) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    //MultiMessageHandler</span><br><span class="line">    handler.received(ch, msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入MultiMessageHandler：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">    if (message instanceof MultiMessage) &#123;</span><br><span class="line">        MultiMessage list = (MultiMessage)message;</span><br><span class="line">        for(Object obj : list) &#123;</span><br><span class="line">            handler.received(channel, obj);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">    	//HeartbeatHandler</span><br><span class="line">        handler.received(channel, message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入HeartbeatHandler，根据不同类型进行处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">    setReadTimestamp(channel);</span><br><span class="line">    if (isHeartbeatRequest(message)) &#123;</span><br><span class="line">        Request req = (Request) message;</span><br><span class="line">        if (req.isTwoWay()) &#123;</span><br><span class="line">            Response res = new Response(req.getId(), req.getVersion());</span><br><span class="line">            res.setEvent(Response.HEARTBEAT_EVENT);</span><br><span class="line">            channel.send(res);</span><br><span class="line">            if (logger.isInfoEnabled()) &#123;</span><br><span class="line">                int heartbeat = channel.getUrl().getParameter(Constants.HEARTBEAT_KEY, 0);</span><br><span class="line">                if(logger.isDebugEnabled()) &#123;</span><br><span class="line">                    logger.debug(&quot;Received heartbeat from remote channel &quot; + channel.getRemoteAddress()</span><br><span class="line">                                    + &quot;, cause: The channel has no data-transmission exceeds a heartbeat period&quot;</span><br><span class="line">                                    + (heartbeat &gt; 0 ? &quot;: &quot; + heartbeat + &quot;ms&quot; : &quot;&quot;));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    if (isHeartbeatResponse(message)) &#123;</span><br><span class="line">        if (logger.isDebugEnabled()) &#123;</span><br><span class="line">            logger.debug(</span><br><span class="line">                new StringBuilder(32)</span><br><span class="line">                    .append(&quot;Receive heartbeat response in thread &quot;)</span><br><span class="line">                    .append(Thread.currentThread().getName())</span><br><span class="line">                    .toString());</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    //AllChannelHandler</span><br><span class="line">    handler.received(channel, message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入AllChannelHandler：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">    ExecutorService cexecutor = getExecutorService();</span><br><span class="line">    try &#123;</span><br><span class="line">        cexecutor.execute(new ChannelEventRunnable(channel, handler, ChannelState.RECEIVED, message));</span><br><span class="line">    &#125; catch (Throwable t) &#123;</span><br><span class="line">        throw new ExecutionException(message, channel, getClass() + &quot; error when process received event .&quot;, t);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在新线程，ChannelEventRunnable的run方法中进入DecodeHandler：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">    if (message instanceof Decodeable) &#123;</span><br><span class="line">        decode(message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (message instanceof Request) &#123;</span><br><span class="line">        decode(((Request)message).getData());</span><br><span class="line">    &#125;</span><br><span class="line">	//这里进行response类型的处理</span><br><span class="line">    if (message instanceof Response) &#123;</span><br><span class="line">        decode( ((Response)message).getResult());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    handler.received(channel, message);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入处理response的decode方法，进行解码response：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private void decode(Object message) &#123;</span><br><span class="line">    if (message != null &amp;&amp; message instanceof Decodeable) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            ((Decodeable)message).decode();</span><br><span class="line">        &#125; catch (Throwable e) &#123;。。。&#125; // ~ end of catch</span><br><span class="line">    &#125; // ~ end of if</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着会进入HeaderExchangerHandler.received () 方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public void received(Channel channel, Object message) throws RemotingException &#123;</span><br><span class="line">    channel.setAttribute(KEY_READ_TIMESTAMP, System.currentTimeMillis());</span><br><span class="line">    ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);</span><br><span class="line">    try &#123;</span><br><span class="line">        if (message instanceof Request) &#123;</span><br><span class="line">            Request request = (Request) message;</span><br><span class="line">            if (request.isEvent()) &#123;</span><br><span class="line">                handlerEvent(channel, request);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                if (request.isTwoWay()) &#123;</span><br><span class="line">                    Response response = handleRequest(exchangeChannel, request);</span><br><span class="line">                    channel.send(response);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    handler.received(exchangeChannel, request.getData());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else if (message instanceof Response) &#123;</span><br><span class="line">        	//这里处理response消息</span><br><span class="line">            handleResponse(channel, (Response) message);</span><br><span class="line">        &#125; else if (message instanceof String) &#123;</span><br><span class="line">            if (isClientSide(channel)) &#123;  Exception  &#125; else &#123;</span><br><span class="line">                String echo = handler.telnet(channel, (String) message);</span><br><span class="line">                if (echo != null &amp;&amp; echo.length() &gt; 0) &#123;</span><br><span class="line">                    channel.send(echo);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            handler.received(exchangeChannel, message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        HeaderExchangeChannel.removeChannelIfDisconnected(channel);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>handleResponse方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static void handleResponse(Channel channel, Response response) throws RemotingException &#123;</span><br><span class="line">    if (response != null &amp;&amp; !response.isHeartbeat()) &#123;</span><br><span class="line">        DefaultFuture.received(channel, response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这一步设置response到消费者请求的Future中，以供消费者通过DefaultFuture.get()取得提供者的响应，此为同步转异步重要一步，且请求超时也由DefaultFuture控制。</p>
+<p>然后就是<code>return (Result) currentClient.request(inv, timeout).get();</code>在DubboInvoker中，这里继续执行，然后执行Filter，最后返回到InvokerInvocationHandler.invoker()方法中，方法得到调用结果，结束！</p>
+<p>注意：</p>
+<p>消费者端的DubboInvoker发起请求后，后续的逻辑是异步的或是指定超时时间内阻塞的，直到得到响应结果后，继续执行DubboInvoker中逻辑。</p>
+<p>对于异步请求时，消费者得到Future，其余逻辑均是异步的。</p>
+<p>消费者还可以通过设置async、sent、return来调整处理逻辑，async指异步还是同步请求，sent指是否等待请求消息发出即阻塞等待是否成功发出请求、return指是否忽略返回值即但方向通信，一般异步时使用以减少Future对象的创建和管理成本。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/dubbo源码/" rel="tag"># dubbo源码</a>
+          
+            <a href="/tags/dubbo请求响应过程/" rel="tag"># dubbo请求响应过程</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/19/Dubbo中编码和解码的解析/" rel="next" title="Dubbo中编码和解码的解析">
+                <i class="fa fa-chevron-left"></i> Dubbo中编码和解码的解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/21/Dubbo中消费者初始化的过程解析/" rel="prev" title="Dubbo中消费者初始化的过程解析">
+                Dubbo中消费者初始化的过程解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/03/20/Dubbo中服务消费者和服务提供者之间的请求和响应过程/"
+           data-title="Dubbo中服务消费者和服务提供者之间的请求和响应过程" data-url="http://dachengxi.github.com/2017/03/20/Dubbo中服务消费者和服务提供者之间的请求和响应过程/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">50</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">64</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#服务消费者发起调用请求"><span class="nav-number">1.</span> <span class="nav-text">服务消费者发起调用请求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#服务提供者处理并响应请求"><span class="nav-number">2.</span> <span class="nav-text">服务提供者处理并响应请求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消费者接受到服务端返回的响应后的处理"><span class="nav-number">3.</span> <span class="nav-text">消费者接受到服务端返回的响应后的处理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dachengxi"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

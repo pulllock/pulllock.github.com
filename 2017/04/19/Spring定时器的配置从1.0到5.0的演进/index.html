@@ -1,0 +1,1091 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Spring 定时器," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="这里主要是记录下从Spring1.0到现在的5.0中定时器的配置方式，关于源码，暂先不解释。主要用作自己记录用，如果有错误的还请指出一起改正学习，免得误导别人，谢谢。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring定时器的配置从1.0到5.0的演进">
+<meta property="og:url" content="http://dachengxi.github.com/2017/04/19/Spring定时器的配置从1.0到5.0的演进/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="这里主要是记录下从Spring1.0到现在的5.0中定时器的配置方式，关于源码，暂先不解释。主要用作自己记录用，如果有错误的还请指出一起改正学习，免得误导别人，谢谢。">
+<meta property="og:updated_time" content="2017-04-19T08:23:38.016Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring定时器的配置从1.0到5.0的演进">
+<meta name="twitter:description" content="这里主要是记录下从Spring1.0到现在的5.0中定时器的配置方式，关于源码，暂先不解释。主要用作自己记录用，如果有错误的还请指出一起改正学习，免得误导别人，谢谢。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2017/04/19/Spring定时器的配置从1.0到5.0的演进/"/>
+
+
+
+
+
+  <title> Spring定时器的配置从1.0到5.0的演进 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/04/19/Spring定时器的配置从1.0到5.0的演进/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Spring定时器的配置从1.0到5.0的演进
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-19T16:20:43+08:00">
+                2017-04-19 16:20:43
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/定时器/" itemprop="url" rel="index">
+                    <span itemprop="name">定时器</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/04/19/Spring定时器的配置从1.0到5.0的演进/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/04/19/Spring定时器的配置从1.0到5.0的演进/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这里主要是记录下从Spring1.0到现在的5.0中定时器的配置方式，关于源码，暂先不解释。主要用作自己记录用，如果有错误的还请指出一起改正学习，免得误导别人，谢谢。<br><a id="more"></a></p>
+<h1 id="Spring1中定时器的配置"><a href="#Spring1中定时器的配置" class="headerlink" title="Spring1中定时器的配置"></a>Spring1中定时器的配置</h1><p>直接看Spring1.1.1的文档，里面都已经给出来了各种配置方式，更高版本的也都包含了这些，但是觉得看1.1.1的更纯粹一些。</p>
+<p>Spring1中对定时器的支持有两种方式：</p>
+<ul>
+<li>jdk的Timer</li>
+<li>Quartz Scheduler</li>
+</ul>
+<h2 id="Quartz-Scheduler"><a href="#Quartz-Scheduler" class="headerlink" title="Quartz Scheduler"></a>Quartz Scheduler</h2><p>Quartz Scheduler使用Triggers，Jobs，JobDetail来实现定时器功能。Spring提供了对Quartz的支持。</p>
+<p>使用的大概步骤是：</p>
+<ol>
+<li>定义JobDetail，也就是定义具体的任务。</li>
+<li>定义trigger，就是定义触发器，指定什么任务，在什么时间执行或者隔多久执行。</li>
+<li>定义SchedulerFactoryBean，来执行任务。</li>
+</ol>
+<p>下面我们以一个例子来说明，是一个定时的去获取信息和定时统计信息的示例。</p>
+<h3 id="定义JobDetail"><a href="#定义JobDetail" class="headerlink" title="定义JobDetail"></a>定义JobDetail</h3><p>定义JobDetail有两种方式，一种是使用JobDetailBean，一种是使用MethodInvokingJobDetailFactoryBean，后者可以指定要执行的具体方法。</p>
+<h4 id="使用JobDetailBean"><a href="#使用JobDetailBean" class="headerlink" title="使用JobDetailBean"></a>使用JobDetailBean</h4><p>CountUserJob：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.quartz;</span><br><span class="line"></span><br><span class="line">import org.quartz.JobExecutionContext;</span><br><span class="line">import org.quartz.JobExecutionException;</span><br><span class="line">import org.springframework.scheduling.quartz.QuartzJobBean;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 11:00.</span><br><span class="line"> * 定时的统计信息的JOb</span><br><span class="line"> * 比如这里是定时的统计系统中总的用户数，总的用户数是我查询到的数和我在xml指定的数的总和</span><br><span class="line"> */</span><br><span class="line">public class CountUserJob extends QuartzJobBean&#123;</span><br><span class="line"></span><br><span class="line">    private int adminUser;</span><br><span class="line"></span><br><span class="line">    public void setAdminUser(int adminUser) &#123;</span><br><span class="line">        this.adminUser = adminUser;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected void executeInternal(JobExecutionContext context) throws JobExecutionException &#123;</span><br><span class="line">        //执行真正的统计任务</span><br><span class="line">        System.out.println(&quot;开始统计系统中人数&quot;);</span><br><span class="line">        System.out.println(&quot;统计完成，共有101人&quot;);</span><br><span class="line">        System.out.println(&quot;加上系统管理员之后共有&quot; + (adminUser + 101) + &quot;人&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>xml中声明一个job：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--定义一个JobDetailBean类型的Job，用来统计系统中总的人数，adminUser指的是系统中预先留的管理员数目--&gt;</span><br><span class="line">&lt;bean name=&quot;countUserJob&quot; class=&quot;org.springframework.scheduling.quartz.JobDetailBean&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;jobClass&quot;&gt;</span><br><span class="line">        &lt;value&gt;me.cxis.spring.scheduling.quartz.CountUserJob&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;property name=&quot;jobDataAsMap&quot;&gt;</span><br><span class="line">        &lt;map&gt;</span><br><span class="line">            &lt;entry key=&quot;adminUser&quot;&gt;</span><br><span class="line">                &lt;value&gt;10&lt;/value&gt;</span><br><span class="line">            &lt;/entry&gt;</span><br><span class="line">        &lt;/map&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="使用MethodInvokingJobDetailFactoryBean"><a href="#使用MethodInvokingJobDetailFactoryBean" class="headerlink" title="使用MethodInvokingJobDetailFactoryBean"></a>使用MethodInvokingJobDetailFactoryBean</h4><p>MethodInvokingJobDetailFactoryBean可以指定方法。直接看例子。</p>
+<p>GetJob：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.quartz;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 11:01.</span><br><span class="line"> * 定时的获取信息的Job，定时从文件中获取数据</span><br><span class="line"> */</span><br><span class="line">public class GetJob &#123;</span><br><span class="line">    public void getSomethingFromFile()&#123;</span><br><span class="line">        System.out.println(&quot;从文件中获取数据。。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>xml中配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--从文件中获取信息的bean--&gt;</span><br><span class="line">&lt;bean id=&quot;getJob&quot; class=&quot;me.cxis.spring.scheduling.quartz.GetJob&quot;/&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--定义一个MethodInvokingJobDetailFactoryBean，从文件中获取数据的Job--&gt;</span><br><span class="line">&lt;bean id=&quot;getJobDetail&quot; class=&quot;org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;targetObject&quot;&gt;&lt;ref bean=&quot;getJob&quot;/&gt;&lt;/property&gt;</span><br><span class="line">    &lt;property name=&quot;targetMethod&quot;&gt;&lt;value&gt;getSomethingFromFile&lt;/value&gt;&lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="定义Triggers"><a href="#定义Triggers" class="headerlink" title="定义Triggers"></a>定义Triggers</h3><p>上面我们把JobDetail都定义好了，也都配置好了，但是怎么去执行，多长时间执行一次都没有说明，这时候需要定义Triggers来描述任务什么时候执行等。只需要在xml中配置就可以了。</p>
+<p>Triggers也有两种方式，一种是SimpleTriggerBean，一种是CronTriggerBean。我们的例子中，统计用户数使用SimpleTriggerBean，从文件中获取信息使用CronTriggerBean。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--定义Triggers，统计用户数--&gt;</span><br><span class="line">&lt;bean id=&quot;countUserTrigger&quot; class=&quot;org.springframework.scheduling.quartz.SimpleTriggerBean&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;jobDetail&quot;&gt;</span><br><span class="line">        &lt;ref bean=&quot;countUserJob&quot;/&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;!--第一次执行之前需要等待的时间--&gt;</span><br><span class="line">    &lt;property name=&quot;startDelay&quot;&gt;</span><br><span class="line">        &lt;!--10秒--&gt;</span><br><span class="line">        &lt;value&gt;10000&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;!--任务重复时间，每隔多少时间执行一次--&gt;</span><br><span class="line">    &lt;property name=&quot;repeatInterval&quot;&gt;</span><br><span class="line">        &lt;value&gt;20000&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--定义Triggers，定时从文件中获取数据--&gt;</span><br><span class="line">&lt;bean id=&quot;getJobTrigger&quot; class=&quot;org.springframework.scheduling.quartz.CronTriggerBean&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;jobDetail&quot;&gt;</span><br><span class="line">        &lt;ref bean=&quot;getJobDetail&quot;/&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;property name=&quot;cronExpression&quot;&gt;</span><br><span class="line">        &lt;!--cron表达式，这里是每隔两分钟执行一次--&gt;</span><br><span class="line">        &lt;value&gt;0 0/2 * * * ?&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="定义SchedulerFactoryBean"><a href="#定义SchedulerFactoryBean" class="headerlink" title="定义SchedulerFactoryBean"></a>定义SchedulerFactoryBean</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--定义SchedulerFactoryBean--&gt;</span><br><span class="line">&lt;bean class=&quot;org.springframework.scheduling.quartz.SchedulerFactoryBean&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;triggers&quot;&gt;</span><br><span class="line">        &lt;list&gt;</span><br><span class="line">            &lt;ref local=&quot;countUserTrigger&quot;/&gt;</span><br><span class="line">            &lt;ref local=&quot;getJobTrigger&quot;/&gt;</span><br><span class="line">        &lt;/list&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>Main：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.quartz;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 11:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:scheduling-quartz.xml&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="JDK-Timer"><a href="#JDK-Timer" class="headerlink" title="JDK Timer"></a>JDK Timer</h2><p>使用JDK Timer，也跟上面类似，大概的步骤是：</p>
+<ol>
+<li>创建一个TimerTask，里面是执行任务的逻辑。</li>
+<li>创建ScheduledTimerTask，就是什么时候或者隔多久执行任务。</li>
+<li>创建TimerFactoryBean，来执行任务。</li>
+</ol>
+<h3 id="创建TimerTask"><a href="#创建TimerTask" class="headerlink" title="创建TimerTask"></a>创建TimerTask</h3><p>同样，创建一个Task也有两种方式，一种是继承TimerTask，另外一种是使用MethodInvokingTimerTaskFactoryBean，后者可以指定具体方法。</p>
+<h4 id="继承TimerTask"><a href="#继承TimerTask" class="headerlink" title="继承TimerTask"></a>继承TimerTask</h4><p>CountUserTask：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.timer;</span><br><span class="line"></span><br><span class="line">import java.util.TimerTask;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 11:00.</span><br><span class="line"> * 定时的统计信息的 task</span><br><span class="line"> * 比如这里是定时的统计系统中总的用户数，总的用户数是我查询到的数和我在xml指定的数的总和</span><br><span class="line"> */</span><br><span class="line">public class CountUserTask extends TimerTask&#123;</span><br><span class="line"></span><br><span class="line">    private int adminUser;</span><br><span class="line"></span><br><span class="line">    public void setAdminUser(int adminUser) &#123;</span><br><span class="line">        this.adminUser = adminUser;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void run() &#123;</span><br><span class="line">        //执行真正的统计任务</span><br><span class="line">        System.out.println(&quot;开始统计系统中人数&quot;);</span><br><span class="line">        System.out.println(&quot;统计完成，共有101人&quot;);</span><br><span class="line">        System.out.println(&quot;加上系统管理员之后共有&quot; + (adminUser + 101) + &quot;人&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在xml中配置bean：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--统计用户数的bean--&gt;</span><br><span class="line">&lt;bean id=&quot;countUserTask&quot; class=&quot;me.cxis.spring.scheduling.timer.CountUserTask&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;adminUser&quot;&gt;</span><br><span class="line">        &lt;value&gt;10&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="使用MethodInvokingTimerTaskFactoryBean"><a href="#使用MethodInvokingTimerTaskFactoryBean" class="headerlink" title="使用MethodInvokingTimerTaskFactoryBean"></a>使用MethodInvokingTimerTaskFactoryBean</h4><p>GetTask:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.timer;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 11:01.</span><br><span class="line"> * 定时的获取信息的task，定时从文件中获取数据</span><br><span class="line"> */</span><br><span class="line">public class GetTask &#123;</span><br><span class="line">    public void getSomethingFromFile()&#123;</span><br><span class="line">        System.out.println(&quot;从文件中获取数据。。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>xml中配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--从文件中获取信息的bean--&gt;</span><br><span class="line">&lt;bean id=&quot;getTaskBean&quot; class=&quot;me.cxis.spring.scheduling.timer.GetTask&quot;&gt;&lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--使用MethodInvokingTimerTaskFactoryBean--&gt;</span><br><span class="line">&lt;bean id=&quot;getTask&quot; class=&quot;org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;targetObject&quot;&gt;&lt;ref bean=&quot;getTaskBean&quot;/&gt; &lt;/property&gt;</span><br><span class="line">    &lt;property name=&quot;targetMethod&quot;&gt;&lt;value&gt;getSomethingFromFile&lt;/value&gt;&lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="创建ScheduledTimerTask"><a href="#创建ScheduledTimerTask" class="headerlink" title="创建ScheduledTimerTask"></a>创建ScheduledTimerTask</h3><p>定义ScheduledTimerTask来描述任务什么时候执行等。只需要在xml中配置就可以了。</p>
+<p>使用Timer的方式，就这么一种配置，没法使用cron的方式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--创建统计用户的ScheduledTimerTask，描述任务怎么运行--&gt;</span><br><span class="line">&lt;bean id=&quot;countUserScheduledTimerTask&quot; class=&quot;org.springframework.scheduling.timer.ScheduledTimerTask&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;delay&quot;&gt;</span><br><span class="line">        &lt;value&gt;10000&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;property name=&quot;period&quot;&gt;</span><br><span class="line">        &lt;value&gt;20000&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;property name=&quot;timerTask&quot;&gt;</span><br><span class="line">        &lt;ref local=&quot;countUserTask&quot;/&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--创建从文件获取信息的ScheduledTimerTask，描述任务怎么运行--&gt;</span><br><span class="line">&lt;bean id=&quot;getScheduledTimerTask&quot; class=&quot;org.springframework.scheduling.timer.ScheduledTimerTask&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;period&quot;&gt;</span><br><span class="line">        &lt;value&gt;60000&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">    &lt;property name=&quot;timerTask&quot;&gt;</span><br><span class="line">        &lt;ref local=&quot;getTask&quot;/&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="创建TimerFactoryBean"><a href="#创建TimerFactoryBean" class="headerlink" title="创建TimerFactoryBean"></a>创建TimerFactoryBean</h3><p>任务执行的配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--创建TimerFactoryBean，执行任务--&gt;</span><br><span class="line">&lt;bean id=&quot;timerFactory&quot; class=&quot;org.springframework.scheduling.timer.TimerFactoryBean&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;scheduledTimerTasks&quot;&gt;</span><br><span class="line">        &lt;list&gt;</span><br><span class="line">            &lt;ref local=&quot;countUserScheduledTimerTask&quot;/&gt;</span><br><span class="line">            &lt;ref local=&quot;getScheduledTimerTask&quot;/&gt;</span><br><span class="line">        &lt;/list&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.timer;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.io.InputStream;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 11:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:scheduling-timer.xml&quot;);</span><br><span class="line">        try &#123;</span><br><span class="line">            System.in.read();</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面就是Spring1.x中关于定时器的配置方式，配置清晰，易懂，但是任务多了之后，就会发现配置文件会迅速变得臃肿。</p>
+<h1 id="Spring2中定时器的配置"><a href="#Spring2中定时器的配置" class="headerlink" title="Spring2中定时器的配置"></a>Spring2中定时器的配置</h1><p>What’s new in Spring 2.0?</p>
+<ul>
+<li>增加对Executors的支持</li>
+</ul>
+<p>上面就是AOP在2.0版本新增的特性，1.0的所有AOP配置方式在2.0中都支持，下面主要看看2.0中新增的一些方法。</p>
+<p>Spring2.0中新定义了一个TaskExecutor接口，增加了对线程池的支持，这个接口的功能跟JDK1.5中的Executor接口一样。那么2.0中线程池的增加，对定时器有什么影响呢？其实就是可以在定时任务执行的时候，使用线程池来执行任务，我们不用关心其他的实现。</p>
+<h2 id="Spring2中配置示例"><a href="#Spring2中配置示例" class="headerlink" title="Spring2中配置示例"></a>Spring2中配置示例</h2><p>直接看示例，我们定时，每隔5分钟，每次都从20个文件中同时获取数据。</p>
+<p>首先写实际执行业务的类，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.executor;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 14:51.</span><br><span class="line"> * 从文件中获取数据的Task</span><br><span class="line"> */</span><br><span class="line">public class GetDataFromFileTask implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">    private int fileId;</span><br><span class="line"></span><br><span class="line">    public GetDataFromFileTask(int fileId)&#123;</span><br><span class="line">        this.fileId = fileId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void run() &#123;</span><br><span class="line">        //真正执行从文件中获取数据的逻辑</span><br><span class="line">        System.out.println(&quot;从文件&quot; + fileId + &quot;中获取数据&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后是执行任务的定时器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.executor;</span><br><span class="line"></span><br><span class="line">import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line">import java.util.TimerTask;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 14:54.</span><br><span class="line"> * 批量从文件中获取数据的定时器</span><br><span class="line"> */</span><br><span class="line">public class GetDataFromFileScheduler extends TimerTask &#123;</span><br><span class="line"></span><br><span class="line">    private ThreadPoolTaskExecutor executor;</span><br><span class="line"></span><br><span class="line">    public void setExecutor(ThreadPoolTaskExecutor executor) &#123;</span><br><span class="line">        this.executor = executor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void run() &#123;</span><br><span class="line">    	System.out.println(&quot;CorePoolSize:&quot; + taskExecutor.getCorePoolSize() + &quot;;MaxPoolSize:&quot; + taskExecutor.getMaxPoolSize());</span><br><span class="line">        //每次都会同时执行从20个文件中获取数据</span><br><span class="line">        for(int i = 0; i &lt; 20;i++)&#123;</span><br><span class="line">            executor.execute(new GetDataFromFileTask(i));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着是xml的配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot; &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span><br><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;!--线程池taskExecutor--&gt;</span><br><span class="line">    &lt;bean id=&quot;taskExecutor&quot; class=&quot;org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor&quot;&gt;</span><br><span class="line">        &lt;!--核心线程数--&gt;</span><br><span class="line">        &lt;property name=&quot;corePoolSize&quot;&gt;</span><br><span class="line">            &lt;value&gt;5&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;!--最大线程数--&gt;</span><br><span class="line">        &lt;property name=&quot;maxPoolSize&quot;&gt;</span><br><span class="line">            &lt;value&gt;10&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;!--队列最大长度--&gt;</span><br><span class="line">        &lt;property name=&quot;queueCapacity&quot;&gt;</span><br><span class="line">            &lt;value&gt;40&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--GetDataFromFileScheduler，获取数据的定时器--&gt;</span><br><span class="line">    &lt;bean id=&quot;getDataFromFileScheduler&quot; class=&quot;me.cxis.spring.scheduling.executor.GetDataFromFileScheduler&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;taskExecutor&quot;&gt;</span><br><span class="line">            &lt;ref local=&quot;taskExecutor&quot;/&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--创建统计用户的ScheduledTimerTask，描述任务怎么运行--&gt;</span><br><span class="line">    &lt;bean id=&quot;getDataFromFileTimerTask&quot; class=&quot;org.springframework.scheduling.timer.ScheduledTimerTask&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;delay&quot;&gt;</span><br><span class="line">            &lt;value&gt;10000&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;period&quot;&gt;</span><br><span class="line">            &lt;value&gt;20000&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;timerTask&quot;&gt;</span><br><span class="line">            &lt;ref local=&quot;getDataFromFileScheduler&quot;/&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--创建TimerFactoryBean，执行任务--&gt;</span><br><span class="line">    &lt;bean id=&quot;timerFactory&quot; class=&quot;org.springframework.scheduling.timer.TimerFactoryBean&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;scheduledTimerTasks&quot;&gt;</span><br><span class="line">            &lt;list&gt;</span><br><span class="line">                &lt;ref local=&quot;getDataFromFileTimerTask&quot;/&gt;</span><br><span class="line">            &lt;/list&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>测试类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.executor;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 15:11.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:scheduling-executor.xml&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面就是结合线程池的示例。也就是在执行任务的时候多了线程池，基本的配置方式使用方法基本没变。</p>
+<h1 id="Spring3中定时器的配置"><a href="#Spring3中定时器的配置" class="headerlink" title="Spring3中定时器的配置"></a>Spring3中定时器的配置</h1><ul>
+<li>Spring3中TaskExecutor继承了JDK的Executor。使用方面还是跟原来2.0一样。</li>
+<li>Spring3中还引入了新的接口TaskScheduler，Trigger，TriggerContext等。</li>
+<li>Spring3中还引入了task的命名空间<code>&lt;task:scheduler/&gt;</code>，<code>&lt;task:executor/&gt;</code>，<code>&lt;task:scheduled-tasks/&gt;</code>等。</li>
+<li>Spring3中还支持注解的方式<code>@Scheduled</code>，<code>@Async</code>，使配置更加简化。使用注解的方式，需要在配置文件中先开启注解支持<code>&lt;task:annotation-driven/&gt;</code></li>
+</ul>
+<p>注解方式的示例如下。</p>
+<p>CountUserTask：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.annotation;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import org.springframework.scheduling.annotation.Scheduled;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 11:00.</span><br><span class="line"> * 定时的统计信息的Task</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class CountUserTask&#123;</span><br><span class="line"></span><br><span class="line">    //@Scheduled(cron=&quot;*/5 * * * * MON-FRI&quot;) cron的方式</span><br><span class="line">    //下面是固定时间，每隔5秒执行一次</span><br><span class="line">    @Scheduled(fixedRate = 5000)</span><br><span class="line">    public void countUser()&#123;</span><br><span class="line">        //执行真正的统计任务</span><br><span class="line">        System.out.println(&quot;开始统计系统中人数&quot;);</span><br><span class="line">        System.out.println(&quot;统计完成，共有101人&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">       xmlns:task=&quot;http://www.springframework.org/schema/task&quot;</span><br><span class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</span><br><span class="line">	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd</span><br><span class="line">	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--开启task的注解支持--&gt;</span><br><span class="line">    &lt;task:annotation-driven /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--执行任务的bean--&gt;</span><br><span class="line">    &lt;bean id=&quot;countUserTask&quot; class=&quot;me.cxis.spring.scheduling.annotation.CountUserTask&quot;/&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>测试：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.scheduling.annotation;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-04-19 16:08.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:scheduling-annotation.xml&quot;);</span><br><span class="line">        try &#123;</span><br><span class="line">            System.in.read();</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，使用注解的方式简化了很多很多。</p>
+<h1 id="Spring4和Spring5中定时器的配置"><a href="#Spring4和Spring5中定时器的配置" class="headerlink" title="Spring4和Spring5中定时器的配置"></a>Spring4和Spring5中定时器的配置</h1><p>Spring4中增加了<code>@EnableScheduling</code>注解来启用对<code>@Scheduled</code>注解的支持。其他的基本没有什么变化，使用方式还是跟以前一样，现在使用注解更多。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring-定时器/" rel="tag"># Spring 定时器</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/17/Java中SPI机制深入及源码解析/" rel="next" title="Java中SPI机制深入及源码解析">
+                <i class="fa fa-chevron-left"></i> Java中SPI机制深入及源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/03/跨域以及CORS相关知识简介/" rel="prev" title="跨域以及CORS相关知识简介">
+                跨域以及CORS相关知识简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring1中定时器的配置"><span class="nav-number">1.</span> <span class="nav-text">Spring1中定时器的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quartz-Scheduler"><span class="nav-number">1.1.</span> <span class="nav-text">Quartz Scheduler</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义JobDetail"><span class="nav-number">1.1.1.</span> <span class="nav-text">定义JobDetail</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用JobDetailBean"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">使用JobDetailBean</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用MethodInvokingJobDetailFactoryBean"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">使用MethodInvokingJobDetailFactoryBean</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义Triggers"><span class="nav-number">1.1.2.</span> <span class="nav-text">定义Triggers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义SchedulerFactoryBean"><span class="nav-number">1.1.3.</span> <span class="nav-text">定义SchedulerFactoryBean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">1.1.4.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDK-Timer"><span class="nav-number">1.2.</span> <span class="nav-text">JDK Timer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建TimerTask"><span class="nav-number">1.2.1.</span> <span class="nav-text">创建TimerTask</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#继承TimerTask"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">继承TimerTask</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用MethodInvokingTimerTaskFactoryBean"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">使用MethodInvokingTimerTaskFactoryBean</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建ScheduledTimerTask"><span class="nav-number">1.2.2.</span> <span class="nav-text">创建ScheduledTimerTask</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建TimerFactoryBean"><span class="nav-number">1.2.3.</span> <span class="nav-text">创建TimerFactoryBean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试-1"><span class="nav-number">1.2.4.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring2中定时器的配置"><span class="nav-number">2.</span> <span class="nav-text">Spring2中定时器的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring2中配置示例"><span class="nav-number">2.1.</span> <span class="nav-text">Spring2中配置示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring3中定时器的配置"><span class="nav-number">3.</span> <span class="nav-text">Spring3中定时器的配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring4和Spring5中定时器的配置"><span class="nav-number">4.</span> <span class="nav-text">Spring4和Spring5中定时器的配置</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2017/04/19/Spring定时器的配置从1.0到5.0的演进/';
+
+      var disqus_title = "Spring定时器的配置从1.0到5.0的演进";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

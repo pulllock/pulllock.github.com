@@ -1,0 +1,1056 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="AQS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JUC中AQS简介">
+<meta property="og:url" content="http://dachengxi.github.com/2017/03/23/JUC中AQS简介/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。">
+<meta property="og:updated_time" content="2017-03-23T08:27:46.591Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JUC中AQS简介">
+<meta name="twitter:description" content="AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2017/03/23/JUC中AQS简介/"/>
+
+
+
+
+
+  <title> JUC中AQS简介 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/03/23/JUC中AQS简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                JUC中AQS简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-23T16:25:44+08:00">
+                2017-03-23 16:25:44
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/并发包/" itemprop="url" rel="index">
+                    <span itemprop="name">并发包</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/23/JUC中AQS简介/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/23/JUC中AQS简介/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。</p>
+<a id="more"></a>
+<h1 id="AQS原理"><a href="#AQS原理" class="headerlink" title="AQS原理"></a>AQS原理</h1><p>AQS就是一个同步器，要做的事情就相当于一个锁，所以就会有两个动作：一个是获取，一个是释放。获取释放的时候该有一个东西来记住他是被用还是没被用，这个东西就是一个状态。如果锁被获取了，也就是被用了，还有很多其他的要来获取锁，总不能给全部拒绝了，这时候就需要他们排队，这里就需要一个队列。这大概就清楚了AQS的主要构成了：</p>
+<ul>
+<li>获取和释放两个动作</li>
+<li>同步状态（原子操作）</li>
+<li>阻塞队列</li>
+</ul>
+<h1 id="state"><a href="#state" class="headerlink" title="state"></a>state</h1><p>AQS用32位整形来表示同步状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private volatile int state;</span><br></pre></td></tr></table></figure>
+<p>在互斥锁中表示线程是否已经获取了锁，0未获取，1已经获取，大于1表示重入数。</p>
+<p>AQS提供了getState(),setState(),compareAndSetState()来获取和修改state的值，这些操作需要atomic包的支持，采用CAS操作，保证其原子性和可见性。</p>
+<h1 id="AQS的CLH锁队列"><a href="#AQS的CLH锁队列" class="headerlink" title="AQS的CLH锁队列"></a>AQS的CLH锁队列</h1><p>CLH其实就是一个FIFO的队列，只不过稍微做了点改进。AQS中内部使用内部类Node来实现，是一个链表队列，原始CLH使用自旋锁，AQS的CLH则在每个node里使用一个状态字段来控制阻塞，不是自旋。直接看代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">      +------+  prev +-----+       +-----+</span><br><span class="line"> head |      | &lt;---- |     | &lt;---- |     |  tail</span><br><span class="line">      +------+       +-----+       +-----+</span><br><span class="line">/**</span><br><span class="line">static final class Node &#123;</span><br><span class="line">	//作为共享模式</span><br><span class="line">    static final Node SHARED = new Node();</span><br><span class="line">	//作为独占模式</span><br><span class="line">    static final Node EXCLUSIVE = null;</span><br><span class="line">	//等待状态：表示节点中线程是已被取消的</span><br><span class="line">    static final int CANCELLED =  1;</span><br><span class="line">	//等待状态：表示当前节点的后继节点的线程需要被唤醒</span><br><span class="line">    static final int SIGNAL    = -1;</span><br><span class="line">	//等待状态：表示线程正在等待条件</span><br><span class="line">    static final int CONDITION = -2;</span><br><span class="line">	//等待状态：表示下一个共享模式的节点应该无条件的传播下去</span><br><span class="line">    static final int PROPAGATE = -3;</span><br><span class="line">	//等待状态，初始化为0，剩下的状态就是上面列出的</span><br><span class="line">    volatile int waitStatus;</span><br><span class="line">	//当前节点的前驱节点</span><br><span class="line">    volatile Node prev;</span><br><span class="line">	//后继节点</span><br><span class="line">    volatile Node next;</span><br><span class="line">	//当前节点的线程</span><br><span class="line">    volatile Thread thread;</span><br><span class="line">	//</span><br><span class="line">    Node nextWaiter;</span><br><span class="line">	//是否是共享节点</span><br><span class="line">    final boolean isShared() &#123;</span><br><span class="line">        return nextWaiter == SHARED;</span><br><span class="line">    &#125;</span><br><span class="line">	//当前节点的前驱节点</span><br><span class="line">    final Node predecessor() throws NullPointerException &#123;</span><br><span class="line">        Node p = prev;</span><br><span class="line">        if (p == null)</span><br><span class="line">            throw new NullPointerException();</span><br><span class="line">        else</span><br><span class="line">            return p;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Node() &#123;    // Used to establish initial head or SHARED marker</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Node(Thread thread, Node mode) &#123;     // Used by addWaiter</span><br><span class="line">        this.nextWaiter = mode;</span><br><span class="line">        this.thread = thread;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Node(Thread thread, int waitStatus) &#123; // Used by Condition</span><br><span class="line">        this.waitStatus = waitStatus;</span><br><span class="line">        this.thread = thread;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="共享锁和互斥锁"><a href="#共享锁和互斥锁" class="headerlink" title="共享锁和互斥锁"></a>共享锁和互斥锁</h1><p>AQS的CLH队列锁中，每个节点代表着一个需要获取锁的线程，该node中有两个常量SHARED共享模式，EXCLUSIVE独占模式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/** Marker to indicate a node is waiting in shared mode */</span><br><span class="line">static final Node SHARED = new Node();</span><br><span class="line">/** Marker to indicate a node is waiting in exclusive mode */</span><br><span class="line">static final Node EXCLUSIVE = null;</span><br></pre></td></tr></table></figure>
+<p>共享模式允许多个线程可以获取同一个锁，独占模式则一个锁只能被一个线程持有，其他线程必须要等待。</p>
+<h1 id="AQS源码"><a href="#AQS源码" class="headerlink" title="AQS源码"></a>AQS源码</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">//阻塞队列的队列头</span><br><span class="line">private transient volatile Node head;</span><br><span class="line">//队列尾</span><br><span class="line">private transient volatile Node tail;</span><br><span class="line">//同步状态，这就是上面提到的需要原子操作的状态</span><br><span class="line">private volatile int state;</span><br><span class="line">//返回当前同步器的状态</span><br><span class="line">protected final int getState() &#123;</span><br><span class="line">    return state;</span><br><span class="line">&#125;</span><br><span class="line">//设置同步器的状态</span><br><span class="line">protected final void setState(int newState) &#123;</span><br><span class="line">    state = newState;</span><br><span class="line">&#125;</span><br><span class="line">//原子的设置当前同步器的状态</span><br><span class="line">protected final boolean compareAndSetState(int expect, int update) &#123;</span><br><span class="line">    return unsafe.compareAndSwapInt(this, stateOffset, expect, update);</span><br><span class="line">&#125;</span><br><span class="line">//</span><br><span class="line">static final long spinForTimeoutThreshold = 1000L;</span><br></pre></td></tr></table></figure>
+<h2 id="独占模式的获取"><a href="#独占模式的获取" class="headerlink" title="独占模式的获取"></a>独占模式的获取</h2><h3 id="acquire，独占，忽略中断"><a href="#acquire，独占，忽略中断" class="headerlink" title="acquire，独占，忽略中断"></a>acquire，独占，忽略中断</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//独占模式的获取方法，会忽略中断</span><br><span class="line">//tryAcquire方法会被至少调用一次，由子类实现</span><br><span class="line">//如果tryAcquire不能成功，当前线程就会进入队列排队</span><br><span class="line">public final void acquire(int arg) &#123;</span><br><span class="line">	//首先调用tryAcquire尝试获取</span><br><span class="line">    //获取不成功，就使用acquireQueued使线程进入等待队列</span><br><span class="line">    if (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">        selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>tryAcquire方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//由子类来实现</span><br><span class="line">//尝试在独占模式下获取，会查询该对象的状态是否允许在独占模式下获取</span><br><span class="line">protected boolean tryAcquire(int arg) &#123;</span><br><span class="line">    throw new UnsupportedOperationException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用指定的模式创建一个节点，添加到AQS链表队列中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">private Node addWaiter(Node mode) &#123;</span><br><span class="line">	//当前线程，指定的mode，共享或者独占</span><br><span class="line">    Node node = new Node(Thread.currentThread(), mode);</span><br><span class="line">    //先尝试使用直接添加进队列</span><br><span class="line">    Node pred = tail;</span><br><span class="line">    if (pred != null) &#123;</span><br><span class="line">        node.prev = pred;</span><br><span class="line">        if (compareAndSetTail(pred, node)) &#123;</span><br><span class="line">            pred.next = node;</span><br><span class="line">            return node;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //使用添加节点的方法</span><br><span class="line">    enq(node);</span><br><span class="line">    return node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>向队列中插入节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">//会插入节点到对列中</span><br><span class="line">private Node enq(final Node node) &#123;</span><br><span class="line">    for (;;) &#123;</span><br><span class="line">    	//尾节点</span><br><span class="line">        Node t = tail;</span><br><span class="line">        //需要实例化一个队列</span><br><span class="line">        if (t == null) &#123; // Must initialize</span><br><span class="line">        	//使用cas创建头节点</span><br><span class="line">            if (compareAndSetHead(new Node()))</span><br><span class="line">                tail = head;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            node.prev = t;</span><br><span class="line">            if (compareAndSetTail(t, node)) &#123;</span><br><span class="line">                t.next = node;</span><br><span class="line">                return t;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>tryAcquire没有获取到，就会先使用addWaiter添加进队列，然后使用acquireQueued从队列获取，如果这时候获取成功，则替换当前节点为队列头，然后返回：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">//独占模式处理正在排队等待的线程。</span><br><span class="line">//自旋，直至获取成功才返回</span><br><span class="line">final boolean acquireQueued(final Node node, int arg) &#123;</span><br><span class="line">	//当前获取是否失败</span><br><span class="line">    boolean failed = true;</span><br><span class="line">    try &#123;</span><br><span class="line">    	//获取是否被中断</span><br><span class="line">        boolean interrupted = false;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">        	//获取当前节点的前驱节点</span><br><span class="line">            final Node p = node.predecessor();</span><br><span class="line">            </span><br><span class="line">            //head节点要么是刚才初始化的节点</span><br><span class="line">            //要么就是成功获取锁的节点</span><br><span class="line">            //如果当前节点的前驱节点是head，当前节点就应该去尝试获取锁了</span><br><span class="line">            //当前节点的前驱节点是头节点，就尝试获取</span><br><span class="line">            if (p == head &amp;&amp; tryAcquire(arg)) &#123;</span><br><span class="line">            	//获取成功的话，就把当前节点设置为头节点</span><br><span class="line">                setHead(node);</span><br><span class="line">                //之前的head节点的next引用设为null</span><br><span class="line">                p.next = null; // help GC</span><br><span class="line">                failed = false;</span><br><span class="line">                return interrupted;</span><br><span class="line">            &#125;</span><br><span class="line">            //查看当前节点是否应该被park</span><br><span class="line">            //如果应该，就park当前线程</span><br><span class="line">            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                parkAndCheckInterrupt())</span><br><span class="line">                interrupted = true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">    	//失败了，取消当前线程</span><br><span class="line">        if (failed)</span><br><span class="line">            cancelAcquire(node);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置头节点，只能被获取方法调用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">private void setHead(Node node) &#123;</span><br><span class="line">    head = node;</span><br><span class="line">    node.thread = null;</span><br><span class="line">    node.prev = null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>shouldParkAfterFailedAcquire方法，查看是否应该被park：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) &#123;</span><br><span class="line">	//前驱节点中保存的等待状态</span><br><span class="line">    int ws = pred.waitStatus;</span><br><span class="line">    //等待状态是signal，也就是当前节点在等着被唤醒</span><br><span class="line">    //此时当前节点应该park</span><br><span class="line">    if (ws == Node.SIGNAL)</span><br><span class="line">        return true;</span><br><span class="line">        </span><br><span class="line">    //等待状态大于0表示前驱节点已经取消</span><br><span class="line">    //会向前找到一个非取消状态的节点</span><br><span class="line">    if (ws &gt; 0) &#123;</span><br><span class="line">        do &#123;</span><br><span class="line">            node.prev = pred = pred.prev;</span><br><span class="line">        &#125; while (pred.waitStatus &gt; 0);</span><br><span class="line">        pred.next = node;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">       //将前驱节点的waitStatus设置为signal，表示当前需要被park</span><br><span class="line">        compareAndSetWaitStatus(pred, ws, Node.SIGNAL);</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看下parkAndCheckInterrupt方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//挂起当前线程，并返回当前中断状态</span><br><span class="line">private final boolean parkAndCheckInterrupt() &#123;</span><br><span class="line">    //挂起当前线程</span><br><span class="line">    LockSupport.park(this);</span><br><span class="line">    return Thread.interrupted();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>cancelAcquire取消当前节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">private void cancelAcquire(Node node) &#123;</span><br><span class="line">    //节点不存在</span><br><span class="line">    if (node == null)</span><br><span class="line">        return;</span><br><span class="line">	//节点的线程引用设为null</span><br><span class="line">    node.thread = null;</span><br><span class="line"></span><br><span class="line">    //前驱节点</span><br><span class="line">    Node pred = node.prev;</span><br><span class="line">    //大于0表示前驱节点被取消</span><br><span class="line">    while (pred.waitStatus &gt; 0)</span><br><span class="line">        node.prev = pred = pred.prev;</span><br><span class="line"></span><br><span class="line">    //前驱节点的下一个是需要移除的节点</span><br><span class="line">    Node predNext = pred.next;</span><br><span class="line"></span><br><span class="line">    //设置节点状态为取消</span><br><span class="line">    node.waitStatus = Node.CANCELLED;</span><br><span class="line"></span><br><span class="line">    //如果是尾节点，直接取消，将前一个节点设置为尾节点</span><br><span class="line">    if (node == tail &amp;&amp; compareAndSetTail(node, pred)) &#123;</span><br><span class="line">        compareAndSetNext(pred, predNext, null);</span><br><span class="line">    &#125; else &#123;//不是尾节点，说明有后继节点，将前驱节点的next纸箱后继节点</span><br><span class="line">        int ws;</span><br><span class="line">        if (pred != head &amp;&amp;</span><br><span class="line">            ((ws = pred.waitStatus) == Node.SIGNAL ||</span><br><span class="line">             (ws &lt;= 0 &amp;&amp; compareAndSetWaitStatus(pred, ws, Node.SIGNAL))) &amp;&amp;</span><br><span class="line">            pred.thread != null) &#123;</span><br><span class="line">            Node next = node.next;</span><br><span class="line">            if (next != null &amp;&amp; next.waitStatus &lt;= 0)</span><br><span class="line">                compareAndSetNext(pred, predNext, next);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            unparkSuccessor(node);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        node.next = node; // help GC</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="acquireInterruptibly-独占，可中断"><a href="#acquireInterruptibly-独占，可中断" class="headerlink" title="acquireInterruptibly 独占，可中断"></a>acquireInterruptibly 独占，可中断</h3><p>跟独占忽略中断类似，不再解释。</p>
+<h3 id="tryAcquireNanos，独占，可超时，可中断"><a href="#tryAcquireNanos，独占，可超时，可中断" class="headerlink" title="tryAcquireNanos，独占，可超时，可中断"></a>tryAcquireNanos，独占，可超时，可中断</h3><p>跟上面类似，但是在doAcquireNanos中会获取当前时间，并获取LockSupport.parkNanos之后的时间在做超时时间的重新计算，到了超时时间，就返回false。</p>
+<h2 id="独占模式的释放"><a href="#独占模式的释放" class="headerlink" title="独占模式的释放"></a>独占模式的释放</h2><h3 id="release，独占，忽略中断"><a href="#release，独占，忽略中断" class="headerlink" title="release，独占，忽略中断"></a>release，独占，忽略中断</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public final boolean release(int arg) &#123;</span><br><span class="line">	//尝试释放，修改状态</span><br><span class="line">    if (tryRelease(arg)) &#123;</span><br><span class="line">    	//成功释放</span><br><span class="line">        //head代表初始化的节点，或者是当前占有锁的节点</span><br><span class="line">        //需要unpark后继节点</span><br><span class="line">        Node h = head;</span><br><span class="line">        if (h != null &amp;&amp; h.waitStatus != 0)</span><br><span class="line">            unparkSuccessor(h);</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>unparkSuccessor：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private void unparkSuccessor(Node node) &#123;</span><br><span class="line">	//头节点中保存的waitStatus</span><br><span class="line">    int ws = node.waitStatus;</span><br><span class="line">    //重置头节点状态为0</span><br><span class="line">    if (ws &lt; 0)</span><br><span class="line">        compareAndSetWaitStatus(node, ws, 0);</span><br><span class="line">	//后继节点</span><br><span class="line">    Node s = node.next;</span><br><span class="line">    //后继节点为null或者已经取消</span><br><span class="line">    if (s == null || s.waitStatus &gt; 0) &#123;</span><br><span class="line">        s = null;</span><br><span class="line">        //从最后往前找有效的节点</span><br><span class="line">        for (Node t = tail; t != null &amp;&amp; t != node; t = t.prev)</span><br><span class="line">            if (t.waitStatus &lt;= 0)</span><br><span class="line">                s = t;</span><br><span class="line">    &#125;</span><br><span class="line">    //unpark</span><br><span class="line">    if (s != null)</span><br><span class="line">        LockSupport.unpark(s.thread);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="共享模式的获取"><a href="#共享模式的获取" class="headerlink" title="共享模式的获取"></a>共享模式的获取</h2><h3 id="acquireShared，共享，忽略中断"><a href="#acquireShared，共享，忽略中断" class="headerlink" title="acquireShared，共享，忽略中断"></a>acquireShared，共享，忽略中断</h3><h3 id="acquireSharedInterruptibly，共享，可中断"><a href="#acquireSharedInterruptibly，共享，可中断" class="headerlink" title="acquireSharedInterruptibly，共享，可中断"></a>acquireSharedInterruptibly，共享，可中断</h3><h3 id="tryAcquireSharedNanos，共享，可设置超时，可中断"><a href="#tryAcquireSharedNanos，共享，可设置超时，可中断" class="headerlink" title="tryAcquireSharedNanos，共享，可设置超时，可中断"></a>tryAcquireSharedNanos，共享，可设置超时，可中断</h3><h2 id="共享模式的释放"><a href="#共享模式的释放" class="headerlink" title="共享模式的释放"></a>共享模式的释放</h2><h3 id="releaseShared"><a href="#releaseShared" class="headerlink" title="releaseShared"></a>releaseShared</h3><p>共享模式的和独占模式基本差不多，和独占式的acquireQueued方法区别就是在获取成功的节点后会继续unpark后继节点，将共享状态向后传播。</p>
+<h1 id="LockSupport"><a href="#LockSupport" class="headerlink" title="LockSupport"></a>LockSupport</h1><p>用来创建锁和其他同步类的基本线程阻塞原语。每个使用LockSupport的线程都会与一个许可关联，如果该许可可用并且可在进程中使用，则调用park()将会立即返回，否则可能阻塞。如果许可不可用，可调用unpark使其可用。</p>
+<p>许可不可重入，只能调用一次park()方法，否则会一直阻塞。</p>
+<p>park()和unpark()作用分别是阻塞线程和解除阻塞线程，且park和unpark不会遇到suspend和resume可能引发的死锁问题。</p>
+<p>park，如果许可可用，使用该许可，并且该调用立即返回；否则为线程调度禁用当前线程，并在发生以下三种情况之一之前，使其处于休眠状态：</p>
+<pre><code>* 其他某个线程将当前线程作为目标调用unpark
+* 其他某个线程中断当前线程
+* 该调用不合逻辑的返回
+</code></pre><p>unpark，如果给定的线程尚不可用，则使其可用。如果线程在park上受阻塞，则它将解除其阻塞状态。否则，保证下一次调用park不受阻塞。如果给定线程尚未启动，则无法保证此操作有任何效果。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/AQS/" rel="tag"># AQS</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/21/Dubbo中服务消费者和服务提供者之间的请求和响应过程/" rel="next" title="Dubbo中服务消费者和服务提供者之间的请求和响应过程">
+                <i class="fa fa-chevron-left"></i> Dubbo中服务消费者和服务提供者之间的请求和响应过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/" rel="prev" title="Dubbo中集群Cluster，负载均衡，容错，路由解析">
+                Dubbo中集群Cluster，负载均衡，容错，路由解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AQS原理"><span class="nav-number">1.</span> <span class="nav-text">AQS原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#state"><span class="nav-number">2.</span> <span class="nav-text">state</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AQS的CLH锁队列"><span class="nav-number">3.</span> <span class="nav-text">AQS的CLH锁队列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#共享锁和互斥锁"><span class="nav-number">4.</span> <span class="nav-text">共享锁和互斥锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AQS源码"><span class="nav-number">5.</span> <span class="nav-text">AQS源码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#独占模式的获取"><span class="nav-number">5.1.</span> <span class="nav-text">独占模式的获取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#acquire，独占，忽略中断"><span class="nav-number">5.1.1.</span> <span class="nav-text">acquire，独占，忽略中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#acquireInterruptibly-独占，可中断"><span class="nav-number">5.1.2.</span> <span class="nav-text">acquireInterruptibly 独占，可中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tryAcquireNanos，独占，可超时，可中断"><span class="nav-number">5.1.3.</span> <span class="nav-text">tryAcquireNanos，独占，可超时，可中断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#独占模式的释放"><span class="nav-number">5.2.</span> <span class="nav-text">独占模式的释放</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#release，独占，忽略中断"><span class="nav-number">5.2.1.</span> <span class="nav-text">release，独占，忽略中断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#共享模式的获取"><span class="nav-number">5.3.</span> <span class="nav-text">共享模式的获取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#acquireShared，共享，忽略中断"><span class="nav-number">5.3.1.</span> <span class="nav-text">acquireShared，共享，忽略中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#acquireSharedInterruptibly，共享，可中断"><span class="nav-number">5.3.2.</span> <span class="nav-text">acquireSharedInterruptibly，共享，可中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tryAcquireSharedNanos，共享，可设置超时，可中断"><span class="nav-number">5.3.3.</span> <span class="nav-text">tryAcquireSharedNanos，共享，可设置超时，可中断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#共享模式的释放"><span class="nav-number">5.4.</span> <span class="nav-text">共享模式的释放</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#releaseShared"><span class="nav-number">5.4.1.</span> <span class="nav-text">releaseShared</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LockSupport"><span class="nav-number">6.</span> <span class="nav-text">LockSupport</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2017/03/23/JUC中AQS简介/';
+
+      var disqus_title = "JUC中AQS简介";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

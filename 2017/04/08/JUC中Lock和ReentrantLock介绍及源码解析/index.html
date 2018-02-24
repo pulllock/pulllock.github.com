@@ -1,0 +1,1072 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Lock,ReentrantLock," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JUC中Lock和ReentrantLock介绍及源码解析">
+<meta property="og:url" content="http://dachengxi.github.com/2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。">
+<meta property="og:updated_time" content="2017-04-08T07:15:51.938Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JUC中Lock和ReentrantLock介绍及源码解析">
+<meta name="twitter:description" content="Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/"/>
+
+
+
+
+
+  <title> JUC中Lock和ReentrantLock介绍及源码解析 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                JUC中Lock和ReentrantLock介绍及源码解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T15:13:45+08:00">
+                2017-04-08 15:13:45
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/并发包/" itemprop="url" rel="index">
+                    <span itemprop="name">并发包</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。</p>
+<a id="more"></a>
+<h1 id="Lock框架和synchronized"><a href="#Lock框架和synchronized" class="headerlink" title="Lock框架和synchronized"></a>Lock框架和synchronized</h1><p>有关synchronized的作用和用法不在具体说明，应该都很熟悉了。而Lock有着和synchronized一样的语意，但是比synchronized多了一些功能，单单就从Lock接口定义来看，比synchronized多出来的功能有：</p>
+<ul>
+<li>可中断的获取锁，就是获取锁的线程可以响应中断。</li>
+<li>可以尝试获取锁，也就是非阻塞获取锁，一个线程可以尝试去获取锁，获取成功就持有锁并返回true，否则返回false。</li>
+<li>带超时的尝试获取锁，就是在尝试获取锁的时候，会有超时时间，当到达了指定的时间后，还未获取到锁，就返回false。</li>
+</ul>
+<p>除了定义之外，Lock框架还和synchronized有不一样的是：</p>
+<ul>
+<li>Lock需要显示的加锁和释放锁，而且一定要在finally中去释放锁。而synchronized则不需要我们去关心锁的释放。</li>
+<li>锁的公平性，Lock接口并没有定义有关公平性的方法，而是在具体的实现类中使用AQS来实现锁的公平性。</li>
+</ul>
+<h1 id="Lock接口源码"><a href="#Lock接口源码" class="headerlink" title="Lock接口源码"></a>Lock接口源码</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public interface Lock &#123;</span><br><span class="line"></span><br><span class="line">    //获取锁，获取到锁后返回</span><br><span class="line">    //注意一定要记得释放锁</span><br><span class="line">    void lock();</span><br><span class="line"></span><br><span class="line">    //可中断的获取锁</span><br><span class="line">    //获取锁的时候，如果线程正在等待获取锁，则该线程能响应中断</span><br><span class="line">    void lockInterruptibly() throws InterruptedException;</span><br><span class="line"></span><br><span class="line">    //尝试获取锁，当线程获取锁的时候，获取成功与否都会立即返回</span><br><span class="line">    //不会一直等着去获取锁</span><br><span class="line">    boolean tryLock();</span><br><span class="line"></span><br><span class="line">    //带有超时时间的尝试获取锁</span><br><span class="line">    //在一定的时间内获取到锁会返回true</span><br><span class="line">    //在这段时间内被中断了，会返回</span><br><span class="line">    //在这段时间内，没有获取到锁，会返回false</span><br><span class="line">    boolean tryLock(long time, TimeUnit unit) throws InterruptedException;</span><br><span class="line"></span><br><span class="line">    //释放锁</span><br><span class="line">    void unlock();</span><br><span class="line"></span><br><span class="line">    //获取一个Condition对象。</span><br><span class="line">    Condition newCondition();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Lock接口的定义并不复杂，获取锁释放锁以及非阻塞式的获取锁等方法的定义。其实想象一下日常使用的时候，也大概是如此，获取锁，释放锁，获取锁的时候没有得到锁，我就转一圈回来再试试，等到一定时间之后，我就不要了，走了。接口的定义没有太多要说的，接下来看Lock接口的实现。</p>
+<h1 id="Lock接口的实现"><a href="#Lock接口的实现" class="headerlink" title="Lock接口的实现"></a>Lock接口的实现</h1><p>Lock接口主要的实现是ReentrantLock重入锁，另外还有ConcurrentHashMap中的Segment继承了ReentrantLock，在ReentrantReadWriteLock中的WriteLock和ReadLock也实现了Lock接口。</p>
+<h2 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h2><p>ReentrantLock是一个可重入的互斥锁，等同于synchronized，但是比synchronized更强大灵活，减少死锁发生的概率。我们上面说Lock框架提供了公平锁的机制，就是在ReentrantLock中有提供公平锁机制的实现，默认为非公平锁。</p>
+<p>在继续看ReentrantLock的各个方法实现之前，首先需要了解下内部是怎么实现公平锁和非公平锁的，其实想一下也简单，比如我就是一可重入锁ReentrantLock，你想从我这获得到公平的还是不公平的，但是不能我说什么就是什么，我这里有一个天平（AQS），这个是大家公认的可以实现公平和不公平的机器，你找我要，我就给天平说一声，他来操作，然后我再把结果给你。（越描述越复杂！）。几乎ReentrantLock中所有的操作都会交给Sync去实现。</p>
+<p>有关AQS这里不做介绍，在AQS专门的文章有介绍，请自行查阅把。接下来就看看我拿着的两把锁，公平和不公平。</p>
+<h3 id="Sync"><a href="#Sync" class="headerlink" title="Sync"></a>Sync</h3><p>Sync是公平和非公平两种的基类，直接看代码，看不明白的话，可以先看下面公平和非公平的解析，然后再返回来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">//继承自AQS</span><br><span class="line">abstract static class Sync extends AbstractQueuedSynchronizer &#123;</span><br><span class="line"></span><br><span class="line">    //由具体的子类实现，即公平和非公平的有不同实现</span><br><span class="line">    abstract void lock();</span><br><span class="line"></span><br><span class="line">    //非公平的尝试获取</span><br><span class="line">    final boolean nonfairTryAcquire(int acquires) &#123;</span><br><span class="line">    	//当前线程</span><br><span class="line">        final Thread current = Thread.currentThread();</span><br><span class="line">        //当前AQS同步器的状态</span><br><span class="line">        int c = getState();</span><br><span class="line">        //状态为0，说明没有人获取锁</span><br><span class="line">        if (c == 0) &#123;</span><br><span class="line">        	//尝试获取，获取成功设为独占模式</span><br><span class="line">            if (compareAndSetState(0, acquires)) &#123;</span><br><span class="line">                setExclusiveOwnerThread(current);</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        //这里解释跟公平的一样，参照下面的</span><br><span class="line">        else if (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">            int nextc = c + acquires;</span><br><span class="line">            if (nextc &lt; 0) // overflow</span><br><span class="line">                throw new Error(&quot;Maximum lock count exceeded&quot;);</span><br><span class="line">            setState(nextc);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    //尝试释放</span><br><span class="line">    protected final boolean tryRelease(int releases) &#123;</span><br><span class="line">        int c = getState() - releases;</span><br><span class="line">        if (Thread.currentThread() != getExclusiveOwnerThread())</span><br><span class="line">            throw new IllegalMonitorStateException();</span><br><span class="line">        boolean free = false;</span><br><span class="line">        if (c == 0) &#123;</span><br><span class="line">            free = true;</span><br><span class="line">            setExclusiveOwnerThread(null);</span><br><span class="line">        &#125;</span><br><span class="line">        setState(c);</span><br><span class="line">        return free;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    //是否是独占</span><br><span class="line">    protected final boolean isHeldExclusively() &#123;</span><br><span class="line">        // While we must in general read state before owner,</span><br><span class="line">        // we don&apos;t need to do so to check if current thread is owner</span><br><span class="line">        return getExclusiveOwnerThread() == Thread.currentThread();</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    final ConditionObject newCondition() &#123;</span><br><span class="line">        return new ConditionObject();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Methods relayed from outer class</span><br><span class="line">	//获取持有者线程</span><br><span class="line">    final Thread getOwner() &#123;</span><br><span class="line">        return getState() == 0 ? null : getExclusiveOwnerThread();</span><br><span class="line">    &#125;</span><br><span class="line">	//获取重入数</span><br><span class="line">    final int getHoldCount() &#123;</span><br><span class="line">        return isHeldExclusively() ? getState() : 0;</span><br><span class="line">    &#125;</span><br><span class="line">	//是否锁了</span><br><span class="line">    final boolean isLocked() &#123;</span><br><span class="line">        return getState() != 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //</span><br><span class="line">    private void readObject(java.io.ObjectInputStream s)</span><br><span class="line">        throws java.io.IOException, ClassNotFoundException &#123;</span><br><span class="line">        s.defaultReadObject();</span><br><span class="line">        setState(0); // reset to unlocked state</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="FairSync"><a href="#FairSync" class="headerlink" title="FairSync"></a>FairSync</h3><p>公平锁的实现，有关公平的实现，是此类进行处理的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">//继承自Sync</span><br><span class="line">static final class FairSync extends Sync &#123;</span><br><span class="line">	//获取锁</span><br><span class="line">    //公平的lock方法交给了AQS的acquire方法去处理</span><br><span class="line">    //acquire方法采用独占模式，并且忽略中断</span><br><span class="line">    //而AQS获取锁的实现是先使用tryAcquire方法获取，获取不到就加入到队列中，一直尝试获取，直到成功返回，</span><br><span class="line">    //tryAcquire的实现又是具体的子类实现的，下面的tryAcquire方法就是公平的tryAcquire实现</span><br><span class="line">    //</span><br><span class="line">    final void lock() &#123;</span><br><span class="line">    	//参数1是AQS的同步状态</span><br><span class="line">        //首先了解下AQS中同步状态的定义，state</span><br><span class="line">   	 	//0表示未被获取到锁，1表示已经被获取到锁了，大于1表示重入数</span><br><span class="line">        //我们要获取锁，肯定是想要现在的同步状态为0，然后我们把状态变成1，这样锁就是我们的了</span><br><span class="line">        acquire(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //公平的tryAcquire方法实现</span><br><span class="line">    protected final boolean tryAcquire(int acquires) &#123;</span><br><span class="line">    	//当前线程</span><br><span class="line">        final Thread current = Thread.currentThread();</span><br><span class="line">        //获取AQS的同步状态</span><br><span class="line">        int c = getState();</span><br><span class="line">        //状态为0的话，说明没有其他人获取到锁</span><br><span class="line">        if (c == 0) &#123;</span><br><span class="line">        	//hasQueuedPredecessors查询是否还有其他线程比当前线程等待获取锁的时间更长</span><br><span class="line">            //compareAndSetState使用cas来设置状态，预期为0，我们想要设置的值为1</span><br><span class="line">            if (!hasQueuedPredecessors() &amp;&amp;</span><br><span class="line">                compareAndSetState(0, acquires)) &#123;</span><br><span class="line">                //如果我们是等待获取时间最长的（这就是公平，我等的时间长，就该我第一个被服务）</span><br><span class="line">                //并且cas设置成功了，表示我们获取到锁了</span><br><span class="line">                //设置当前线程为独占访问</span><br><span class="line">                setExclusiveOwnerThread(current);</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        //往下是state不为0的情况，也就是1，或者大于1</span><br><span class="line">        //如果当前线程和独占线程是同一个</span><br><span class="line">        else if (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">        	//当前状态加上我们要获取的参数1</span><br><span class="line">            //现在表示的是重入数</span><br><span class="line">            int nextc = c + acquires;</span><br><span class="line">            //state是一个32位整型，小于0，表示重入数超过了最大数</span><br><span class="line">            if (nextc &lt; 0)</span><br><span class="line">                throw new Error(&quot;Maximum lock count exceeded&quot;);</span><br><span class="line">            //设置当前状态</span><br><span class="line">            setState(nextc);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到公平的tryAcquire在获取锁的开始只调用一次，获取到就获取到了，或者已经获取到增加重入数，没有获取到就返回false，如果返回false的话，AQS就会将其加入到队列中一直尝试获取。</p>
+<h3 id="NonfairSync"><a href="#NonfairSync" class="headerlink" title="NonfairSync"></a>NonfairSync</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">//也是继承自Sync</span><br><span class="line">static final class NonfairSync extends Sync &#123;</span><br><span class="line">    //非公平的获取锁</span><br><span class="line">    final void lock() &#123;</span><br><span class="line">    	//先尝试直接获取锁</span><br><span class="line">        //如果能获取到锁，就设置为独占模式</span><br><span class="line">        if (compareAndSetState(0, 1))</span><br><span class="line">            setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">        else</span><br><span class="line">        	//直接获取不到的话，就会跟公平锁一样的流程去获取</span><br><span class="line">            //tryAcquire在下面</span><br><span class="line">            acquire(1);</span><br><span class="line">    &#125;</span><br><span class="line">	//这里是非公平的tryAcquire，直接调用Sync中的nofairTryAcquire方法</span><br><span class="line">    protected final boolean tryAcquire(int acquires) &#123;</span><br><span class="line">        return nonfairTryAcquire(acquires);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="公平和非公平的区别"><a href="#公平和非公平的区别" class="headerlink" title="公平和非公平的区别"></a>公平和非公平的区别</h3><p>上面看完了代码，有点模糊，感觉代码都差不多，到底公平和非公平差别在哪里。首先看下公平的锁获取，公平锁获取会直接调用acquire方法，acquire方法并不是直接去获取锁，而是调用公平的tryAcquire方法，公平的tryAcquire方法首先获取到当前同步器状态，如果没有人用同步器，也就是状态为0，会先去判断有没有人比我等的时间更长，有的话我就不能获取锁，而是让别人先去；如果我是等待最长的那个，我就去使用CAS更改状态，获取锁。</p>
+<p>而非公平的实现是，我上来就直接使用CAS获取锁，不问别人是不是等着很长时间了，我获取到了就是我的了，我获取不到，再调用acquire方法，然后acquire方法中调用非公平的tryAcquire方法，非公平的tryAcquire方法也是很直接，如果当前锁没有人用，也就是state为0，我不管有没有人比我等的时间长，我就去获取，然后设置独占。</p>
+<p>公平锁，获取锁首先去尝试，没有的话就排队，轮到我之后，还要去问一下有没有等的时间更长的。非公平锁则是不排队，直接上，没有获取到，我也尝试获取，尝试获取的时候我还是直接上，不管其他人。</p>
+<p>了解完公平和非公平锁，再去看其他方法就没那么难了。</p>
+<h3 id="ReentrantLock构造函数"><a href="#ReentrantLock构造函数" class="headerlink" title="ReentrantLock构造函数"></a>ReentrantLock构造函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//可以看到，默认是非公平的</span><br><span class="line">public ReentrantLock() &#123;</span><br><span class="line">    sync = new NonfairSync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还可以指定公平性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public ReentrantLock(boolean fair) &#123;</span><br><span class="line">    sync = fair ? new FairSync() : new NonfairSync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="lock方法"><a href="#lock方法" class="headerlink" title="lock方法"></a>lock方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//直接调用公平或者非公平的同步器的lock方法</span><br><span class="line">public void lock() &#123;</span><br><span class="line">    sync.lock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>lock方法有三种情况：</p>
+<ul>
+<li>如果锁没有被其他线程持有，当前线程立即获得锁并返回，同步器状态设为1。</li>
+<li>如果当前线程已经持有锁，则状态加1，并立即返回。</li>
+<li>如果锁被其他线程持有，当前线程挂起直到获取到锁，然后返回，同步器设为1。</li>
+</ul>
+<h3 id="lockInterruptibly方法"><a href="#lockInterruptibly方法" class="headerlink" title="lockInterruptibly方法"></a>lockInterruptibly方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//可中断的获取锁</span><br><span class="line">public void lockInterruptibly() throws InterruptedException &#123;</span><br><span class="line">	//调用AQS的方法</span><br><span class="line">    sync.acquireInterruptibly(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取锁，可以被Thread.interrupt打断。也有三种情况：</p>
+<ul>
+<li>如果锁没有被其他线程持有，当前线程立即获得锁并返回，同步器状态设为1。</li>
+<li>如果当前线程已经持有锁，则状态加1，并立即返回。</li>
+<li><p>如果锁被其他线程持有，当前线程会挂起去获取锁，在这个过程会有两种情况：</p>
+<ul>
+<li>当前线程获取到了锁，返回，同步器状态设置1。</li>
+<li>当前线程被中断了，会抛出InterruptedException异常，并清除中断状态。</li>
+</ul>
+</li>
+</ul>
+<h3 id="tryLock方法"><a href="#tryLock方法" class="headerlink" title="tryLock方法"></a>tryLock方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//尝试获取锁，不会阻塞，成功与否都会直接返回</span><br><span class="line">public boolean tryLock() &#123;</span><br><span class="line">	//使用的是非公平锁的获取</span><br><span class="line">    return sync.nonfairTryAcquire(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用非公平的锁获取，如果使用了公平的，获取的时候还要判断别人是不是了好久，而非公平的nonfairTryAcquire，能获取就直接获取到，获取不到就返回false，比较直接。</p>
+<p>如果不想破坏公平性，可以使用带有超时时间的tryLock方法。</p>
+<h3 id="带超时的tryLock方法"><a href="#带超时的tryLock方法" class="headerlink" title="带超时的tryLock方法"></a>带超时的tryLock方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//在超时间内，并且没有被打断，锁没有被其他线程持有，就立即获取到锁并返回</span><br><span class="line">public boolean tryLock(long timeout, TimeUnit unit)</span><br><span class="line">        throws InterruptedException &#123;</span><br><span class="line">    return sync.tryAcquireNanos(1, unit.toNanos(timeout));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果使用的是公平锁，如果有其他等的时间更长的线程，即便现在锁没有人持有，当前线程也不会获取到锁，给等的时间更长的去获取。</p>
+<h3 id="unlock方法"><a href="#unlock方法" class="headerlink" title="unlock方法"></a>unlock方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//释放锁</span><br><span class="line">//直接调用AQS来释放锁</span><br><span class="line">public void unlock() &#123;</span><br><span class="line">    sync.release(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="newCondition方法"><a href="#newCondition方法" class="headerlink" title="newCondition方法"></a>newCondition方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//返回一个新的Condition实例</span><br><span class="line">public Condition newCondition() &#123;</span><br><span class="line">    return sync.newCondition();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回的Condition实例的方法，其实和Object的wait，notify，notifyAll方法的作用一样。</p>
+<h3 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">//重入次数</span><br><span class="line"> public int getHoldCount() &#123;</span><br><span class="line">    return sync.getHoldCount();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//锁是否被当前线程持有</span><br><span class="line">public boolean isHeldByCurrentThread() &#123;</span><br><span class="line">    return sync.isHeldExclusively();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//查询锁是否被任何线程持有</span><br><span class="line">public boolean isLocked() &#123;</span><br><span class="line">    return sync.isLocked();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//是否是公平锁</span><br><span class="line">public final boolean isFair() &#123;</span><br><span class="line">    return sync instanceof FairSync;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//返回当前拥有锁的线程</span><br><span class="line">protected Thread getOwner() &#123;</span><br><span class="line">    return sync.getOwner();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//查询是否有线程在排队获取锁</span><br><span class="line">public final boolean hasQueuedThreads() &#123;</span><br><span class="line">    return sync.hasQueuedThreads();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//查询给定的线程是否在等待获取锁</span><br><span class="line">public final boolean hasQueuedThread(Thread thread) &#123;</span><br><span class="line">    return sync.isQueued(thread);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//得到正在等待获取锁的队列的长度</span><br><span class="line">public final int getQueueLength() &#123;</span><br><span class="line">    return sync.getQueueLength();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//获取正在等待获取锁的所有线程</span><br><span class="line">protected Collection&lt;Thread&gt; getQueuedThreads() &#123;</span><br><span class="line">    return sync.getQueuedThreads();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//查询是否有线程正在等待给定的Condition</span><br><span class="line">public boolean hasWaiters(Condition condition) &#123;</span><br><span class="line">    if (condition == null)</span><br><span class="line">        throw new NullPointerException();</span><br><span class="line">    if (!(condition instanceof AbstractQueuedSynchronizer.ConditionObject))</span><br><span class="line">        throw new IllegalArgumentException(&quot;not owner&quot;);</span><br><span class="line">    return sync.hasWaiters((AbstractQueuedSynchronizer.ConditionObject)condition);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//得到正在等待一个Condition的队列的长度</span><br><span class="line">public int getWaitQueueLength(Condition condition) &#123;</span><br><span class="line">    if (condition == null)</span><br><span class="line">        throw new NullPointerException();</span><br><span class="line">    if (!(condition instanceof AbstractQueuedSynchronizer.ConditionObject))</span><br><span class="line">        throw new IllegalArgumentException(&quot;not owner&quot;);</span><br><span class="line">    return sync.getWaitQueueLength((AbstractQueuedSynchronizer.ConditionObject)condition);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//获取所有的等待某个Condition的线程集合</span><br><span class="line">protected Collection&lt;Thread&gt; getWaitingThreads(Condition condition) &#123;</span><br><span class="line">    if (condition == null)</span><br><span class="line">        throw new NullPointerException();</span><br><span class="line">    if (!(condition instanceof AbstractQueuedSynchronizer.ConditionObject))</span><br><span class="line">        throw new IllegalArgumentException(&quot;not owner&quot;);</span><br><span class="line">    return sync.getWaitingThreads((AbstractQueuedSynchronizer.ConditionObject)condition);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ReentrantLock和synchronized的区别"><a href="#ReentrantLock和synchronized的区别" class="headerlink" title="ReentrantLock和synchronized的区别"></a>ReentrantLock和synchronized的区别</h3><p>ReentrantLock和synchronized很类似，但是比synchronized多了更多功能，比如可中断锁，锁可以带超时时间，可以尝试非阻塞获取锁等。ReentrantLock还提供了条件Condition，跟Object的wait/notify类似，但是在多个条件变量和高度竞争锁的地方，ReentrantLock更加合适。</p>
+<p>另外AQS是重点，一定要多学几遍，学会了，才能掌握锁（我还不太明白！）。</p>
+<p>有关其他实现，比如ReentrantReadWriteLock的ReadLock和WriteLock以及ConcurrentHashMap中的Segment会另行介绍。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Lock/" rel="tag"># Lock</a>
+          
+            <a href="/tags/ReentrantLock/" rel="tag"># ReentrantLock</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/06/SpringMVC执行流程及源码解析/" rel="next" title="SpringMVC执行流程及源码解析">
+                <i class="fa fa-chevron-left"></i> SpringMVC执行流程及源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/10/Spring中AOP的配置从1.0到5.0的演进/" rel="prev" title="Spring中AOP的配置从1.0到5.0的演进">
+                Spring中AOP的配置从1.0到5.0的演进 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Lock框架和synchronized"><span class="nav-number">1.</span> <span class="nav-text">Lock框架和synchronized</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lock接口源码"><span class="nav-number">2.</span> <span class="nav-text">Lock接口源码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lock接口的实现"><span class="nav-number">3.</span> <span class="nav-text">Lock接口的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ReentrantLock"><span class="nav-number">3.1.</span> <span class="nav-text">ReentrantLock</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sync"><span class="nav-number">3.1.1.</span> <span class="nav-text">Sync</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FairSync"><span class="nav-number">3.1.2.</span> <span class="nav-text">FairSync</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NonfairSync"><span class="nav-number">3.1.3.</span> <span class="nav-text">NonfairSync</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#公平和非公平的区别"><span class="nav-number">3.1.4.</span> <span class="nav-text">公平和非公平的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReentrantLock构造函数"><span class="nav-number">3.1.5.</span> <span class="nav-text">ReentrantLock构造函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lock方法"><span class="nav-number">3.1.6.</span> <span class="nav-text">lock方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lockInterruptibly方法"><span class="nav-number">3.1.7.</span> <span class="nav-text">lockInterruptibly方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tryLock方法"><span class="nav-number">3.1.8.</span> <span class="nav-text">tryLock方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#带超时的tryLock方法"><span class="nav-number">3.1.9.</span> <span class="nav-text">带超时的tryLock方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unlock方法"><span class="nav-number">3.1.10.</span> <span class="nav-text">unlock方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#newCondition方法"><span class="nav-number">3.1.11.</span> <span class="nav-text">newCondition方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他方法"><span class="nav-number">3.1.12.</span> <span class="nav-text">其他方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReentrantLock和synchronized的区别"><span class="nav-number">3.1.13.</span> <span class="nav-text">ReentrantLock和synchronized的区别</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/';
+
+      var disqus_title = "JUC中Lock和ReentrantLock介绍及源码解析";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

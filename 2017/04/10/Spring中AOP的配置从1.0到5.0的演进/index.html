@@ -1,0 +1,1164 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Spring AOP," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="最近在学习Spring稍微深入一点的东西，在这过程中发现虽然有很多关于各种AOP，IOC原理配置等的文章，但是都只是针对某一版本或者压根儿就没有标明版本的解析配置等。或许是我理解力不够，为了方便自己以后快速找到这些东西去看，还是自己记录下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring中AOP的配置从1.0到5.0的演进">
+<meta property="og:url" content="http://dachengxi.github.com/2017/04/10/Spring中AOP的配置从1.0到5.0的演进/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="最近在学习Spring稍微深入一点的东西，在这过程中发现虽然有很多关于各种AOP，IOC原理配置等的文章，但是都只是针对某一版本或者压根儿就没有标明版本的解析配置等。或许是我理解力不够，为了方便自己以后快速找到这些东西去看，还是自己记录下。">
+<meta property="og:updated_time" content="2017-04-10T08:20:09.248Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring中AOP的配置从1.0到5.0的演进">
+<meta name="twitter:description" content="最近在学习Spring稍微深入一点的东西，在这过程中发现虽然有很多关于各种AOP，IOC原理配置等的文章，但是都只是针对某一版本或者压根儿就没有标明版本的解析配置等。或许是我理解力不够，为了方便自己以后快速找到这些东西去看，还是自己记录下。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2017/04/10/Spring中AOP的配置从1.0到5.0的演进/"/>
+
+
+
+
+
+  <title> Spring中AOP的配置从1.0到5.0的演进 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/04/10/Spring中AOP的配置从1.0到5.0的演进/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Spring中AOP的配置从1.0到5.0的演进
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-10T16:17:35+08:00">
+                2017-04-10 16:17:35
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/AOP/" itemprop="url" rel="index">
+                    <span itemprop="name">AOP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/04/10/Spring中AOP的配置从1.0到5.0的演进/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/04/10/Spring中AOP的配置从1.0到5.0的演进/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近在学习Spring稍微深入一点的东西，在这过程中发现虽然有很多关于各种AOP，IOC原理配置等的文章，但是都只是针对某一版本或者压根儿就没有标明版本的解析配置等。或许是我理解力不够，为了方便自己以后快速找到这些东西去看，还是自己记录下。</p>
+<a id="more"></a>
+<p>这里主要是记录下从Spring1.0到现在的5.0中AOP的配置方式，关于AOP原理和源码，暂先不解释。主要用作自己记录用，如果有错误的还请指出一起改正学习，免得误导别人，谢谢。</p>
+<h1 id="Spring1中AOP的配置"><a href="#Spring1中AOP的配置" class="headerlink" title="Spring1中AOP的配置"></a>Spring1中AOP的配置</h1><p>直接看Spring1.1.1的文档，里面都已经给出来了各种配置方式，更高版本的也都包含了这些，但是觉得看1.1.1的更纯粹一些。</p>
+<h2 id="使用ProxyFactoryBean创建AOP代理"><a href="#使用ProxyFactoryBean创建AOP代理" class="headerlink" title="使用ProxyFactoryBean创建AOP代理"></a>使用ProxyFactoryBean创建AOP代理</h2><p>使用ProxyFactoryBean的方式来配置AOP，是最基础的方法。这里我们用的是代理接口的方式，步骤大概是：</p>
+<ol>
+<li>定义我们的业务接口和业务实现类。</li>
+<li>定义通知类，就是我们要对目标对象进行增强的类。</li>
+<li>定义ProxyFactoryBean，这里封装了AOP的功能。</li>
+</ol>
+<p>这就是Spring中AOP的配置，这种方式简单明了，往下接着看示例代码。</p>
+<p>我们的业务接口，LoginService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务接口的实现类，LoginServiceImpl：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在登录前做一些操作的通知类，LogBeforeLogin：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//这里只是在登录方法调用之前打印一句话</span><br><span class="line">public class LogBeforeLogin implements MethodBeforeAdvice &#123;</span><br><span class="line">    public void before(Method method, Object[] objects, Object o) throws Throwable &#123;</span><br><span class="line">        System.out.println(&quot;有人要登录了。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件，在Spring1.x中主要还是用xml的方式来配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot; &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span><br><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;!--业务处理类，也就是被代理的类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginServiceImpl&quot; class=&quot;me.cxis.spring.aop.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--通知类--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLogin&quot; class=&quot;me.cxis.spring.aop.LogBeforeLogin&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--代理类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginProxy&quot; class=&quot;org.springframework.aop.framework.ProxyFactoryBean&quot;&gt;</span><br><span class="line">        &lt;!--要代理的接口--&gt;</span><br><span class="line">        &lt;property name=&quot;proxyInterfaces&quot;&gt;</span><br><span class="line">            &lt;value&gt;me.cxis.spring.aop.LoginService&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;!--拦截器名字，也就是我们定义的通知类--&gt;</span><br><span class="line">        &lt;property name=&quot;interceptorNames&quot;&gt;</span><br><span class="line">            &lt;list&gt;</span><br><span class="line">                &lt;value&gt;logBeforeLogin&lt;/value&gt;</span><br><span class="line">            &lt;/list&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;!--目标类，就是我们业务的实现类--&gt;</span><br><span class="line">        &lt;property name=&quot;target&quot;&gt;</span><br><span class="line">            &lt;ref bean=&quot;loginServiceImpl&quot;/&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>测试方法，Main：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:aop.xml&quot;);</span><br><span class="line">        LoginService loginService = (LoginService) applicationContext.getBean(&quot;loginProxy&quot;);</span><br><span class="line">        loginService.login(&quot;sdf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的例子是用的是代理接口的方式，关于代理类的方式这里不做介绍，代理类的方式需要依赖CGLIB。从上面的代码可以看到，这种方式使用AOP简单直观，也是我们理解Spring AOP原理的很好的入口，但是在使用的时候，可能会发现业务增多了之后，ProxyFactoryBean的配置也会增多，导致xml迅速变多。</p>
+<p>另外这种方式的使用会把LoginService接口中所有的方法都代理了，也就是说每个方法都会被增强，如果不想被增强，还可以使用另外一种方式，配置Advisor。</p>
+<h3 id="使用ProxyFactoryBean和Advisor的方式创建AOP代理"><a href="#使用ProxyFactoryBean和Advisor的方式创建AOP代理" class="headerlink" title="使用ProxyFactoryBean和Advisor的方式创建AOP代理"></a>使用ProxyFactoryBean和Advisor的方式创建AOP代理</h3><p>使用Advisor配合，可以指定要增强的方法，不会把整个类中的所有方法都代理了。</p>
+<p>这种方式跟上面的方式相比较，只是xml配置文件发生了变化，其他的代码都没有变，所以这里只列出了xml代码，其他的参照上面的代码。</p>
+<p>xml配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot; &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span><br><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;!--业务处理类，也就是被代理的类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginServiceImpl&quot; class=&quot;me.cxis.spring.aop.advisor.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--通知类--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLogin&quot; class=&quot;me.cxis.spring.aop.advisor.LogBeforeLogin&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--切面--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginAdvisor&quot; class=&quot;org.springframework.aop.support.RegexpMethodPointcutAdvisor&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;advice&quot;&gt;</span><br><span class="line">            &lt;ref bean=&quot;logBeforeLogin&quot;/&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;pattern&quot;&gt;</span><br><span class="line">            &lt;value&gt;me.cxis.spring.aop.advisor.LoginServiceImpl.login*&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--代理类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginProxy&quot; class=&quot;org.springframework.aop.framework.ProxyFactoryBean&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;interceptorNames&quot;&gt;</span><br><span class="line">            &lt;list&gt;</span><br><span class="line">                &lt;value&gt;loginAdvisor&lt;/value&gt;</span><br><span class="line">            &lt;/list&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;target&quot;&gt;</span><br><span class="line">            &lt;ref bean=&quot;loginServiceImpl&quot;/&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>可以看到这里我们多了Advisor，Advisor中可以使用正则表达式来匹配要增强的方法。</p>
+<h2 id="使用ProxyFactory编程的方式创建AOP代理"><a href="#使用ProxyFactory编程的方式创建AOP代理" class="headerlink" title="使用ProxyFactory编程的方式创建AOP代理"></a>使用ProxyFactory编程的方式创建AOP代理</h2><p>也可以使用直接代码的方式，不依赖xml文件，来创建AOP代理，直接看示例代码。</p>
+<p>业务接口，LoginService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.proxyfactory;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务接口实现类，LoginServiceImpl：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.proxyfactory;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通知类，LogBeforeLogin：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.proxyfactory;</span><br><span class="line"></span><br><span class="line">import org.springframework.aop.MethodBeforeAdvice;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:56.</span><br><span class="line"> */</span><br><span class="line">public class LogBeforeLogin implements MethodBeforeAdvice &#123;</span><br><span class="line">    public void before(Method method, Object[] objects, Object o) throws Throwable &#123;</span><br><span class="line">        System.out.println(&quot;有人要登录了。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.proxyfactory;</span><br><span class="line"></span><br><span class="line">import org.springframework.aop.framework.ProxyFactory;</span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ProxyFactory proxyFactory = new ProxyFactory();//创建代理工厂</span><br><span class="line">        proxyFactory.setTarget(new LoginServiceImpl());//设置目标对象</span><br><span class="line">        proxyFactory.addAdvice(new LogBeforeLogin());//前置增强</span><br><span class="line"></span><br><span class="line">        LoginService loginService = (LoginService) proxyFactory.getProxy();//从代理工厂中获取代理</span><br><span class="line">        loginService.login(&quot;x&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种方式跟上面使用ProxyFactoryBean的方式差不多，步骤也基本相同，不做过多解释。Spring不推荐这种方式。</p>
+<h2 id="使用autoproxy方式创建AOP"><a href="#使用autoproxy方式创建AOP" class="headerlink" title="使用autoproxy方式创建AOP"></a>使用autoproxy方式创建AOP</h2><p>使用这种方式创建AOP代理，最主要的是可以使用一个配置来代理多个业务bean，也就是跟上面使用ProxyFactoryBean不同的地方，ProxyFactoryBean需要配置很多个ProxyFactoryBean配置，而autoproxy相对会很少。</p>
+<p>使用autoproxy也有两种方式：BeanNameAutoProxyCreator和DefaultAdvisorAutoProxyCreator。两种方式的差别直接看代码。</p>
+<h3 id="BeanNameAutoProxyCreator方式"><a href="#BeanNameAutoProxyCreator方式" class="headerlink" title="BeanNameAutoProxyCreator方式"></a>BeanNameAutoProxyCreator方式</h3><p>业务接口，LoginService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.autoproxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务接口实现类，LoginServiceImpl：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.autoproxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;autoproxy:正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通知类，LogBeforeLogin：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.autoproxy;</span><br><span class="line"></span><br><span class="line">import org.springframework.aop.MethodBeforeAdvice;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:56.</span><br><span class="line"> */</span><br><span class="line">public class LogBeforeLogin implements MethodBeforeAdvice &#123;</span><br><span class="line">    public void before(Method method, Object[] objects, Object o) throws Throwable &#123;</span><br><span class="line">        System.out.println(&quot;autoproxy:有人要登录了。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>xml配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot; &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span><br><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;!--业务处理类，也就是被代理的类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginService&quot; class=&quot;me.cxis.spring.aop.autoproxy.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--通知类--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLogin&quot; class=&quot;me.cxis.spring.aop.autoproxy.LogBeforeLogin&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--代理类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginServiceProxy&quot; class=&quot;org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator&quot;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;property name=&quot;interceptorNames&quot;&gt;</span><br><span class="line">            &lt;list&gt;</span><br><span class="line">                &lt;value&gt;logBeforeLogin&lt;/value&gt;</span><br><span class="line">            &lt;/list&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;beanNames&quot;&gt;</span><br><span class="line">            &lt;value&gt;loginService*&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>测试方法，Main：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.autoproxy;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:aop-auto-proxy.xml&quot;);</span><br><span class="line">        LoginService loginService = (LoginService) applicationContext.getBean(&quot;loginService&quot;);</span><br><span class="line">        loginService.login(&quot;sdf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在xml配置中beanNames的值我们使用了通配符，也就是我们可以使用这一个BeanNameAutoProxyCreator来匹配很多个接口，在ProxyFactoryBean的方式中，我们则需要配置很多ProxyFactoryBean的配置。</p>
+<p>另外也需要注意下在测试方法中我们对bean的调用方式，之前我们是调用代理类，现在我们直接调用的Bean。这种方式中也还是把业务类中的所有的方法都增强了。</p>
+<h3 id="DefaultAdvisorAutoProxyCreator方式"><a href="#DefaultAdvisorAutoProxyCreator方式" class="headerlink" title="DefaultAdvisorAutoProxyCreator方式"></a>DefaultAdvisorAutoProxyCreator方式</h3><p>业务接口，LoginService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.advisorautoproxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务接口实现类，LoginServiceImpl：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.advisorautoproxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;advisorautoproxy:正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通知类，LogBeforeLogin：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.advisorautoproxy;</span><br><span class="line"></span><br><span class="line">import org.springframework.aop.MethodBeforeAdvice;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:56.</span><br><span class="line"> */</span><br><span class="line">public class LogBeforeLogin implements MethodBeforeAdvice &#123;</span><br><span class="line">    public void before(Method method, Object[] objects, Object o) throws Throwable &#123;</span><br><span class="line">        System.out.println(&quot;advisorautoproxy:有人要登录了。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件xml：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot; &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span><br><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;!--业务处理类，也就是被代理的类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginService&quot; class=&quot;me.cxis.spring.aop.advisorautoproxy.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--通知类--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLogin&quot; class=&quot;me.cxis.spring.aop.advisorautoproxy.LogBeforeLogin&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;bean id=&quot;logBeforeAdvisor&quot; class=&quot;org.springframework.aop.support.RegexpMethodPointcutAdvisor&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;advice&quot;&gt;</span><br><span class="line">            &lt;ref bean=&quot;logBeforeLogin&quot;/&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;pattern&quot;&gt;</span><br><span class="line">            &lt;value&gt;me.cxis.spring.aop.advisorautoproxy.*&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--代理类--&gt;</span><br><span class="line">    &lt;bean id=&quot;advisorAutoProxy&quot; class=&quot;org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator&quot;&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>测试方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.advisorautoproxy;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:aop-advisor-auto-proxy.xml&quot;);</span><br><span class="line">        LoginService loginService = (LoginService) applicationContext.getBean(&quot;loginService&quot;);</span><br><span class="line">        loginService.login(&quot;sdf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里的配置文件中我们使用了正则的方式来配置Advisor，这种可以匹配指定的方法，不需要把类中的所有的方法都增强了。</p>
+<h2 id="引介增强Introduction"><a href="#引介增强Introduction" class="headerlink" title="引介增强Introduction"></a>引介增强Introduction</h2><p>上面所有AOP的代理都是对方法的增强，而引介增强则是对类的增强，所谓对类的增强就是，我是A类，实现了接口B，但是我没有实现接口C，那么通过引介增强的方式，我没有实现接口C，但是我可以调用C中的方法。</p>
+<p>业务接口，LoginService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务接口实现类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外一个业务接口，SendEmailService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-30 23:45.</span><br><span class="line"> */</span><br><span class="line">public interface SendEmailService &#123;</span><br><span class="line">    void sendEmail();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>增强，LogAndSendEmailBeforeLogin：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">import org.aopalliance.intercept.MethodInvocation;</span><br><span class="line">import org.springframework.aop.MethodBeforeAdvice;</span><br><span class="line">import org.springframework.aop.support.DelegatingIntroductionInterceptor;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:56.</span><br><span class="line"> */</span><br><span class="line">public class LogAndSendEmailBeforeLogin extends DelegatingIntroductionInterceptor implements SendEmailService &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Object invoke(MethodInvocation mi) throws Throwable &#123;</span><br><span class="line">        System.out.println(&quot;有人要登录了。。。&quot;);</span><br><span class="line">        return super.invoke(mi);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void sendEmail() &#123;</span><br><span class="line">        System.out.println(&quot;发送邮件。。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>xml配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span><br><span class="line">&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot; &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;</span><br><span class="line">&lt;beans&gt;</span><br><span class="line">    &lt;!--业务处理类，也就是被代理的类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginServiceImpl&quot; class=&quot;me.cxis.spring.aop.introduction.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--通知类--&gt;</span><br><span class="line">    &lt;bean id=&quot;logAndSendEmailBeforeLogin&quot; class=&quot;me.cxis.spring.aop.introduction.LogAndSendEmailBeforeLogin&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--代理类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginProxy&quot; class=&quot;org.springframework.aop.framework.ProxyFactoryBean&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;interfaces&quot;&gt;</span><br><span class="line">            &lt;value&gt;me.cxis.spring.aop.introduction.SendEmailService&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;interceptorNames&quot;&gt;</span><br><span class="line">            &lt;list&gt;</span><br><span class="line">                &lt;value&gt;logAndSendEmailBeforeLogin&lt;/value&gt;</span><br><span class="line">            &lt;/list&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;target&quot;&gt;</span><br><span class="line">            &lt;ref bean=&quot;loginServiceImpl&quot;/&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;proxyTargetClass&quot;&gt;</span><br><span class="line">            &lt;value&gt;true&lt;/value&gt;</span><br><span class="line">        &lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>测试方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:aop-introduction.xml&quot;);</span><br><span class="line">        LoginServiceImpl loginService = (LoginServiceImpl) applicationContext.getBean(&quot;loginProxy&quot;);</span><br><span class="line">        loginService.login(&quot;sdf&quot;);</span><br><span class="line"></span><br><span class="line">        SendEmailService sendEmailService = (SendEmailService) loginService;</span><br><span class="line">        sendEmailService.sendEmail();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就可以了～</p>
+<h1 id="Spring2中AOP的配置"><a href="#Spring2中AOP的配置" class="headerlink" title="Spring2中AOP的配置"></a>Spring2中AOP的配置</h1><p>What’s new in Spring 2.0?</p>
+<ul>
+<li>添加了基于schema的AOP支持。</li>
+<li>加入了AspectJ的支持，添加了@AspectJ注解。</li>
+</ul>
+<p>上面就是AOP在2.0版本新增的特性，1.0的所有AOP配置方式在2.0中都支持，下面主要看看2.0中新增的一些方法。</p>
+<h2 id="使用-AspectJ的方式配置AOP代理"><a href="#使用-AspectJ的方式配置AOP代理" class="headerlink" title="使用@AspectJ的方式配置AOP代理"></a>使用@AspectJ的方式配置AOP代理</h2><p>步骤大概如下：</p>
+<ol>
+<li>定义我们的业务接口和业务实现类。</li>
+<li>定义通知类，就是我们要对目标对象进行增强的类。使用@AspectJ注解。</li>
+<li>启用@AspectJ支持。</li>
+</ol>
+<p>还是看代码。</p>
+<p>业务接口，LoginService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务接口实现，LoginServiceImpl：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>增强类，LogBeforeLogin，请注意这里面使用了注解：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop;</span><br><span class="line"></span><br><span class="line">import org.aspectj.lang.annotation.Aspect;</span><br><span class="line">import org.aspectj.lang.annotation.Before;</span><br><span class="line">import org.aspectj.lang.annotation.Pointcut;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:56.</span><br><span class="line"> */</span><br><span class="line">@Aspect</span><br><span class="line">public class LogBeforeLogin &#123;</span><br><span class="line"></span><br><span class="line">    @Pointcut(&quot;execution(* me.cxis.spring.aop.*.login(..))&quot;)</span><br><span class="line">    public void loginMethod()&#123;&#125;</span><br><span class="line"></span><br><span class="line">    @Before(&quot;loginMethod()&quot;)</span><br><span class="line">    public void beforeLogin()&#123;</span><br><span class="line">        System.out.println(&quot;有人要登录了。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>xml配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</span><br><span class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--@AspectJ支持--&gt;</span><br><span class="line">    &lt;aop:aspectj-autoproxy/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--业务实现--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginService&quot; class=&quot;me.cxis.spring.aop.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--Aspect--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLoginAspect&quot; class=&quot;me.cxis.spring.aop.LogBeforeLogin&quot;&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>测试方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:aop.xml&quot;);</span><br><span class="line">        LoginService loginService = (LoginService) applicationContext.getBean(&quot;loginService&quot;);</span><br><span class="line">        loginService.login(&quot;sdf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看下上面的配置文件，首先开启@AspectJ注解的支持，然后只需要声明一下业务bean和增强bean，其余的都不用做了，是不是比以前方便多了。以前的那些配置，全部都在增强类中用注解处理了。</p>
+<h3 id="使用自定义注解作为execution的表达式"><a href="#使用自定义注解作为execution的表达式" class="headerlink" title="使用自定义注解作为execution的表达式"></a>使用自定义注解作为execution的表达式</h3><p>上面使用普通的execution表达式来声明对那些方法进行增强，也可以使用注解的方式，其实就是把表达式换成了注解，只有添加了注解的方法才能被增强。</p>
+<p>先定义一个注解UseAop：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.customannotation;</span><br><span class="line"></span><br><span class="line">import java.lang.annotation.ElementType;</span><br><span class="line">import java.lang.annotation.Retention;</span><br><span class="line">import java.lang.annotation.RetentionPolicy;</span><br><span class="line">import java.lang.annotation.Target;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-31 11:29.</span><br><span class="line"> * 标注此注解的方法，需要使用AOP代理</span><br><span class="line"> */</span><br><span class="line">@Target(ElementType.METHOD)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">public @interface UseAop &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务接口，LoginService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.customannotation;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务接口的实现，LoginServiceImpl：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.customannotation;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    @UseAop</span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里业务实现类的方法使用了注解，表明这个方法需要使用AOP代理。</p>
+<p>增强类，LogBeforeLogin：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Aspect</span><br><span class="line">public class LogBeforeLogin &#123;</span><br><span class="line">	</span><br><span class="line">    @Pointcut(&quot;@annotation(me.cxis.spring.aop.customannotation.UseAop)&quot;)</span><br><span class="line">    public void loginMethod()&#123;&#125;</span><br><span class="line"></span><br><span class="line">    @Before(&quot;loginMethod()&quot;)</span><br><span class="line">    public void beforeLogin()&#123;</span><br><span class="line">        System.out.println(&quot;有人要登录了。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里是把表达式换成了我们定义的注解。</p>
+<p>xml配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</span><br><span class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--@AspectJ支持--&gt;</span><br><span class="line">    &lt;aop:aspectj-autoproxy/&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;!--业务实现--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginService&quot; class=&quot;me.cxis.spring.aop.customannotation.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--Aspect--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLoginAspect&quot; class=&quot;me.cxis.spring.aop.customannotation.LogBeforeLogin&quot;&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>xml配置文件并没有改变。同样下面的测试方法也没有变。</p>
+<p>测试方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.customannotation;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:aop-annotation.xml&quot;);</span><br><span class="line">        LoginService loginService = (LoginService) applicationContext.getBean(&quot;loginService&quot;);</span><br><span class="line">        loginService.login(&quot;sdf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用基于schema的方式配置AOP代理"><a href="#使用基于schema的方式配置AOP代理" class="headerlink" title="使用基于schema的方式配置AOP代理"></a>使用基于schema的方式配置AOP代理</h2><p>基于schema的方式配置，可以不使用注解，而是完全基于xml配置。</p>
+<p>业务接口，实现类，增强如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.config;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">package me.cxis.spring.aop.config;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">package me.cxis.spring.aop.config;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:56.</span><br><span class="line"> */</span><br><span class="line">public class LogBeforeLogin &#123;</span><br><span class="line"></span><br><span class="line">    public void beforeLogin()&#123;</span><br><span class="line">        System.out.println(&quot;有人要登录了。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到上面三个类中，增强类只是一个普通的bean而已，所有的配置都在xml中。</p>
+<p>xml配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</span><br><span class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--业务实现类--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginService&quot; class=&quot;me.cxis.spring.aop.config.LoginServiceImpl&quot;&gt;&lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--增强类--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLogin&quot; class=&quot;me.cxis.spring.aop.config.LogBeforeLogin&quot;&gt;&lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">    &lt;aop:config&gt;</span><br><span class="line">        &lt;aop:aspect id=&quot;loginAspect&quot; ref=&quot;logBeforeLogin&quot;&gt;</span><br><span class="line">            &lt;aop:pointcut expression=&quot;execution(* me.cxis.spring.aop.config.*.*(..))&quot; id=&quot;beforeLoginPointCut&quot;/&gt;</span><br><span class="line">            &lt;aop:before method=&quot;beforeLogin&quot; pointcut-ref=&quot;beforeLoginPointCut&quot;/&gt;</span><br><span class="line">        &lt;/aop:aspect&gt;</span><br><span class="line">    &lt;/aop:config&gt;</span><br><span class="line"></span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>可以类比下上面@AspectJ的方式，其实是一样的，只不过把注解的东西都放到了xml中。</p>
+<p>测试方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.config;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:aop-config.xml&quot;);</span><br><span class="line">        LoginService loginService = (LoginService) applicationContext.getBean(&quot;loginService&quot;);</span><br><span class="line">        loginService.login(&quot;sdf&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用dtd方式"><a href="#使用dtd方式" class="headerlink" title="使用dtd方式"></a>使用dtd方式</h2><p>我们上面看到使用<code>&lt;aop:aspectj-autoproxy/&gt;</code>来启用@AspectJ的支持，这种方式使用的基于schema扩展的，如果想用原来的DTD模式也是可以的，使用AnnotationAwareAspectJAutoProxyCreator即可。</p>
+<p>业务接口，业务实现类，增强类的代码都跟<code>使用@AspectJ的方式配置AOP代理</code>这一步的一样，除了xml里面有点不一样，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd &quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;bean class=&quot;org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--业务实现--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginService&quot; class=&quot;me.cxis.spring.aop.dtd.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--Aspect--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLoginAspect&quot; class=&quot;me.cxis.spring.aop.dtd.LogBeforeLogin&quot;&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>就是将<code>&lt;aop:aspectj-autoproxy/&gt;</code>替换成<code>&lt;bean class=&quot;org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator&quot;/&gt;</code>，Spring文档上也有说明。</p>
+<h2 id="编程的方式使用-AspectJ"><a href="#编程的方式使用-AspectJ" class="headerlink" title="编程的方式使用@AspectJ"></a>编程的方式使用@AspectJ</h2><p>业务接口LoginService：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.programmatic;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>业务实现类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.programmatic;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>增强类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.programmatic;</span><br><span class="line"></span><br><span class="line">import org.aspectj.lang.annotation.Aspect;</span><br><span class="line">import org.aspectj.lang.annotation.Before;</span><br><span class="line">import org.aspectj.lang.annotation.Pointcut;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:56.</span><br><span class="line"> */</span><br><span class="line">@Aspect</span><br><span class="line">public class LogBeforeLogin &#123;</span><br><span class="line"></span><br><span class="line">    @Pointcut(&quot;execution(* me.cxis.spring.aop.programmatic.*.login(..))&quot;)</span><br><span class="line">    public void loginMethod()&#123;&#125;</span><br><span class="line"></span><br><span class="line">    @Before(&quot;loginMethod()&quot;)</span><br><span class="line">    public void beforeLogin()&#123;</span><br><span class="line">        System.out.println(&quot;有人要登录了。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.programmatic;</span><br><span class="line"></span><br><span class="line">import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">        AspectJProxyFactory factory = new AspectJProxyFactory();//创建代理工厂</span><br><span class="line">        factory.setTarget(new LoginServiceImpl());//设置目标类</span><br><span class="line">        factory.addAspect(LogBeforeLogin.class);//设置增强</span><br><span class="line">        LoginService loginService = factory.getProxy();//获取代理</span><br><span class="line">        loginService.login(&quot;xsd&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基本跟使用xml方式的@Aspect的步骤差不多。</p>
+<h2 id="引介增强Introduction-1"><a href="#引介增强Introduction-1" class="headerlink" title="引介增强Introduction"></a>引介增强Introduction</h2><p>感觉引介增强比1.0更强大了点，直接看代码，对比1.0的引介就知道了。</p>
+<p>业务接口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 12:02.</span><br><span class="line"> */</span><br><span class="line">public interface LoginService &#123;</span><br><span class="line">    String login(String userName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接口实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:36.</span><br><span class="line"> */</span><br><span class="line">public class LoginServiceImpl implements LoginService &#123;</span><br><span class="line"></span><br><span class="line">    public String login(String userName)&#123;</span><br><span class="line">        System.out.println(&quot;正在登录&quot;);</span><br><span class="line">        return &quot;success&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外一个业务接口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-30 23:45.</span><br><span class="line"> */</span><br><span class="line">public interface SendEmailService &#123;</span><br><span class="line">    void sendEmail();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接口实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-31 13:46.</span><br><span class="line"> */</span><br><span class="line">public class SendMailServiceImpl implements SendEmailService &#123;</span><br><span class="line">    public void sendEmail() &#123;</span><br><span class="line">        System.out.println(&quot;发送邮件。。。。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>增强，也就是把上面两个接口关联起来的地方：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">import org.aspectj.lang.annotation.Aspect;</span><br><span class="line">import org.aspectj.lang.annotation.DeclareParents;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:56.</span><br><span class="line"> */</span><br><span class="line">@Aspect</span><br><span class="line">public class LogAndSendEmailBeforeLogin &#123;</span><br><span class="line"></span><br><span class="line">    @DeclareParents(value = &quot;me.cxis.spring.aop.introduction.LoginServiceImpl&quot;,defaultImpl = SendMailServiceImpl.class)</span><br><span class="line">    private SendEmailService sendEmailService;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>xml配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:aop=&quot;http://www.springframework.org/schema/aop&quot;</span><br><span class="line">       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--@AspectJ支持--&gt;</span><br><span class="line">    &lt;aop:aspectj-autoproxy/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--业务实现--&gt;</span><br><span class="line">    &lt;bean id=&quot;loginService&quot; class=&quot;me.cxis.spring.aop.introduction.LoginServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--Aspect--&gt;</span><br><span class="line">    &lt;bean id=&quot;logBeforeLoginAspect&quot; class=&quot;me.cxis.spring.aop.introduction.LogAndSendEmailBeforeLogin&quot;&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br><span class="line"></span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<p>测试方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package me.cxis.spring.aop.introduction;</span><br><span class="line"></span><br><span class="line">import org.springframework.context.ApplicationContext;</span><br><span class="line">import org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Created by cheng.xi on 2017-03-29 10:34.</span><br><span class="line"> */</span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:aop-introduction.xml&quot;);</span><br><span class="line">        LoginService loginService = (LoginService) applicationContext.getBean(&quot;loginService&quot;);</span><br><span class="line">        loginService.login(&quot;sdf&quot;);</span><br><span class="line"></span><br><span class="line">        SendEmailService sendEmailService = (SendEmailService) loginService;</span><br><span class="line">        sendEmailService.sendEmail();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体的Introduction不做过多解释。另外上面也都是基于接口进行的代理，关于基于类的，这里不做说明。</p>
+<p>上面是Spring2.0新增的关于AOP的配置的东西，1.0的方式在2.0中仍然适用。另外在Spring2.5中还增加了AspectJ的load-time织入的支持，也就是在类加载的时候织入。</p>
+<h1 id="Spring3-4-5中AOP的配置"><a href="#Spring3-4-5中AOP的配置" class="headerlink" title="Spring3,4,5中AOP的配置"></a>Spring3,4,5中AOP的配置</h1><p>Spring3,4,5基本就没在增加新的配置方式了，使用的方式基本都还是1.0和2.0中的方式，但是还会有很多的细节以及小特性添加，这里不能过多深入理解。暂先到这里。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Spring-AOP/" rel="tag"># Spring AOP</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/" rel="next" title="JUC中Lock和ReentrantLock介绍及源码解析">
+                <i class="fa fa-chevron-left"></i> JUC中Lock和ReentrantLock介绍及源码解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/12/AOP概念，原理，应用介绍/" rel="prev" title="AOP概念，原理，应用介绍">
+                AOP概念，原理，应用介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring1中AOP的配置"><span class="nav-number">1.</span> <span class="nav-text">Spring1中AOP的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用ProxyFactoryBean创建AOP代理"><span class="nav-number">1.1.</span> <span class="nav-text">使用ProxyFactoryBean创建AOP代理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用ProxyFactoryBean和Advisor的方式创建AOP代理"><span class="nav-number">1.1.1.</span> <span class="nav-text">使用ProxyFactoryBean和Advisor的方式创建AOP代理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用ProxyFactory编程的方式创建AOP代理"><span class="nav-number">1.2.</span> <span class="nav-text">使用ProxyFactory编程的方式创建AOP代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用autoproxy方式创建AOP"><span class="nav-number">1.3.</span> <span class="nav-text">使用autoproxy方式创建AOP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BeanNameAutoProxyCreator方式"><span class="nav-number">1.3.1.</span> <span class="nav-text">BeanNameAutoProxyCreator方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DefaultAdvisorAutoProxyCreator方式"><span class="nav-number">1.3.2.</span> <span class="nav-text">DefaultAdvisorAutoProxyCreator方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引介增强Introduction"><span class="nav-number">1.4.</span> <span class="nav-text">引介增强Introduction</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring2中AOP的配置"><span class="nav-number">2.</span> <span class="nav-text">Spring2中AOP的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用-AspectJ的方式配置AOP代理"><span class="nav-number">2.1.</span> <span class="nav-text">使用@AspectJ的方式配置AOP代理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用自定义注解作为execution的表达式"><span class="nav-number">2.1.1.</span> <span class="nav-text">使用自定义注解作为execution的表达式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用基于schema的方式配置AOP代理"><span class="nav-number">2.2.</span> <span class="nav-text">使用基于schema的方式配置AOP代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用dtd方式"><span class="nav-number">2.3.</span> <span class="nav-text">使用dtd方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编程的方式使用-AspectJ"><span class="nav-number">2.4.</span> <span class="nav-text">编程的方式使用@AspectJ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引介增强Introduction-1"><span class="nav-number">2.5.</span> <span class="nav-text">引介增强Introduction</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring3-4-5中AOP的配置"><span class="nav-number">3.</span> <span class="nav-text">Spring3,4,5中AOP的配置</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2017/04/10/Spring中AOP的配置从1.0到5.0的演进/';
+
+      var disqus_title = "Spring中AOP的配置从1.0到5.0的演进";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

@@ -1,0 +1,1090 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="dubbo源码,dubbo集群,dubbo容错,dubbo路由,dubbo负载均衡," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo中集群Cluster，负载均衡，容错，路由解析">
+<meta property="og:url" content="http://dachengxi.github.com/2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）">
+<meta property="og:updated_time" content="2017-03-26T04:14:33.112Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dubbo中集群Cluster，负载均衡，容错，路由解析">
+<meta name="twitter:description" content="Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/"/>
+
+
+
+
+
+  <title> Dubbo中集群Cluster，负载均衡，容错，路由解析 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Dubbo中集群Cluster，负载均衡，容错，路由解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-26T12:12:49+08:00">
+                2017-03-26 12:12:49
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/dubbo/" itemprop="url" rel="index">
+                    <span itemprop="name">dubbo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）</p>
+<a id="more"></a>
+<h1 id="集群的容错模式"><a href="#集群的容错模式" class="headerlink" title="集群的容错模式"></a>集群的容错模式</h1><h2 id="Failover-Cluster"><a href="#Failover-Cluster" class="headerlink" title="Failover Cluster"></a>Failover Cluster</h2><p>这是dubbo中默认的集群容错模式</p>
+<ul>
+<li>失败自动切换，当出现失败，重试其它服务器。</li>
+<li>通常用于读操作，但重试会带来更长延迟。</li>
+<li>可通过retries=”2”来设置重试次数(不含第一次)。</li>
+</ul>
+<h2 id="Failfast-Cluster"><a href="#Failfast-Cluster" class="headerlink" title="Failfast Cluster"></a>Failfast Cluster</h2><ul>
+<li>快速失败，只发起一次调用，失败立即报错。</li>
+<li>通常用于非幂等性的写操作，比如新增记录。</li>
+</ul>
+<h2 id="Failsafe-Cluster"><a href="#Failsafe-Cluster" class="headerlink" title="Failsafe Cluster"></a>Failsafe Cluster</h2><ul>
+<li>失败安全，出现异常时，直接忽略。</li>
+<li>通常用于写入审计日志等操作。</li>
+</ul>
+<h2 id="Failback-Cluster"><a href="#Failback-Cluster" class="headerlink" title="Failback Cluster"></a>Failback Cluster</h2><ul>
+<li><ul>
+<li>失败自动恢复，后台记录失败请求，定时重发。</li>
+</ul>
+</li>
+<li>通常用于消息通知操作。</li>
+</ul>
+<h2 id="Forking-Cluster"><a href="#Forking-Cluster" class="headerlink" title="Forking Cluster"></a>Forking Cluster</h2><ul>
+<li>并行调用多个服务器，只要一个成功即返回。</li>
+<li>通常用于实时性要求较高的读操作，但需要浪费更多服务资源。</li>
+<li>可通过forks=”2”来设置最大并行数。</li>
+</ul>
+<h2 id="Broadcast-Cluster"><a href="#Broadcast-Cluster" class="headerlink" title="Broadcast Cluster"></a>Broadcast Cluster</h2><ul>
+<li>广播调用所有提供者，逐个调用，任意一台报错则报错。(2.1.0开始支持)</li>
+<li>通常用于通知所有提供者更新缓存或日志等本地资源信息。</li>
+</ul>
+<h1 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h1><p>dubbo默认的负载均衡策略是random，随机调用。</p>
+<h2 id="Random-LoadBalance"><a href="#Random-LoadBalance" class="headerlink" title="Random LoadBalance"></a>Random LoadBalance</h2><ul>
+<li>随机，按权重设置随机概率。</li>
+<li>在一个截面上碰撞的概率高，但调用量越大分布越均匀，而且按概率使用权重后也比较均匀，有利于动态调整提供者权重。</li>
+</ul>
+<h2 id="RoundRobin-LoadBalance"><a href="#RoundRobin-LoadBalance" class="headerlink" title="RoundRobin LoadBalance"></a>RoundRobin LoadBalance</h2><ul>
+<li>轮循，按公约后的权重设置轮循比率。</li>
+<li>存在慢的提供者累积请求问题，比如：第二台机器很慢，但没挂，当请求调到第二台时就卡在那，久而久之，所有请求都卡在调到第二台上。</li>
+</ul>
+<h2 id="LeastActive-LoadBalance"><a href="#LeastActive-LoadBalance" class="headerlink" title="LeastActive LoadBalance"></a>LeastActive LoadBalance</h2><ul>
+<li>最少活跃调用数，相同活跃数的随机，活跃数指调用前后计数差。</li>
+<li>使慢的提供者收到更少请求，因为越慢的提供者的调用前后计数差会越大。</li>
+</ul>
+<h2 id="ConsistentHash-LoadBalance"><a href="#ConsistentHash-LoadBalance" class="headerlink" title="ConsistentHash LoadBalance"></a>ConsistentHash LoadBalance</h2><ul>
+<li>一致性Hash，相同参数的请求总是发到同一提供者。</li>
+<li>当某一台提供者挂时，原本发往该提供者的请求，基于虚拟节点，平摊到其它提供者，不会引起剧烈变动。</li>
+<li>缺省只对第一个参数Hash。</li>
+<li>缺省用160份虚拟节点。</li>
+</ul>
+<h1 id="集群相关源码解析"><a href="#集群相关源码解析" class="headerlink" title="集群相关源码解析"></a>集群相关源码解析</h1><p>回想一下在服务消费者初始化的过程中，在引用远程服务的那一步，也就是RegistryProtocol的refer方法中，调用了doRefer方法，doRefer方法中第一个参数就是cluster，我们就从这里开始解析。RegistryProtocol的refer方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException &#123;</span><br><span class="line">    url = url.setProtocol(url.getParameter(Constants.REGISTRY_KEY, Constants.DEFAULT_REGISTRY)).removeParameter(Constants.REGISTRY_KEY);</span><br><span class="line">    //根据url获取注册中心实例</span><br><span class="line">    //这一步连接注册中心，并把消费者注册到注册中心</span><br><span class="line">    Registry registry = registryFactory.getRegistry(url);</span><br><span class="line">    //对注册中心服务的处理</span><br><span class="line">    if (RegistryService.class.equals(type)) &#123;</span><br><span class="line">        return proxyFactory.getInvoker((T) registry, type, url);</span><br><span class="line">    &#125;</span><br><span class="line">	//以下是我们自己定义的业务的服务处理</span><br><span class="line">    // group=&quot;a,b&quot; or group=&quot;*&quot;</span><br><span class="line">    Map&lt;String, String&gt; qs = StringUtils.parseQueryString(url.getParameterAndDecoded(Constants.REFER_KEY));</span><br><span class="line">    String group = qs.get(Constants.GROUP_KEY);</span><br><span class="line">    //服务需要合并不同实现</span><br><span class="line">    if (group != null &amp;&amp; group.length() &gt; 0 ) &#123;</span><br><span class="line">        if ( ( Constants.COMMA_SPLIT_PATTERN.split( group ) ).length &gt; 1</span><br><span class="line">                || &quot;*&quot;.equals( group ) ) &#123;</span><br><span class="line">            return doRefer( getMergeableCluster(), registry, type, url );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //这里参数cluster是集群的适配类，代码在下面</span><br><span class="line">    return doRefer(cluster, registry, type, url);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着看doRefer，真正去做服务引用的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) &#123;</span><br><span class="line">	//Directory中是Invoker的集合，相当于一个List</span><br><span class="line">    //也就是说这里面存放了多个Invoker，那么我们该调用哪一个呢？</span><br><span class="line">    //该调用哪一个Invoker的工作就是Cluster来处理的</span><br><span class="line">    RegistryDirectory&lt;T&gt; directory = new RegistryDirectory&lt;T&gt;(type, url);</span><br><span class="line">    directory.setRegistry(registry);</span><br><span class="line">    directory.setProtocol(protocol);</span><br><span class="line">    URL subscribeUrl = new URL(Constants.CONSUMER_PROTOCOL, NetUtils.getLocalHost(), 0, type.getName(), directory.getUrl().getParameters());</span><br><span class="line">    if (! Constants.ANY_VALUE.equals(url.getServiceInterface())</span><br><span class="line">            &amp;&amp; url.getParameter(Constants.REGISTER_KEY, true)) &#123;</span><br><span class="line">        </span><br><span class="line"> //到注册中心注册服务       registry.register(subscribeUrl.addParameters(Constants.CATEGORY_KEY, Constants.CONSUMERS_CATEGORY,</span><br><span class="line">                Constants.CHECK_KEY, String.valueOf(false)));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"> //订阅服务，注册中心会推送服务消息给消费者，消费者会再次进行服务的引用。   directory.subscribe(subscribeUrl.addParameter(Constants.CATEGORY_KEY, </span><br><span class="line">            Constants.PROVIDERS_CATEGORY </span><br><span class="line">            + &quot;,&quot; + Constants.CONFIGURATORS_CATEGORY </span><br><span class="line">            + &quot;,&quot; + Constants.ROUTERS_CATEGORY));</span><br><span class="line">    //服务的引用和变更全部由Directory异步完成</span><br><span class="line">    //Directory中可能存在多个Invoker</span><br><span class="line">    //而Cluster会把多个Invoker伪装成一个Invoker</span><br><span class="line">    //这一步就是做这个事情的</span><br><span class="line">    return cluster.join(directory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="集群处理的入口"><a href="#集群处理的入口" class="headerlink" title="集群处理的入口"></a>集群处理的入口</h2><p>入口就是在doRefer的时候最后一步：<code>cluster.join(directory);</code>。</p>
+<p>首先解释下cluster，这个是根据dubbo的扩展机制生成的，在RegistryProtocol中有一个setCluster方法，根据扩展机制可以知道，这是注入Cluster的地方，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.dubbo.common.extension.ExtensionLoader;</span><br><span class="line">public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster &#123;</span><br><span class="line"></span><br><span class="line">  public com.alibaba.dubbo.rpc.Invoker join(com.alibaba.dubbo.rpc.cluster.Directory arg0) throws com.alibaba.dubbo.rpc.cluster.Directory &#123;</span><br><span class="line">    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument == null&quot;);</span><br><span class="line"></span><br><span class="line">    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();</span><br><span class="line"></span><br><span class="line">    String extName = url.getParameter(&quot;cluster&quot;, &quot;failover&quot;);</span><br><span class="line">    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.cluster.Cluster) name from url(&quot; + url.toString() + &quot;) use keys([cluster])&quot;);</span><br><span class="line"></span><br><span class="line">    com.alibaba.dubbo.rpc.cluster.Cluster extension = (com.alibaba.dubbo.rpc.cluster.Cluster)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.cluster.Cluster.class).getExtension(extName);</span><br><span class="line"></span><br><span class="line">    return extension.join(arg0);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，如果我们没有配置集群策略的话，默认是用failover模式，在Cluster接口的注解上<code>@SPI(FailoverCluster.NAME)</code>也可以看到默认是failover。</p>
+<p>继续执行cluster.join方法，会首先进入MockClusterWrapper的join方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; join(Directory&lt;T&gt; directory) throws RpcException &#123;</span><br><span class="line">	//先执行FailoverCluster的join方法处理</span><br><span class="line">    //然后将Directory和返回的Invoker封装成一个MockCluster</span><br><span class="line">    return new MockClusterInvoker&lt;T&gt;(directory,</span><br><span class="line">            this.cluster.join(directory));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看下Failover的join方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; join(Directory&lt;T&gt; directory) throws RpcException &#123;</span><br><span class="line">	//直接返回一个FailoverClusterInvoker的实例</span><br><span class="line">    return new FailoverClusterInvoker&lt;T&gt;(directory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到这里就算把Invoker都封装好了，返回的Invoker是一个MockClusterInvoker，MockClusterInvoker内部包含一个Directory和一个FailoverClusterInvoker。</p>
+<p>Invoker都封装好了之后，就是创建代理，然后使用代理调用我们的要调用的方法。</p>
+<h2 id="调用方法时集群的处理"><a href="#调用方法时集群的处理" class="headerlink" title="调用方法时集群的处理"></a>调用方法时集群的处理</h2><p>在进行具体方法调用的时候，代理中会<code>invoker.invoke()</code>，这里Invoker就是我们上面封装好的MockClusterInvoker，所以首先进入MockClusterInvoker的invoke方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public Result invoke(Invocation invocation) throws RpcException &#123;</span><br><span class="line">    Result result = null;</span><br><span class="line">	//我们没配置mock，所以这里为false</span><br><span class="line">    //Mock通常用于服务降级</span><br><span class="line">    String value = directory.getUrl().getMethodParameter(invocation.getMethodName(), Constants.MOCK_KEY, Boolean.FALSE.toString()).trim(); </span><br><span class="line">    //没有使用mock</span><br><span class="line">    if (value.length() == 0 || value.equalsIgnoreCase(&quot;false&quot;))&#123;</span><br><span class="line">        //这里的invoker是FailoverClusterInvoker</span><br><span class="line">        result = this.invoker.invoke(invocation);</span><br><span class="line">    &#125; else if (value.startsWith(&quot;force&quot;)) &#123;</span><br><span class="line">    	//mock=force:return+null</span><br><span class="line">        //表示消费方对方法的调用都直接返回null，不发起远程调用</span><br><span class="line">        //可用于屏蔽不重要服务不可用的时候，对调用方的影响</span><br><span class="line">        //force:direct mock</span><br><span class="line">        result = doMockInvoke(invocation, null);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">    	//mock=fail:return+null</span><br><span class="line">        //表示消费方对该服务的方法调用失败后，再返回null，不抛异常</span><br><span class="line">        //可用于对不重要服务不稳定的时候，忽略对调用方的影响</span><br><span class="line">        //fail-mock</span><br><span class="line">        try &#123;</span><br><span class="line">            result = this.invoker.invoke(invocation);</span><br><span class="line">        &#125;catch (RpcException e) &#123;</span><br><span class="line">            if (e.isBiz()) &#123;</span><br><span class="line">                throw e;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                result = doMockInvoke(invocation, e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们这里么有配置mock属性。首先进入的是AbstractClusterInvoker的incoke方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public Result invoke(final Invocation invocation) throws RpcException &#123;</span><br><span class="line">	//检查是否已经被销毁</span><br><span class="line">    checkWheatherDestoried();</span><br><span class="line">	//可以看到这里该处理负载均衡的问题了</span><br><span class="line">    LoadBalance loadbalance;</span><br><span class="line">	//根据invocation中的信息从Directory中获取Invoker列表</span><br><span class="line">    //这一步中会进行路由的处理</span><br><span class="line">    List&lt;Invoker&lt;T&gt;&gt; invokers = list(invocation);</span><br><span class="line">    if (invokers != null &amp;&amp; invokers.size() &gt; 0) &#123;</span><br><span class="line">    	//使用扩展机制，加载LoadBalance的实现类，默认使用的是random</span><br><span class="line">        //我们这里得到的就是RandomLoadBalance</span><br><span class="line">        loadbalance = ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(invokers.get(0).getUrl()</span><br><span class="line">                .getMethodParameter(invocation.getMethodName(),Constants.LOADBALANCE_KEY, Constants.DEFAULT_LOADBALANCE));</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        loadbalance = ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(Constants.DEFAULT_LOADBALANCE);</span><br><span class="line">    &#125;</span><br><span class="line">    //异步操作默认添加invocation id</span><br><span class="line">    RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);</span><br><span class="line">    //调用具体的实现类的doInvoke方法，这里是FailoverClusterInvoker</span><br><span class="line">    return doInvoke(invocation, invokers, loadbalance);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看下FailoverClusterInvoker的invoke方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">public Result doInvoke(Invocation invocation, final List&lt;Invoker&lt;T&gt;&gt; invokers, LoadBalance loadbalance) throws RpcException &#123;</span><br><span class="line">	//Invoker列表</span><br><span class="line">    List&lt;Invoker&lt;T&gt;&gt; copyinvokers = invokers;</span><br><span class="line">    //确认下Invoker列表不为空</span><br><span class="line">    checkInvokers(copyinvokers, invocation);</span><br><span class="line">    //重试次数</span><br><span class="line">    int len = getUrl().getMethodParameter(invocation.getMethodName(), Constants.RETRIES_KEY, Constants.DEFAULT_RETRIES) + 1;</span><br><span class="line">    if (len &lt;= 0) &#123;</span><br><span class="line">        len = 1;</span><br><span class="line">    &#125;</span><br><span class="line">    // retry loop.</span><br><span class="line">    RpcException le = null; // last exception.</span><br><span class="line">    List&lt;Invoker&lt;T&gt;&gt; invoked = new ArrayList&lt;Invoker&lt;T&gt;&gt;(copyinvokers.size()); // invoked invokers.</span><br><span class="line">    Set&lt;String&gt; providers = new HashSet&lt;String&gt;(len);</span><br><span class="line">    for (int i = 0; i &lt; len; i++) &#123;</span><br><span class="line">        //重试时，进行重新选择，避免重试时invoker列表已发生变化.</span><br><span class="line">        //注意：如果列表发生了变化，那么invoked判断会失效，因为invoker示例已经改变</span><br><span class="line">        if (i &gt; 0) &#123;</span><br><span class="line">            checkWheatherDestoried();</span><br><span class="line">            copyinvokers = list(invocation);</span><br><span class="line">            //重新检查一下</span><br><span class="line">            checkInvokers(copyinvokers, invocation);</span><br><span class="line">        &#125;</span><br><span class="line">        //使用loadBalance选择一个Invoker返回</span><br><span class="line">        Invoker&lt;T&gt; invoker = select(loadbalance, invocation, copyinvokers, invoked);</span><br><span class="line">        invoked.add(invoker);</span><br><span class="line">        RpcContext.getContext().setInvokers((List)invoked);</span><br><span class="line">        try &#123;</span><br><span class="line">        	//使用选择的结果Invoker进行调用，返回结果</span><br><span class="line">            Result result = invoker.invoke(invocation);</span><br><span class="line">            return result;</span><br><span class="line">        &#125; catch (RpcException e) &#123;。。。&#125; finally &#123;</span><br><span class="line">            providers.add(invoker.getUrl().getAddress());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    throw new RpcException(。。。);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先看下使用loadbalance选择invoker的select方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">protected Invoker&lt;T&gt; select(LoadBalance loadbalance, Invocation invocation, List&lt;Invoker&lt;T&gt;&gt; invokers, List&lt;Invoker&lt;T&gt;&gt; selected) throws RpcException &#123;</span><br><span class="line">    if (invokers == null || invokers.size() == 0)</span><br><span class="line">        return null;</span><br><span class="line">    String methodName = invocation == null ? &quot;&quot; : invocation.getMethodName();</span><br><span class="line"></span><br><span class="line">    //sticky，滞连接用于有状态服务，尽可能让客户端总是向同一提供者发起调用，除非该提供者挂了，再连另一台。</span><br><span class="line">    boolean sticky = invokers.get(0).getUrl().getMethodParameter(methodName,Constants.CLUSTER_STICKY_KEY, Constants.DEFAULT_CLUSTER_STICKY) ;</span><br><span class="line">    &#123;</span><br><span class="line">        //ignore overloaded method</span><br><span class="line">        if ( stickyInvoker != null &amp;&amp; !invokers.contains(stickyInvoker) )&#123;</span><br><span class="line">            stickyInvoker = null;</span><br><span class="line">        &#125;</span><br><span class="line">        //ignore cucurrent problem</span><br><span class="line">        if (sticky &amp;&amp; stickyInvoker != null &amp;&amp; (selected == null || !selected.contains(stickyInvoker)))&#123;</span><br><span class="line">            if (availablecheck &amp;&amp; stickyInvoker.isAvailable())&#123;</span><br><span class="line">                return stickyInvoker;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    Invoker&lt;T&gt; invoker = doselect(loadbalance, invocation, invokers, selected);</span><br><span class="line"></span><br><span class="line">    if (sticky)&#123;</span><br><span class="line">        stickyInvoker = invoker;</span><br><span class="line">    &#125;</span><br><span class="line">    return invoker;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>doselect方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">private Invoker&lt;T&gt; doselect(LoadBalance loadbalance, Invocation invocation, List&lt;Invoker&lt;T&gt;&gt; invokers, List&lt;Invoker&lt;T&gt;&gt; selected) throws RpcException &#123;</span><br><span class="line">    if (invokers == null || invokers.size() == 0)</span><br><span class="line">        return null;</span><br><span class="line">    //只有一个invoker，直接返回，不需要处理</span><br><span class="line">    if (invokers.size() == 1)</span><br><span class="line">        return invokers.get(0);</span><br><span class="line">    // 如果只有两个invoker，退化成轮循</span><br><span class="line">    if (invokers.size() == 2 &amp;&amp; selected != null &amp;&amp; selected.size() &gt; 0) &#123;</span><br><span class="line">        return selected.get(0) == invokers.get(0) ? invokers.get(1) : invokers.get(0);</span><br><span class="line">    &#125;</span><br><span class="line">    //使用loadBalance进行选择</span><br><span class="line">    Invoker&lt;T&gt; invoker = loadbalance.select(invokers, getUrl(), invocation);</span><br><span class="line"></span><br><span class="line">    //如果 selected中包含（优先判断） 或者 不可用&amp;&amp;availablecheck=true 则重试.</span><br><span class="line">    if( (selected != null &amp;&amp; selected.contains(invoker))</span><br><span class="line">            ||(!invoker.isAvailable() &amp;&amp; getUrl()!=null &amp;&amp; availablecheck))&#123;</span><br><span class="line">        try&#123;</span><br><span class="line">        	//重新选择</span><br><span class="line">            Invoker&lt;T&gt; rinvoker = reselect(loadbalance, invocation, invokers, selected, availablecheck);</span><br><span class="line">            if(rinvoker != null)&#123;</span><br><span class="line">                invoker =  rinvoker;</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                //看下第一次选的位置，如果不是最后，选+1位置.</span><br><span class="line">                int index = invokers.indexOf(invoker);</span><br><span class="line">                try&#123;</span><br><span class="line">                    //最后在避免碰撞</span><br><span class="line">                    invoker = index &lt;invokers.size()-1?invokers.get(index+1) :invoker;</span><br><span class="line">                &#125;catch (Exception e) &#123;。。。 &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;catch (Throwable t)&#123;。。。&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return invoker;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着看使用loadBalance进行选择，首先进入AbstractLoadBalance的select方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> public &lt;T&gt; Invoker&lt;T&gt; select(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) &#123;</span><br><span class="line">    if (invokers == null || invokers.size() == 0)</span><br><span class="line">        return null;</span><br><span class="line">    if (invokers.size() == 1)</span><br><span class="line">        return invokers.get(0);</span><br><span class="line">    //	进行选择，具体的子类实现，我们这里是RandomLoadBalance</span><br><span class="line">    return doSelect(invokers, url, invocation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着去RandomLoadBalance中查看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">protected &lt;T&gt; Invoker&lt;T&gt; doSelect(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) &#123;</span><br><span class="line">    int length = invokers.size(); // 总个数</span><br><span class="line">    int totalWeight = 0; // 总权重</span><br><span class="line">    boolean sameWeight = true; // 权重是否都一样</span><br><span class="line">    for (int i = 0; i &lt; length; i++) &#123;</span><br><span class="line">        int weight = getWeight(invokers.get(i), invocation);</span><br><span class="line">        totalWeight += weight; // 累计总权重</span><br><span class="line">        if (sameWeight &amp;&amp; i &gt; 0</span><br><span class="line">                &amp;&amp; weight != getWeight(invokers.get(i - 1), invocation)) &#123;</span><br><span class="line">            sameWeight = false; // 计算所有权重是否一样</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if (totalWeight &gt; 0 &amp;&amp; ! sameWeight) &#123;</span><br><span class="line">        // 如果权重不相同且权重大于0则按总权重数随机</span><br><span class="line">        int offset = random.nextInt(totalWeight);</span><br><span class="line">        // 并确定随机值落在哪个片断上</span><br><span class="line">        for (int i = 0; i &lt; length; i++) &#123;</span><br><span class="line">            offset -= getWeight(invokers.get(i), invocation);</span><br><span class="line">            if (offset &lt; 0) &#123;</span><br><span class="line">                return invokers.get(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 如果权重相同或权重为0则均等随机</span><br><span class="line">    return invokers.get(random.nextInt(length));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面根据权重之类的来进行选择一个Invoker返回。接下来reselect的方法不在说明，是先从非selected的列表中选择，没有在从selected列表中选择。</p>
+<p>选择好了Invoker之后，就回去FailoverClusterInvoker的doInvoke方法，接着就是根据选中的Invoker调用invoke方法进行返回结果，接着就是到具体的Invoker进行调用的过程了。这部分的解析在消费者和提供者请求响应过程已经解析过了，不再重复。</p>
+<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>回到AbstractClusterInvoker的invoke方法中，这里有一步是<code>List&lt;Invoker&lt;T&gt;&gt; invokers = list(invocation);</code>获取Invoker列表，这里同时也进行了路由的操作，看下list方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protected  List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException &#123;</span><br><span class="line">    List&lt;Invoker&lt;T&gt;&gt; invokers = directory.list(invocation);</span><br><span class="line">    return invokers;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着看AbstractDirectory的list方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException &#123;</span><br><span class="line">    if (destroyed)&#123;</span><br><span class="line">        throw new RpcException(&quot;Directory already destroyed .url: &quot;+ getUrl());</span><br><span class="line">    &#125;</span><br><span class="line">    //RegistryDirectory中的doList实现</span><br><span class="line">    List&lt;Invoker&lt;T&gt;&gt; invokers = doList(invocation);</span><br><span class="line">    List&lt;Router&gt; localRouters = this.routers; // local reference</span><br><span class="line">    if (localRouters != null &amp;&amp; localRouters.size() &gt; 0) &#123;</span><br><span class="line">        for (Router router: localRouters)&#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                if (router.getUrl() == null || router.getUrl().getParameter(Constants.RUNTIME_KEY, true)) &#123;</span><br><span class="line">                    //路由选择</span><br><span class="line">                    //MockInvokersSelector中</span><br><span class="line">                    invokers = router.route(invokers, getConsumerUrl(), invocation);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (Throwable t) &#123;。。。&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return invokers;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>路由来过滤之后，进行负载均衡的处理。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/dubbo源码/" rel="tag"># dubbo源码</a>
+          
+            <a href="/tags/dubbo集群/" rel="tag"># dubbo集群</a>
+          
+            <a href="/tags/dubbo容错/" rel="tag"># dubbo容错</a>
+          
+            <a href="/tags/dubbo路由/" rel="tag"># dubbo路由</a>
+          
+            <a href="/tags/dubbo负载均衡/" rel="tag"># dubbo负载均衡</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/23/JUC中AQS简介/" rel="next" title="JUC中AQS简介">
+                <i class="fa fa-chevron-left"></i> JUC中AQS简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/02/Dubbo中订阅和通知解析/" rel="prev" title="Dubbo中订阅和通知解析">
+                Dubbo中订阅和通知解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#集群的容错模式"><span class="nav-number">1.</span> <span class="nav-text">集群的容错模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Failover-Cluster"><span class="nav-number">1.1.</span> <span class="nav-text">Failover Cluster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Failfast-Cluster"><span class="nav-number">1.2.</span> <span class="nav-text">Failfast Cluster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Failsafe-Cluster"><span class="nav-number">1.3.</span> <span class="nav-text">Failsafe Cluster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Failback-Cluster"><span class="nav-number">1.4.</span> <span class="nav-text">Failback Cluster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Forking-Cluster"><span class="nav-number">1.5.</span> <span class="nav-text">Forking Cluster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Broadcast-Cluster"><span class="nav-number">1.6.</span> <span class="nav-text">Broadcast Cluster</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#负载均衡"><span class="nav-number">2.</span> <span class="nav-text">负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Random-LoadBalance"><span class="nav-number">2.1.</span> <span class="nav-text">Random LoadBalance</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RoundRobin-LoadBalance"><span class="nav-number">2.2.</span> <span class="nav-text">RoundRobin LoadBalance</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LeastActive-LoadBalance"><span class="nav-number">2.3.</span> <span class="nav-text">LeastActive LoadBalance</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConsistentHash-LoadBalance"><span class="nav-number">2.4.</span> <span class="nav-text">ConsistentHash LoadBalance</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集群相关源码解析"><span class="nav-number">3.</span> <span class="nav-text">集群相关源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#集群处理的入口"><span class="nav-number">3.1.</span> <span class="nav-text">集群处理的入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调用方法时集群的处理"><span class="nav-number">3.2.</span> <span class="nav-text">调用方法时集群的处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路由"><span class="nav-number">3.3.</span> <span class="nav-text">路由</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/';
+
+      var disqus_title = "Dubbo中集群Cluster，负载均衡，容错，路由解析";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

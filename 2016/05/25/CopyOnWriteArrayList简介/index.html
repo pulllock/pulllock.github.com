@@ -1,0 +1,1074 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="CopyOnWriteArrayList," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="CopyOnWriteArrayList，写数组的拷贝，支持高效率并发且是线程安全的,读操作无锁的ArrayList。所有可变操作都是通过对底层数组进行一次新的复制来实现。
+CopyOnWriteArrayList适合使用在读操作远远大于写操作的场景里，比如缓存。它不存在扩容的概念，每次写操作都要复制一个副本，在副本的基础上修改后改变Array引用。CopyOnWriteArrayList中写操">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CopyOnWriteArrayList简介">
+<meta property="og:url" content="http://dachengxi.github.com/2016/05/25/CopyOnWriteArrayList简介/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="CopyOnWriteArrayList，写数组的拷贝，支持高效率并发且是线程安全的,读操作无锁的ArrayList。所有可变操作都是通过对底层数组进行一次新的复制来实现。
+CopyOnWriteArrayList适合使用在读操作远远大于写操作的场景里，比如缓存。它不存在扩容的概念，每次写操作都要复制一个副本，在副本的基础上修改后改变Array引用。CopyOnWriteArrayList中写操">
+<meta property="og:updated_time" content="2016-08-04T13:46:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CopyOnWriteArrayList简介">
+<meta name="twitter:description" content="CopyOnWriteArrayList，写数组的拷贝，支持高效率并发且是线程安全的,读操作无锁的ArrayList。所有可变操作都是通过对底层数组进行一次新的复制来实现。
+CopyOnWriteArrayList适合使用在读操作远远大于写操作的场景里，比如缓存。它不存在扩容的概念，每次写操作都要复制一个副本，在副本的基础上修改后改变Array引用。CopyOnWriteArrayList中写操">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2016/05/25/CopyOnWriteArrayList简介/"/>
+
+
+
+
+
+  <title> CopyOnWriteArrayList简介 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/05/25/CopyOnWriteArrayList简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                CopyOnWriteArrayList简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-05-25T10:30:09+08:00">
+                2016-05-25 10:30:09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/并发集合/" itemprop="url" rel="index">
+                    <span itemprop="name">并发集合</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/05/25/CopyOnWriteArrayList简介/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/25/CopyOnWriteArrayList简介/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ol>
+<li>CopyOnWriteArrayList，写数组的拷贝，支持高效率并发且是线程安全的,读操作无锁的ArrayList。所有可变操作都是通过对底层数组进行一次新的复制来实现。</li>
+<li>CopyOnWriteArrayList适合使用在读操作远远大于写操作的场景里，比如缓存。它不存在扩容的概念，每次写操作都要复制一个副本，在副本的基础上修改后改变Array引用。CopyOnWriteArrayList中写操作需要大面积复制数组，所以性能肯定很差</li>
+<li>在迭代器上进行的元素更改操作（remove、set和add）不受支持。这些方法将抛出UnsupportedOperationException。</li>
+</ol>
+<a id="more"></a>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>CopyOnWriteArrayList跟ArrayList一样实现了List<e>, RandomAccess, Cloneable, Serializable接口，但是没有继承AbstractList。</e></p>
+<p>初始化时候新建一个容量为0的数组。</p>
+<h1 id="add-E-e-方法"><a href="#add-E-e-方法" class="headerlink" title="add(E e)方法"></a>add(E e)方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">	//获得锁，添加的时候首先进行锁定</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">    	//获取当前数组</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        //获取当前数组的长度</span><br><span class="line">        int len = elements.length;</span><br><span class="line">        //这个是重点，创建新数组，容量为旧数组长度加1，将旧数组拷贝到新数组中</span><br><span class="line">        Object[] newElements = Arrays.copyOf(elements, len + 1);</span><br><span class="line">        //要添加的数据添加到新数组的末尾</span><br><span class="line">        newElements[len] = e;</span><br><span class="line">        //将数组引用指向新数组，完成了添加元素操作</span><br><span class="line">        setArray(newElements);</span><br><span class="line">        return true;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">    	//解锁</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面来说，每次添加一个新元素都会长度加1，然后复制整个旧数组，由此可见对于写多的操作，效率肯定不会很好。所以CopyOnWriteArrayList适合读多写少的场景。</p>
+<h1 id="add-int-index-E-element-方法"><a href="#add-int-index-E-element-方法" class="headerlink" title="add(int index, E element)方法"></a>add(int index, E element)方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public void add(int index, E element) &#123;</span><br><span class="line">	//同样也是先加锁</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">    	//获取旧数组</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        //获取旧数组长度</span><br><span class="line">        int len = elements.length;</span><br><span class="line">        //校验指定的index</span><br><span class="line">        if (index &gt; len || index &lt; 0)</span><br><span class="line">            throw new IndexOutOfBoundsException(&quot;Index: &quot;+index+</span><br><span class="line">                                                &quot;, Size: &quot;+len);</span><br><span class="line">        Object[] newElements;</span><br><span class="line">        int numMoved = len - index;</span><br><span class="line">        if (numMoved == 0)//需要插入的位置正好等于数组长度，数组长度加1，旧数据拷贝到新数组</span><br><span class="line">            newElements = Arrays.copyOf(elements, len + 1);</span><br><span class="line">        else &#123;</span><br><span class="line">        	//新数组长度增加1</span><br><span class="line">            newElements = new Object[len + 1];</span><br><span class="line">            //分两次拷贝，第一次拷贝旧数组0到index处的到新数组0到index，第二次拷贝旧数组index到最后的数组到新数组index+1到最后</span><br><span class="line">            System.arraycopy(elements, 0, newElements, 0, index);</span><br><span class="line">            System.arraycopy(elements, index, newElements, index + 1,</span><br><span class="line">                             numMoved);</span><br><span class="line">        &#125;</span><br><span class="line">        //index初插入数据</span><br><span class="line">        newElements[index] = element;</span><br><span class="line">        //新数组指向全局数组</span><br><span class="line">        setArray(newElements);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">    	//解锁</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="set-int-index-E-element-方法"><a href="#set-int-index-E-element-方法" class="headerlink" title="set(int index, E element)方法"></a>set(int index, E element)方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public E set(int index, E element) &#123;</span><br><span class="line">	//修改元素之前首先加锁</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">    	//获取原来的数组</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        //index位置的元素</span><br><span class="line">        E oldValue = get(elements, index);</span><br><span class="line">		//新旧值不相等才进行替换</span><br><span class="line">        if (oldValue != element) &#123;</span><br><span class="line">        		//原来的长度</span><br><span class="line">            int len = elements.length;</span><br><span class="line">            //拷贝一份到新数组</span><br><span class="line">            Object[] newElements = Arrays.copyOf(elements, len);</span><br><span class="line">            //替换元素</span><br><span class="line">            newElements[index] = element;</span><br><span class="line">            //新数组指向全局数组</span><br><span class="line">            setArray(newElements);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // Not quite a no-op; ensures volatile write semantics</span><br><span class="line">            setArray(elements);</span><br><span class="line">        &#125;</span><br><span class="line">        return oldValue;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">    	//解锁</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="get-int-index-方法"><a href="#get-int-index-方法" class="headerlink" title="get(int index)方法"></a>get(int index)方法</h1><p>读的时候不加锁，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public E get(int index) &#123;</span><br><span class="line">    return get(getArray(), index);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private E get(Object[] a, int index) &#123;</span><br><span class="line">    return (E) a[index];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="remove（）"><a href="#remove（）" class="headerlink" title="remove（）"></a>remove（）</h1><p>remove方法不再过多介绍，看完add和set方法应该就能理解。</p>
+<h1 id="迭代"><a href="#迭代" class="headerlink" title="迭代"></a>迭代</h1><p>内部类COWIterator 实现了ListIterator接口。迭代的时候不能进行remove，add，set等方法，会抛异常。</p>
+<p>迭代速度快，迭代时是迭代的数组快照。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/** Snapshot of the array */</span><br><span class="line">private final Object[] snapshot;</span><br></pre></td></tr></table></figure>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><blockquote>
+<p>jdk1.7.0_71</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//锁,保护所有存取器</span><br><span class="line">transient final ReentrantLock lock = new ReentrantLock();</span><br><span class="line">//保存数据的数组</span><br><span class="line">private volatile transient Object[] array;</span><br><span class="line">final Object[] getArray() &#123;return array;&#125;</span><br><span class="line">final void setArray(Object[] a) &#123;array = a;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="空构造-初始化一个长度为0的数组"><a href="#空构造-初始化一个长度为0的数组" class="headerlink" title="空构造,初始化一个长度为0的数组"></a>空构造,初始化一个长度为0的数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public CopyOnWriteArrayList() &#123;</span><br><span class="line">        setArray(new Object[0]);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="利用集合初始化一个CopyOnWriteArrayList"><a href="#利用集合初始化一个CopyOnWriteArrayList" class="headerlink" title="利用集合初始化一个CopyOnWriteArrayList"></a>利用集合初始化一个CopyOnWriteArrayList</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public CopyOnWriteArrayList(Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="利用数组初始化一个CopyOnWriteArrayList"><a href="#利用数组初始化一个CopyOnWriteArrayList" class="headerlink" title="利用数组初始化一个CopyOnWriteArrayList"></a>利用数组初始化一个CopyOnWriteArrayList</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public CopyOnWriteArrayList(E[] toCopyIn) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="size-大小"><a href="#size-大小" class="headerlink" title="size() 大小"></a>size() 大小</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int size() &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="isEmpty-是否为空"><a href="#isEmpty-是否为空" class="headerlink" title="isEmpty()是否为空"></a>isEmpty()是否为空</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean isEmpty()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="indexOf-Object-o-Object-elements-int-index-int-fence-元素索引"><a href="#indexOf-Object-o-Object-elements-int-index-int-fence-元素索引" class="headerlink" title="indexOf(Object o, Object[] elements,int index, int fence) 元素索引"></a>indexOf(Object o, Object[] elements,int index, int fence) 元素索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static int indexOf(Object o, Object[] elements,int index, int fence) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="indexOf-元素索引"><a href="#indexOf-元素索引" class="headerlink" title="indexOf() 元素索引"></a>indexOf() 元素索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int indexOf(Object o)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="indexOf-E-e-int-index-元素索引"><a href="#indexOf-E-e-int-index-元素索引" class="headerlink" title="indexOf(E e, int index) 元素索引"></a>indexOf(E e, int index) 元素索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int indexOf(E e, int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="lastIndexOf-Object-o-Object-elements-int-index-元素索引-最后一个"><a href="#lastIndexOf-Object-o-Object-elements-int-index-元素索引-最后一个" class="headerlink" title="lastIndexOf(Object o, Object[] elements, int index) 元素索引,最后一个"></a>lastIndexOf(Object o, Object[] elements, int index) 元素索引,最后一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static int lastIndexOf(Object o, Object[] elements, int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="lastIndexOf-Object-o-元素索引-最后一个"><a href="#lastIndexOf-Object-o-元素索引-最后一个" class="headerlink" title="lastIndexOf(Object o) 元素索引,最后一个"></a>lastIndexOf(Object o) 元素索引,最后一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int indexOf(E e, int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="lastIndexOf-E-e-int-index-元素索引-最后一个"><a href="#lastIndexOf-E-e-int-index-元素索引-最后一个" class="headerlink" title="lastIndexOf(E e, int index) 元素索引,最后一个"></a>lastIndexOf(E e, int index) 元素索引,最后一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int lastIndexOf(E e, int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="contains-Object-o-是否包含元素"><a href="#contains-Object-o-是否包含元素" class="headerlink" title="contains(Object o) 是否包含元素"></a>contains(Object o) 是否包含元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean contains(Object o)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="clone-浅拷贝"><a href="#clone-浅拷贝" class="headerlink" title="clone() 浅拷贝"></a>clone() 浅拷贝</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Object clone() &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="toArray-转换成数组"><a href="#toArray-转换成数组" class="headerlink" title="toArray() 转换成数组"></a>toArray() 转换成数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Object[] toArray()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="toArray-T-a-转换成指定类型的数组"><a href="#toArray-T-a-转换成指定类型的数组" class="headerlink" title="toArray(T a[]) 转换成指定类型的数组"></a>toArray(T a[]) 转换成指定类型的数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T[] toArray(T a[]) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="E-get-int-index-获取指定位置的元素"><a href="#E-get-int-index-获取指定位置的元素" class="headerlink" title="E get(int index)获取指定位置的元素"></a>E get(int index)获取指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E get(int index)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="set-int-index-E-element-指定位置设置元素"><a href="#set-int-index-E-element-指定位置设置元素" class="headerlink" title="set(int index, E element) 指定位置设置元素"></a>set(int index, E element) 指定位置设置元素</h2><blockquote>
+<p>写元素的时候,先获得锁,finall块中释放锁</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public E set(int index, E element) &#123;</span><br><span class="line">        final ReentrantLock lock = this.lock;</span><br><span class="line">        lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            Object[] elements = getArray();</span><br><span class="line">            E oldValue = get(elements, index);</span><br><span class="line"></span><br><span class="line">            if (oldValue != element) &#123;</span><br><span class="line">                int len = elements.length;</span><br><span class="line">                Object[] newElements = Arrays.copyOf(elements, len);</span><br><span class="line">                newElements[index] = element;</span><br><span class="line">                setArray(newElements);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                // Not quite a no-op; ensures volatile write semantics</span><br><span class="line">                setArray(elements);</span><br><span class="line">            &#125;</span><br><span class="line">            return oldValue;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="add-E-e-元素添加到末尾"><a href="#add-E-e-元素添加到末尾" class="headerlink" title="add(E e) 元素添加到末尾"></a>add(E e) 元素添加到末尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="add-int-index-E-element-指定位置之后插入元素"><a href="#add-int-index-E-element-指定位置之后插入元素" class="headerlink" title="add(int index, E element) 指定位置之后插入元素"></a>add(int index, E element) 指定位置之后插入元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void add(int index, E element)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="remove-int-index-删除指定位置的元素"><a href="#remove-int-index-删除指定位置的元素" class="headerlink" title="remove(int index)删除指定位置的元素"></a>remove(int index)删除指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E remove(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="remove-Object-o-删除第一个匹配的元素"><a href="#remove-Object-o-删除第一个匹配的元素" class="headerlink" title="remove(Object o) 删除第一个匹配的元素"></a>remove(Object o) 删除第一个匹配的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean remove(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="removeRange-int-fromIndex-int-toIndex-删除指定区间的元素"><a href="#removeRange-int-fromIndex-int-toIndex-删除指定区间的元素" class="headerlink" title="removeRange(int fromIndex, int toIndex) 删除指定区间的元素"></a>removeRange(int fromIndex, int toIndex) 删除指定区间的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private void removeRange(int fromIndex, int toIndex) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="addIfAbsent-E-e-如果元素不存在就添加进list中"><a href="#addIfAbsent-E-e-如果元素不存在就添加进list中" class="headerlink" title="addIfAbsent(E e) 如果元素不存在就添加进list中"></a>addIfAbsent(E e) 如果元素不存在就添加进list中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean addIfAbsent(E e)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="containsAll-Collection-lt-gt-c-是否包含全部"><a href="#containsAll-Collection-lt-gt-c-是否包含全部" class="headerlink" title="containsAll(Collection&lt;?&gt; c)是否包含全部"></a>containsAll(Collection&lt;?&gt; c)是否包含全部</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean containsAll(Collection&lt;?&gt; c)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="removeAll-Collection-lt-gt-c-移除全部包含在集合中的元素"><a href="#removeAll-Collection-lt-gt-c-移除全部包含在集合中的元素" class="headerlink" title="removeAll(Collection&lt;?&gt; c) 移除全部包含在集合中的元素"></a>removeAll(Collection&lt;?&gt; c) 移除全部包含在集合中的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean removeAll(Collection&lt;?&gt; c)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="retainAll-Collection-lt-gt-c-保留指定集合的元素-其他的删除"><a href="#retainAll-Collection-lt-gt-c-保留指定集合的元素-其他的删除" class="headerlink" title="retainAll(Collection&lt;?&gt; c) 保留指定集合的元素,其他的删除"></a>retainAll(Collection&lt;?&gt; c) 保留指定集合的元素,其他的删除</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean retainAll(Collection&lt;?&gt; c)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="addAllAbsent-Collection-lt-extends-E-gt-c-如果不存在就添加进去"><a href="#addAllAbsent-Collection-lt-extends-E-gt-c-如果不存在就添加进去" class="headerlink" title="addAllAbsent(Collection&lt;? extends E&gt; c) 如果不存在就添加进去"></a>addAllAbsent(Collection&lt;? extends E&gt; c) 如果不存在就添加进去</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int addAllAbsent(Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="clear-清空list"><a href="#clear-清空list" class="headerlink" title="clear() 清空list"></a>clear() 清空list</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void clear()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="addAll-Collection-lt-extends-E-gt-c-添加集合中的元素到尾部"><a href="#addAll-Collection-lt-extends-E-gt-c-添加集合中的元素到尾部" class="headerlink" title="addAll(Collection&lt;? extends E&gt; c)添加集合中的元素到尾部"></a>addAll(Collection&lt;? extends E&gt; c)添加集合中的元素到尾部</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void addAll(Collection&lt;? extends E&gt; c)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="addAll-int-index-Collection-lt-extends-E-gt-c-添加集合中元素到指定位置之后"><a href="#addAll-int-index-Collection-lt-extends-E-gt-c-添加集合中元素到指定位置之后" class="headerlink" title="addAll(int index, Collection&lt;? extends E&gt; c) 添加集合中元素到指定位置之后"></a>addAll(int index, Collection&lt;? extends E&gt; c) 添加集合中元素到指定位置之后</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean addAll(int index, Collection&lt;? extends E&gt; c)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString()"></a>toString()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public String toString()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="equals-Object-o"><a href="#equals-Object-o" class="headerlink" title="equals(Object o)"></a>equals(Object o)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public boolean equals(Object o) &#123;</span><br><span class="line">        if (o == this)</span><br><span class="line">            return true;</span><br><span class="line">        if (!(o instanceof List))</span><br><span class="line">            return false;</span><br><span class="line"></span><br><span class="line">        List&lt;?&gt; list = (List&lt;?&gt;)(o);</span><br><span class="line">        Iterator&lt;?&gt; it = list.iterator();</span><br><span class="line">        Object[] elements = getArray();</span><br><span class="line">        int len = elements.length;</span><br><span class="line">        for (int i = 0; i &lt; len; ++i)</span><br><span class="line">            if (!it.hasNext() || !eq(elements[i], it.next()))</span><br><span class="line">                return false;</span><br><span class="line">        if (it.hasNext())</span><br><span class="line">            return false;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="hashCode"><a href="#hashCode" class="headerlink" title="hashCode()"></a>hashCode()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int hashCode&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="listIterator-final-int-index-和-listIterator-返回一个迭代器-支持向前和向后遍历"><a href="#listIterator-final-int-index-和-listIterator-返回一个迭代器-支持向前和向后遍历" class="headerlink" title="listIterator(final int index)和 listIterator() 返回一个迭代器,支持向前和向后遍历"></a>listIterator(final int index)和 listIterator() 返回一个迭代器,支持向前和向后遍历</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public ListIterator&lt;E&gt; listIterator(final int index) &#123;&#125;</span><br><span class="line"></span><br><span class="line">public ListIterator&lt;E&gt; listIterator() &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="iterator-只能向后遍历"><a href="#iterator-只能向后遍历" class="headerlink" title="iterator() 只能向后遍历"></a>iterator() 只能向后遍历</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Iterator&lt;E&gt; iterator() &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="subList-返回部分list"><a href="#subList-返回部分list" class="headerlink" title="subList() 返回部分list"></a>subList() 返回部分list</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public List&lt;E&gt; subList(int fromIndex, int toIndex) &#123;</span><br><span class="line">	...</span><br><span class="line">	return new COWSubList&lt;E&gt;(this, fromIndex, toIndex);</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://www.cnblogs.com/sunwei2012/archive/2010/10/08/1845656.html" target="_blank" rel="external">http://www.cnblogs.com/sunwei2012/archive/2010/10/08/1845656.html</a></p>
+<p><a href="http://my.oschina.net/jielucky/blog/167198" target="_blank" rel="external">http://my.oschina.net/jielucky/blog/167198</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CopyOnWriteArrayList/" rel="tag"># CopyOnWriteArrayList</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/25/Stack简介/" rel="next" title="Stack简介">
+                <i class="fa fa-chevron-left"></i> Stack简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/25/HashMap简介/" rel="prev" title="HashMap简介">
+                HashMap简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#add-E-e-方法"><span class="nav-number">2.</span> <span class="nav-text">add(E e)方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#add-int-index-E-element-方法"><span class="nav-number">3.</span> <span class="nav-text">add(int index, E element)方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#set-int-index-E-element-方法"><span class="nav-number">4.</span> <span class="nav-text">set(int index, E element)方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#get-int-index-方法"><span class="nav-number">5.</span> <span class="nav-text">get(int index)方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remove（）"><span class="nav-number">6.</span> <span class="nav-text">remove（）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#迭代"><span class="nav-number">7.</span> <span class="nav-text">迭代</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析"><span class="nav-number">8.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#空构造-初始化一个长度为0的数组"><span class="nav-number">8.1.</span> <span class="nav-text">空构造,初始化一个长度为0的数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用集合初始化一个CopyOnWriteArrayList"><span class="nav-number">8.2.</span> <span class="nav-text">利用集合初始化一个CopyOnWriteArrayList</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用数组初始化一个CopyOnWriteArrayList"><span class="nav-number">8.3.</span> <span class="nav-text">利用数组初始化一个CopyOnWriteArrayList</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#size-大小"><span class="nav-number">8.4.</span> <span class="nav-text">size() 大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isEmpty-是否为空"><span class="nav-number">8.5.</span> <span class="nav-text">isEmpty()是否为空</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#indexOf-Object-o-Object-elements-int-index-int-fence-元素索引"><span class="nav-number">8.6.</span> <span class="nav-text">indexOf(Object o, Object[] elements,int index, int fence) 元素索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#indexOf-元素索引"><span class="nav-number">8.7.</span> <span class="nav-text">indexOf() 元素索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#indexOf-E-e-int-index-元素索引"><span class="nav-number">8.8.</span> <span class="nav-text">indexOf(E e, int index) 元素索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lastIndexOf-Object-o-Object-elements-int-index-元素索引-最后一个"><span class="nav-number">8.9.</span> <span class="nav-text">lastIndexOf(Object o, Object[] elements, int index) 元素索引,最后一个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lastIndexOf-Object-o-元素索引-最后一个"><span class="nav-number">8.10.</span> <span class="nav-text">lastIndexOf(Object o) 元素索引,最后一个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lastIndexOf-E-e-int-index-元素索引-最后一个"><span class="nav-number">8.11.</span> <span class="nav-text">lastIndexOf(E e, int index) 元素索引,最后一个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#contains-Object-o-是否包含元素"><span class="nav-number">8.12.</span> <span class="nav-text">contains(Object o) 是否包含元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clone-浅拷贝"><span class="nav-number">8.13.</span> <span class="nav-text">clone() 浅拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toArray-转换成数组"><span class="nav-number">8.14.</span> <span class="nav-text">toArray() 转换成数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toArray-T-a-转换成指定类型的数组"><span class="nav-number">8.15.</span> <span class="nav-text">toArray(T a[]) 转换成指定类型的数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#E-get-int-index-获取指定位置的元素"><span class="nav-number">8.16.</span> <span class="nav-text">E get(int index)获取指定位置的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#set-int-index-E-element-指定位置设置元素"><span class="nav-number">8.17.</span> <span class="nav-text">set(int index, E element) 指定位置设置元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-E-e-元素添加到末尾"><span class="nav-number">8.18.</span> <span class="nav-text">add(E e) 元素添加到末尾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-int-index-E-element-指定位置之后插入元素"><span class="nav-number">8.19.</span> <span class="nav-text">add(int index, E element) 指定位置之后插入元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-int-index-删除指定位置的元素"><span class="nav-number">8.20.</span> <span class="nav-text">remove(int index)删除指定位置的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-Object-o-删除第一个匹配的元素"><span class="nav-number">8.21.</span> <span class="nav-text">remove(Object o) 删除第一个匹配的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#removeRange-int-fromIndex-int-toIndex-删除指定区间的元素"><span class="nav-number">8.22.</span> <span class="nav-text">removeRange(int fromIndex, int toIndex) 删除指定区间的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addIfAbsent-E-e-如果元素不存在就添加进list中"><span class="nav-number">8.23.</span> <span class="nav-text">addIfAbsent(E e) 如果元素不存在就添加进list中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#containsAll-Collection-lt-gt-c-是否包含全部"><span class="nav-number">8.24.</span> <span class="nav-text">containsAll(Collection<?> c)是否包含全部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#removeAll-Collection-lt-gt-c-移除全部包含在集合中的元素"><span class="nav-number">8.25.</span> <span class="nav-text">removeAll(Collection<?> c) 移除全部包含在集合中的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#retainAll-Collection-lt-gt-c-保留指定集合的元素-其他的删除"><span class="nav-number">8.26.</span> <span class="nav-text">retainAll(Collection<?> c) 保留指定集合的元素,其他的删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addAllAbsent-Collection-lt-extends-E-gt-c-如果不存在就添加进去"><span class="nav-number">8.27.</span> <span class="nav-text">addAllAbsent(Collection<? extends E> c) 如果不存在就添加进去</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clear-清空list"><span class="nav-number">8.28.</span> <span class="nav-text">clear() 清空list</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addAll-Collection-lt-extends-E-gt-c-添加集合中的元素到尾部"><span class="nav-number">8.29.</span> <span class="nav-text">addAll(Collection<? extends E> c)添加集合中的元素到尾部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addAll-int-index-Collection-lt-extends-E-gt-c-添加集合中元素到指定位置之后"><span class="nav-number">8.30.</span> <span class="nav-text">addAll(int index, Collection<? extends E> c) 添加集合中元素到指定位置之后</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toString-NaN"><span class="nav-number">8.31.</span> <span class="nav-text">toString()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#equals-Object-o"><span class="nav-number">8.32.</span> <span class="nav-text">equals(Object o)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hashCode"><span class="nav-number">8.33.</span> <span class="nav-text">hashCode()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#listIterator-final-int-index-和-listIterator-返回一个迭代器-支持向前和向后遍历"><span class="nav-number">8.34.</span> <span class="nav-text">listIterator(final int index)和 listIterator() 返回一个迭代器,支持向前和向后遍历</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iterator-只能向后遍历"><span class="nav-number">8.35.</span> <span class="nav-text">iterator() 只能向后遍历</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#subList-返回部分list"><span class="nav-number">8.36.</span> <span class="nav-text">subList() 返回部分list</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2016/05/25/CopyOnWriteArrayList简介/';
+
+      var disqus_title = "CopyOnWriteArrayList简介";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

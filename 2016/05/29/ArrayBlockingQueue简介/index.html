@@ -1,0 +1,1058 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ArrayBlockingQueue," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="ArrayBlockingQueue基于数组，先进先出，从尾部插入到队列，从头部开始返回。
+线程安全的有序阻塞队列，内部通过“互斥锁”保护竞争资源。
+指定时间的阻塞读写
+容量可限制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ArrayBlockingQueue简介">
+<meta property="og:url" content="http://dachengxi.github.com/2016/05/29/ArrayBlockingQueue简介/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="ArrayBlockingQueue基于数组，先进先出，从尾部插入到队列，从头部开始返回。
+线程安全的有序阻塞队列，内部通过“互斥锁”保护竞争资源。
+指定时间的阻塞读写
+容量可限制">
+<meta property="og:updated_time" content="2016-08-05T02:06:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ArrayBlockingQueue简介">
+<meta name="twitter:description" content="ArrayBlockingQueue基于数组，先进先出，从尾部插入到队列，从头部开始返回。
+线程安全的有序阻塞队列，内部通过“互斥锁”保护竞争资源。
+指定时间的阻塞读写
+容量可限制">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2016/05/29/ArrayBlockingQueue简介/"/>
+
+
+
+
+
+  <title> ArrayBlockingQueue简介 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/05/29/ArrayBlockingQueue简介/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ArrayBlockingQueue简介
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-05-29T18:46:59+08:00">
+                2016-05-29 18:46:59
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Java基础</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java基础/并发集合/" itemprop="url" rel="index">
+                    <span itemprop="name">并发集合</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/05/29/ArrayBlockingQueue简介/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/29/ArrayBlockingQueue简介/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ol>
+<li>ArrayBlockingQueue基于数组，先进先出，从尾部插入到队列，从头部开始返回。</li>
+<li>线程安全的有序阻塞队列，内部通过“互斥锁”保护竞争资源。</li>
+<li>指定时间的阻塞读写</li>
+<li>容量可限制</li>
+</ol>
+<a id="more"></a>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>ArrayBlockingQueue继承AbstractQueue，实现了BlockingQueue，Serializable接口，内部元素使用Object[]数组保存。初始化时候需要指定容量<code>ArrayBlockingQueue(int capacity)</code>，ArrayBlockingQueue默认会使用非公平锁。</p>
+<p>ArrayBlockingQueue只使用一把锁，造成在存取两种操作时会竞争同一把锁，而使得性能相对低下。</p>
+<h1 id="add-E-方法和offer-E"><a href="#add-E-方法和offer-E" class="headerlink" title="add(E)方法和offer(E)"></a>add(E)方法和offer(E)</h1><p>调用父类中的add方法，查看源码可知父类中的add方法是调用offer方法实现,所以查看offer方法源码，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public boolean offer(E e) &#123;</span><br><span class="line">	//检查元素不为null</span><br><span class="line">    checkNotNull(e);</span><br><span class="line">    //加锁，独占锁保护竞态资源。</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">    	//队列已满，返回false</span><br><span class="line">        if (count == items.length)</span><br><span class="line">            return false;</span><br><span class="line">        else &#123;</span><br><span class="line">        	//插入元素,返回true</span><br><span class="line">            insert(e);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">    	//释放锁</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>insert源码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private void insert(E x) &#123;</span><br><span class="line">	//将元素添加到队列中</span><br><span class="line">    items[putIndex] = x;</span><br><span class="line">    //putIndex表示下一个被添加元素的索引，设置下一个被添加元素的索引，若队列满了，就设置下一个被添加元素索引为0</span><br><span class="line">    putIndex = inc(putIndex);</span><br><span class="line">    //队列的元素数加1</span><br><span class="line">    ++count;</span><br><span class="line">    //唤醒notEmpty上的等待线程,也就是取元素的线程。</span><br><span class="line">    notEmpty.signal();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="take-方法"><a href="#take-方法" class="headerlink" title="take()方法"></a>take()方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public E take() throws InterruptedException &#123;</span><br><span class="line">	//获取独占锁，加锁，线程是中断状态的话会抛异常</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lockInterruptibly();</span><br><span class="line">    try &#123;</span><br><span class="line">    	//队列为空，会一直等待</span><br><span class="line">        while (count == 0)</span><br><span class="line">            notEmpty.await();</span><br><span class="line">        //取元素的方法</span><br><span class="line">        return extract();</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">    	//释放锁</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">private E extract() &#123;</span><br><span class="line">    final Object[] items = this.items;</span><br><span class="line">    E x = this.&lt;E&gt;cast(items[takeIndex]);</span><br><span class="line">    //取完之后，删除元素</span><br><span class="line">    items[takeIndex] = null;</span><br><span class="line">    //设置下一个被取出的元素索引，若是最后一个元素，下一个被取出的元素索引为0</span><br><span class="line">    takeIndex = inc(takeIndex);</span><br><span class="line">    //元素数减1</span><br><span class="line">    --count;</span><br><span class="line">    //唤醒添加元素的线程</span><br><span class="line">    notFull.signal();</span><br><span class="line">    return x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><blockquote>
+<p>jdk1.7.0_71</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//队列元素</span><br><span class="line">final Object[] items;</span><br><span class="line">//下次被take,poll,remove的索引</span><br><span class="line">int takeIndex;</span><br><span class="line">//下次被put,offer,add的索引</span><br><span class="line">int putIndex;</span><br><span class="line">//队列中元素的个数</span><br><span class="line">int count;</span><br><span class="line">//保护所有访问的主锁</span><br><span class="line">final ReentrantLock lock;</span><br><span class="line">//等待take锁,读线程条件</span><br><span class="line">private final Condition notEmpty;</span><br><span class="line">//等待put锁,写线程条件</span><br><span class="line">private final Condition notFull;</span><br></pre></td></tr></table></figure>
+<h2 id="ArrayBlockingQueue-int-capacity-给定容量和默认的访问规则初始化"><a href="#ArrayBlockingQueue-int-capacity-给定容量和默认的访问规则初始化" class="headerlink" title="ArrayBlockingQueue(int capacity) 给定容量和默认的访问规则初始化"></a>ArrayBlockingQueue(int capacity) 给定容量和默认的访问规则初始化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public ArrayBlockingQueue(int capacity)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ArrayBlockingQueue-int-capacity-boolean-fair-知道你跟容量和访问规则"><a href="#ArrayBlockingQueue-int-capacity-boolean-fair-知道你跟容量和访问规则" class="headerlink" title="ArrayBlockingQueue(int capacity, boolean fair)知道你跟容量和访问规则"></a>ArrayBlockingQueue(int capacity, boolean fair)知道你跟容量和访问规则</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//fair为true,在插入和删除时,线程的队列访问会阻塞,并且按照先进先出的顺序,false,访问顺序是不确定的</span><br><span class="line">public ArrayBlockingQueue(int capacity, boolean fair) &#123;</span><br><span class="line">        if (capacity &lt;= 0)</span><br><span class="line">            throw new IllegalArgumentException();</span><br><span class="line">        this.items = new Object[capacity];</span><br><span class="line">        lock = new ReentrantLock(fair);</span><br><span class="line">        notEmpty = lock.newCondition();</span><br><span class="line">        notFull =  lock.newCondition();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="ArrayBlockingQueue-int-capacity-boolean-fair-Collection-lt-extends-E-gt-c-指定容量-访问规则-集合来初始化"><a href="#ArrayBlockingQueue-int-capacity-boolean-fair-Collection-lt-extends-E-gt-c-指定容量-访问规则-集合来初始化" class="headerlink" title="ArrayBlockingQueue(int capacity, boolean fair,Collection&lt;? extends E&gt; c) 指定容量,访问规则,集合来初始化"></a>ArrayBlockingQueue(int capacity, boolean fair,Collection&lt;? extends E&gt; c) 指定容量,访问规则,集合来初始化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public ArrayBlockingQueue(int capacity, boolean fair,</span><br><span class="line">                              Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="add-E-e-添加元素到队列末尾-成功返回true-队列满了抛异常IllegalStateException"><a href="#add-E-e-添加元素到队列末尾-成功返回true-队列满了抛异常IllegalStateException" class="headerlink" title="add(E e) 添加元素到队列末尾,成功返回true,队列满了抛异常IllegalStateException"></a>add(E e) 添加元素到队列末尾,成功返回true,队列满了抛异常IllegalStateException</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">        return super.add(e);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="offer-E-e-添加元素到队列末尾-成功返回true-队列满了返回false"><a href="#offer-E-e-添加元素到队列末尾-成功返回true-队列满了返回false" class="headerlink" title="offer(E e)添加元素到队列末尾,成功返回true,队列满了返回false"></a>offer(E e)添加元素到队列末尾,成功返回true,队列满了返回false</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean offer(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="put-E-e-添加元素到队列末尾-队列满了-等待"><a href="#put-E-e-添加元素到队列末尾-队列满了-等待" class="headerlink" title="put(E e) 添加元素到队列末尾,队列满了,等待."></a>put(E e) 添加元素到队列末尾,队列满了,等待.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void put(E e) throws InterruptedException &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="offer-E-e-long-timeout-TimeUnit-unit-添加元素到队列末尾-如果队列满了-等待指定的时间"><a href="#offer-E-e-long-timeout-TimeUnit-unit-添加元素到队列末尾-如果队列满了-等待指定的时间" class="headerlink" title="offer(E e, long timeout, TimeUnit unit)添加元素到队列末尾,如果队列满了,等待指定的时间"></a>offer(E e, long timeout, TimeUnit unit)添加元素到队列末尾,如果队列满了,等待指定的时间</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean offer(E e, long timeout, TimeUnit unit)&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="poll-移除队列头"><a href="#poll-移除队列头" class="headerlink" title="poll() 移除队列头"></a>poll() 移除队列头</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E poll() &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="take-移除队列头-队列为空的话就等待"><a href="#take-移除队列头-队列为空的话就等待" class="headerlink" title="take() 移除队列头,队列为空的话就等待"></a>take() 移除队列头,队列为空的话就等待</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E take() throws InterruptedException &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="poll-long-timeout-TimeUnit-unit-移除队列头-队列为空-等待指定的时间"><a href="#poll-long-timeout-TimeUnit-unit-移除队列头-队列为空-等待指定的时间" class="headerlink" title="poll(long timeout, TimeUnit unit)移除队列头,队列为空,等待指定的时间"></a>poll(long timeout, TimeUnit unit)移除队列头,队列为空,等待指定的时间</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E poll(long timeout, TimeUnit unit) throws InterruptedException &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="peek-返回队列头-不删除"><a href="#peek-返回队列头-不删除" class="headerlink" title="peek()返回队列头,不删除"></a>peek()返回队列头,不删除</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E peek() &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="size"><a href="#size" class="headerlink" title="size()"></a>size()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int size()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="remainingCapacity-返回无阻塞情况下队列能接受容量的大小"><a href="#remainingCapacity-返回无阻塞情况下队列能接受容量的大小" class="headerlink" title="remainingCapacity() 返回无阻塞情况下队列能接受容量的大小"></a>remainingCapacity() 返回无阻塞情况下队列能接受容量的大小</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int remainingCapacity() &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="remove-Object-o-从队列中删除元素"><a href="#remove-Object-o-从队列中删除元素" class="headerlink" title="remove(Object o)从队列中删除元素"></a>remove(Object o)从队列中删除元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean remove(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="contains-Object-o-是否包含元素"><a href="#contains-Object-o-是否包含元素" class="headerlink" title="contains(Object o) 是否包含元素"></a>contains(Object o) 是否包含元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean contains(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="toArray"><a href="#toArray" class="headerlink" title="toArray()"></a>toArray()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Object[] toArray()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="toArray-T-a"><a href="#toArray-T-a" class="headerlink" title="toArray(T[] a)"></a>toArray(T[] a)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T[] toArray(T[] a) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString()"></a>toString()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public String toString()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="clear"><a href="#clear" class="headerlink" title="clear()"></a>clear()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void clear()&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="drainTo-Collection-lt-super-E-gt-c-移除队列中可用元素-添加到集合中"><a href="#drainTo-Collection-lt-super-E-gt-c-移除队列中可用元素-添加到集合中" class="headerlink" title="drainTo(Collection&lt;? super E&gt; c)移除队列中可用元素,添加到集合中"></a>drainTo(Collection&lt;? super E&gt; c)移除队列中可用元素,添加到集合中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int drainTo(Collection&lt;? super E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="drainTo-Collection-lt-super-E-gt-c-int-maxElements-移除队列中给定数量的可用元素-添加到集合中"><a href="#drainTo-Collection-lt-super-E-gt-c-int-maxElements-移除队列中给定数量的可用元素-添加到集合中" class="headerlink" title="drainTo(Collection&lt;? super E&gt; c, int maxElements)移除队列中给定数量的可用元素,添加到集合中"></a>drainTo(Collection&lt;? super E&gt; c, int maxElements)移除队列中给定数量的可用元素,添加到集合中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int drainTo(Collection&lt;? super E&gt; c, int maxElements) &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="iterator-返回一个迭代器"><a href="#iterator-返回一个迭代器" class="headerlink" title="iterator() 返回一个迭代器"></a>iterator() 返回一个迭代器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public Iterator&lt;E&gt; iterator() &#123;</span><br><span class="line">        return new Itr();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://www.jianshu.com/p/9a652250e0d1" target="_blank" rel="external">http://www.jianshu.com/p/9a652250e0d1</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ArrayBlockingQueue/" rel="tag"># ArrayBlockingQueue</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/27/CopyOnWriteArraySet简介/" rel="next" title="CopyOnWriteArraySet简介">
+                <i class="fa fa-chevron-left"></i> CopyOnWriteArraySet简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/30/AtomicInteger简介/" rel="prev" title="AtomicInteger简介">
+                AtomicInteger简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#add-E-方法和offer-E"><span class="nav-number">2.</span> <span class="nav-text">add(E)方法和offer(E)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#take-方法"><span class="nav-number">3.</span> <span class="nav-text">take()方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析"><span class="nav-number">4.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ArrayBlockingQueue-int-capacity-给定容量和默认的访问规则初始化"><span class="nav-number">4.1.</span> <span class="nav-text">ArrayBlockingQueue(int capacity) 给定容量和默认的访问规则初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ArrayBlockingQueue-int-capacity-boolean-fair-知道你跟容量和访问规则"><span class="nav-number">4.2.</span> <span class="nav-text">ArrayBlockingQueue(int capacity, boolean fair)知道你跟容量和访问规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ArrayBlockingQueue-int-capacity-boolean-fair-Collection-lt-extends-E-gt-c-指定容量-访问规则-集合来初始化"><span class="nav-number">4.3.</span> <span class="nav-text">ArrayBlockingQueue(int capacity, boolean fair,Collection<? extends E> c) 指定容量,访问规则,集合来初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-E-e-添加元素到队列末尾-成功返回true-队列满了抛异常IllegalStateException"><span class="nav-number">4.4.</span> <span class="nav-text">add(E e) 添加元素到队列末尾,成功返回true,队列满了抛异常IllegalStateException</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#offer-E-e-添加元素到队列末尾-成功返回true-队列满了返回false"><span class="nav-number">4.5.</span> <span class="nav-text">offer(E e)添加元素到队列末尾,成功返回true,队列满了返回false</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#put-E-e-添加元素到队列末尾-队列满了-等待"><span class="nav-number">4.6.</span> <span class="nav-text">put(E e) 添加元素到队列末尾,队列满了,等待.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#offer-E-e-long-timeout-TimeUnit-unit-添加元素到队列末尾-如果队列满了-等待指定的时间"><span class="nav-number">4.7.</span> <span class="nav-text">offer(E e, long timeout, TimeUnit unit)添加元素到队列末尾,如果队列满了,等待指定的时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#poll-移除队列头"><span class="nav-number">4.8.</span> <span class="nav-text">poll() 移除队列头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#take-移除队列头-队列为空的话就等待"><span class="nav-number">4.9.</span> <span class="nav-text">take() 移除队列头,队列为空的话就等待</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#poll-long-timeout-TimeUnit-unit-移除队列头-队列为空-等待指定的时间"><span class="nav-number">4.10.</span> <span class="nav-text">poll(long timeout, TimeUnit unit)移除队列头,队列为空,等待指定的时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#peek-返回队列头-不删除"><span class="nav-number">4.11.</span> <span class="nav-text">peek()返回队列头,不删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#size"><span class="nav-number">4.12.</span> <span class="nav-text">size()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remainingCapacity-返回无阻塞情况下队列能接受容量的大小"><span class="nav-number">4.13.</span> <span class="nav-text">remainingCapacity() 返回无阻塞情况下队列能接受容量的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-Object-o-从队列中删除元素"><span class="nav-number">4.14.</span> <span class="nav-text">remove(Object o)从队列中删除元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#contains-Object-o-是否包含元素"><span class="nav-number">4.15.</span> <span class="nav-text">contains(Object o) 是否包含元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toArray"><span class="nav-number">4.16.</span> <span class="nav-text">toArray()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toArray-T-a"><span class="nav-number">4.17.</span> <span class="nav-text">toArray(T[] a)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toString-NaN"><span class="nav-number">4.18.</span> <span class="nav-text">toString()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clear"><span class="nav-number">4.19.</span> <span class="nav-text">clear()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#drainTo-Collection-lt-super-E-gt-c-移除队列中可用元素-添加到集合中"><span class="nav-number">4.20.</span> <span class="nav-text">drainTo(Collection<? super E> c)移除队列中可用元素,添加到集合中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#drainTo-Collection-lt-super-E-gt-c-int-maxElements-移除队列中给定数量的可用元素-添加到集合中"><span class="nav-number">4.21.</span> <span class="nav-text">drainTo(Collection<? super E> c, int maxElements)移除队列中给定数量的可用元素,添加到集合中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iterator-返回一个迭代器"><span class="nav-number">4.22.</span> <span class="nav-text">iterator() 返回一个迭代器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2016/05/29/ArrayBlockingQueue简介/';
+
+      var disqus_title = "ArrayBlockingQueue简介";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

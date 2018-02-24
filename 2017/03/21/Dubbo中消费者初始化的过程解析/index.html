@@ -1,0 +1,1131 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="dubbo源码,dubbo消费者初始化," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="首先还是Spring碰到dubbo的标签之后，会使用parseCustomElement解析dubbo标签，使用的解析器是dubbo的DubboBeanDefinitionParser，解析完成之后返回BeanDefinition给Spring管理。
+服务消费者端对应的是ReferenceBean，实现了ApplicationContextAware接口，Spring会在Bean的实例化那一步回调">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo中消费者初始化的过程解析">
+<meta property="og:url" content="http://dachengxi.github.com/2017/03/21/Dubbo中消费者初始化的过程解析/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="首先还是Spring碰到dubbo的标签之后，会使用parseCustomElement解析dubbo标签，使用的解析器是dubbo的DubboBeanDefinitionParser，解析完成之后返回BeanDefinition给Spring管理。
+服务消费者端对应的是ReferenceBean，实现了ApplicationContextAware接口，Spring会在Bean的实例化那一步回调">
+<meta property="og:updated_time" content="2017-04-23T07:14:08.693Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dubbo中消费者初始化的过程解析">
+<meta name="twitter:description" content="首先还是Spring碰到dubbo的标签之后，会使用parseCustomElement解析dubbo标签，使用的解析器是dubbo的DubboBeanDefinitionParser，解析完成之后返回BeanDefinition给Spring管理。
+服务消费者端对应的是ReferenceBean，实现了ApplicationContextAware接口，Spring会在Bean的实例化那一步回调">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://dachengxi.github.com/2017/03/21/Dubbo中消费者初始化的过程解析/"/>
+
+
+
+
+
+  <title> Dubbo中消费者初始化的过程解析 | 大程熙 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大程熙</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小角落</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            读书
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/03/21/Dubbo中消费者初始化的过程解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Dubbo中消费者初始化的过程解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-21T20:30:29+08:00">
+                2017-03-21 20:30:29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/dubbo/" itemprop="url" rel="index">
+                    <span itemprop="name">dubbo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/03/21/Dubbo中消费者初始化的过程解析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/21/Dubbo中消费者初始化的过程解析/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>首先还是Spring碰到dubbo的标签之后，会使用parseCustomElement解析dubbo标签，使用的解析器是dubbo的DubboBeanDefinitionParser，解析完成之后返回BeanDefinition给Spring管理。</p>
+<p>服务消费者端对应的是ReferenceBean，实现了ApplicationContextAware接口，Spring会在Bean的实例化那一步回调setApplicationContext方法。也实现了InitializingBean接口，接着会回调afterPropertySet方法。还实现了FactoryBean接口，实现FactoryBean可以在后期获取bean的时候做一些操作，dubbo在这个时候做初始化。另外ReferenceBean还实现了DisposableBean，会在bean销毁的时候调用destory方法。<br><a id="more"></a><br>消费者的初始化是在ReferenceBean的init方法中执行，分为两种情况：</p>
+<ul>
+<li>reference标签中没有配置init属性，此时是延迟初始化的，也就是只有等到bean引用被注入到其他Bean中，或者调用getBean获取这个Bean的时候，才会初始化。比如在这里的例子里reference没有配置init属性，只有等到<code>HelloService helloService = (HelloService) applicationContext.getBean(&quot;helloService&quot;);</code>这句getBean的时候，才会开始调用init方法进行初始化。</li>
+<li>另外一种情况是立即初始化，即是如果reference标签中init属性配置为true，会立即进行初始化（也就是上面说到的实现了FactoryBean接口）。</li>
+</ul>
+<h1 id="初始化开始"><a href="#初始化开始" class="headerlink" title="初始化开始"></a>初始化开始</h1><p>这里以没有配置init的reference为例，只要不注入bean或者不调用getBean获取bean的时候，就不会被初始化。<code>HelloService helloService = (HelloService) applicationContext.getBean(&quot;helloService&quot;);</code></p>
+<p>另外在ReferenceBean这个类在Spring中初始化的时候，有几个静态变量会被初始化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">private static final Protocol refprotocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();</span><br><span class="line"></span><br><span class="line">private static final Cluster cluster = ExtensionLoader.getExtensionLoader(Cluster.class).getAdaptiveExtension();</span><br><span class="line"></span><br><span class="line">private static final ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();</span><br></pre></td></tr></table></figure>
+<p>这几个变量的初始化是根据dubbo的SPI扩展机制动态生成的代码：</p>
+<p>refprotocol：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.dubbo.common.extension.ExtensionLoader;</span><br><span class="line">public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol &#123;</span><br><span class="line">  public com.alibaba.dubbo.rpc.Invoker refer(java.lang.Class arg0, com.alibaba.dubbo.common.URL arg1) throws java.lang.Class &#123;</span><br><span class="line">    if (arg1 == null) throw new IllegalArgumentException(&quot;url == null&quot;);</span><br><span class="line"></span><br><span class="line">    com.alibaba.dubbo.common.URL url = arg1;</span><br><span class="line">    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line"></span><br><span class="line">    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);</span><br><span class="line">    </span><br><span class="line">    com.alibaba.dubbo.rpc.Protocol extension = (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.refer(arg0, arg1);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public com.alibaba.dubbo.rpc.Exporter export(com.alibaba.dubbo.rpc.Invoker arg0) throws com.alibaba.dubbo.rpc.Invoker &#123;</span><br><span class="line">    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument == null&quot;);</span><br><span class="line">    </span><br><span class="line">    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();</span><br><span class="line">    </span><br><span class="line">    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line">    </span><br><span class="line">    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);</span><br><span class="line">    </span><br><span class="line">    com.alibaba.dubbo.rpc.Protocol extension = (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.export(arg0);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public void destroy() &#123;</span><br><span class="line">  	throw new UnsupportedOperationException(&quot;method public abstract void com.alibaba.dubbo.rpc.Protocol.destroy() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public int getDefaultPort() &#123;</span><br><span class="line">  	throw new UnsupportedOperationException(&quot;method public abstract int com.alibaba.dubbo.rpc.Protocol.getDefaultPort() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>cluster：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.dubbo.common.extension.ExtensionLoader;</span><br><span class="line">public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster &#123;</span><br><span class="line"></span><br><span class="line">  public com.alibaba.dubbo.rpc.Invoker join(com.alibaba.dubbo.rpc.cluster.Directory arg0) throws com.alibaba.dubbo.rpc.cluster.Directory &#123;</span><br><span class="line">    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument == null&quot;);</span><br><span class="line">    </span><br><span class="line">    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();</span><br><span class="line">    </span><br><span class="line">    String extName = url.getParameter(&quot;cluster&quot;, &quot;failover&quot;);</span><br><span class="line">    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.cluster.Cluster) name from url(&quot; + url.toString() + &quot;) use keys([cluster])&quot;);</span><br><span class="line">    </span><br><span class="line">    com.alibaba.dubbo.rpc.cluster.Cluster extension = (com.alibaba.dubbo.rpc.cluster.Cluster)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.cluster.Cluster.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.join(arg0);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>proxyFactory：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.dubbo.common.extension.ExtensionLoader;</span><br><span class="line">public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory &#123;</span><br><span class="line"></span><br><span class="line">  public java.lang.Object getProxy(com.alibaba.dubbo.rpc.Invoker arg0) throws com.alibaba.dubbo.rpc.Invoker &#123;</span><br><span class="line">    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument == null&quot;);</span><br><span class="line">    </span><br><span class="line">    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();</span><br><span class="line">    </span><br><span class="line">    String extName = url.getParameter(&quot;proxy&quot;, &quot;javassist&quot;);</span><br><span class="line">    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&quot; + url.toString() + &quot;) use keys([proxy])&quot;);</span><br><span class="line">    </span><br><span class="line">    com.alibaba.dubbo.rpc.ProxyFactory extension = (com.alibaba.dubbo.rpc.ProxyFactory)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.ProxyFactory.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.getProxy(arg0);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public com.alibaba.dubbo.rpc.Invoker getInvoker(java.lang.Object arg0, java.lang.Class arg1, com.alibaba.dubbo.common.URL arg2) throws java.lang.Object &#123;</span><br><span class="line">    if (arg2 == null) throw new IllegalArgumentException(&quot;url == null&quot;);</span><br><span class="line">    </span><br><span class="line">    com.alibaba.dubbo.common.URL url = arg2;</span><br><span class="line">    String extName = url.getParameter(&quot;proxy&quot;, &quot;javassist&quot;);</span><br><span class="line">    </span><br><span class="line">    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&quot; + url.toString() + &quot;) use keys([proxy])&quot;);</span><br><span class="line">    </span><br><span class="line">    com.alibaba.dubbo.rpc.ProxyFactory extension = (com.alibaba.dubbo.rpc.ProxyFactory)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.ProxyFactory.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.getInvoker(arg0, arg1, arg2);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="初始化入口"><a href="#初始化入口" class="headerlink" title="初始化入口"></a>初始化入口</h1><p>初始化的入口在ReferenceConfig的get()方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public synchronized T get() &#123;</span><br><span class="line">  if (destroyed)&#123;</span><br><span class="line">  	throw new IllegalStateException(&quot;Already destroyed!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  if (ref == null) &#123;</span><br><span class="line">  	init();</span><br><span class="line">  &#125;</span><br><span class="line">  return ref;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>init()方法会先检查初始化所有的配置信息，然后调用<code>ref = createProxy(map);</code>创建代理，消费者最终得到的是服务的代理。初始化主要做的事情就是引用对应的远程服务，大概的步骤：</p>
+<ul>
+<li>监听注册中心</li>
+<li>连接服务提供者端进行服务引用</li>
+<li>创建服务代理并返回</li>
+</ul>
+<p>文档上关于Zookeeper作为注册中心时，服务消费者启动时要做的事情有：</p>
+<blockquote>
+<p>订阅/dubbo/com.foo.BarService/providers目录下的提供者URL地址。<br>并向/dubbo/com.foo.BarService/consumers目录下写入自己的URL地址。</p>
+</blockquote>
+<h2 id="创建代理"><a href="#创建代理" class="headerlink" title="创建代理"></a>创建代理</h2><ul>
+<li>引用远程服务</li>
+<li>创建代理</li>
+</ul>
+<p>init()中createProxy方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">private T createProxy(Map&lt;String, String&gt; map) &#123;</span><br><span class="line">	//先判断是否是本地服务引用injvm</span><br><span class="line">    //判断是否是点对点直连</span><br><span class="line">    //判断是否是通过注册中心连接</span><br><span class="line">    //然后是服务的引用</span><br><span class="line">    //这里url为</span><br><span class="line">    //registry://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?</span><br><span class="line">    //application=dubbo-consumer&amp;dubbo=2.5.3&amp;pid=12272&amp;</span><br><span class="line">    //refer=application%3Ddubbo-consumer%26dubbo%3D2.5.3%26</span><br><span class="line">    //interface%3Ddubbo.common.hello.service.HelloService%26</span><br><span class="line">    //methods%3DsayHello%26pid%3D12272%26side%3D</span><br><span class="line">    //consumer%26timeout%3D100000%26timestamp%3D1489318676447&amp;</span><br><span class="line">    //registry=zookeeper&amp;timestamp=1489318676641</span><br><span class="line">    //引用远程服务由Protocol的实现来处理</span><br><span class="line">    refprotocol.refer(interfaceClass, url);</span><br><span class="line">    //最后返回服务代理</span><br><span class="line">     return (T) proxyFactory.getProxy(invoker);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里refprotocol是上面生成的代码，会根据协议不同选择不同的Protocol协议。</p>
+<h2 id="引用远程服务"><a href="#引用远程服务" class="headerlink" title="引用远程服务"></a>引用远程服务</h2><p>对于服务引用<code>refprotocol.refer(interfaceClass, url)</code>会首先进入ProtocolListenerWrapper的refer方法，然后在进入ProtocolFilterWrapper的refer方法，然后再进入RegistryProtocol的refer方法，这里的url协议是registry，所以上面两个Wrapper中不做处理，直接进入了RegistryProtocol，看下RegistryProtocol中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException &#123;</span><br><span class="line">	//这里获得的url是</span><br><span class="line">    //zookeeper://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?</span><br><span class="line">    //application=dubbo-consumer&amp;dubbo=2.5.3&amp;pid=12272&amp;</span><br><span class="line">    //refer=application%3Ddubbo-consumer%26dubbo%3D2.5.3%26</span><br><span class="line">    //interface%3Ddubbo.common.hello.service.HelloService%26</span><br><span class="line">    //methods%3DsayHello%26pid%3D12272%26side%3D</span><br><span class="line">    //consumer%26timeout%3D100000%26</span><br><span class="line">    //timestamp%3D1489318676447&amp;timestamp=1489318676641</span><br><span class="line">    url = url.setProtocol(url.getParameter(Constants.REGISTRY_KEY, Constants.DEFAULT_REGISTRY)).removeParameter(Constants.REGISTRY_KEY);</span><br><span class="line">    //根据url获取Registry对象</span><br><span class="line">    //先连接注册中心，把消费者注册到注册中心</span><br><span class="line">    Registry registry = registryFactory.getRegistry(url);</span><br><span class="line">    //判断引用是否是注册中心RegistryService，如果是直接返回刚得到的注册中心服务</span><br><span class="line">    if (RegistryService.class.equals(type)) &#123;</span><br><span class="line">        return proxyFactory.getInvoker((T) registry, type, url);</span><br><span class="line">    &#125;</span><br><span class="line">	//以下是普通服务，需要进入注册中心和集群下面的逻辑</span><br><span class="line">    // group=&quot;a,b&quot; or group=&quot;*&quot;</span><br><span class="line">    //获取ref的各种属性</span><br><span class="line">    Map&lt;String, String&gt; qs = StringUtils.parseQueryString(url.getParameterAndDecoded(Constants.REFER_KEY));</span><br><span class="line">    //获取分组属性</span><br><span class="line">    String group = qs.get(Constants.GROUP_KEY);</span><br><span class="line">    //先判断引用服务是否需要合并不同实现的返回结果</span><br><span class="line">    if (group != null &amp;&amp; group.length() &gt; 0 ) &#123;</span><br><span class="line">        if ( ( Constants.COMMA_SPLIT_PATTERN.split( group ) ).length &gt; 1</span><br><span class="line">                || &quot;*&quot;.equals( group ) ) &#123;</span><br><span class="line">                //使用默认的分组聚合集群策略</span><br><span class="line">            return doRefer( getMergeableCluster(), registry, type, url );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //选择配置的集群策略（cluster=&quot;failback&quot;）或者默认策略</span><br><span class="line">    return doRefer(cluster, registry, type, url);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="获取注册中心"><a href="#获取注册中心" class="headerlink" title="获取注册中心"></a>获取注册中心</h3><p>连接注册中心<code>Registry registry = registryFactory.getRegistry(url);</code>首先会到AbstractRegistryFactory的getRegistry方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public Registry getRegistry(URL url) &#123;</span><br><span class="line">	//这里url是</span><br><span class="line">    //zookeeper://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?</span><br><span class="line">    //application=dubbo-consumer&amp;dubbo=2.5.3&amp;</span><br><span class="line">    //interface=com.alibaba.dubbo.registry.RegistryService&amp;</span><br><span class="line">    //pid=12272&amp;timestamp=1489318676641</span><br><span class="line">    url = url.setPath(RegistryService.class.getName())</span><br><span class="line">            .addParameter(Constants.INTERFACE_KEY, RegistryService.class.getName())</span><br><span class="line">            .removeParameters(Constants.EXPORT_KEY, Constants.REFER_KEY);</span><br><span class="line">    //这里key是</span><br><span class="line">    //zookeeper://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService</span><br><span class="line">    String key = url.toServiceString();</span><br><span class="line">    // 锁定注册中心获取过程，保证注册中心单一实例</span><br><span class="line">    LOCK.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">        Registry registry = REGISTRIES.get(key);</span><br><span class="line">        if (registry != null) &#123;</span><br><span class="line">            return registry;</span><br><span class="line">        &#125;</span><br><span class="line">        //这里用的是ZookeeperRegistryFactory</span><br><span class="line">        //返回的Registry中封装了已经连接到Zookeeper的zkClient实例</span><br><span class="line">        registry = createRegistry(url);</span><br><span class="line">        if (registry == null) &#123;</span><br><span class="line">            throw new IllegalStateException(&quot;Can not create registry &quot; + url);</span><br><span class="line">        &#125;</span><br><span class="line">        //放到缓存中</span><br><span class="line">        REGISTRIES.put(key, registry);</span><br><span class="line">        return registry;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        // 释放锁</span><br><span class="line">        LOCK.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ZookeeperRegistryFactory的createRegistry方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public Registry createRegistry(URL url) &#123;</span><br><span class="line">	//直接返回一个新的ZookeeperRegistry实例</span><br><span class="line">    //这里的zookeeperTransporter代码在下面，动态生成的适配类</span><br><span class="line">    return new ZookeeperRegistry(url, zookeeperTransporter);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>zookeeperTransporter代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package com.alibaba.dubbo.remoting.zookeeper;</span><br><span class="line">import com.alibaba.dubbo.common.extension.ExtensionLoader;</span><br><span class="line">public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter &#123;</span><br><span class="line">    public com.alibaba.dubbo.remoting.zookeeper.ZookeeperClient connect(com.alibaba.dubbo.common.URL arg0) &#123;</span><br><span class="line">        if (arg0 == null) throw new IllegalArgumentException(&quot;url == null&quot;);</span><br><span class="line">        </span><br><span class="line">        com.alibaba.dubbo.common.URL url = arg0;</span><br><span class="line">        String extName = url.getParameter(&quot;client&quot;, url.getParameter(&quot;transporter&quot;, &quot;zkclient&quot;));</span><br><span class="line">        </span><br><span class="line">        if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter) name from url(&quot; + url.toString() + &quot;) use keys([client, transporter])&quot;);</span><br><span class="line">        </span><br><span class="line">        com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter extension = (com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter.class).getExtension(extName);</span><br><span class="line">        </span><br><span class="line">        return extension.connect(arg0);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中可以看到，如果我们没有指定Zookeeper的client属性，默认使用zkClient，所以上面的zookeeperTransporter是ZkclientZookeeperTransporter。</p>
+<p>继续看<code>new ZookeeperRegistry(url, zookeeperTransporter);</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">public ZookeeperRegistry(URL url, ZookeeperTransporter zookeeperTransporter) &#123;</span><br><span class="line">	//这里会先经过AbstractRegistry的处理，然后经过FailbackRegistry的处理（解释在下面）</span><br><span class="line">    super(url);</span><br><span class="line">    if (url.isAnyHost()) &#123;</span><br><span class="line">        throw new IllegalStateException(&quot;registry address == null&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    //服务分组，默认dubbo</span><br><span class="line">    String group = url.getParameter(Constants.GROUP_KEY, DEFAULT_ROOT);</span><br><span class="line">    if (! group.startsWith(Constants.PATH_SEPARATOR)) &#123;</span><br><span class="line">        group = Constants.PATH_SEPARATOR + group;</span><br><span class="line">    &#125;</span><br><span class="line">    //注册中心的节点</span><br><span class="line">    this.root = group;</span><br><span class="line">    //ZkclientZookeeperTransporter的connect方法</span><br><span class="line">    //直接返回一个ZkclientZookeeperClient实例</span><br><span class="line">    //具体的步骤是，new一个ZkClient实例，然后订阅了一个状态变化的监听器</span><br><span class="line">    zkClient = zookeeperTransporter.connect(url);</span><br><span class="line">    //添加一个状态改变的监听器</span><br><span class="line">    zkClient.addStateListener(new StateListener() &#123;</span><br><span class="line">        public void stateChanged(int state) &#123;</span><br><span class="line">            if (state == RECONNECTED) &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    recover();</span><br><span class="line">                &#125; catch (Exception e) &#123;</span><br><span class="line">                    logger.error(e.getMessage(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>AbstractRegistry的处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public AbstractRegistry(URL url) &#123;</span><br><span class="line">	//设置registryUrl</span><br><span class="line">    setUrl(url);</span><br><span class="line">    // 启动文件保存定时器</span><br><span class="line">    syncSaveFile = url.getParameter(Constants.REGISTRY_FILESAVE_SYNC_KEY, false);</span><br><span class="line">    //会先去用户主目录下的.dubbo目录下加载缓存注册中心的缓存文件比如：dubbo-registry-127.0.0.1.cache</span><br><span class="line">    String filename = url.getParameter(Constants.FILE_KEY, System.getProperty(&quot;user.home&quot;) + &quot;/.dubbo/dubbo-registry-&quot; + url.getHost() + &quot;.cache&quot;);</span><br><span class="line">    File file = null;</span><br><span class="line">    if (ConfigUtils.isNotEmpty(filename)) &#123;</span><br><span class="line">        file = new File(filename);</span><br><span class="line">        if(! file.exists() &amp;&amp; file.getParentFile() != null &amp;&amp; ! file.getParentFile().exists())&#123;</span><br><span class="line">            if(! file.getParentFile().mkdirs())&#123;</span><br><span class="line">                throw new IllegalArgumentException(&quot;Invalid registry store file &quot; + file + &quot;, cause: Failed to create directory &quot; + file.getParentFile() + &quot;!&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    this.file = file;</span><br><span class="line">    //缓存文件存在的话就把文件读进内存中</span><br><span class="line">    loadProperties();</span><br><span class="line">    //先获取backup url</span><br><span class="line">    //然后通知订阅</span><br><span class="line">    notify(url.getBackupUrls());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="获取注册中心时的通知方法"><a href="#获取注册中心时的通知方法" class="headerlink" title="获取注册中心时的通知方法"></a>获取注册中心时的通知方法</h3><p>notify方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">protected void notify(List&lt;URL&gt; urls) &#123;</span><br><span class="line">    if(urls == null || urls.isEmpty()) return;</span><br><span class="line">	//getSubscribed()方法获取订阅者列表</span><br><span class="line">    for (Map.Entry&lt;URL, Set&lt;NotifyListener&gt;&gt; entry : getSubscribed().entrySet()) &#123;</span><br><span class="line">        URL url = entry.getKey();</span><br><span class="line"></span><br><span class="line">        if(! UrlUtils.isMatch(url, urls.get(0))) &#123;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Set&lt;NotifyListener&gt; listeners = entry.getValue();</span><br><span class="line">        if (listeners != null) &#123;</span><br><span class="line">            for (NotifyListener listener : listeners) &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                	//通知每个监听器</span><br><span class="line">                    notify(url, listener, filterEmpty(url, urls));</span><br><span class="line">                &#125; catch (Throwable t) &#123; &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>notify(url, listener, filterEmpty(url, urls));</code>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) &#123;</span><br><span class="line">    Map&lt;String, List&lt;URL&gt;&gt; result = new HashMap&lt;String, List&lt;URL&gt;&gt;();</span><br><span class="line">    for (URL u : urls) &#123;</span><br><span class="line">        if (UrlUtils.isMatch(url, u)) &#123;</span><br><span class="line">        	//分类</span><br><span class="line">            String category = u.getParameter(Constants.CATEGORY_KEY, Constants.DEFAULT_CATEGORY);</span><br><span class="line">            List&lt;URL&gt; categoryList = result.get(category);</span><br><span class="line">            if (categoryList == null) &#123;</span><br><span class="line">                categoryList = new ArrayList&lt;URL&gt;();</span><br><span class="line">                result.put(category, categoryList);</span><br><span class="line">            &#125;</span><br><span class="line">            categoryList.add(u);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if (result.size() == 0) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    Map&lt;String, List&lt;URL&gt;&gt; categoryNotified = notified.get(url);</span><br><span class="line">    if (categoryNotified == null) &#123;</span><br><span class="line">        notified.putIfAbsent(url, new ConcurrentHashMap&lt;String, List&lt;URL&gt;&gt;());</span><br><span class="line">        categoryNotified = notified.get(url);</span><br><span class="line">    &#125;</span><br><span class="line">    for (Map.Entry&lt;String, List&lt;URL&gt;&gt; entry : result.entrySet()) &#123;</span><br><span class="line">        String category = entry.getKey();</span><br><span class="line">        List&lt;URL&gt; categoryList = entry.getValue();</span><br><span class="line">        categoryNotified.put(category, categoryList);</span><br><span class="line">        saveProperties(url);</span><br><span class="line">        //通知</span><br><span class="line">        listener.notify(categoryList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>AbstractRegistry构造完，接着是FailbackRegistry的处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public FailbackRegistry(URL url) &#123;</span><br><span class="line">    super(url);</span><br><span class="line">    int retryPeriod = url.getParameter(Constants.REGISTRY_RETRY_PERIOD_KEY, Constants.DEFAULT_REGISTRY_RETRY_PERIOD);</span><br><span class="line">    //启动失败重试定时器</span><br><span class="line">    this.retryFuture = retryExecutor.scheduleWithFixedDelay(new Runnable() &#123;</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            // 检测并连接注册中心</span><br><span class="line">            try &#123;</span><br><span class="line">            	//重试方法由每个具体子类实现</span><br><span class="line">                //获取到注册失败的，然后尝试注册</span><br><span class="line">                retry();</span><br><span class="line">            &#125; catch (Throwable t) &#123; // 防御性容错 &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, retryPeriod, retryPeriod, TimeUnit.MILLISECONDS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里会启动一个新的定时线程，主要是有连接失败的话，会进行重试连接retry()，启动完之后返回ZookeeperRegistry中继续处理。接下来下一步是服务的引用。</p>
+<h3 id="引用远程服务-1"><a href="#引用远程服务-1" class="headerlink" title="引用远程服务"></a>引用远程服务</h3><p>继续看ref方法中最后一步，服务的引用，返回的是一个Invoker，<code>return doRefer(cluster, registry, type, url)；</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) &#123;</span><br><span class="line">	//初始化Directory</span><br><span class="line">    //组装Directory，可以看成一个消费端的List，可以随着注册中心的消息推送而动态的变化服务的Invoker</span><br><span class="line">    //封装了所有服务真正引用逻辑，覆盖配置，路由规则等逻辑</span><br><span class="line">    //初始化时只需要向注册中心发起订阅请求，其他逻辑均是异步处理，包括服务的引用等</span><br><span class="line">    //缓存接口所有的提供者端Invoker以及注册中心接口相关的配置等</span><br><span class="line">    RegistryDirectory&lt;T&gt; directory = new RegistryDirectory&lt;T&gt;(type, url);</span><br><span class="line">    directory.setRegistry(registry);</span><br><span class="line">    directory.setProtocol(protocol);</span><br><span class="line">    //此处的subscribeUrl为</span><br><span class="line">    //consumer://192.168.1.100/dubbo.common.hello.service.HelloService?</span><br><span class="line">    //application=dubbo-consumer&amp;dubbo=2.5.3&amp;</span><br><span class="line">    //interface=dubbo.common.hello.service.HelloService&amp;</span><br><span class="line">    //methods=sayHello&amp;pid=16409&amp;</span><br><span class="line">    //side=consumer&amp;timeout=100000&amp;timestamp=1489322133987</span><br><span class="line">    URL subscribeUrl = new URL(Constants.CONSUMER_PROTOCOL, NetUtils.getLocalHost(), 0, type.getName(), directory.getUrl().getParameters());</span><br><span class="line">    if (! Constants.ANY_VALUE.equals(url.getServiceInterface())</span><br><span class="line">            &amp;&amp; url.getParameter(Constants.REGISTER_KEY, true)) &#123;</span><br><span class="line">            //到注册中心注册服务</span><br><span class="line">            //此处regist是上面一步获得的registry，即是ZookeeperRegistry，包含zkClient的实例</span><br><span class="line">            //会先经过AbstractRegistry的处理，然后经过FailbackRegistry的处理（解析在下面）</span><br><span class="line">        registry.register(subscribeUrl.addParameters(Constants.CATEGORY_KEY, Constants.CONSUMERS_CATEGORY,</span><br><span class="line">                Constants.CHECK_KEY, String.valueOf(false)));</span><br><span class="line">    &#125;</span><br><span class="line">    //订阅服务</span><br><span class="line">    //有服务提供的时候，注册中心会推送服务消息给消费者，消费者再进行服务的引用。</span><br><span class="line">    directory.subscribe(subscribeUrl.addParameter(Constants.CATEGORY_KEY, </span><br><span class="line">            Constants.PROVIDERS_CATEGORY </span><br><span class="line">            + &quot;,&quot; + Constants.CONFIGURATORS_CATEGORY </span><br><span class="line">            + &quot;,&quot; + Constants.ROUTERS_CATEGORY));</span><br><span class="line">    //服务的引用与变更全部由Directory异步完成</span><br><span class="line">    //集群策略会将Directory伪装成一个Invoker返回</span><br><span class="line">    //合并所有相同的invoker</span><br><span class="line">    return cluster.join(directory);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注册中心接收到消费者发送的订阅请求后，会根据提供者注册服务的列表，推送服务消息给消费者。消费者端接收到注册中心发来的提供者列表后，进行服务的引用。触发Directory监听器的可以是订阅请求，覆盖策略消息，路由策略消息。</p>
+<h3 id="注册到注册中心"><a href="#注册到注册中心" class="headerlink" title="注册到注册中心"></a>注册到注册中心</h3><p>AbstractRegistry的register方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public void register(URL url) &#123;</span><br><span class="line">	//此时url是</span><br><span class="line">    //consumer://192.168.1.100/dubbo.common.hello.service.HelloService?</span><br><span class="line">    //application=dubbo-consumer&amp;</span><br><span class="line">    //category=consumers&amp;check=false&amp;dubbo=2.5.3&amp;</span><br><span class="line">    //interface=dubbo.common.hello.service.HelloService&amp;methods=sayHello</span><br><span class="line">    //&amp;pid=16409&amp;side=consumer&amp;timeout=100000&amp;timestamp=1489322133987</span><br><span class="line">    if (url == null) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;register url == null&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if (logger.isInfoEnabled())&#123;</span><br><span class="line">        logger.info(&quot;Register: &quot; + url);</span><br><span class="line">    &#125;</span><br><span class="line">    registered.add(url);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面只是把url添加到registered这个set中。</p>
+<p>接着看FailbackRegistry的register方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public void register(URL url) &#123;</span><br><span class="line">    super.register(url);</span><br><span class="line">    failedRegistered.remove(url);</span><br><span class="line">    failedUnregistered.remove(url);</span><br><span class="line">    try &#123;</span><br><span class="line">        // 向服务器端发送注册请求</span><br><span class="line">        //这里调用的是ZookeeperRegistry中的doRegister方法</span><br><span class="line">        doRegister(url);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        Throwable t = e;</span><br><span class="line"></span><br><span class="line">        // 如果开启了启动时检测，则直接抛出异常</span><br><span class="line">        boolean check = getUrl().getParameter(Constants.CHECK_KEY, true)</span><br><span class="line">                &amp;&amp; url.getParameter(Constants.CHECK_KEY, true)</span><br><span class="line">                &amp;&amp; ! Constants.CONSUMER_PROTOCOL.equals(url.getProtocol());</span><br><span class="line">        boolean skipFailback = t instanceof SkipFailbackWrapperException;</span><br><span class="line">        if (check || skipFailback) &#123;</span><br><span class="line">            if(skipFailback) &#123;</span><br><span class="line">                t = t.getCause();</span><br><span class="line">            &#125;</span><br><span class="line">            throw new IllegalStateException(&quot;Failed to register &quot; + url + &quot; to registry &quot; + getUrl().getAddress() + &quot;, cause: &quot; + t.getMessage(), t);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            logger.error(&quot;Failed to register &quot; + url + &quot;, waiting for retry, cause: &quot; + t.getMessage(), t);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 将失败的注册请求记录到失败列表，定时重试</span><br><span class="line">        failedRegistered.add(url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着看下doRegister(url);方法，向服务器端发送注册请求，在ZookeeperRegistry中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">protected void doRegister(URL url) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">    	//直接调用create，在AbstractZookeeperClient类中</span><br><span class="line">        zkClient.create(toUrlPath(url), url.getParameter(Constants.DYNAMIC_KEY, true));</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        throw new RpcException(&quot;Failed to register &quot; + url + &quot; to zookeeper &quot; + getUrl() + &quot;, cause: &quot; + e.getMessage(), e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>zkClient.create()方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">//path为</span><br><span class="line">///dubbo/dubbo.common.hello.service.HelloService/consumers/</span><br><span class="line">//consumer%3A%2F%2F192.168.1.100%2F</span><br><span class="line">//dubbo.common.hello.service.HelloService%3Fapplication%3D</span><br><span class="line">//dubbo-consumer%26category%3Dconsumers%26check%3Dfalse%26</span><br><span class="line">//dubbo%3D2.5.3%26interface%3D</span><br><span class="line">//dubbo.common.hello.service.HelloService%26</span><br><span class="line">//methods%3DsayHello%26pid%3D28819%26</span><br><span class="line">//side%3Dconsumer%26timeout%3D100000%26timestamp%3D1489332839677</span><br><span class="line">public void create(String path, boolean ephemeral) &#123;</span><br><span class="line">    int i = path.lastIndexOf(&apos;/&apos;);</span><br><span class="line">    if (i &gt; 0) &#123;</span><br><span class="line">        create(path.substring(0, i), false);</span><br><span class="line">    &#125;</span><br><span class="line">    //循环完得到的path为/dubbo</span><br><span class="line">    //dynamic=false 表示该数据为持久数据，当注册方退出时，数据依然保存在注册中心</span><br><span class="line">    if (ephemeral) &#123;</span><br><span class="line">    	//创建临时的节点</span><br><span class="line">        createEphemeral(path);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">    	//创建持久的节点，/dubbo/dubbo.common.hello.service.HelloService/consumers/</span><br><span class="line">        //consumer%3A%2F%2F192.168.110.197%2F</span><br><span class="line">        //dubbo.common.hello.service.HelloService%3Fapplication%3Ddubbo-consumer%26</span><br><span class="line">        //category%3Dconsumers%26check%3Dfalse%26</span><br><span class="line">        //dubbo%3D2.5.3%26interface%3D</span><br><span class="line">        //dubbo.common.hello.service.HelloService%26</span><br><span class="line">        //methods%3DsayHello%26pid%3D6370%26side%3D</span><br><span class="line">        //consumer%26timeout%3D100000%26timestamp%3D1489367959659</span><br><span class="line">        createPersistent(path);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过上面create之后，Zookeeper中就存在了消费者需要订阅的服务的节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/dubbo</span><br><span class="line">	/dubbo.common.hello.service.HelloService</span><br><span class="line">    	/consumers</span><br><span class="line">        	/http://0.0.0.0:4550/?path=dubbo%2F</span><br><span class="line">            dubbo.common.hello.service.HelloService%2F</span><br><span class="line">            consumers%2Fconsumer%253A%252F%252F192.168.110.197%252F</span><br><span class="line">            dubbo.common.hello.service.HelloService%253F</span><br><span class="line">            application%253Ddubbo-consumer%2526category%253D</span><br><span class="line">            consumers%2526check%253Dfalse%2526</span><br><span class="line">            dubbo%253D2.5.3%2526interface%253D</span><br><span class="line">            dubbo.common.hello.service.HelloService%2526</span><br><span class="line">            methods%253DsayHello%2526pid%253D22392%2526side%253D</span><br><span class="line">            consumer%2526timeout%253D100000%2526timestamp%253D1490063394184</span><br></pre></td></tr></table></figure>
+<h3 id="订阅服务提供者"><a href="#订阅服务提供者" class="headerlink" title="订阅服务提供者"></a>订阅服务提供者</h3><p>消费者自己注册到注册中心之后，接着是订阅服务提供者，directory.subscribe()：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public void subscribe(URL url) &#123;</span><br><span class="line">	//设置消费者url</span><br><span class="line">    setConsumerUrl(url);</span><br><span class="line">    //这里的registry是ZookeeperRegistry</span><br><span class="line">    registry.subscribe(url, this);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看下registry.subscribe(url, this);，这里registry是ZookeeperRegistry，会先经过AbstractRegistry的处理，然后是FailbackRegistry的处理。</p>
+<p>在AbstractRegistry中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//此时url为consumer://192.168.1.100/dubbo.common.hello.service.HelloService?application=dubbo-consumer&amp;</span><br><span class="line">//category=providers,configurators,routers&amp;dubbo=2.5.3&amp;interface=dubbo.common.hello.service.HelloService&amp;methods=</span><br><span class="line">//sayHello&amp;pid=28819&amp;side=consumer&amp;timeout=100000&amp;timestamp=1489332839677</span><br><span class="line">public void subscribe(URL url, NotifyListener listener) &#123;</span><br><span class="line">	//先根据url获取已注册的监听器</span><br><span class="line">    Set&lt;NotifyListener&gt; listeners = subscribed.get(url);</span><br><span class="line">    //没有监听器，就创建，并添加进去</span><br><span class="line">    if (listeners == null) &#123;</span><br><span class="line">        subscribed.putIfAbsent(url, new ConcurrentHashSet&lt;NotifyListener&gt;());</span><br><span class="line">        listeners = subscribed.get(url);</span><br><span class="line">    &#125;</span><br><span class="line">    //有监听器，直接把当前RegistryDirectory添加进去</span><br><span class="line">    listeners.add(listener);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后是FailbackRegistry中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public void subscribe(URL url, NotifyListener listener) &#123;</span><br><span class="line">    super.subscribe(url, listener);</span><br><span class="line">    removeFailedSubscribed(url, listener);</span><br><span class="line">    try &#123;</span><br><span class="line">        // 向服务器端发送订阅请求</span><br><span class="line">        doSubscribe(url, listener);</span><br><span class="line">    &#125; catch (Exception e) &#123;...&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>继续看doSubscribe(url, listener);向服务端发送订阅请求，在ZookeeperRegistry中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">protected void doSubscribe(final URL url, final NotifyListener listener) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        if (Constants.ANY_VALUE.equals(url.getServiceInterface())) &#123;... &#125; else &#123;</span><br><span class="line">            List&lt;URL&gt; urls = new ArrayList&lt;URL&gt;();</span><br><span class="line">            for (String path : toCategoriesPath(url)) &#123;</span><br><span class="line">                ConcurrentMap&lt;NotifyListener, ChildListener&gt; listeners = zkListeners.get(url);</span><br><span class="line">                if (listeners == null) &#123;</span><br><span class="line">                    zkListeners.putIfAbsent(url, new ConcurrentHashMap&lt;NotifyListener, ChildListener&gt;());</span><br><span class="line">                    listeners = zkListeners.get(url);</span><br><span class="line">                &#125;</span><br><span class="line">                //将zkClient的事件IZkChildListener转换到registry事件NotifyListener</span><br><span class="line">                ChildListener zkListener = listeners.get(listener);</span><br><span class="line">                if (zkListener == null) &#123;</span><br><span class="line">                    listeners.putIfAbsent(listener, new ChildListener() &#123;</span><br><span class="line">                        public void childChanged(String parentPath, List&lt;String&gt; currentChilds) &#123;</span><br><span class="line">                            ZookeeperRegistry.this.notify(url, listener, toUrlsWithEmpty(url, parentPath, currentChilds));</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">                    zkListener = listeners.get(listener);</span><br><span class="line">                &#125;</span><br><span class="line">                //创建三个节点</span><br><span class="line">                // /dubbo/dubbo.common.hello.service.HelloService/providers/</span><br><span class="line">                // /dubbo/dubbo.common.hello.service.HelloService/configurators/</span><br><span class="line">                // /dubbo/dubbo.common.hello.service.HelloService/routers/</span><br><span class="line">                //上面三个路径会被消费者端监听，当提供者，配置，路由发生变化之后，</span><br><span class="line">                //注册中心会通知消费者刷新本地缓存。</span><br><span class="line">                zkClient.create(path, false);</span><br><span class="line">                List&lt;String&gt; children = zkClient.addChildListener(path, zkListener);</span><br><span class="line">                if (children != null) &#123;</span><br><span class="line">                    urls.addAll(toUrlsWithEmpty(url, path, children));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            notify(url, listener, urls);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        throw new RpcException(&quot;Failed to subscribe &quot; + url + &quot; to zookeeper &quot; + getUrl() + &quot;, cause: &quot; + e.getMessage(), e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="服务订阅完之后的通知"><a href="#服务订阅完之后的通知" class="headerlink" title="服务订阅完之后的通知"></a>服务订阅完之后的通知</h3><p>服务订阅完成之后，接着就是notify(url, listener, urls);：</p>
+<p>会先经过FailbackRegistry将失败的通知请求记录到失败列表，定时重试。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        doNotify(url, listener, urls);</span><br><span class="line">    &#125; catch (Exception t) &#123;</span><br><span class="line">        // 将失败的通知请求记录到失败列表，定时重试</span><br><span class="line">        Map&lt;NotifyListener, List&lt;URL&gt;&gt; listeners = failedNotified.get(url);</span><br><span class="line">        if (listeners == null) &#123;</span><br><span class="line">            failedNotified.putIfAbsent(url, new ConcurrentHashMap&lt;NotifyListener, List&lt;URL&gt;&gt;());</span><br><span class="line">            listeners = failedNotified.get(url);</span><br><span class="line">        &#125;</span><br><span class="line">        listeners.put(listener, urls);</span><br><span class="line">        logger.error(&quot;Failed to notify for subscribe &quot; + url + &quot;, waiting for retry, cause: &quot; + t.getMessage(), t);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>doNotify(url, listener, urls);：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protected void doNotify(URL url, NotifyListener listener, List&lt;URL&gt; urls) &#123;</span><br><span class="line">	//父类实现</span><br><span class="line">    super.notify(url, listener, urls);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>AbstractRegistry中的doNotify实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) &#123;</span><br><span class="line">    Map&lt;String, List&lt;URL&gt;&gt; result = new HashMap&lt;String, List&lt;URL&gt;&gt;();</span><br><span class="line">    for (URL u : urls) &#123;</span><br><span class="line">        if (UrlUtils.isMatch(url, u)) &#123;</span><br><span class="line">        	//不同类型的数据分开通知，providers，consumers，routers，overrides</span><br><span class="line">            //允许只通知其中一种类型，但该类型的数据必须是全量的，不是增量的。</span><br><span class="line">            String category = u.getParameter(Constants.CATEGORY_KEY, Constants.DEFAULT_CATEGORY);</span><br><span class="line">            List&lt;URL&gt; categoryList = result.get(category);</span><br><span class="line">            if (categoryList == null) &#123;</span><br><span class="line">                categoryList = new ArrayList&lt;URL&gt;();</span><br><span class="line">                result.put(category, categoryList);</span><br><span class="line">            &#125;</span><br><span class="line">            categoryList.add(u);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if (result.size() == 0) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    Map&lt;String, List&lt;URL&gt;&gt; categoryNotified = notified.get(url);</span><br><span class="line">    if (categoryNotified == null) &#123;</span><br><span class="line">        notified.putIfAbsent(url, new ConcurrentHashMap&lt;String, List&lt;URL&gt;&gt;());</span><br><span class="line">        categoryNotified = notified.get(url);</span><br><span class="line">    &#125;</span><br><span class="line">    //对这里得到的providers，configurators，routers分别进行通知</span><br><span class="line">    for (Map.Entry&lt;String, List&lt;URL&gt;&gt; entry : result.entrySet()) &#123;</span><br><span class="line">        String category = entry.getKey();</span><br><span class="line">        List&lt;URL&gt; categoryList = entry.getValue();</span><br><span class="line">        categoryNotified.put(category, categoryList);</span><br><span class="line">        saveProperties(url);</span><br><span class="line">        //这里的listener是RegistryDirectory</span><br><span class="line">        listener.notify(categoryList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到RegistryDirectory中查看notify方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void notify(List&lt;URL&gt; urls) &#123;</span><br><span class="line">    List&lt;URL&gt; invokerUrls = new ArrayList&lt;URL&gt;();</span><br><span class="line">    List&lt;URL&gt; routerUrls = new ArrayList&lt;URL&gt;();</span><br><span class="line">    List&lt;URL&gt; configuratorUrls = new ArrayList&lt;URL&gt;();</span><br><span class="line">    for (URL url : urls) &#123;</span><br><span class="line">        String protocol = url.getProtocol();</span><br><span class="line">        String category = url.getParameter(Constants.CATEGORY_KEY, Constants.DEFAULT_CATEGORY);</span><br><span class="line">        if (Constants.ROUTERS_CATEGORY.equals(category) </span><br><span class="line">                || Constants.ROUTE_PROTOCOL.equals(protocol)) &#123;</span><br><span class="line">            routerUrls.add(url);</span><br><span class="line">        &#125; else if (Constants.CONFIGURATORS_CATEGORY.equals(category) </span><br><span class="line">                || Constants.OVERRIDE_PROTOCOL.equals(protocol)) &#123;</span><br><span class="line">            configuratorUrls.add(url);</span><br><span class="line">        &#125; else if (Constants.PROVIDERS_CATEGORY.equals(category)) &#123;</span><br><span class="line">            invokerUrls.add(url);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            logger.warn(&quot;Unsupported category &quot; + category + &quot; in notified url: &quot; + url + &quot; from registry &quot; + getUrl().getAddress() + &quot; to consumer &quot; + NetUtils.getLocalHost());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // configurators 更新缓存的服务提供方配置</span><br><span class="line">    if (configuratorUrls != null &amp;&amp; configuratorUrls.size() &gt;0 )&#123;</span><br><span class="line">        this.configurators = toConfigurators(configuratorUrls);</span><br><span class="line">    &#125;</span><br><span class="line">    // routers//更新缓存的路由规则配置</span><br><span class="line">    if (routerUrls != null &amp;&amp; routerUrls.size() &gt;0 )&#123;</span><br><span class="line">        List&lt;Router&gt; routers = toRouters(routerUrls);</span><br><span class="line">        if(routers != null)&#123; // null - do nothing</span><br><span class="line">            setRouters(routers);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    List&lt;Configurator&gt; localConfigurators = this.configurators; // local reference</span><br><span class="line">    // 合并override参数</span><br><span class="line">    this.overrideDirectoryUrl = directoryUrl;</span><br><span class="line">    if (localConfigurators != null &amp;&amp; localConfigurators.size() &gt; 0) &#123;</span><br><span class="line">        for (Configurator configurator : localConfigurators) &#123;</span><br><span class="line">            this.overrideDirectoryUrl = configurator.configure(overrideDirectoryUrl);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // providers</span><br><span class="line">    //重建invoker实例</span><br><span class="line">    refreshInvoker(invokerUrls);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="重建invoker实例"><a href="#重建invoker实例" class="headerlink" title="重建invoker实例"></a>重建invoker实例</h4><p>refreshInvoker(invokerUrls);：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 根据invokerURL列表转换为invoker列表。转换规则如下：</span><br><span class="line"> * 1.如果url已经被转换为invoker，则不在重新引用，直接从缓存中获取，注意如果url中任何一个参数变更也会重新引用</span><br><span class="line"> * 2.如果传入的invoker列表不为空，则表示最新的invoker列表</span><br><span class="line"> * 3.如果传入的invokerUrl列表是空，则表示只是下发的override规则或route规则，需要重新交叉对比，决定是否需要重新引用。</span><br><span class="line"> * @param invokerUrls 传入的参数不能为null</span><br><span class="line"> */</span><br><span class="line">private void refreshInvoker(List&lt;URL&gt; invokerUrls)&#123;</span><br><span class="line">    if (invokerUrls != null &amp;&amp; invokerUrls.size() == 1 &amp;&amp; invokerUrls.get(0) != null</span><br><span class="line">            &amp;&amp; Constants.EMPTY_PROTOCOL.equals(invokerUrls.get(0).getProtocol())) &#123;</span><br><span class="line">        this.forbidden = true; // 禁止访问</span><br><span class="line">        this.methodInvokerMap = null; // 置空列表</span><br><span class="line">        destroyAllInvokers(); // 关闭所有Invoker</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        this.forbidden = false; // 允许访问</span><br><span class="line">        Map&lt;String, Invoker&lt;T&gt;&gt; oldUrlInvokerMap = this.urlInvokerMap; // local reference</span><br><span class="line">        if (invokerUrls.size() == 0 &amp;&amp; this.cachedInvokerUrls != null)&#123;</span><br><span class="line">            invokerUrls.addAll(this.cachedInvokerUrls);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            this.cachedInvokerUrls = new HashSet&lt;URL&gt;();</span><br><span class="line">            this.cachedInvokerUrls.addAll(invokerUrls);//缓存invokerUrls列表，便于交叉对比</span><br><span class="line">        &#125;</span><br><span class="line">        if (invokerUrls.size() ==0 )&#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        //会重新走一遍服务的引用过程</span><br><span class="line">        //给每个提供者创建一个Invoker</span><br><span class="line">        Map&lt;String, Invoker&lt;T&gt;&gt; newUrlInvokerMap = toInvokers(invokerUrls) ;// 将URL列表转成Invoker列表</span><br><span class="line">        Map&lt;String, List&lt;Invoker&lt;T&gt;&gt;&gt; newMethodInvokerMap = toMethodInvokers(newUrlInvokerMap); // 换方法名映射Invoker列表</span><br><span class="line">        // state change</span><br><span class="line">        //如果计算错误，则不进行处理.</span><br><span class="line">        if (newUrlInvokerMap == null || newUrlInvokerMap.size() == 0 )&#123;</span><br><span class="line">            logger.error(new IllegalStateException(&quot;urls to invokers error .invokerUrls.size :&quot;+invokerUrls.size() + &quot;, invoker.size :0. urls :&quot;+invokerUrls.toString()));</span><br><span class="line">            return ;</span><br><span class="line">        &#125;</span><br><span class="line">        //服务提供者Invoker保存在这个map中</span><br><span class="line">        this.methodInvokerMap = multiGroup ? toMergeMethodInvokerMap(newMethodInvokerMap) : newMethodInvokerMap;</span><br><span class="line">        this.urlInvokerMap = newUrlInvokerMap;</span><br><span class="line">        try&#123;</span><br><span class="line">            destroyUnusedInvokers(oldUrlInvokerMap,newUrlInvokerMap); // 关闭未使用的Invoker</span><br><span class="line">        &#125;catch (Exception e) &#123;</span><br><span class="line">            logger.warn(&quot;destroyUnusedInvokers error. &quot;, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>toInvokers(invokerUrls) 方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">private Map&lt;String, Invoker&lt;T&gt;&gt; toInvokers(List&lt;URL&gt; urls) &#123;</span><br><span class="line">    Map&lt;String, Invoker&lt;T&gt;&gt; newUrlInvokerMap = new HashMap&lt;String, Invoker&lt;T&gt;&gt;();</span><br><span class="line">    if(urls == null || urls.size() == 0)&#123;</span><br><span class="line">        return newUrlInvokerMap;</span><br><span class="line">    &#125;</span><br><span class="line">    Set&lt;String&gt; keys = new HashSet&lt;String&gt;();</span><br><span class="line">    String queryProtocols = this.queryMap.get(Constants.PROTOCOL_KEY);</span><br><span class="line">    for (URL providerUrl : urls) &#123;</span><br><span class="line">    	//此时url是dubbo://192.168.110.197:20880/dubbo.common.hello.service.HelloService?anyhost=true&amp;</span><br><span class="line">        //application=dubbo-provider&amp;application.version=1.0&amp;dubbo=2.5.3&amp;environment=product&amp;</span><br><span class="line">        //interface=dubbo.common.hello.service.HelloService&amp;methods=sayHello&amp;organization=china&amp;</span><br><span class="line">        //owner=cheng.xi&amp;pid=5631&amp;side=provider&amp;timestamp=1489367571986</span><br><span class="line">        //从注册中心获取到的携带提供者信息的url</span><br><span class="line">        //如果reference端配置了protocol，则只选择匹配的protocol</span><br><span class="line">        if (queryProtocols != null &amp;&amp; queryProtocols.length() &gt;0) &#123;</span><br><span class="line">            boolean accept = false;</span><br><span class="line">            String[] acceptProtocols = queryProtocols.split(&quot;,&quot;);</span><br><span class="line">            for (String acceptProtocol : acceptProtocols) &#123;</span><br><span class="line">                if (providerUrl.getProtocol().equals(acceptProtocol)) &#123;</span><br><span class="line">                    accept = true;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            if (!accept) &#123;</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (Constants.EMPTY_PROTOCOL.equals(providerUrl.getProtocol())) &#123;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        if (! ExtensionLoader.getExtensionLoader(Protocol.class).hasExtension(providerUrl.getProtocol())) &#123;</span><br><span class="line">            logger.error(new IllegalStateException(&quot;Unsupported protocol &quot; + providerUrl.getProtocol() + &quot; in notified url: &quot; + providerUrl + &quot; from registry &quot; + getUrl().getAddress() + &quot; to consumer &quot; + NetUtils.getLocalHost() </span><br><span class="line">                    + &quot;, supported protocol: &quot;+ExtensionLoader.getExtensionLoader(Protocol.class).getSupportedExtensions()));</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        URL url = mergeUrl(providerUrl);</span><br><span class="line"></span><br><span class="line">        String key = url.toFullString(); // URL参数是排序的</span><br><span class="line">        if (keys.contains(key)) &#123; // 重复URL</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        keys.add(key);</span><br><span class="line">        // 缓存key为没有合并消费端参数的URL，不管消费端如何合并参数，如果服务端URL发生变化，则重新refer</span><br><span class="line">        Map&lt;String, Invoker&lt;T&gt;&gt; localUrlInvokerMap = this.urlInvokerMap; // local reference</span><br><span class="line">        Invoker&lt;T&gt; invoker = localUrlInvokerMap == null ? null : localUrlInvokerMap.get(key);</span><br><span class="line">        if (invoker == null) &#123; // 缓存中没有，重新refer</span><br><span class="line">            try &#123;</span><br><span class="line">                boolean enabled = true;</span><br><span class="line">                if (url.hasParameter(Constants.DISABLED_KEY)) &#123;</span><br><span class="line">                    enabled = ! url.getParameter(Constants.DISABLED_KEY, false);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    enabled = url.getParameter(Constants.ENABLED_KEY, true);</span><br><span class="line">                &#125;</span><br><span class="line">                if (enabled) &#123;</span><br><span class="line">                	//根据扩展点加载机制，这里使用的protocol是DubboProtocol</span><br><span class="line">                    invoker = new InvokerDelegete&lt;T&gt;(protocol.refer(serviceType, url), url, providerUrl);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (Throwable t) &#123;</span><br><span class="line">                logger.error(&quot;Failed to refer invoker for interface:&quot;+serviceType+&quot;,url:(&quot;+url+&quot;)&quot; + t.getMessage(), t);</span><br><span class="line">            &#125;</span><br><span class="line">            if (invoker != null) &#123; // 将新的引用放入缓存</span><br><span class="line">                newUrlInvokerMap.put(key, invoker);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            newUrlInvokerMap.put(key, invoker);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    keys.clear();</span><br><span class="line">    return newUrlInvokerMap;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建invoker <code>invoker = new InvokerDelegete&lt;T&gt;(protocol.refer(serviceType, url), url, providerUrl);</code>：</p>
+<ul>
+<li>先使用DubboProtocol的refer方法，这一步会依次调用ProtocolFIlterListenerWrapper，ProtocolFilterWrapper，DubboProtocol中的refer方法。经过两个Wrapper中，会添加对应的InvokerListener并构建Invoker Filter链，在DubboProtocol中会创建一个DubboInvoker对象，该Invoker对象持有服务Class，providerUrl，负责和服务提供端通信的ExchangeClient。</li>
+<li>接着使用得到的Invoker创建一个InvokerDelegete</li>
+</ul>
+<h4 id="创建invoker"><a href="#创建invoker" class="headerlink" title="创建invoker"></a>创建invoker</h4><p>在DubboProtocol中创建DubboInvoker的时候代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; serviceType, URL url) throws RpcException &#123;</span><br><span class="line">    // create rpc invoker.</span><br><span class="line">    //这里有一个getClients方法</span><br><span class="line">    DubboInvoker&lt;T&gt; invoker = new DubboInvoker&lt;T&gt;(serviceType, url, getClients(url), invokers);</span><br><span class="line">    invokers.add(invoker);</span><br><span class="line">    return invoker;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看getClients方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">private ExchangeClient[] getClients(URL url)&#123;</span><br><span class="line">    //是否共享连接</span><br><span class="line">    boolean service_share_connect = false;</span><br><span class="line">    int connections = url.getParameter(Constants.CONNECTIONS_KEY, 0);</span><br><span class="line">    //如果connections不配置，则共享连接，否则每服务每连接</span><br><span class="line">    if (connections == 0)&#123;</span><br><span class="line">        service_share_connect = true;</span><br><span class="line">        connections = 1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ExchangeClient[] clients = new ExchangeClient[connections];</span><br><span class="line">    for (int i = 0; i &lt; clients.length; i++) &#123;</span><br><span class="line">        if (service_share_connect)&#123;</span><br><span class="line">        	//这里没有配置connections，就使用getSharedClient</span><br><span class="line">            //getSharedClient中先去缓存中查找，没有的话就会新建，也是调用initClient方法</span><br><span class="line">            clients[i] = getSharedClient(url);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            clients[i] = initClient(url);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return clients;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接看initClient方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">//创建新连接</span><br><span class="line">private ExchangeClient initClient(URL url) &#123;</span><br><span class="line">        </span><br><span class="line">    // client type setting.</span><br><span class="line">    String str = url.getParameter(Constants.CLIENT_KEY, url.getParameter(Constants.SERVER_KEY, Constants.DEFAULT_REMOTING_CLIENT));</span><br><span class="line"></span><br><span class="line">    String version = url.getParameter(Constants.DUBBO_VERSION_KEY);</span><br><span class="line">    boolean compatible = (version != null &amp;&amp; version.startsWith(&quot;1.0.&quot;));</span><br><span class="line">    url = url.addParameter(Constants.CODEC_KEY, Version.isCompatibleVersion() &amp;&amp; compatible ? COMPATIBLE_CODEC_NAME : DubboCodec.NAME);</span><br><span class="line">    //默认开启heartbeat</span><br><span class="line">    url = url.addParameterIfAbsent(Constants.HEARTBEAT_KEY, String.valueOf(Constants.DEFAULT_HEARTBEAT));</span><br><span class="line"></span><br><span class="line">    // BIO存在严重性能问题，暂时不允许使用</span><br><span class="line">    if (str != null &amp;&amp; str.length() &gt; 0 &amp;&amp; ! ExtensionLoader.getExtensionLoader(Transporter.class).hasExtension(str)) &#123;</span><br><span class="line">        throw new RpcException(&quot;Unsupported client type: &quot; + str + &quot;,&quot; +</span><br><span class="line">                &quot; supported client type is &quot; + StringUtils.join(ExtensionLoader.getExtensionLoader(Transporter.class).getSupportedExtensions(), &quot; &quot;));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ExchangeClient client ;</span><br><span class="line">    try &#123;</span><br><span class="line">    	//如果lazy属性没有配置为true（我们没有配置，默认为false）ExchangeClient会马上和服务端建立连接</span><br><span class="line">        //设置连接应该是lazy的 </span><br><span class="line">        if (url.getParameter(Constants.LAZY_CONNECT_KEY, false))&#123;</span><br><span class="line">            client = new LazyConnectExchangeClient(url ,requestHandler);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">        	//立即和服务端建立连接</span><br><span class="line">            client = Exchangers.connect(url ,requestHandler);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (RemotingException e) &#123;</span><br><span class="line">        throw new RpcException(&quot;Fail to create remoting client for service(&quot; + url</span><br><span class="line">                + &quot;): &quot; + e.getMessage(), e);</span><br><span class="line">    &#125;</span><br><span class="line">    return client;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和服务端建立连接，Exchangers.connect(url ,requestHandler);，其实最后使用的是HeaderExchanger，Exchanger目前只有这一个实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public ExchangeClient connect(URL url, ExchangeHandler handler) throws RemotingException &#123;</span><br><span class="line">	//先经过HeaderExchangeHandler包装</span><br><span class="line">    //然后是DecodeHandler</span><br><span class="line">    //然后是Transporters.connect</span><br><span class="line">    //返回一个HeaderExchangerClient，这里封装了client，channel，启动心跳的定时器等</span><br><span class="line">    return new HeaderExchangeClient(Transporters.connect(url, new DecodeHandler(new HeaderExchangeHandler(handler))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Transporters.connect中也是根据SPI扩展获取Transport的具体实现，这里默认使用NettyTransporter.connect()，在NettyTransporter的connect方法中直接返回一个NettyClient(url, listener);，下面看下具体的NettyClient初始化细节，会先初始化AbstractPeer这里只是吧url和handler赋值；然后是AbstractEndpoint初始化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public AbstractEndpoint(URL url, ChannelHandler handler) &#123;</span><br><span class="line">    super(url, handler);</span><br><span class="line">    //获取编解码器，这里是DubboCountCodec</span><br><span class="line">    this.codec = getChannelCodec(url);</span><br><span class="line">    this.timeout = url.getPositiveParameter(Constants.TIMEOUT_KEY, Constants.DEFAULT_TIMEOUT);</span><br><span class="line">    this.connectTimeout = url.getPositiveParameter(Constants.CONNECT_TIMEOUT_KEY, Constants.DEFAULT_CONNECT_TIMEOUT);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着是AbstractClient的初始化：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public AbstractClient(URL url, ChannelHandler handler) throws RemotingException &#123;</span><br><span class="line">    super(url, handler);</span><br><span class="line">    send_reconnect = url.getParameter(Constants.SEND_RECONNECT_KEY, false);</span><br><span class="line">    shutdown_timeout = url.getParameter(Constants.SHUTDOWN_TIMEOUT_KEY, Constants.DEFAULT_SHUTDOWN_TIMEOUT);</span><br><span class="line">    //默认重连间隔2s，1800表示1小时warning一次.</span><br><span class="line">    reconnect_warning_period = url.getParameter(&quot;reconnect.waring.period&quot;, 1800);</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">    	//具体实现在子类中</span><br><span class="line">        doOpen();</span><br><span class="line">    &#125; catch (Throwable t) &#123;。。。 &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">        // 连接</span><br><span class="line">        connect();</span><br><span class="line">    &#125; catch (RemotingException t) &#123;。。。&#125; </span><br><span class="line">	// TODO暂没理解</span><br><span class="line">    executor = (ExecutorService) ExtensionLoader.getExtensionLoader(DataStore.class)</span><br><span class="line">        .getDefaultExtension().get(Constants.CONSUMER_SIDE, Integer.toString(url.getPort()));</span><br><span class="line">    ExtensionLoader.getExtensionLoader(DataStore.class)</span><br><span class="line">        .getDefaultExtension().remove(Constants.CONSUMER_SIDE, Integer.toString(url.getPort()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看下在NettyClient中doOpen()的实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">protected void doOpen() throws Throwable &#123;</span><br><span class="line">    NettyHelper.setNettyLoggerFactory();</span><br><span class="line">    bootstrap = new ClientBootstrap(channelFactory);</span><br><span class="line">    // config</span><br><span class="line">    // @see org.jboss.netty.channel.socket.SocketChannelConfig</span><br><span class="line">    bootstrap.setOption(&quot;keepAlive&quot;, true);</span><br><span class="line">    bootstrap.setOption(&quot;tcpNoDelay&quot;, true);</span><br><span class="line">    bootstrap.setOption(&quot;connectTimeoutMillis&quot;, getTimeout());</span><br><span class="line">    final NettyHandler nettyHandler = new NettyHandler(getUrl(), this);</span><br><span class="line">    bootstrap.setPipelineFactory(new ChannelPipelineFactory() &#123;</span><br><span class="line">        public ChannelPipeline getPipeline() &#123;</span><br><span class="line">            NettyCodecAdapter adapter = new NettyCodecAdapter(getCodec(), getUrl(), NettyClient.this);</span><br><span class="line">            ChannelPipeline pipeline = Channels.pipeline();</span><br><span class="line">            pipeline.addLast(&quot;decoder&quot;, adapter.getDecoder());</span><br><span class="line">            pipeline.addLast(&quot;encoder&quot;, adapter.getEncoder());</span><br><span class="line">            pipeline.addLast(&quot;handler&quot;, nettyHandler);</span><br><span class="line">            return pipeline;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里是Netty3中的客户端连接的一些常规步骤，暂不做具体解析。open之后，就是真正连接服务端的操作了，connect()：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">protected void connect() throws RemotingException &#123;</span><br><span class="line">    connectLock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">        if (isConnected()) &#123;</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        //初始化重连的线程</span><br><span class="line">        initConnectStatusCheckCommand();</span><br><span class="line">        //连接，在子类中实现</span><br><span class="line">        doConnect();</span><br><span class="line">        reconnect_count.set(0);</span><br><span class="line">        reconnect_error_log_flag.set(false);</span><br><span class="line">    &#125; catch (RemotingException e) &#123;。。。&#125; finally &#123;</span><br><span class="line">        connectLock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>NettyClient中的doConnect方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">protected void doConnect() throws Throwable &#123;</span><br><span class="line">    long start = System.currentTimeMillis();</span><br><span class="line">    //消费者端开始连接，这一步的时候，服务提供者端就接到了连接请求，开始处理了</span><br><span class="line">    ChannelFuture future = bootstrap.connect(getConnectAddress());</span><br><span class="line">    try&#123;</span><br><span class="line">        boolean ret = future.awaitUninterruptibly(getConnectTimeout(), TimeUnit.MILLISECONDS);</span><br><span class="line">        if (ret &amp;&amp; future.isSuccess()) &#123;</span><br><span class="line">            Channel newChannel = future.getChannel();</span><br><span class="line">            newChannel.setInterestOps(Channel.OP_READ_WRITE);</span><br><span class="line">            try &#123;</span><br><span class="line">                // 关闭旧的连接</span><br><span class="line">                Channel oldChannel = NettyClient.this.channel; // copy reference</span><br><span class="line">                if (oldChannel != null) &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        oldChannel.close();</span><br><span class="line">                    &#125; finally &#123;</span><br><span class="line">                        NettyChannel.removeChannelIfDisconnected(oldChannel);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                if (NettyClient.this.isClosed()) &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        newChannel.close();</span><br><span class="line">                    &#125; finally &#123;</span><br><span class="line">                        NettyClient.this.channel = null;</span><br><span class="line">                        NettyChannel.removeChannelIfDisconnected(newChannel);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    NettyClient.this.channel = newChannel;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else if (future.getCause() != null) &#123; throw。。。  &#125; else &#123;throw 。。。 &#125;</span><br><span class="line">    &#125;finally&#123;</span><br><span class="line">        if (! isConnected()) &#123;</span><br><span class="line">            future.cancel();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里连接的细节都交给了netty。</p>
+<p>NettyClient初始化完成之后，返回给Transporters，再返回给HeaderExchanger，HeaderExchanger中将NettyClient包装成HeaderExchangeClient返回给DubboProtocol的initClient方法中，到此在getSharedClient中就获取到了一个ExchangeClient，然后包装一下返回<code>client = new ReferenceCountExchangeClient(exchagneclient, ghostClientMap);</code>。</p>
+<p>到这里在DubboProtocol的refer方法中这句<code>DubboInvoker&lt;T&gt; invoker = new DubboInvoker&lt;T&gt;(serviceType, url, getClients(url), invokers);</code>创建DubboInvoker就已经解析完成，创建过程中连接了服务端，包含一个ExchangeClient等：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; serviceType, URL url) throws RpcException &#123;</span><br><span class="line">    // create rpc invoker.</span><br><span class="line">    DubboInvoker&lt;T&gt; invoker = new DubboInvoker&lt;T&gt;(serviceType, url, getClients(url), invokers);</span><br><span class="line">    //将invoker缓存</span><br><span class="line">    invokers.add(invoker);</span><br><span class="line">    //返回invoker</span><br><span class="line">    return invoker;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着返回ProtocolFilterWrapper的refer方法，在这里会构建invoker链：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException &#123;</span><br><span class="line">    if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) &#123;</span><br><span class="line">        return protocol.refer(type, url);</span><br><span class="line">    &#125;</span><br><span class="line">    return buildInvokerChain(protocol.refer(type, url), Constants.REFERENCE_FILTER_KEY, Constants.CONSUMER);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着再返回到ProtocolListenerWrapper的refer方法，这里会初始化监听器，包装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException &#123;</span><br><span class="line">    if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) &#123;</span><br><span class="line">        return protocol.refer(type, url);</span><br><span class="line">    &#125;</span><br><span class="line">    return new ListenerInvokerWrapper&lt;T&gt;(protocol.refer(type, url), </span><br><span class="line">            Collections.unmodifiableList(</span><br><span class="line">                    ExtensionLoader.getExtensionLoader(InvokerListener.class)</span><br><span class="line">                    .getActivateExtension(url, Constants.INVOKER_LISTENER_KEY)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着在返回到toInvokers方法，然后返回refreshInvoker方法的<code>Map&lt;String, Invoker&lt;T&gt;&gt; newUrlInvokerMap = toInvokers(invokerUrls) ;</code>这就获得了Invoker，接着就是方法名映射Invoker列表：<code>Map&lt;String, List&lt;Invoker&lt;T&gt;&gt;&gt; newMethodInvokerMap = toMethodInvokers(newUrlInvokerMap);</code>这里将invokers列表转成与方法的映射关系。到这里refreshInvoker方法就完成了，在往上就返回到AbstractRegistry的notify方法，到这里也完成了。</p>
+<h2 id="创建服务代理"><a href="#创建服务代理" class="headerlink" title="创建服务代理"></a>创建服务代理</h2><p>到这里有关消费者端注册到注册中心和订阅注册中心就完事儿了，这部分是在RegistryProtocol.doRefer方法中，这个方法最后一句是<code>return cluster.join(directory);</code>，这里由Cluster组件创建一个Invoker并返回，这里的cluster默认是用FailoverCluster，最后返回的是经过MockClusterInvoker包装过的FailoverCluster。继续返回到ReferenceConfig中createProxy方法，这时候我们已经完成了消费者端引用服务的Invoker。然后最后返回的是根据我们得到的invoker创建的服务代理<code>return (T) proxyFactory.getProxy(invoker);</code>。这里proxyFactory是我们在最上面列出的动态生成的代码。</p>
+<p>首先经过AbstractProxyFactory的处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T getProxy(Invoker&lt;T&gt; invoker) throws RpcException &#123;</span><br><span class="line">    Class&lt;?&gt;[] interfaces = null;</span><br><span class="line">    String config = invoker.getUrl().getParameter(&quot;interfaces&quot;);</span><br><span class="line">    if (config != null &amp;&amp; config.length() &gt; 0) &#123;</span><br><span class="line">        String[] types = Constants.COMMA_SPLIT_PATTERN.split(config);</span><br><span class="line">        if (types != null &amp;&amp; types.length &gt; 0) &#123;</span><br><span class="line">            interfaces = new Class&lt;?&gt;[types.length + 2];</span><br><span class="line">            interfaces[0] = invoker.getInterface();</span><br><span class="line">            interfaces[1] = EchoService.class;</span><br><span class="line">            for (int i = 0; i &lt; types.length; i ++) &#123;</span><br><span class="line">                interfaces[i + 1] = ReflectUtils.forName(types[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if (interfaces == null) &#123;</span><br><span class="line">        interfaces = new Class&lt;?&gt;[] &#123;invoker.getInterface(), EchoService.class&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    //这里默认使用的是JavassistProxyFactory的实现</span><br><span class="line">    return getProxy(invoker, interfaces);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后经过StubProxyFactoryWrapper的处理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T getProxy(Invoker&lt;T&gt; invoker) throws RpcException &#123;</span><br><span class="line">    T proxy = proxyFactory.getProxy(invoker);</span><br><span class="line">    if (GenericService.class != invoker.getInterface()) &#123;</span><br><span class="line">        String stub = invoker.getUrl().getParameter(Constants.STUB_KEY, invoker.getUrl().getParameter(Constants.LOCAL_KEY));</span><br><span class="line">        if (ConfigUtils.isNotEmpty(stub)) &#123;</span><br><span class="line">            Class&lt;?&gt; serviceType = invoker.getInterface();</span><br><span class="line">            if (ConfigUtils.isDefault(stub)) &#123;</span><br><span class="line">                if (invoker.getUrl().hasParameter(Constants.STUB_KEY)) &#123;</span><br><span class="line">                    stub = serviceType.getName() + &quot;Stub&quot;;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    stub = serviceType.getName() + &quot;Local&quot;;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            try &#123;</span><br><span class="line">                Class&lt;?&gt; stubClass = ReflectUtils.forName(stub);</span><br><span class="line">                if (! serviceType.isAssignableFrom(stubClass)) &#123;</span><br><span class="line">                    throw new IllegalStateException(&quot;The stub implemention class &quot; + stubClass.getName() + &quot; not implement interface &quot; + serviceType.getName());</span><br><span class="line">                &#125;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Constructor&lt;?&gt; constructor = ReflectUtils.findConstructor(stubClass, serviceType);</span><br><span class="line">                    proxy = (T) constructor.newInstance(new Object[] &#123;proxy&#125;);</span><br><span class="line">                    //export stub service</span><br><span class="line">                    URL url = invoker.getUrl();</span><br><span class="line">                    if (url.getParameter(Constants.STUB_EVENT_KEY, Constants.DEFAULT_STUB_EVENT))&#123;</span><br><span class="line">                        url = url.addParameter(Constants.STUB_EVENT_METHODS_KEY, StringUtils.join(Wrapper.getWrapper(proxy.getClass()).getDeclaredMethodNames(), &quot;,&quot;));</span><br><span class="line">                        url = url.addParameter(Constants.IS_SERVER_KEY, Boolean.FALSE.toString());</span><br><span class="line">                        try&#123;</span><br><span class="line">                            export(proxy, (Class)invoker.getInterface(), url);</span><br><span class="line">                        &#125;catch (Exception e) &#123;</span><br><span class="line">                            LOGGER.error(&quot;export a stub service error.&quot;, e);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; catch (NoSuchMethodException e) &#123;</span><br><span class="line">                    throw new IllegalStateException(&quot;No such constructor \&quot;public &quot; + stubClass.getSimpleName() + &quot;(&quot; + serviceType.getName() + &quot;)\&quot; in stub implemention class &quot; + stubClass.getName(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (Throwable t) &#123;</span><br><span class="line">                LOGGER.error(&quot;Failed to create stub implemention class &quot; + stub + &quot; in consumer &quot; + NetUtils.getLocalHost() + &quot; use dubbo version &quot; + Version.getVersion() + &quot;, cause: &quot; + t.getMessage(), t);</span><br><span class="line">                // ignore</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return proxy;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回代理。到此<code>HelloService helloService = (HelloService) applicationContext.getBean(&quot;helloService&quot;);</code>就解析完成了，得到了服务的代理，代理会被注册到Spring容器中，可以调用服务方法了。接下来的方法调用过程，是消费者发送请求，提供者处理，然后消费者接受处理结果的请求。</p>
+<p>初始化的过程：主要做了注册到注册中心，监听注册中心，连接到服务提供者端，创建代理。这些都是为了下面消费者和提供者之间的通信做准备。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="dachengxi WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="dachengxi Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/dubbo源码/" rel="tag"># dubbo源码</a>
+          
+            <a href="/tags/dubbo消费者初始化/" rel="tag"># dubbo消费者初始化</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/19/Dubbo中编码和解码的解析/" rel="next" title="Dubbo中编码和解码的解析">
+                <i class="fa fa-chevron-left"></i> Dubbo中编码和解码的解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/21/Dubbo中服务消费者和服务提供者之间的请求和响应过程/" rel="prev" title="Dubbo中服务消费者和服务提供者之间的请求和响应过程">
+                Dubbo中服务消费者和服务提供者之间的请求和响应过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="dachengxi" />
+          <p class="site-author-name" itemprop="name">dachengxi</p>
+           
+              <p class="site-description motion-element" itemprop="description">一个小学生</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">99</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/dachengxi" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/dachengxi" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://git.oschina.net/dachengxi" target="_blank" title="码云">
+                  
+                    <i class="fa fa-fw fa-git"></i>
+                  
+                  码云
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://hexo.io" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/iissnan/hexo-theme-next" title="Next Theme" target="_blank">Next Theme</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化开始"><span class="nav-number">1.</span> <span class="nav-text">初始化开始</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化入口"><span class="nav-number">2.</span> <span class="nav-text">初始化入口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建代理"><span class="nav-number">2.1.</span> <span class="nav-text">创建代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用远程服务"><span class="nav-number">2.2.</span> <span class="nav-text">引用远程服务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#获取注册中心"><span class="nav-number">2.2.1.</span> <span class="nav-text">获取注册中心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取注册中心时的通知方法"><span class="nav-number">2.2.2.</span> <span class="nav-text">获取注册中心时的通知方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用远程服务-1"><span class="nav-number">2.2.3.</span> <span class="nav-text">引用远程服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注册到注册中心"><span class="nav-number">2.2.4.</span> <span class="nav-text">注册到注册中心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#订阅服务提供者"><span class="nav-number">2.2.5.</span> <span class="nav-text">订阅服务提供者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务订阅完之后的通知"><span class="nav-number">2.2.6.</span> <span class="nav-text">服务订阅完之后的通知</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#重建invoker实例"><span class="nav-number">2.2.6.1.</span> <span class="nav-text">重建invoker实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建invoker"><span class="nav-number">2.2.6.2.</span> <span class="nav-text">创建invoker</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建服务代理"><span class="nav-number">2.3.</span> <span class="nav-text">创建服务代理</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'cxis';
+      var disqus_identifier = '2017/03/21/Dubbo中消费者初始化的过程解析/';
+
+      var disqus_title = "Dubbo中消费者初始化的过程解析";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>
