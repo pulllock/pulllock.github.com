@@ -87,21 +87,19 @@
 
 
 
-<meta name="description" content="ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程环境下，能保证程序执行的正确性，每次同步执行的时候都要锁住整个结构。HashMap不是同步的，在单线程情况下效率高。
-ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计。它默认将Hash表分为16个分段，get，put，remove等">
+<meta name="description" content="ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程环境下，能保证程序执行的正确性，每次同步执行的时候都要锁住整个结构。HashMap不是同步的，在单线程情况下效率高。 ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计。它默认将Hash表分为16个分段，get，put，remove等">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ConcurrentHashMap简介">
-<meta property="og:url" content="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap简介/index.html">
+<meta property="og:url" content="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/index.html">
 <meta property="og:site_name" content="大程熙">
-<meta property="og:description" content="ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程环境下，能保证程序执行的正确性，每次同步执行的时候都要锁住整个结构。HashMap不是同步的，在单线程情况下效率高。
-ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计。它默认将Hash表分为16个分段，get，put，remove等">
-<meta property="og:image" content="http://dachengxi.github.com/ConcurrentHashMap.png">
-<meta property="og:updated_time" content="2016-08-03T06:35:10.000Z">
+<meta property="og:description" content="ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程环境下，能保证程序执行的正确性，每次同步执行的时候都要锁住整个结构。HashMap不是同步的，在单线程情况下效率高。 ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计。它默认将Hash表分为16个分段，get，put，remove等">
+<meta property="og:image" content="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/ConcurrentHashMap.png">
+<meta property="article:published_time" content="2016-05-26T03:00:23.000Z">
+<meta property="article:modified_time" content="2016-08-03T06:35:10.000Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="ConcurrentHashMap">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ConcurrentHashMap简介">
-<meta name="twitter:description" content="ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程环境下，能保证程序执行的正确性，每次同步执行的时候都要锁住整个结构。HashMap不是同步的，在单线程情况下效率高。
-ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计。它默认将Hash表分为16个分段，get，put，remove等">
-<meta name="twitter:image" content="http://dachengxi.github.com/ConcurrentHashMap.png">
+<meta name="twitter:image" content="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/ConcurrentHashMap.png">
 
 
 
@@ -136,7 +134,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
 
 
   <title> ConcurrentHashMap简介 | 大程熙 </title>
-</head>
+<meta name="generator" content="Hexo 4.2.0"></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
@@ -328,7 +326,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap简介/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dachengxi">
@@ -387,7 +385,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
                     <span itemprop="name">Java基础</span>
                   </a>
                 </span>
@@ -398,7 +396,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java基础/并发集合/" itemprop="url" rel="index">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88/" itemprop="url" rel="index">
                     <span itemprop="name">并发集合</span>
                   </a>
                 </span>
@@ -416,7 +414,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/05/26/ConcurrentHashMap简介/#comments" itemprop="discussionUrl">
+                <a href="/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/26/ConcurrentHashMap简介/" itemprop="commentCount"></span>
                 </a>
               </span>
@@ -579,7 +577,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/05/26/HashTable简介/" rel="next" title="HashTable简介">
+              <a href="/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/" rel="next" title="HashTable简介">
                 <i class="fa fa-chevron-left"></i> HashTable简介
               </a>
             
@@ -589,7 +587,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/05/27/TreeMap简介/" rel="prev" title="TreeMap简介">
+              <a href="/2016/05/27/TreeMap%E7%AE%80%E4%BB%8B/" rel="prev" title="TreeMap简介">
                 TreeMap简介 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -620,7 +618,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
       <div id="disqus_thread">
         <noscript>
           Please enable JavaScript to view the
-          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
         </noscript>
       </div>
     
@@ -774,7 +772,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结构"><span class="nav-number">2.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Segment"><span class="nav-number">3.</span> <span class="nav-text">Segment</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化"><span class="nav-number">4.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#put-key-value-方法"><span class="nav-number">5.</span> <span class="nav-text">put(key,value)方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#get-key-方法"><span class="nav-number">6.</span> <span class="nav-text">get(key)方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#size-方法"><span class="nav-number">7.</span> <span class="nav-text">size()方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#迭代"><span class="nav-number">8.</span> <span class="nav-text">迭代</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析"><span class="nav-number">9.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Holder-静态内部类-存放一些在虚拟机启动后才能初始化的值"><span class="nav-number">9.1.</span> <span class="nav-text">Holder 静态内部类,存放一些在虚拟机启动后才能初始化的值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#容量阈值，初始化hashSeed的时候会用到该值"><span class="nav-number">9.1.1.</span> <span class="nav-text">容量阈值，初始化hashSeed的时候会用到该值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#static静态块"><span class="nav-number">9.1.2.</span> <span class="nav-text">static静态块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-int-initialCapacity-float-loadFactor-int-concurrencyLevel-构造"><span class="nav-number">9.2.</span> <span class="nav-text">ConcurrentHashMap(int initialCapacity,float loadFactor, int concurrencyLevel) 构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-int-initialCapacity-float-loadFactor-指定初始容量和负载因子"><span class="nav-number">9.3.</span> <span class="nav-text">ConcurrentHashMap(int initialCapacity, float loadFactor) 指定初始容量和负载因子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-int-initialCapacity-指定初始容量"><span class="nav-number">9.4.</span> <span class="nav-text">ConcurrentHashMap(int initialCapacity) 指定初始容量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-int-initialCapacity-空构造"><span class="nav-number">9.5.</span> <span class="nav-text">ConcurrentHashMap(int initialCapacity) 空构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-Map-lt-extends-K-extends-V-gt-m-使用map初始化"><span class="nav-number">9.6.</span> <span class="nav-text">ConcurrentHashMap(Map<? extends K, ? extends V> m) 使用map初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isEmpty-是否为空"><span class="nav-number">9.7.</span> <span class="nav-text">isEmpty() 是否为空</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#size-返回大小"><span class="nav-number">9.8.</span> <span class="nav-text">size() 返回大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get-Object-key-根据key获取value"><span class="nav-number">9.9.</span> <span class="nav-text">get(Object key) 根据key获取value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#containsKey-Object-key-是否包含key"><span class="nav-number">9.10.</span> <span class="nav-text">containsKey(Object key) 是否包含key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#containsValue-Object-value-是否包含value"><span class="nav-number">9.11.</span> <span class="nav-text">containsValue(Object value) 是否包含value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#put-K-key-V-value"><span class="nav-number">9.12.</span> <span class="nav-text">put(K key, V value)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#putIfAbsent-K-key-V-value-如果不存在对应的key-就放进去"><span class="nav-number">9.13.</span> <span class="nav-text">putIfAbsent(K key, V value) 如果不存在对应的key,就放进去</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#putAll-Map-lt-extends-K-extends-V-gt-m-把指定map放进去"><span class="nav-number">9.14.</span> <span class="nav-text">putAll(Map<? extends K, ? extends V> m) 把指定map放进去</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-Object-key-删除"><span class="nav-number">9.15.</span> <span class="nav-text">remove(Object key) 删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-Object-key-Object-value-删除"><span class="nav-number">9.16.</span> <span class="nav-text">remove(Object key, Object value)删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#replace-K-key-V-oldValue-V-newValue-替换"><span class="nav-number">9.17.</span> <span class="nav-text">replace(K key, V oldValue, V newValue) 替换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#replace-K-key-V-value-替换"><span class="nav-number">9.18.</span> <span class="nav-text">replace(K key, V value) 替换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clear-清空"><span class="nav-number">9.19.</span> <span class="nav-text">clear() 清空</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Segment-–重要–"><span class="nav-number">9.20.</span> <span class="nav-text">Segment (–重要–)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put-K-key-int-hash-V-value-boolean-onlyIfAbsent"><span class="nav-number">9.20.1.</span> <span class="nav-text">put(K key, int hash, V value, boolean onlyIfAbsent)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">10.</span> <span class="nav-text">参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结构"><span class="nav-number">2.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Segment"><span class="nav-number">3.</span> <span class="nav-text">Segment</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化"><span class="nav-number">4.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#put-key-value-方法"><span class="nav-number">5.</span> <span class="nav-text">put(key,value)方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#get-key-方法"><span class="nav-number">6.</span> <span class="nav-text">get(key)方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#size-方法"><span class="nav-number">7.</span> <span class="nav-text">size()方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#迭代"><span class="nav-number">8.</span> <span class="nav-text">迭代</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析"><span class="nav-number">9.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Holder-静态内部类-存放一些在虚拟机启动后才能初始化的值"><span class="nav-number">9.1.</span> <span class="nav-text">Holder 静态内部类,存放一些在虚拟机启动后才能初始化的值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#容量阈值，初始化hashSeed的时候会用到该值"><span class="nav-number">9.1.1.</span> <span class="nav-text">容量阈值，初始化hashSeed的时候会用到该值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#static静态块"><span class="nav-number">9.1.2.</span> <span class="nav-text">static静态块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-int-initialCapacity-float-loadFactor-int-concurrencyLevel-构造"><span class="nav-number">9.2.</span> <span class="nav-text">ConcurrentHashMap(int initialCapacity,float loadFactor, int concurrencyLevel) 构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-int-initialCapacity-float-loadFactor-指定初始容量和负载因子"><span class="nav-number">9.3.</span> <span class="nav-text">ConcurrentHashMap(int initialCapacity, float loadFactor) 指定初始容量和负载因子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-int-initialCapacity-指定初始容量"><span class="nav-number">9.4.</span> <span class="nav-text">ConcurrentHashMap(int initialCapacity) 指定初始容量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-int-initialCapacity-空构造"><span class="nav-number">9.5.</span> <span class="nav-text">ConcurrentHashMap(int initialCapacity) 空构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap-Map-lt-extends-K-extends-V-gt-m-使用map初始化"><span class="nav-number">9.6.</span> <span class="nav-text">ConcurrentHashMap(Map&lt;? extends K, ? extends V&gt; m) 使用map初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isEmpty-是否为空"><span class="nav-number">9.7.</span> <span class="nav-text">isEmpty() 是否为空</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#size-返回大小"><span class="nav-number">9.8.</span> <span class="nav-text">size() 返回大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get-Object-key-根据key获取value"><span class="nav-number">9.9.</span> <span class="nav-text">get(Object key) 根据key获取value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#containsKey-Object-key-是否包含key"><span class="nav-number">9.10.</span> <span class="nav-text">containsKey(Object key) 是否包含key</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#containsValue-Object-value-是否包含value"><span class="nav-number">9.11.</span> <span class="nav-text">containsValue(Object value) 是否包含value</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#put-K-key-V-value"><span class="nav-number">9.12.</span> <span class="nav-text">put(K key, V value)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#putIfAbsent-K-key-V-value-如果不存在对应的key-就放进去"><span class="nav-number">9.13.</span> <span class="nav-text">putIfAbsent(K key, V value) 如果不存在对应的key,就放进去</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#putAll-Map-lt-extends-K-extends-V-gt-m-把指定map放进去"><span class="nav-number">9.14.</span> <span class="nav-text">putAll(Map&lt;? extends K, ? extends V&gt; m) 把指定map放进去</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-Object-key-删除"><span class="nav-number">9.15.</span> <span class="nav-text">remove(Object key) 删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-Object-key-Object-value-删除"><span class="nav-number">9.16.</span> <span class="nav-text">remove(Object key, Object value)删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#replace-K-key-V-oldValue-V-newValue-替换"><span class="nav-number">9.17.</span> <span class="nav-text">replace(K key, V oldValue, V newValue) 替换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#replace-K-key-V-value-替换"><span class="nav-number">9.18.</span> <span class="nav-text">replace(K key, V value) 替换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clear-清空"><span class="nav-number">9.19.</span> <span class="nav-text">clear() 清空</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Segment-–重要–"><span class="nav-number">9.20.</span> <span class="nav-text">Segment (–重要–)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#put-K-key-int-hash-V-value-boolean-onlyIfAbsent"><span class="nav-number">9.20.1.</span> <span class="nav-text">put(K key, int hash, V value, boolean onlyIfAbsent)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">10.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>
@@ -797,7 +795,7 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
         <div class="copyright" >
   
   &copy;  2014 - 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -806,12 +804,12 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
 
 
 <div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  由 <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
   主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
     NexT.Mist
   </a>
 </div>
@@ -1080,6 +1078,6 @@ ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计
 
 
   
-<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+<a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

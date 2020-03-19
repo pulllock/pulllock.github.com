@@ -90,13 +90,15 @@
 <meta name="description" content="Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JUC中Lock和ReentrantLock介绍及源码解析">
-<meta property="og:url" content="http://dachengxi.github.com/2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/index.html">
+<meta property="og:url" content="http://dachengxi.github.com/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。">
-<meta property="og:updated_time" content="2017-04-08T07:15:51.938Z">
+<meta property="article:published_time" content="2017-04-08T07:13:45.000Z">
+<meta property="article:modified_time" content="2017-04-08T07:15:51.000Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="Lock">
+<meta property="article:tag" content="ReentrantLock">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JUC中Lock和ReentrantLock介绍及源码解析">
-<meta name="twitter:description" content="Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。">
 
 
 
@@ -131,7 +133,7 @@
 
 
   <title> JUC中Lock和ReentrantLock介绍及源码解析 | 大程熙 </title>
-</head>
+<meta name="generator" content="Hexo 4.2.0"></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
@@ -323,7 +325,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dachengxi">
@@ -382,7 +384,7 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
                     <span itemprop="name">Java基础</span>
                   </a>
                 </span>
@@ -393,7 +395,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java基础/并发包/" itemprop="url" rel="index">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/%E5%B9%B6%E5%8F%91%E5%8C%85/" itemprop="url" rel="index">
                     <span itemprop="name">并发包</span>
                   </a>
                 </span>
@@ -411,7 +413,7 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/#comments" itemprop="discussionUrl">
+                <a href="/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/04/08/JUC中Lock和ReentrantLock介绍及源码解析/" itemprop="commentCount"></span>
                 </a>
               </span>
@@ -566,7 +568,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/04/06/SpringMVC执行流程及源码解析/" rel="next" title="SpringMVC执行流程及源码解析">
+              <a href="/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" rel="next" title="SpringMVC执行流程及源码解析">
                 <i class="fa fa-chevron-left"></i> SpringMVC执行流程及源码解析
               </a>
             
@@ -576,7 +578,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/04/10/Spring中AOP的配置从1.0到5.0的演进/" rel="prev" title="Spring中AOP的配置从1.0到5.0的演进">
+              <a href="/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/" rel="prev" title="Spring中AOP的配置从1.0到5.0的演进">
                 Spring中AOP的配置从1.0到5.0的演进 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -607,7 +609,7 @@
       <div id="disqus_thread">
         <noscript>
           Please enable JavaScript to view the
-          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
         </noscript>
       </div>
     
@@ -784,7 +786,7 @@
         <div class="copyright" >
   
   &copy;  2014 - 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -793,12 +795,12 @@
 
 
 <div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  由 <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
   主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
     NexT.Mist
   </a>
 </div>
@@ -1067,6 +1069,6 @@
 
 
   
-<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+<a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

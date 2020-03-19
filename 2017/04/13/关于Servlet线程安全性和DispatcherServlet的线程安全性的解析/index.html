@@ -90,13 +90,14 @@
 <meta name="description" content="我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于Servlet线程安全性和DispatcherServlet的线程安全性的解析">
-<meta property="og:url" content="http://dachengxi.github.com/2017/04/13/关于Servlet线程安全性和DispatcherServlet的线程安全性的解析/index.html">
+<meta property="og:url" content="http://dachengxi.github.com/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。">
-<meta property="og:updated_time" content="2017-04-13T08:34:23.831Z">
+<meta property="article:published_time" content="2017-04-13T08:33:01.000Z">
+<meta property="article:modified_time" content="2017-04-13T08:34:23.000Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="Servlet">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于Servlet线程安全性和DispatcherServlet的线程安全性的解析">
-<meta name="twitter:description" content="我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。">
 
 
 
@@ -131,7 +132,7 @@
 
 
   <title> 关于Servlet线程安全性和DispatcherServlet的线程安全性的解析 | 大程熙 </title>
-</head>
+<meta name="generator" content="Hexo 4.2.0"></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
@@ -323,7 +324,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/04/13/关于Servlet线程安全性和DispatcherServlet的线程安全性的解析/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dachengxi">
@@ -382,7 +383,7 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java基础/" itemprop="url" rel="index">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
                     <span itemprop="name">Java基础</span>
                   </a>
                 </span>
@@ -393,7 +394,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java基础/Servlet/" itemprop="url" rel="index">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/Servlet/" itemprop="url" rel="index">
                     <span itemprop="name">Servlet</span>
                   </a>
                 </span>
@@ -411,7 +412,7 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/04/13/关于Servlet线程安全性和DispatcherServlet的线程安全性的解析/#comments" itemprop="discussionUrl">
+                <a href="/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/04/13/关于Servlet线程安全性和DispatcherServlet的线程安全性的解析/" itemprop="commentCount"></span>
                 </a>
               </span>
@@ -520,7 +521,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/04/13/Java Servlet工作流程以及源码解析/" rel="next" title="Java Servlet工作流程以及源码解析">
+              <a href="/2017/04/13/Java%20Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" rel="next" title="Java Servlet工作流程以及源码解析">
                 <i class="fa fa-chevron-left"></i> Java Servlet工作流程以及源码解析
               </a>
             
@@ -530,7 +531,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/04/14/从头开始写一个迷你dubbo/" rel="prev" title="从头开始写一个迷你dubbo">
+              <a href="/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/" rel="prev" title="从头开始写一个迷你dubbo">
                 从头开始写一个迷你dubbo <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -561,7 +562,7 @@
       <div id="disqus_thread">
         <noscript>
           Please enable JavaScript to view the
-          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
         </noscript>
       </div>
     
@@ -738,7 +739,7 @@
         <div class="copyright" >
   
   &copy;  2014 - 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -747,12 +748,12 @@
 
 
 <div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  由 <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
   主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
     NexT.Mist
   </a>
 </div>
@@ -1021,6 +1022,6 @@
 
 
   
-<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+<a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

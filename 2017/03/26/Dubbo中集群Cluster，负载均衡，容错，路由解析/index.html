@@ -90,13 +90,18 @@
 <meta name="description" content="Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Dubbo中集群Cluster，负载均衡，容错，路由解析">
-<meta property="og:url" content="http://dachengxi.github.com/2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/index.html">
+<meta property="og:url" content="http://dachengxi.github.com/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%EF%BC%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%8C%E5%AE%B9%E9%94%99%EF%BC%8C%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）">
-<meta property="og:updated_time" content="2017-03-26T04:14:33.112Z">
+<meta property="article:published_time" content="2017-03-26T04:12:49.000Z">
+<meta property="article:modified_time" content="2017-03-26T04:14:33.000Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="dubbo源码">
+<meta property="article:tag" content="dubbo集群">
+<meta property="article:tag" content="dubbo容错">
+<meta property="article:tag" content="dubbo路由">
+<meta property="article:tag" content="dubbo负载均衡">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dubbo中集群Cluster，负载均衡，容错，路由解析">
-<meta name="twitter:description" content="Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）">
 
 
 
@@ -131,7 +136,7 @@
 
 
   <title> Dubbo中集群Cluster，负载均衡，容错，路由解析 | 大程熙 </title>
-</head>
+<meta name="generator" content="Hexo 4.2.0"></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
@@ -323,7 +328,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%EF%BC%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%8C%E5%AE%B9%E9%94%99%EF%BC%8C%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dachengxi">
@@ -400,7 +405,7 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/#comments" itemprop="discussionUrl">
+                <a href="/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%EF%BC%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%8C%E5%AE%B9%E9%94%99%EF%BC%8C%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/26/Dubbo中集群Cluster，负载均衡，容错，路由解析/" itemprop="commentCount"></span>
                 </a>
               </span>
@@ -563,15 +568,15 @@
       
         <div class="post-tags">
           
-            <a href="/tags/dubbo源码/" rel="tag"># dubbo源码</a>
+            <a href="/tags/dubbo%E6%BA%90%E7%A0%81/" rel="tag"># dubbo源码</a>
           
-            <a href="/tags/dubbo集群/" rel="tag"># dubbo集群</a>
+            <a href="/tags/dubbo%E9%9B%86%E7%BE%A4/" rel="tag"># dubbo集群</a>
           
-            <a href="/tags/dubbo容错/" rel="tag"># dubbo容错</a>
+            <a href="/tags/dubbo%E5%AE%B9%E9%94%99/" rel="tag"># dubbo容错</a>
           
-            <a href="/tags/dubbo路由/" rel="tag"># dubbo路由</a>
+            <a href="/tags/dubbo%E8%B7%AF%E7%94%B1/" rel="tag"># dubbo路由</a>
           
-            <a href="/tags/dubbo负载均衡/" rel="tag"># dubbo负载均衡</a>
+            <a href="/tags/dubbo%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" rel="tag"># dubbo负载均衡</a>
           
         </div>
       
@@ -584,7 +589,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/23/JUC中AQS简介/" rel="next" title="JUC中AQS简介">
+              <a href="/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/" rel="next" title="JUC中AQS简介">
                 <i class="fa fa-chevron-left"></i> JUC中AQS简介
               </a>
             
@@ -594,7 +599,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/04/02/Dubbo中订阅和通知解析/" rel="prev" title="Dubbo中订阅和通知解析">
+              <a href="/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/" rel="prev" title="Dubbo中订阅和通知解析">
                 Dubbo中订阅和通知解析 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -625,7 +630,7 @@
       <div id="disqus_thread">
         <noscript>
           Please enable JavaScript to view the
-          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
         </noscript>
       </div>
     
@@ -802,7 +807,7 @@
         <div class="copyright" >
   
   &copy;  2014 - 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -811,12 +816,12 @@
 
 
 <div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  由 <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
   主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
     NexT.Mist
   </a>
 </div>
@@ -1085,6 +1090,6 @@
 
 
   
-<a href="https://github.com/dachengxi"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+<a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>
