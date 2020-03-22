@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="简介(转)这个可能是最好的对比volatile和synchronized作用的文章了。 volatile是一个变量修饰符，而synchronized是一个方法或块的修饰符。所以我们使用这两种关键字来指定三种简单的存取变量的方式。">
@@ -106,6 +106,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -150,11 +151,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -253,6 +281,7 @@
         <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>(转)这个可能是最好的对比volatile和synchronized作用的文章了。</p>
 <p>volatile是一个变量修饰符，而synchronized是一个方法或块的修饰符。所以我们使用这两种关键字来指定三种简单的存取变量的方式。</p>
 <a id="more"></a>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int i1;</span><br><span class="line">int geti1() &#123;return i1;&#125;</span><br><span class="line"></span><br><span class="line">volatile int i2;</span><br><span class="line">int geti2() &#123;return i2;&#125;</span><br><span class="line"></span><br><span class="line">int i3;</span><br><span class="line">synchronized int geti3() &#123;return i3;&#125;</span><br></pre></td></tr></table></figure>
 <p>geti1()在当前线程中立即获取在i1变量中的值。线程可以获得变量的本地拷贝，而所获得的变量的值并不一定与其他线程所获得的值相同。特别是，如果其他的线程修改了i1的值，那么当前线程获得的i1的值可能与修改后的值有所差别。</p>
 <p>实际上，Java有一种主内存的机制，使用一个主内存来保存变量当前的正确的值。线程将变量的值拷贝到自己独立的内存中，而这些线程的内存拷贝可能与主内存中的值不同。所以实际当中可能发生这样的情况，在主内存中i1的值为1，线程1和线程2都更改了i1，但是却没把更新的值传回给主内存或其他线程中，那么可能在线程1中i1的值为2，线程2中i1的值却为3。</p>
@@ -273,7 +302,7 @@
 <li>volatile不会造成线程的阻塞；synchronized可能会造成线程的阻塞。</li>
 <li>volatile标记的变量不会被编译器优化；synchronized标记的变量可以被编译器优化</li>
 </ol>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://blog.csdn.net/wanghai__/article/details/6260178" target="_blank" rel="external">http://blog.csdn.net/wanghai__/article/details/6260178</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://blog.csdn.net/wanghai__/article/details/6260178" target="_blank" rel="noopener">http://blog.csdn.net/wanghai__/article/details/6260178</a></p>
 
     </div>
 
@@ -508,6 +537,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="从03年接触第一本计算机相关的书，到第一次接触计算机申请第一个qq，到第一台手机，第一台智能机，在手机上做开发学习，到第二次高考报志愿的毫不犹豫的选择计算机，到现在找工作都感觉困难，到现在的感觉迷茫，有时候很想退回去03年，不去翻看那几本书！">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -236,7 +264,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>从03年接触第一本计算机相关的书，到第一次接触计算机申请第一个qq，到第一台手机，第一台智能机，在手机上做开发学习，到第二次高考报志愿的毫不犹豫的选择计算机，到现在找工作都感觉困难，到现在的感觉迷茫，有时候很想退回去03年，不去翻看那几本书！<br><a id="more"></a></p>
+        <p>从03年接触第一本计算机相关的书，到第一次接触计算机申请第一个qq，到第一台手机，第一台智能机，在手机上做开发学习，到第二次高考报志愿的毫不犹豫的选择计算机，到现在找工作都感觉困难，到现在的感觉迷茫，有时候很想退回去03年，不去翻看那几本书！</p>
+<a id="more"></a>
 <h1 id="2003年，3本书和一张光盘"><a href="#2003年，3本书和一张光盘" class="headerlink" title="2003年，3本书和一张光盘"></a>2003年，3本书和一张光盘</h1><p>家里很穷，我还在上初中。有关这3本书和光盘的来历有点记不清楚了，但是这三本书和光盘的主人我记得，是我一个从小就很崇拜的堂叔的。堂叔长得帅气，很稳重，那时候技校到处都是招计算机，厨师之类的，他去培训了计算机。这书有可能就是他不用了，不知道怎么的就到我手里了。（现在还在馋涎他的7位QQ）。</p>
 <p>关于三本书记得都不太清楚了，一本大概是Frontpage2000，一本是网页制作与网站之类的，一本是有关电脑维修之类的，还有一张至今藏在老家快要坍塌的房子里的光盘，内容我到现在都不知道是啥。</p>
 <p>就是这三本书，带我走上了‘歧途’。简单的看了一点之后，发现这东西好神奇！然后就在我长大的那间屋子里，我看完了这三本书。从此一发不可收拾，电脑变成了我唯一的梦想，什么社会主义接班人，什么科学家的我都不在乎了。</p>
@@ -247,7 +276,7 @@
 <p>当我开始刷了WM6.5的时候，也体验了诺基亚的智能操作系统，那时候便感觉s60和wm即将被Android代替！但是没想到IOS会和Android平分天下。</p>
 <p>就这样，我意外的考上了二本，报志愿的时候，其他的专业一眼没看，全部计算机。</p>
 <h1 id="2010沈阳化工大学，网络工程"><a href="#2010沈阳化工大学，网络工程" class="headerlink" title="2010沈阳化工大学，网络工程"></a>2010沈阳化工大学，网络工程</h1><p>大学就正式开始了我的计算机生涯，协会面试，给自己和同学做了很多自我介绍的作品，网页等等，顺利进入各种协会。不就便成了老师手下的得力干将，各种做网站，给学校维护网站，计算机，做项目，去外地做实施。大学生活就这么很快的过去了，我感觉什么都没有做好，什么都还没体验。</p>
-<h1 id="2013大三结束来到上海"><a href="#2013大三结束来到上海" class="headerlink" title="2013大三结束来到上海"></a>2013大三结束来到上海</h1><p>大三结束来到上海！开始了我的Java<del>~</del>~~~<br>好迷茫！</p>
+<h1 id="2013大三结束来到上海"><a href="#2013大三结束来到上海" class="headerlink" title="2013大三结束来到上海"></a>2013大三结束来到上海</h1><p>大三结束来到上海！开始了我的Java<del>~</del><br>好迷茫！</p>
 
     </div>
 
@@ -481,6 +510,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

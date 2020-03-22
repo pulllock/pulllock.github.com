@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Vector简介 Vector和ArrayList类似,基于Object数组方式实现 Vector是同步访问的,操作是线程安全的">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -250,62 +278,111 @@
 <li>Vector是同步访问的,操作是线程安全的</li>
 </ol>
 <a id="more"></a>
+
 <h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><blockquote>
 <p>jdk1.7.0_71</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//保存Vector中的元素</span><br><span class="line">protected Object[] elementData;</span><br><span class="line">//Vector中存储的元素个数</span><br><span class="line">protected int elementCount;</span><br><span class="line">//Vector容量自动增长的大小,此数值小于等于0,容量增长为2倍</span><br><span class="line">protected int capacityIncrement;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;保存Vector中的元素</span><br><span class="line">protected Object[] elementData;</span><br><span class="line">&#x2F;&#x2F;Vector中存储的元素个数</span><br><span class="line">protected int elementCount;</span><br><span class="line">&#x2F;&#x2F;Vector容量自动增长的大小,此数值小于等于0,容量增长为2倍</span><br><span class="line">protected int capacityIncrement;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Vector-int-initialCapacity-int-capacityIncrement-初始容量和初始自动增长-构造"><a href="#Vector-int-initialCapacity-int-capacityIncrement-初始容量和初始自动增长-构造" class="headerlink" title="Vector(int initialCapacity, int capacityIncrement) 初始容量和初始自动增长 构造"></a>Vector(int initialCapacity, int capacityIncrement) 初始容量和初始自动增长 构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Vector(int initialCapacity, int capacityIncrement)&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Vector-int-initialCapacity-初始容量-自动增长2倍-构造"><a href="#Vector-int-initialCapacity-初始容量-自动增长2倍-构造" class="headerlink" title="Vector(int initialCapacity) 初始容量 ,自动增长2倍 构造"></a>Vector(int initialCapacity) 初始容量 ,自动增长2倍 构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Vector(int initialCapacity)&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Vector-初始容量10-自动增长2倍-构造"><a href="#Vector-初始容量10-自动增长2倍-构造" class="headerlink" title="Vector() 初始容量10,自动增长2倍 构造"></a>Vector() 初始容量10,自动增长2倍 构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Vector()&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Vector-Collection-lt-extends-E-gt-c-使用集合初始化"><a href="#Vector-Collection-lt-extends-E-gt-c-使用集合初始化" class="headerlink" title="Vector(Collection&lt;? extends E&gt; c) 使用集合初始化"></a>Vector(Collection&lt;? extends E&gt; c) 使用集合初始化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Vector(Collection&lt;? extends E&gt; c)&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="copyInto-Object-anArray-将Vector中的元素拷到Object数组中"><a href="#copyInto-Object-anArray-将Vector中的元素拷到Object数组中" class="headerlink" title="copyInto(Object[] anArray) 将Vector中的元素拷到Object数组中"></a>copyInto(Object[] anArray) 将Vector中的元素拷到Object数组中</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void copyInto(Object[] anArray) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="trimToSize"><a href="#trimToSize" class="headerlink" title="trimToSize()"></a>trimToSize()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void trimToSize() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="ensureCapacity-int-minCapacity-增加容量"><a href="#ensureCapacity-int-minCapacity-增加容量" class="headerlink" title="ensureCapacity(int minCapacity) 增加容量"></a>ensureCapacity(int minCapacity) 增加容量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void ensureCapacity(int minCapacity) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="grow-int-minCapacity-真正增长容量的方法"><a href="#grow-int-minCapacity-真正增长容量的方法" class="headerlink" title="grow(int minCapacity) 真正增长容量的方法"></a>grow(int minCapacity) 真正增长容量的方法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private void grow(int minCapacity) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="setSize-int-newSize-设置大小"><a href="#setSize-int-newSize-设置大小" class="headerlink" title="setSize(int newSize) 设置大小"></a>setSize(int newSize) 设置大小</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void setSize(int newSize) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="capacity-Vector的容量"><a href="#capacity-Vector的容量" class="headerlink" title="capacity() Vector的容量"></a>capacity() Vector的容量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized int capacity() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="size-Vector包含元素的数量"><a href="#size-Vector包含元素的数量" class="headerlink" title="size() Vector包含元素的数量"></a>size() Vector包含元素的数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized int size() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="isEmpty-是否为空"><a href="#isEmpty-是否为空" class="headerlink" title="isEmpty()是否为空"></a>isEmpty()是否为空</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean isEmpty() &#123;&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="elements-返回一个枚举"><a href="#elements-返回一个枚举" class="headerlink" title="elements()返回一个枚举"></a>elements()返回一个枚举</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public Enumeration&lt;E&gt; elements() &#123;</span><br><span class="line">			return new Enumeration&lt;E&gt;() &#123;</span><br><span class="line">            int count = 0;</span><br><span class="line"></span><br><span class="line">            public boolean hasMoreElements() &#123;</span><br><span class="line">                return count &lt; elementCount;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            public E nextElement() &#123;</span><br><span class="line">                synchronized (Vector.this) &#123;</span><br><span class="line">                    if (count &lt; elementCount) &#123;</span><br><span class="line">                        return elementData(count++);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                throw new NoSuchElementException(&quot;Vector Enumeration&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="elements-返回一个枚举"><a href="#elements-返回一个枚举" class="headerlink" title="elements()返回一个枚举"></a>elements()返回一个枚举</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public Enumeration&lt;E&gt; elements() &#123;</span><br><span class="line">			return new Enumeration&lt;E&gt;() &#123;</span><br><span class="line">            int count &#x3D; 0;</span><br><span class="line"></span><br><span class="line">            public boolean hasMoreElements() &#123;</span><br><span class="line">                return count &lt; elementCount;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            public E nextElement() &#123;</span><br><span class="line">                synchronized (Vector.this) &#123;</span><br><span class="line">                    if (count &lt; elementCount) &#123;</span><br><span class="line">                        return elementData(count++);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                throw new NoSuchElementException(&quot;Vector Enumeration&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="contains-Object-o-是否包含指定元素"><a href="#contains-Object-o-是否包含指定元素" class="headerlink" title="contains(Object o) 是否包含指定元素"></a>contains(Object o) 是否包含指定元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean contains(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="indexOf-Object-o-返回第一个匹配的索引"><a href="#indexOf-Object-o-返回第一个匹配的索引" class="headerlink" title="indexOf(Object o) 返回第一个匹配的索引"></a>indexOf(Object o) 返回第一个匹配的索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int indexOf(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="indexOf-Object-o-int-index-返回第一个从index开始的匹配的Object"><a href="#indexOf-Object-o-int-index-返回第一个从index开始的匹配的Object" class="headerlink" title="indexOf(Object o, int index) 返回第一个从index开始的匹配的Object"></a>indexOf(Object o, int index) 返回第一个从index开始的匹配的Object</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized int indexOf(Object o, int index)&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="lastIndexOf-Object-o-返回最后一个匹配的索引"><a href="#lastIndexOf-Object-o-返回最后一个匹配的索引" class="headerlink" title="lastIndexOf(Object o) 返回最后一个匹配的索引"></a>lastIndexOf(Object o) 返回最后一个匹配的索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized int lastIndexOf(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="lastIndexOf-Object-o-int-index-返回最后一个从index开始的匹配的Object"><a href="#lastIndexOf-Object-o-int-index-返回最后一个从index开始的匹配的Object" class="headerlink" title="lastIndexOf(Object o, int index)返回最后一个从index开始的匹配的Object"></a>lastIndexOf(Object o, int index)返回最后一个从index开始的匹配的Object</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized int lastIndexOf(Object o, int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="elementAt-int-index-返回指定位置的元素"><a href="#elementAt-int-index-返回指定位置的元素" class="headerlink" title="elementAt(int index) 返回指定位置的元素"></a>elementAt(int index) 返回指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized E elementAt(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="firstElement-第一个元素"><a href="#firstElement-第一个元素" class="headerlink" title="firstElement() 第一个元素"></a>firstElement() 第一个元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized E firstElement()&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="lastElement-最后一个元素"><a href="#lastElement-最后一个元素" class="headerlink" title="lastElement() 最后一个元素"></a>lastElement() 最后一个元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized E lastElement() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="setElementAt-E-obj-int-index-设置指定位置的元素"><a href="#setElementAt-E-obj-int-index-设置指定位置的元素" class="headerlink" title="setElementAt(E obj, int index) 设置指定位置的元素"></a>setElementAt(E obj, int index) 设置指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void setElementAt(E obj, int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="removeElementAt-int-index-移除指定位置的元素"><a href="#removeElementAt-int-index-移除指定位置的元素" class="headerlink" title="removeElementAt(int index) 移除指定位置的元素"></a>removeElementAt(int index) 移除指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void removeElementAt(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="insertElementAt-E-obj-int-index-指定位置之后插入元素"><a href="#insertElementAt-E-obj-int-index-指定位置之后插入元素" class="headerlink" title="insertElementAt(E obj,int index)指定位置之后插入元素"></a>insertElementAt(E obj,int index)指定位置之后插入元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void insertElementAt(E obj, int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="addElement-E-obj-添加元素到最后"><a href="#addElement-E-obj-添加元素到最后" class="headerlink" title="addElement(E obj) 添加元素到最后"></a>addElement(E obj) 添加元素到最后</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void addElement(E obj) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="removeElement-Object-obj-删除第一个匹配的元素"><a href="#removeElement-Object-obj-删除第一个匹配的元素" class="headerlink" title="removeElement(Object obj) 删除第一个匹配的元素"></a>removeElement(Object obj) 删除第一个匹配的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean removeElement(Object obj) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="removeAllElements-删除所有元素"><a href="#removeAllElements-删除所有元素" class="headerlink" title="removeAllElements() 删除所有元素"></a>removeAllElements() 删除所有元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void removeAllElements() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="clone-深拷贝"><a href="#clone-深拷贝" class="headerlink" title="clone() 深拷贝"></a>clone() 深拷贝</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized Object clone() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="toArray-返回Object数组"><a href="#toArray-返回Object数组" class="headerlink" title="toArray() 返回Object数组"></a>toArray() 返回Object数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized Object[] toArray() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="toArray-T-a-返回指定类型的数组"><a href="#toArray-T-a-返回指定类型的数组" class="headerlink" title="toArray(T[] a) 返回指定类型的数组"></a>toArray(T[] a) 返回指定类型的数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized &lt;T&gt; T[] toArray(T[] a) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="elementData-int-index-返回指定位置的元素"><a href="#elementData-int-index-返回指定位置的元素" class="headerlink" title="elementData(int index) 返回指定位置的元素"></a>elementData(int index) 返回指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E elementData(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="get-int-index-获取指定位置的元素"><a href="#get-int-index-获取指定位置的元素" class="headerlink" title="get(int index) 获取指定位置的元素"></a>get(int index) 获取指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized E get(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="set-int-index-E-element-替换指定位置的元素"><a href="#set-int-index-E-element-替换指定位置的元素" class="headerlink" title="set(int index, E element) 替换指定位置的元素"></a>set(int index, E element) 替换指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized E set(int index, E element) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="add-E-e-添加元素到末尾"><a href="#add-E-e-添加元素到末尾" class="headerlink" title="add(E e) 添加元素到末尾"></a>add(E e) 添加元素到末尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean add(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="remove-Object-o-删除第一个匹配的元素"><a href="#remove-Object-o-删除第一个匹配的元素" class="headerlink" title="remove(Object o) 删除第一个匹配的元素"></a>remove(Object o) 删除第一个匹配的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean remove(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="add-int-index-E-element-指定位置后面插入元素"><a href="#add-int-index-E-element-指定位置后面插入元素" class="headerlink" title="add(int index, E element) 指定位置后面插入元素"></a>add(int index, E element) 指定位置后面插入元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void add(int index, E element)&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="remove-int-index-删除指定位置的元素"><a href="#remove-int-index-删除指定位置的元素" class="headerlink" title="remove(int index) 删除指定位置的元素"></a>remove(int index) 删除指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized E remove(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="clear-清空vector"><a href="#clear-清空vector" class="headerlink" title="clear() 清空vector"></a>clear() 清空vector</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void clear() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="containsAll-Collection-lt-gt-c-是否包含指定的集合"><a href="#containsAll-Collection-lt-gt-c-是否包含指定的集合" class="headerlink" title="containsAll(Collection&lt;?&gt; c) 是否包含指定的集合"></a>containsAll(Collection&lt;?&gt; c) 是否包含指定的集合</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean containsAll(Collection&lt;?&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="addAll-Collection-lt-extends-E-gt-c-把集合添加到vector的末尾"><a href="#addAll-Collection-lt-extends-E-gt-c-把集合添加到vector的末尾" class="headerlink" title="addAll(Collection&lt;? extends E&gt; c) 把集合添加到vector的末尾"></a>addAll(Collection&lt;? extends E&gt; c) 把集合添加到vector的末尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean addAll(Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="removeAll-Collection-lt-gt-c-删除vector中所有的指定集合中的元素"><a href="#removeAll-Collection-lt-gt-c-删除vector中所有的指定集合中的元素" class="headerlink" title="removeAll(Collection&lt;?&gt; c) 删除vector中所有的指定集合中的元素"></a>removeAll(Collection&lt;?&gt; c) 删除vector中所有的指定集合中的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean removeAll(Collection&lt;?&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="retainAll-Collection-lt-gt-c-保留指定的集合元素-其他的删除"><a href="#retainAll-Collection-lt-gt-c-保留指定的集合元素-其他的删除" class="headerlink" title="retainAll(Collection&lt;?&gt; c)保留指定的集合元素,其他的删除"></a>retainAll(Collection&lt;?&gt; c)保留指定的集合元素,其他的删除</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean retainAll(Collection&lt;?&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="addAll-int-index-Collection-lt-extends-E-gt-c-添加指定的集合元素到指定的位置之后"><a href="#addAll-int-index-Collection-lt-extends-E-gt-c-添加指定的集合元素到指定的位置之后" class="headerlink" title="addAll(int index, Collection&lt;? extends E&gt; c) 添加指定的集合元素到指定的位置之后"></a>addAll(int index, Collection&lt;? extends E&gt; c) 添加指定的集合元素到指定的位置之后</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean addAll(int index, Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="equals-Object-o"><a href="#equals-Object-o" class="headerlink" title="equals(Object o)"></a>equals(Object o)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean equals(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="hashCode"><a href="#hashCode" class="headerlink" title="hashCode()"></a>hashCode()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized int hashCode() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString()"></a>toString()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized String toString() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="subList-int-fromIndex-int-toIndex-返回一个子list"><a href="#subList-int-fromIndex-int-toIndex-返回一个子list" class="headerlink" title="subList(int fromIndex, int toIndex)返回一个子list"></a>subList(int fromIndex, int toIndex)返回一个子list</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized List&lt;E&gt; subList(int fromIndex, int toIndex) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="removeRange-int-fromIndex-int-toIndex-删除指定区间的元素"><a href="#removeRange-int-fromIndex-int-toIndex-删除指定区间的元素" class="headerlink" title="removeRange(int fromIndex, int toIndex) 删除指定区间的元素"></a>removeRange(int fromIndex, int toIndex) 删除指定区间的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protected synchronized void removeRange(int fromIndex, int toIndex) &#123;&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="listIterator-int-index-listIterator-返回一个ListIterator"><a href="#listIterator-int-index-listIterator-返回一个ListIterator" class="headerlink" title="listIterator(int index)/listIterator() 返回一个ListIterator"></a>listIterator(int index)/listIterator() 返回一个ListIterator</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public synchronized ListIterator&lt;E&gt; listIterator(int index) &#123;&#125;</span><br><span class="line"></span><br><span class="line">public synchronized ListIterator&lt;E&gt; listIterator() &#123;</span><br><span class="line">        return new ListItr(0);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="iterator-返回一个Iterator"><a href="#iterator-返回一个Iterator" class="headerlink" title="iterator() 返回一个Iterator"></a>iterator() 返回一个Iterator</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public synchronized Iterator&lt;E&gt; iterator() &#123;</span><br><span class="line">        return new Itr();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://www.cnblogs.com/skywang12345/p/3308833.html" target="_blank" rel="external">http://www.cnblogs.com/skywang12345/p/3308833.html</a></p>
-<p><a href="http://www.runoob.com/java/java-vector-class.html" target="_blank" rel="external">http://www.runoob.com/java/java-vector-class.html</a></p>
+
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://www.cnblogs.com/skywang12345/p/3308833.html" target="_blank" rel="noopener">http://www.cnblogs.com/skywang12345/p/3308833.html</a></p>
+<p><a href="http://www.runoob.com/java/java-vector-class.html" target="_blank" rel="noopener">http://www.runoob.com/java/java-vector-class.html</a></p>
 
     </div>
 
@@ -539,6 +616,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

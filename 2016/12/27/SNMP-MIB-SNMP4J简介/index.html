@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="SNMP全称Simple Network Management Protocol，简单网络管理协议。是TCP&#x2F;IP协议的一部分，属于应用层协议。SNMP协议主要用来解决网络设备的管理，大多数的网络管理系统都是基于SNMP协议。通过该协议可以实现在被管理的设备上获取各种参数，还可以设置修改这些参数。">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -247,6 +275,7 @@
       
         <p>SNMP全称Simple Network Management Protocol，简单网络管理协议。是TCP/IP协议的一部分，属于应用层协议。SNMP协议主要用来解决网络设备的管理，大多数的网络管理系统都是基于SNMP协议。通过该协议可以实现在被管理的设备上获取各种参数，还可以设置修改这些参数。</p>
 <a id="more"></a>
+
 <h2 id="SNMP系统的组成"><a href="#SNMP系统的组成" class="headerlink" title="SNMP系统的组成"></a>SNMP系统的组成</h2><p>一般SNMP系统组成大致有4个部分：</p>
 <ol>
 <li>网络管理软件，也就是客户端，网络管理员或者是你和我可以通过管理软件对网络设备进行管理。也就是相当于我们平时使用的系统的后台管理。</li>
@@ -276,21 +305,25 @@
 <h3 id="安装使用"><a href="#安装使用" class="headerlink" title="安装使用"></a>安装使用</h3><p>本次在Centos7上面安装使用net-snmp软件，具体步骤如下：</p>
 <p>安装net-snmp：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install net-snmp*</span><br></pre></td></tr></table></figure>
+
 <p>安装完成之后，修改net-snmp配置文件<code>/etc/snmp/snmpd.conf</code>，在下面代码后面添加两行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">##       sec.name  source          community</span><br><span class="line">#com2sec local     localhost       COMMUNITY</span><br><span class="line">#com2sec mynetwork NETWORK/24      COMMUNITY</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">##       sec.name  source          community</span><br><span class="line">#com2sec local     localhost       COMMUNITY</span><br><span class="line">#com2sec mynetwork NETWORK&#x2F;24      COMMUNITY</span><br></pre></td></tr></table></figure>
 <p>添加两行如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">com2sec local     localhost       public</span><br><span class="line">com2sec mynet    192.168.0.0/24   public</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">com2sec local     localhost       public</span><br><span class="line">com2sec mynet    192.168.0.0&#x2F;24   public</span><br></pre></td></tr></table></figure>
 <p>上面的<code>192.168.0.0/24</code>根据你的实际情况添加，我的局域网网段是<code>192.168.1.xxx</code>，所以上面写的是<code>192.168.0.0</code>，后面的<code>24</code>是子网掩码<code>255.255.255.0</code>。</p>
 <p>修改完配置文件后，启动net-snmp服务：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start snmpd.service</span><br></pre></td></tr></table></figure>
+
 <p>启动后可以使用以下命令查看启动是否有错：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status snmpd.service -l</span><br></pre></td></tr></table></figure>
+
 <p>如果没有提示错误啥的，现在服务应该就已经起来了，可以使用以下命令测试下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">snmpwalk -v1 -c public 192.168.110.198</span><br></pre></td></tr></table></figure>
 <p>后面的ip写net-snmp安装的那台机器的ip。回车后会输出以下信息(不会跟我的完全一样，只是类似的就对了)：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SNMPv2-MIB::sysDescr.0 = STRING: Linux localhost.localdomain 3.10.0-514.2.2.el7.x86_64 #1 SMP Tue Dec 6 23:06:41 UTC 2016 x86_64</span><br><span class="line">SNMPv2-MIB::sysObjectID.0 = OID: NET-SNMP-MIB::netSnmpAgentOIDs.10</span><br><span class="line">DISMAN-EVENT-MIB::sysUpTimeInstance = Timeticks: (4549) 0:00:45.49</span><br><span class="line">SNMPv2-MIB::sysContact.0 = STRING: Root &lt;root@localhost&gt; (configure /etc/snmp/snmp.local.conf)</span><br><span class="line">SNMPv2-MIB::sysName.0 = STRING: localhost.localdomain</span><br><span class="line">SNMPv2-MIB::sysLocation.0 = STRING: Unknown (edit /etc/snmp/snmpd.conf)</span><br><span class="line">SNMPv2-MIB::sysORLastChange.0 = Timeticks: (4) 0:00:00.04</span><br><span class="line">SNMPv2-MIB::sysORID.1 = OID: SNMP-MPD-MIB::snmpMPDCompliance</span><br><span class="line">SNMPv2-MIB::sysORID.2 = OID: SNMP-USER-BASED-SM-MIB::usmMIBCompliance</span><br><span class="line">SNMPv2-MIB::sysORID.3 = OID: SNMP-FRAMEWORK-MIB::snmpFrameworkMIBCompliance</span><br><span class="line">........还有很多输出，省略了......</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SNMPv2-MIB::sysDescr.0 &#x3D; STRING: Linux localhost.localdomain 3.10.0-514.2.2.el7.x86_64 #1 SMP Tue Dec 6 23:06:41 UTC 2016 x86_64</span><br><span class="line">SNMPv2-MIB::sysObjectID.0 &#x3D; OID: NET-SNMP-MIB::netSnmpAgentOIDs.10</span><br><span class="line">DISMAN-EVENT-MIB::sysUpTimeInstance &#x3D; Timeticks: (4549) 0:00:45.49</span><br><span class="line">SNMPv2-MIB::sysContact.0 &#x3D; STRING: Root &lt;root@localhost&gt; (configure &#x2F;etc&#x2F;snmp&#x2F;snmp.local.conf)</span><br><span class="line">SNMPv2-MIB::sysName.0 &#x3D; STRING: localhost.localdomain</span><br><span class="line">SNMPv2-MIB::sysLocation.0 &#x3D; STRING: Unknown (edit &#x2F;etc&#x2F;snmp&#x2F;snmpd.conf)</span><br><span class="line">SNMPv2-MIB::sysORLastChange.0 &#x3D; Timeticks: (4) 0:00:00.04</span><br><span class="line">SNMPv2-MIB::sysORID.1 &#x3D; OID: SNMP-MPD-MIB::snmpMPDCompliance</span><br><span class="line">SNMPv2-MIB::sysORID.2 &#x3D; OID: SNMP-USER-BASED-SM-MIB::usmMIBCompliance</span><br><span class="line">SNMPv2-MIB::sysORID.3 &#x3D; OID: SNMP-FRAMEWORK-MIB::snmpFrameworkMIBCompliance</span><br><span class="line">........还有很多输出，省略了......</span><br></pre></td></tr></table></figure>
+
 <h2 id="使用SNMP4J开发"><a href="#使用SNMP4J开发" class="headerlink" title="使用SNMP4J开发"></a>使用SNMP4J开发</h2><p>简单的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">public class GetCentosSystemInformation &#123;</span><br><span class="line"></span><br><span class="line">    private final static String REMOTE_ADDRESS = &quot;udp:192.168.110.198/161&quot;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IOException &#123;</span><br><span class="line">        //初始化</span><br><span class="line">        Address remoteAddress = GenericAddress.parse(REMOTE_ADDRESS);</span><br><span class="line">        System.out.println(&quot;SNMP地址：&quot; + REMOTE_ADDRESS + &quot;；有效：&quot; + remoteAddress.isValid());</span><br><span class="line">        TransportMapping transportMapping = new DefaultUdpTransportMapping();</span><br><span class="line">        Snmp snmp = new Snmp(transportMapping);</span><br><span class="line">        snmp.listen();</span><br><span class="line"></span><br><span class="line">        //构造发送目标</span><br><span class="line">        CommunityTarget target = new CommunityTarget();</span><br><span class="line">        target.setCommunity(new OctetString(&quot;public&quot;));</span><br><span class="line">        target.setAddress(remoteAddress);</span><br><span class="line">        target.setVersion(SnmpConstants.version2c);</span><br><span class="line">        target.setRetries(10);</span><br><span class="line">        target.setTimeout(1500);</span><br><span class="line"></span><br><span class="line">        //构造发送内容</span><br><span class="line">        PDU pdu = new PDU();</span><br><span class="line">        OID oid = new OID(&quot;1.3.6.1.2.10&quot;);</span><br><span class="line">        pdu.add(new VariableBinding(oid));</span><br><span class="line">        pdu.setType(PDU.GETNEXT);</span><br><span class="line"></span><br><span class="line">        //异步监听响应</span><br><span class="line">        ResponseListener responseListener = new ResponseListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onResponse(ResponseEvent event) &#123;</span><br><span class="line">                ((Snmp)event.getSource()).cancel(event.getRequest(),this);</span><br><span class="line">                PDU response = event.getResponse();</span><br><span class="line">                PDU request = event.getRequest();</span><br><span class="line">                if(response == null)&#123;</span><br><span class="line">                    System.out.println(&quot;请求超时：&quot; + response + &quot;，请求的内容：&quot; + request);</span><br><span class="line">                &#125;else &#123;</span><br><span class="line">                    System.out.println(&quot;获取到信息：&quot; + response);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        //发送</span><br><span class="line">        snmp.send(pdu,target,null,responseListener);</span><br><span class="line">        //由于是异步获取信息，在这里需要程序不能结束运行，否则接收不到异步获取的消息。</span><br><span class="line">        System.in.read();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">public class GetCentosSystemInformation &#123;</span><br><span class="line"></span><br><span class="line">    private final static String REMOTE_ADDRESS &#x3D; &quot;udp:192.168.110.198&#x2F;161&quot;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IOException &#123;</span><br><span class="line">        &#x2F;&#x2F;初始化</span><br><span class="line">        Address remoteAddress &#x3D; GenericAddress.parse(REMOTE_ADDRESS);</span><br><span class="line">        System.out.println(&quot;SNMP地址：&quot; + REMOTE_ADDRESS + &quot;；有效：&quot; + remoteAddress.isValid());</span><br><span class="line">        TransportMapping transportMapping &#x3D; new DefaultUdpTransportMapping();</span><br><span class="line">        Snmp snmp &#x3D; new Snmp(transportMapping);</span><br><span class="line">        snmp.listen();</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;构造发送目标</span><br><span class="line">        CommunityTarget target &#x3D; new CommunityTarget();</span><br><span class="line">        target.setCommunity(new OctetString(&quot;public&quot;));</span><br><span class="line">        target.setAddress(remoteAddress);</span><br><span class="line">        target.setVersion(SnmpConstants.version2c);</span><br><span class="line">        target.setRetries(10);</span><br><span class="line">        target.setTimeout(1500);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;构造发送内容</span><br><span class="line">        PDU pdu &#x3D; new PDU();</span><br><span class="line">        OID oid &#x3D; new OID(&quot;1.3.6.1.2.10&quot;);</span><br><span class="line">        pdu.add(new VariableBinding(oid));</span><br><span class="line">        pdu.setType(PDU.GETNEXT);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;异步监听响应</span><br><span class="line">        ResponseListener responseListener &#x3D; new ResponseListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onResponse(ResponseEvent event) &#123;</span><br><span class="line">                ((Snmp)event.getSource()).cancel(event.getRequest(),this);</span><br><span class="line">                PDU response &#x3D; event.getResponse();</span><br><span class="line">                PDU request &#x3D; event.getRequest();</span><br><span class="line">                if(response &#x3D;&#x3D; null)&#123;</span><br><span class="line">                    System.out.println(&quot;请求超时：&quot; + response + &quot;，请求的内容：&quot; + request);</span><br><span class="line">                &#125;else &#123;</span><br><span class="line">                    System.out.println(&quot;获取到信息：&quot; + response);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;发送</span><br><span class="line">        snmp.send(pdu,target,null,responseListener);</span><br><span class="line">        &#x2F;&#x2F;由于是异步获取信息，在这里需要程序不能结束运行，否则接收不到异步获取的消息。</span><br><span class="line">        System.in.read();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -524,6 +557,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

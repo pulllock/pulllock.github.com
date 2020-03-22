@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="主要记录一下http协议的一些简单的知识，主要包括请求消息，响应消息的组成，以及get和post的‘对比’，对于更详细的信息可以看下http RFC。https也没有做说明。">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -245,19 +273,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>主要记录一下http协议的一些简单的知识，主要包括请求消息，响应消息的组成，以及get和post的‘对比’，对于更详细的信息可以看下http RFC。https也没有做说明。<br><a id="more"></a><br>http基于请求响应模式，无状态，应用层的协议，特点如下：</p>
+        <p>主要记录一下http协议的一些简单的知识，主要包括请求消息，响应消息的组成，以及get和post的‘对比’，对于更详细的信息可以看下http RFC。https也没有做说明。</p>
+<a id="more"></a>
+<p>http基于请求响应模式，无状态，应用层的协议，特点如下：</p>
 <ul>
 <li>支持C/S模式。</li>
 <li>无连接，每次连接只处理一个请求，服务器处理完请求，并返回给客户端之后，就会断开连接。</li>
 <li>无状态，指的是协议对于事务处理没有记忆能力，如果需要前面的信息，需要重传。</li>
 </ul>
 <h2 id="http请求消息（Request）"><a href="#http请求消息（Request）" class="headerlink" title="http请求消息（Request）"></a>http请求消息（Request）</h2><p>http请求由三部分组成：请求行，请求头，请求体。比如下面的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET / HTTP/1.1</span><br><span class="line">Host: cxis.me</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Encoding: gzip, deflate, sdch</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-TW;q=0.2,nb;q=0.2,da;q=0.2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F; HTTP&#x2F;1.1</span><br><span class="line">Host: cxis.me</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0 (X11; Linux x86_64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;58.0.3029.81 Safari&#x2F;537.36</span><br><span class="line">Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;webp,*&#x2F;*;q&#x3D;0.8</span><br><span class="line">Accept-Encoding: gzip, deflate, sdch</span><br><span class="line">Accept-Language: zh-CN,zh;q&#x3D;0.8,en-US;q&#x3D;0.6,en;q&#x3D;0.4,zh-TW;q&#x3D;0.2,nb;q&#x3D;0.2,da;q&#x3D;0.2</span><br></pre></td></tr></table></figure>
+
 <p><code>GET / HTTP/1.1</code>是请求行，GET是请求方法，<code>/</code>是请求资源在服务器上的路径，<code>HTTP/1.1</code>是http协议版本号。</p>
 <p>剩下的是请求头，格式为<code>xxxx: value</code>。</p>
 <p>这里是get方法，所有没有请求体，请求体是向服务器提交的数据，在请求头和请求体中间会有一行空行。</p>
 <h2 id="http响应消息（Response）"><a href="#http响应消息（Response）" class="headerlink" title="http响应消息（Response）"></a>http响应消息（Response）</h2><p>响应消息包括：响应行，响应头，响应体。一个响应消息如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: GitHub.com</span><br><span class="line">Content-Type: text/html; charset=utf-8</span><br><span class="line">Last-Modified: Wed, 03 May 2017 08:32:57 GMT</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Expires: Wed, 03 May 2017 13:51:42 GMT</span><br><span class="line">Cache-Control: max-age=600</span><br><span class="line">Content-Encoding: gzip</span><br><span class="line">X-GitHub-Request-Id: AACA:40A3:65A338:8EB391:5909DE15</span><br><span class="line">Content-Length: 9905</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Date: Wed, 03 May 2017 14:41:45 GMT</span><br><span class="line">Via: 1.1 varnish</span><br><span class="line">Age: 0</span><br><span class="line">Connection: keep-alive</span><br><span class="line">X-Served-By: cache-nrt6130-NRT</span><br><span class="line">X-Cache: HIT</span><br><span class="line">X-Cache-Hits: 1</span><br><span class="line">X-Timer: S1493822505.031176,VS0,VE181</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">X-Fastly-Request-ID: bc385cef3dbff07f200175fa461c920cb6ca4b3f</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">HTTP&#x2F;1.1 200 OK</span><br><span class="line">Server: GitHub.com</span><br><span class="line">Content-Type: text&#x2F;html; charset&#x3D;utf-8</span><br><span class="line">Last-Modified: Wed, 03 May 2017 08:32:57 GMT</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Expires: Wed, 03 May 2017 13:51:42 GMT</span><br><span class="line">Cache-Control: max-age&#x3D;600</span><br><span class="line">Content-Encoding: gzip</span><br><span class="line">X-GitHub-Request-Id: AACA:40A3:65A338:8EB391:5909DE15</span><br><span class="line">Content-Length: 9905</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Date: Wed, 03 May 2017 14:41:45 GMT</span><br><span class="line">Via: 1.1 varnish</span><br><span class="line">Age: 0</span><br><span class="line">Connection: keep-alive</span><br><span class="line">X-Served-By: cache-nrt6130-NRT</span><br><span class="line">X-Cache: HIT</span><br><span class="line">X-Cache-Hits: 1</span><br><span class="line">X-Timer: S1493822505.031176,VS0,VE181</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">X-Fastly-Request-ID: bc385cef3dbff07f200175fa461c920cb6ca4b3f</span><br></pre></td></tr></table></figure>
 <p><code>HTTP/1.1 200 OK</code>是响应行，<code>HTTP/1.1</code>是http协议版本号，200是状态码，OK是状态消息，和响应码对应。</p>
 <p>剩下的是响应头，这里没有响应体。GET方法的响应体为空。</p>
 <h2 id="请求方法"><a href="#请求方法" class="headerlink" title="请求方法"></a>请求方法</h2><ul>
@@ -299,7 +330,7 @@
 <li>503 Service Unavailable，服务不可用</li>
 </ul>
 <h2 id="消息报头"><a href="#消息报头" class="headerlink" title="消息报头"></a>消息报头</h2><p>在请求消息的第二部分是请求头，在响应消息的第二部分是响应头，请求头和响应头又叫做消息报头，这是可选的。其实消息报头不只是包括请求头和响应头，一个消息报头包括：普通报头、请求报头、响应报头、实体报头。</p>
-<p>下面列出了各种报头，含义没有一一列出，如有需要可以查看<a href="https://tools.ietf.org/html/rfc2616" target="_blank" rel="external">http RFC</a></p>
+<p>下面列出了各种报头，含义没有一一列出，如有需要可以查看<a href="https://tools.ietf.org/html/rfc2616" target="_blank" rel="noopener">http RFC</a></p>
 <h3 id="普通报头"><a href="#普通报头" class="headerlink" title="普通报头"></a>普通报头</h3><p>普通报头既适用于请求消息也适用于响应消息，这些头域不适用于实体传输，只适用于传输消息。</p>
 <ul>
 <li>Cache-Control 控制缓存指令，缓存指令是单向，独立的。</li>
@@ -313,49 +344,84 @@
 <li>Waring</li>
 </ul>
 <h3 id="请求报头"><a href="#请求报头" class="headerlink" title="请求报头"></a>请求报头</h3><ul>
-<li>Accept 指定客户端接受哪些类型的信息</li>
-<li>Accept-Charset 指定客户端接受的字符集</li>
-<li>Accept-Encoding 指定客户端可接受的内容编码</li>
-<li>Accept-Language 指定客户端可接受的语言</li>
-<li>Authorization 客户端有权限查看某个资源</li>
-<li>Expect</li>
-<li>From</li>
-<li>Host 指定被请求资源的主机和端口号</li>
-<li>If-Match</li>
-<li>If-Modified-Since</li>
-<li>If-None-Match</li>
-<li>If-Range</li>
-<li>If-Unmodified-Since</li>
-<li>Max-Forwards</li>
-<li>Proxy-Authorization</li>
-<li>Range</li>
-<li>Referer</li>
-<li>TE</li>
+<li><p>Accept 指定客户端接受哪些类型的信息</p>
+</li>
+<li><p>Accept-Charset 指定客户端接受的字符集</p>
+</li>
+<li><p>Accept-Encoding 指定客户端可接受的内容编码</p>
+</li>
+<li><p>Accept-Language 指定客户端可接受的语言</p>
+</li>
+<li><p>Authorization 客户端有权限查看某个资源</p>
+</li>
+<li><p>Expect</p>
+</li>
+<li><p>From</p>
+</li>
+<li><p>Host 指定被请求资源的主机和端口号</p>
+</li>
+<li><p>If-Match</p>
+</li>
+<li><p>If-Modified-Since</p>
+</li>
+<li><p>If-None-Match</p>
+</li>
+<li><p>If-Range</p>
+</li>
+<li><p>If-Unmodified-Since</p>
+</li>
+<li><p>Max-Forwards</p>
+</li>
+<li><p>Proxy-Authorization</p>
+</li>
+<li><p>Range</p>
+</li>
+<li><p>Referer</p>
+</li>
+<li><p>TE</p>
+</li>
 <li><p>User-Agent</p>
 <h3 id="响应报头"><a href="#响应报头" class="headerlink" title="响应报头"></a>响应报头</h3></li>
 <li><p>Accept-Ranges</p>
 </li>
-<li>Age</li>
-<li>ETag</li>
-<li>Location</li>
-<li>Proxy-Authenticate</li>
-<li>Retry-After</li>
-<li>Server</li>
-<li>Vary</li>
+<li><p>Age</p>
+</li>
+<li><p>ETag</p>
+</li>
+<li><p>Location</p>
+</li>
+<li><p>Proxy-Authenticate</p>
+</li>
+<li><p>Retry-After</p>
+</li>
+<li><p>Server</p>
+</li>
+<li><p>Vary</p>
+</li>
 <li><p>WWW-Authenticate</p>
 <h3 id="实体报头"><a href="#实体报头" class="headerlink" title="实体报头"></a>实体报头</h3></li>
 <li><p>Allow</p>
 </li>
-<li>Content-Encoding</li>
-<li>Content-Language</li>
-<li>Content-Length 指明实体正文的长度，以字节方式存储的十进制数字来表示</li>
-<li>Content-Location</li>
-<li>Content-MD5</li>
-<li>Content-Range</li>
-<li>Content-Type 指明发送给接收者的实体正文的媒体类型</li>
-<li>Expires 响应过期的日期和时间</li>
-<li>Last-Modified 用于指示资源的最后修改日期和时间</li>
-<li>extension-header</li>
+<li><p>Content-Encoding</p>
+</li>
+<li><p>Content-Language</p>
+</li>
+<li><p>Content-Length 指明实体正文的长度，以字节方式存储的十进制数字来表示</p>
+</li>
+<li><p>Content-Location</p>
+</li>
+<li><p>Content-MD5</p>
+</li>
+<li><p>Content-Range</p>
+</li>
+<li><p>Content-Type 指明发送给接收者的实体正文的媒体类型</p>
+</li>
+<li><p>Expires 响应过期的日期和时间</p>
+</li>
+<li><p>Last-Modified 用于指示资源的最后修改日期和时间</p>
+</li>
+<li><p>extension-header</p>
+</li>
 </ul>
 
     </div>
@@ -590,6 +656,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

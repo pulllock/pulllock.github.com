@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="简介看书刚好看到集群session共享,总觉得只看不做,不能确定这到底是怎么运行的.所以就做了这个测试.有关Memcached-Session-Manager,Memcached,以及集群session共享等相关知识,请自行补充.本次就简单记录下测试过程.有关其他的方式以及其他的情况,本文不做说明,有需要的话,会再写其他情况和方式下的文章.">
@@ -107,6 +107,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -151,11 +152,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -247,8 +275,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>看书刚好看到集群session共享,总觉得只看不做,不能确定这到底是怎么运行的.所以就做了这个测试.有关<a href="https://github.com/magro/memcached-session-manager" target="_blank" rel="external">Memcached-Session-Manager</a>,Memcached,以及集群session共享等相关知识,请自行补充.本次就简单记录下测试过程.<br>有关其他的方式以及其他的情况,本文不做说明,有需要的话,会再写其他情况和方式下的文章.</p>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>看书刚好看到集群session共享,总觉得只看不做,不能确定这到底是怎么运行的.所以就做了这个测试.有关<a href="https://github.com/magro/memcached-session-manager" target="_blank" rel="noopener">Memcached-Session-Manager</a>,Memcached,以及集群session共享等相关知识,请自行补充.本次就简单记录下测试过程.<br>有关其他的方式以及其他的情况,本文不做说明,有需要的话,会再写其他情况和方式下的文章.</p>
 <a id="more"></a>
+
 <h2 id="环境说明"><a href="#环境说明" class="headerlink" title="环境说明"></a>环境说明</h2><ul>
 <li>本机OSX 10.11,tomca7.0.57,memcached-1.4.24</li>
 <li>虚拟机Ubuntu16.04,tomca7.0.57,memcached-1.4.24</li>
@@ -259,17 +288,20 @@
 <h2 id="具体步骤"><a href="#具体步骤" class="headerlink" title="具体步骤"></a>具体步骤</h2><h3 id="安装jdk-memcached-tomcat"><a href="#安装jdk-memcached-tomcat" class="headerlink" title="安装jdk,memcached,tomcat"></a>安装jdk,memcached,tomcat</h3><p>不做详细说明</p>
 <h3 id="放jar包"><a href="#放jar包" class="headerlink" title="放jar包"></a>放jar包</h3><p>将如下相关jar包分别放置到两台机器的tomcat  <code>$CATALINA_HOME/lib/</code>目录中.</p>
 <ul>
-<li><a href="http://repo1.maven.org/maven2/de/javakaffee/msm/memcached-session-manager/" target="_blank" rel="external">memcached-session-manager-${version}.jar</a></li>
-<li><a href="http://repo1.maven.org/maven2/de/javakaffee/msm/memcached-session-manager-tc7/" target="_blank" rel="external">memcached-session-manager-tc7-${version}.jar</a></li>
-<li><a href="http://repo1.maven.org/maven2/net/spy/spymemcached/2.11.1/spymemcached-2.11.1.jar" target="_blank" rel="external">spymemcached-2.11.1.jar</a></li>
+<li><a href="http://repo1.maven.org/maven2/de/javakaffee/msm/memcached-session-manager/" target="_blank" rel="noopener">memcached-session-manager-${version}.jar</a></li>
+<li><a href="http://repo1.maven.org/maven2/de/javakaffee/msm/memcached-session-manager-tc7/" target="_blank" rel="noopener">memcached-session-manager-tc7-${version}.jar</a></li>
+<li><a href="http://repo1.maven.org/maven2/net/spy/spymemcached/2.11.1/spymemcached-2.11.1.jar" target="_blank" rel="noopener">spymemcached-2.11.1.jar</a></li>
 </ul>
 <h3 id="修改tomcat配置文件"><a href="#修改tomcat配置文件" class="headerlink" title="修改tomcat配置文件"></a>修改tomcat配置文件</h3><p>两台机器分别修改tomcat <code>$CATALINA_HOME/conf/context.xml</code>文件,添加如下代码到Context节点下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;Manager className=&quot;de.javakaffee.web.msm.MemcachedBackupSessionManager&quot;</span><br><span class="line">        memcachedNodes=&quot;n1:192.168.110.197:11211,n2:192.168.110.198:11211&quot;</span><br><span class="line">        sticky=&quot;false&quot;</span><br><span class="line">        sessionBackupAsync=&quot;false&quot;</span><br><span class="line">        requestUriIgnorePattern=&quot;.*\.(ico|png|gif|jpg|css|js)$&quot;</span><br><span class="line"> /&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;Manager className&#x3D;&quot;de.javakaffee.web.msm.MemcachedBackupSessionManager&quot;</span><br><span class="line">        memcachedNodes&#x3D;&quot;n1:192.168.110.197:11211,n2:192.168.110.198:11211&quot;</span><br><span class="line">        sticky&#x3D;&quot;false&quot;</span><br><span class="line">        sessionBackupAsync&#x3D;&quot;false&quot;</span><br><span class="line">        requestUriIgnorePattern&#x3D;&quot;.*\.(ico|png|gif|jpg|css|js)$&quot;</span><br><span class="line"> &#x2F;&gt;</span><br></pre></td></tr></table></figure>
 <h3 id="部署Web项目到tomcat"><a href="#部署Web项目到tomcat" class="headerlink" title="部署Web项目到tomcat"></a>部署Web项目到tomcat</h3><p>新建测试用的web项目,并部署到两台tomcat中.测试代码简单如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;body&gt;</span><br><span class="line">	Session ID:&lt;%=session.getId()%&gt; &lt;br&gt;</span><br><span class="line">	IP:&lt;%=request.getServerName()%&gt; &lt;br&gt;</span><br><span class="line">	Port:&lt;%=request.getServerPort()%&gt;</span><br><span class="line">&lt;/body&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;body&gt;</span><br><span class="line">	Session ID:&lt;%&#x3D;session.getId()%&gt; &lt;br&gt;</span><br><span class="line">	IP:&lt;%&#x3D;request.getServerName()%&gt; &lt;br&gt;</span><br><span class="line">	Port:&lt;%&#x3D;request.getServerPort()%&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br></pre></td></tr></table></figure>
+
 <h3 id="启动两台机器的memcached"><a href="#启动两台机器的memcached" class="headerlink" title="启动两台机器的memcached"></a>启动两台机器的memcached</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">memcached -m 32 -p 11211 -d</span><br></pre></td></tr></table></figure>
+
 <h3 id="启动两台机器的tomcat"><a href="#启动两台机器的tomcat" class="headerlink" title="启动两台机器的tomcat"></a>启动两台机器的tomcat</h3><p>查看tomcat信息<code>tail -f catalina.out</code>未报错,看到类似如下信息就启动成功</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">信息: --------</span><br><span class="line">-  finished initialization:</span><br><span class="line">- sticky: false</span><br><span class="line">- operation timeout: 1000</span><br><span class="line">- node ids: [n1, n2]</span><br><span class="line">- failover node ids: []</span><br><span class="line">- storage key prefix: null</span><br><span class="line">--------</span><br></pre></td></tr></table></figure>
+
 <h3 id="访问测试页面"><a href="#访问测试页面" class="headerlink" title="访问测试页面"></a>访问测试页面</h3><p>分别访问两台机器的测试页面:</p>
 <ul>
 <li>同一个浏览器</li>
@@ -278,10 +310,11 @@
 </ul>
 <p>同一个浏览器不同标签页访问192.168.110.197和192.168.110.198 得到的sessionid都是一样的:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Session ID:39D5E175513B4496C136F5E1554478CD-n1 </span><br><span class="line">IP:192.168.110.197 </span><br><span class="line">Port:8080</span><br><span class="line"></span><br><span class="line">Session ID:39D5E175513B4496C136F5E1554478CD-n1 </span><br><span class="line">IP:192.168.110.198 </span><br><span class="line">Port:8080</span><br></pre></td></tr></table></figure>
-<p>关闭ip为197的memcached进程之后,刷新页面:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Session ID:39D5E175513B4496C136F5E1554478CD-n2 </span><br><span class="line">IP:192.168.110.197 </span><br><span class="line">Port:8080</span><br><span class="line"></span><br><span class="line">Session ID:39D5E175513B4496C136F5E1554478CD-n2 </span><br><span class="line">IP:192.168.110.198 </span><br><span class="line">Port:8080</span><br></pre></td></tr></table></figure></p>
+<p>关闭ip为197的memcached进程之后,刷新页面:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Session ID:39D5E175513B4496C136F5E1554478CD-n2 </span><br><span class="line">IP:192.168.110.197 </span><br><span class="line">Port:8080</span><br><span class="line"></span><br><span class="line">Session ID:39D5E175513B4496C136F5E1554478CD-n2 </span><br><span class="line">IP:192.168.110.198 </span><br><span class="line">Port:8080</span><br></pre></td></tr></table></figure>
 <p>测试成功.</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://github.com/magro/memcached-session-manager/wiki/SetupAndConfiguration#introduction" target="_blank" rel="external">https://github.com/magro/memcached-session-manager/wiki/SetupAndConfiguration#introduction</a></p>
-<p><a href="http://laoxu.blog.51cto.com/4120547/1566477" target="_blank" rel="external">http://laoxu.blog.51cto.com/4120547/1566477</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://github.com/magro/memcached-session-manager/wiki/SetupAndConfiguration#introduction" target="_blank" rel="noopener">https://github.com/magro/memcached-session-manager/wiki/SetupAndConfiguration#introduction</a></p>
+<p><a href="http://laoxu.blog.51cto.com/4120547/1566477" target="_blank" rel="noopener">http://laoxu.blog.51cto.com/4120547/1566477</a></p>
 
     </div>
 
@@ -517,6 +550,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

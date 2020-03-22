@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="心情没法不沉重，被问到AOP是什么？AOP原理是什么？我竟然张大了嘴巴，说不出来！对于一个程序员的打击，还能有比这更大的吗？我没脸说我是个写代码的，我也没脸说我是程序员。">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -251,6 +279,7 @@
       
         <p>心情没法不沉重，被问到AOP是什么？AOP原理是什么？我竟然张大了嘴巴，说不出来！对于一个程序员的打击，还能有比这更大的吗？我没脸说我是个写代码的，我也没脸说我是程序员。</p>
 <a id="more"></a>
+
 <h1 id="AOP是什么？"><a href="#AOP是什么？" class="headerlink" title="AOP是什么？"></a>AOP是什么？</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>AOP，面向切面编程，是对OOP的补充。从网上看到的一句话：<code>这种在运行时，动态的将代码切入到类的指定方法或者指定位置上的编程思想，就是面向切面的编程。</code>这是其中的一种方式，在运行时动态添加。还有另外一种是在编译代码的时候，将代码切入到指定的方法或者位置上去，这是静态添加的方式。</p>
 <h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>我们在实际的业务中都会有一些公共逻辑，比如日志的记录，事务的管理等等，而如果每次都把日志和事务的代码手动写到业务逻辑前后，重复代码就相当可怕，而如果这些额外代码有修改，必须要每个都修改，这是相当不明智的。AOP可以帮我们解决这些问题。</p>
 <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>其实AOP本身并不能帮我们解决那些问题，AOP就是一种思想，而帮我们解决的是具体的AOP的实现，比如aspectj，jboss AOP，以及我们最熟悉的Spring AOP，Spring AOP在Spring1.0的时候是自己实现的AOP框架，在2.0之后就开始集成了aspectj。现在我们所说的Spring AOP就是Spring加Aspectj这种方式。</p>
@@ -285,10 +314,11 @@
 <h3 id="JDK动态代理"><a href="#JDK动态代理" class="headerlink" title="JDK动态代理"></a>JDK动态代理</h3><p>JDK动态代理需要被代理的类必须实现一个接口，通过使用反射来接受被代理的类。</p>
 <h3 id="CGLIB动态代理"><a href="#CGLIB动态代理" class="headerlink" title="CGLIB动态代理"></a>CGLIB动态代理</h3><p>CGLIB动态代理可以不用需要被代理类必须实现接口，被代理类可以是一个类。</p>
 <h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><p>上面说到了Spring AOP中使用的是动态代理机制，同时也分为两种代理机制：JDK动态代理和CGLIB动态代理，这可以在源码中看到，在DefaultAopProxyFactory的createAopProxy中可看到：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public AopProxy createAopProxy(AdvisedSupport advisedSupport) throws AopConfigException &#123;</span><br><span class="line">	//可以看到这里有条件是没有实现接口</span><br><span class="line">    boolean useCglib = advisedSupport.getOptimize() || advisedSupport.getProxyTargetClass() || advisedSupport.getProxiedInterfaces().length == 0;</span><br><span class="line">    if (useCglib) &#123;</span><br><span class="line">        return CglibProxyFactory.createCglibProxy(advisedSupport);</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">        // Depends on whether we have expose proxy or frozen or static ts</span><br><span class="line">        return new JdkDynamicAopProxy(advisedSupport);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public AopProxy createAopProxy(AdvisedSupport advisedSupport) throws AopConfigException &#123;</span><br><span class="line">	&#x2F;&#x2F;可以看到这里有条件是没有实现接口</span><br><span class="line">    boolean useCglib &#x3D; advisedSupport.getOptimize() || advisedSupport.getProxyTargetClass() || advisedSupport.getProxiedInterfaces().length &#x3D;&#x3D; 0;</span><br><span class="line">    if (useCglib) &#123;</span><br><span class="line">        return CglibProxyFactory.createCglibProxy(advisedSupport);</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">        &#x2F;&#x2F; Depends on whether we have expose proxy or frozen or static ts</span><br><span class="line">        return new JdkDynamicAopProxy(advisedSupport);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>对于接口的代理使用的JDK动态代理，而对于类的代理使用的是CGLIB动态代理。</p>
 <h1 id="AOP的使用场景"><a href="#AOP的使用场景" class="headerlink" title="AOP的使用场景"></a>AOP的使用场景</h1><p>AOP适用于具有横切逻辑的应用，比如性能监控，日志记录，缓存，事务管理，访问控制等。</p>
-<p>有关Spring AOP的例子可以参考<a href="http://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/" target="_blank" rel="external">Spring中AOP的配置从1.0到5.0的演进</a>，这里有具体的配置。</p>
+<p>有关Spring AOP的例子可以参考<a href="http://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/" target="_blank" rel="noopener">Spring中AOP的配置从1.0到5.0的演进</a>，这里有具体的配置。</p>
 
     </div>
 
@@ -522,6 +552,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

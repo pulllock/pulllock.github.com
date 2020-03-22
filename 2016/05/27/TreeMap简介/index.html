@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="TreeMap是支持排序的map，基于红黑树，无容量限制，TreeMap非线程安全。 TreeMap继承AbstractMap，实现NavigableMap、Cloneable、Serializable三个接口。其中AbstractMap表明TreeMap为一个Map即支持key-value的集合， NavigableMap则意味着它支持一系列的导航方法，具备针对给定搜索目标返回最接近匹配项的导航">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -246,15 +274,23 @@
 
       
         <p>TreeMap是支持排序的map，基于红黑树，无容量限制，TreeMap非线程安全。</p>
-<p>TreeMap继承AbstractMap，实现NavigableMap、Cloneable、Serializable三个接口。其中AbstractMap表明TreeMap为一个Map即支持key-value的集合， NavigableMap则意味着它支持一系列的导航方法，具备针对给定搜索目标返回最接近匹配项的导航方法 。<br><a id="more"></a></p>
+<p>TreeMap继承AbstractMap，实现NavigableMap、Cloneable、Serializable三个接口。其中AbstractMap表明TreeMap为一个Map即支持key-value的集合， NavigableMap则意味着它支持一系列的导航方法，具备针对给定搜索目标返回最接近匹配项的导航方法 。</p>
+<a id="more"></a>
+
 <h1 id="TreeMap-put-方法"><a href="#TreeMap-put-方法" class="headerlink" title="TreeMap put()方法"></a>TreeMap put()方法</h1><h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><blockquote>
 <p>jdk1.7.0_71</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//用于排序的comparator</span><br><span class="line">private final Comparator&lt;? super K&gt; comparator;</span><br><span class="line">//根节点</span><br><span class="line">private transient Entry&lt;K,V&gt; root = null;</span><br><span class="line">//TreeMap的元素数量</span><br><span class="line">private transient int size = 0;</span><br><span class="line">//结构修改次数</span><br><span class="line">private transient int modCount = 0;</span><br></pre></td></tr></table></figure>
-<h2 id="空构造"><a href="#空构造" class="headerlink" title="空构造"></a>空构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public TreeMap() &#123;</span><br><span class="line">        comparator = null;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="使用给定的comparator初始化空的TreeMap"><a href="#使用给定的comparator初始化空的TreeMap" class="headerlink" title="使用给定的comparator初始化空的TreeMap"></a>使用给定的comparator初始化空的TreeMap</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public TreeMap(Comparator&lt;? super K&gt; comparator) &#123;</span><br><span class="line">        this.comparator = comparator;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="使用给定的map初始化TreeMap"><a href="#使用给定的map初始化TreeMap" class="headerlink" title="使用给定的map初始化TreeMap"></a>使用给定的map初始化TreeMap</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public TreeMap(Map&lt;? extends K, ? extends V&gt; m) &#123;</span><br><span class="line">        comparator = null;</span><br><span class="line">        putAll(m);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;用于排序的comparator</span><br><span class="line">private final Comparator&lt;? super K&gt; comparator;</span><br><span class="line">&#x2F;&#x2F;根节点</span><br><span class="line">private transient Entry&lt;K,V&gt; root &#x3D; null;</span><br><span class="line">&#x2F;&#x2F;TreeMap的元素数量</span><br><span class="line">private transient int size &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F;结构修改次数</span><br><span class="line">private transient int modCount &#x3D; 0;</span><br></pre></td></tr></table></figure>
+
+<h2 id="空构造"><a href="#空构造" class="headerlink" title="空构造"></a>空构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public TreeMap() &#123;</span><br><span class="line">        comparator &#x3D; null;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用给定的comparator初始化空的TreeMap"><a href="#使用给定的comparator初始化空的TreeMap" class="headerlink" title="使用给定的comparator初始化空的TreeMap"></a>使用给定的comparator初始化空的TreeMap</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public TreeMap(Comparator&lt;? super K&gt; comparator) &#123;</span><br><span class="line">        this.comparator &#x3D; comparator;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用给定的map初始化TreeMap"><a href="#使用给定的map初始化TreeMap" class="headerlink" title="使用给定的map初始化TreeMap"></a>使用给定的map初始化TreeMap</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public TreeMap(Map&lt;? extends K, ? extends V&gt; m) &#123;</span><br><span class="line">        comparator &#x3D; null;</span><br><span class="line">        putAll(m);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="使用SortedMap初始化"><a href="#使用SortedMap初始化" class="headerlink" title="使用SortedMap初始化"></a>使用SortedMap初始化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public TreeMap(SortedMap&lt;K, ? extends V&gt; m) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1>
     </div>
 
@@ -488,6 +524,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

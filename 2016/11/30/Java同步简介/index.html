@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Java同步Java中同步一直都是很重要的问题，对于初学者来说也是不太容易能理解的问题。特在此记录一下有关Java中同步和锁的知识。主要涉及到同步的概念以及Java中解决的办法和简单的例子。有关锁Lock中的内容不在此做说明。">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -247,6 +275,7 @@
       
         <h1 id="Java同步"><a href="#Java同步" class="headerlink" title="Java同步"></a>Java同步</h1><p>Java中同步一直都是很重要的问题，对于初学者来说也是不太容易能理解的问题。特在此记录一下有关Java中同步和锁的知识。主要涉及到同步的概念以及Java中解决的办法和简单的例子。有关锁Lock中的内容不在此做说明。</p>
 <a id="more"></a>
+
 <h1 id="同步"><a href="#同步" class="headerlink" title="同步"></a>同步</h1><h2 id="为什么需要同步"><a href="#为什么需要同步" class="headerlink" title="为什么需要同步"></a>为什么需要同步</h2><p>这个问题不难回答。当牵扯到同步问题的时候，就离不开多线程了。简单举个例子，桌子上有一台2016新款MacBook pro，我和女朋友都想要去玩，我们俩同时伸向了那台电脑，后果可想而知（当然是我地上坐着玩手机去了！），我们俩都在抢那台电脑，谁也玩不了。这时候该怎么办？我们会约定好，一人半个小时，我在玩电脑的时候你拿着手机玩……就这样一人一段时间的玩。分析一下，电脑就是被竞争的资源，我和女朋友是两个线程，关于怎么玩电脑就需要同步来解决了，要不然不就打起来了么。</p>
 <p>同步就是要多个运行的线程在一起良好的工作，在访问同一个资源时不会造成资源的错误或者混乱。</p>
 <h2 id="Java中同步的解决办法"><a href="#Java中同步的解决办法" class="headerlink" title="Java中同步的解决办法"></a>Java中同步的解决办法</h2><p>Java中内置了synchronized关键字来控制线程的同步。synchronized关键字可以修饰方法或者代码块，当有一个线程进入到了synchronized方法或者代码块中的时候，其他的线程就不能进入到此方法或者代码块中，必须等待刚才的线程完成退出synchronized方法或者代码块之后，等待的方法才能去执行。就是我女票玩电脑的时候，我就不能玩，必须等着。</p>
@@ -488,6 +517,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

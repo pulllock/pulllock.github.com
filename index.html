@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="一个小学生">
@@ -102,6 +102,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -146,11 +147,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -528,7 +556,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>从两个示例代码，介绍dubbo的SPI的使用以及相关源码分析，分析了获取扩展实现和获取自适应扩展点实现的源码，最后简单说了下ExtensionFactory的流程，看完就可以理解为什么dubbo是自包含的了。从上往下看，再回头看，应该能看明白，文章比较长，希望能耐心读下去。如果有错误的地方希望能指出来，我也理解不是太完整或者表述不是太明白。<br>
+          <p>从两个示例代码，介绍dubbo的SPI的使用以及相关源码分析，分析了获取扩展实现和获取自适应扩展点实现的源码，最后简单说了下ExtensionFactory的流程，看完就可以理解为什么dubbo是自包含的了。从上往下看，再回头看，应该能看明白，文章比较长，希望能耐心读下去。如果有错误的地方希望能指出来，我也理解不是太完整或者表述不是太明白。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/#more" rel="contents">
@@ -901,7 +929,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。<br>
+          <p>tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/#more" rel="contents">
@@ -996,7 +1024,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这里对tomcat7的server.xml文件进行解释一下，方便在分析启动源码的时候理解Digester做的事情。<br>
+          <p>这里对tomcat7的server.xml文件进行解释一下，方便在分析启动源码的时候理解Digester做的事情。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/#more" rel="contents">
@@ -1091,7 +1119,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。<br>
+          <p>主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/#more" rel="contents">
@@ -1292,6 +1320,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

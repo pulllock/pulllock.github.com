@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="LinkedList简介 LinkedList基于双向链表实现 LinkedList相对于Arraylist来说,get和set等随机访问会比较慢,LinkedList需要移动指针；add和remove会比较快。 LinkedList类还为在列表开头和结尾的get，remove，insert元素提供统一的命名方法，这些操作允许将链表用做堆栈、队列或者双端队列。此类实现 Deque 接口，为 add">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -252,46 +280,82 @@
 <li>非线程安全，不同步。</li>
 </ol>
 <a id="more"></a>
+
 <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>LinkedList集成AbstractSequentialList，实现了List，Deque，Cloneable，Serializable接口。AbstractSequentialList提供了骨干实现。Deque一个线性 collection，支持在两端插入和移除元素，定义了双端队列的操作。</p>
 <h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><blockquote>
 <p>jdk1.7.0_71</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//节点个数</span><br><span class="line">transient int size = 0;</span><br><span class="line">//前驱节点</span><br><span class="line">transient Node&lt;E&gt; first;</span><br><span class="line">//后继节点</span><br><span class="line">transient Node&lt;E&gt; last;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;节点个数</span><br><span class="line">transient int size &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F;前驱节点</span><br><span class="line">transient Node&lt;E&gt; first;</span><br><span class="line">&#x2F;&#x2F;后继节点</span><br><span class="line">transient Node&lt;E&gt; last;</span><br></pre></td></tr></table></figure>
+
 <h2 id="无参构造"><a href="#无参构造" class="headerlink" title="无参构造"></a>无参构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public LinkedList() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="根据其他容器进行构造"><a href="#根据其他容器进行构造" class="headerlink" title="根据其他容器进行构造"></a>根据其他容器进行构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public LinkedList(Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="getFirst-getLast-获取第一个-获取最后一个"><a href="#getFirst-getLast-获取第一个-获取最后一个" class="headerlink" title="getFirst()/getLast() 获取第一个/获取最后一个"></a>getFirst()/getLast() 获取第一个/获取最后一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public E getFirst() &#123;&#125;</span><br><span class="line">public E getLast() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="removeFirst-removeLast-删除第一个-删除最后一个"><a href="#removeFirst-removeLast-删除第一个-删除最后一个" class="headerlink" title="removeFirst()/removeLast() 删除第一个/删除最后一个"></a>removeFirst()/removeLast() 删除第一个/删除最后一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public E removeFirst() &#123;&#125;</span><br><span class="line">public E removeLast() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="addFirst-E-e-addLast-E-e-添加到头-尾"><a href="#addFirst-E-e-addLast-E-e-添加到头-尾" class="headerlink" title="addFirst(E e)/addLast(E e) 添加到头/尾"></a>addFirst(E e)/addLast(E e) 添加到头/尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public void addFirst(E e) &#123;&#125;</span><br><span class="line">public void addLast(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="是否包含指定的元素"><a href="#是否包含指定的元素" class="headerlink" title="是否包含指定的元素"></a>是否包含指定的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean contains(Object o) &#123;</span><br><span class="line">	return indexOf(o) != -1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="是否包含指定的元素"><a href="#是否包含指定的元素" class="headerlink" title="是否包含指定的元素"></a>是否包含指定的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean contains(Object o) &#123;</span><br><span class="line">	return indexOf(o) !&#x3D; -1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="指定元素的位置索引"><a href="#指定元素的位置索引" class="headerlink" title="指定元素的位置索引"></a>指定元素的位置索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int indexOf(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="指定元素的最后的位置索引"><a href="#指定元素的最后的位置索引" class="headerlink" title="指定元素的最后的位置索引"></a>指定元素的最后的位置索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int lastIndexOf(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="list的大小"><a href="#list的大小" class="headerlink" title="list的大小"></a>list的大小</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public int size() &#123;</span><br><span class="line">        return size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="add-添加到末尾"><a href="#add-添加到末尾" class="headerlink" title="add() 添加到末尾"></a>add() 添加到末尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="remove-Object-o-removeFirstOccurrence-Object-o-移除第一个o"><a href="#remove-Object-o-removeFirstOccurrence-Object-o-移除第一个o" class="headerlink" title="remove(Object o)/removeFirstOccurrence(Object o) 移除第一个o"></a>remove(Object o)/removeFirstOccurrence(Object o) 移除第一个o</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean remove(Object o) &#123;&#125;</span><br><span class="line"></span><br><span class="line">public boolean removeFirstOccurrence(Object o)&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="addAll-Collection-lt-extends-E-gt-c-添加到list结尾"><a href="#addAll-Collection-lt-extends-E-gt-c-添加到list结尾" class="headerlink" title="addAll(Collection&lt;? extends E&gt; c) 添加到list结尾"></a>addAll(Collection&lt;? extends E&gt; c) 添加到list结尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean addAll(Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="addAll-int-index-Collection-lt-extends-E-gt-c-指定的位置以后添加全部"><a href="#addAll-int-index-Collection-lt-extends-E-gt-c-指定的位置以后添加全部" class="headerlink" title="addAll(int index, Collection&lt;? extends E&gt; c) 指定的位置以后添加全部"></a>addAll(int index, Collection&lt;? extends E&gt; c) 指定的位置以后添加全部</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean addAll(int index, Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="clear-清空"><a href="#clear-清空" class="headerlink" title="clear() 清空"></a>clear() 清空</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void clear() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="get-int-index-获取指定位置的元素"><a href="#get-int-index-获取指定位置的元素" class="headerlink" title="get(int index) 获取指定位置的元素"></a>get(int index) 获取指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E get(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="指定位置替换成新元素-返回旧元素"><a href="#指定位置替换成新元素-返回旧元素" class="headerlink" title="指定位置替换成新元素,返回旧元素"></a>指定位置替换成新元素,返回旧元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E set(int index, E element) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="add-int-index-E-element-指定位置插入指定元素"><a href="#add-int-index-E-element-指定位置插入指定元素" class="headerlink" title="add(int index, E element)指定位置插入指定元素"></a>add(int index, E element)指定位置插入指定元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void add(int index, E element) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="remove-int-index-移除指定位置的元素"><a href="#remove-int-index-移除指定位置的元素" class="headerlink" title="remove(int index) 移除指定位置的元素"></a>remove(int index) 移除指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E remove(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="peek-peekFirst-获取list头"><a href="#peek-peekFirst-获取list头" class="headerlink" title="peek()/peekFirst() 获取list头"></a>peek()/peekFirst() 获取list头</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public E peek() &#123;&#125;</span><br><span class="line"></span><br><span class="line">public E peekFirst() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="element-获取list头"><a href="#element-获取list头" class="headerlink" title="element() 获取list头"></a>element() 获取list头</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E element() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="poll-pollFirst-获取list头-并删除"><a href="#poll-pollFirst-获取list头-并删除" class="headerlink" title="poll()/pollFirst() 获取list头,并删除"></a>poll()/pollFirst() 获取list头,并删除</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public E poll() &#123;&#125;</span><br><span class="line"></span><br><span class="line">public E pollFirst() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="remove-删除第一个"><a href="#remove-删除第一个" class="headerlink" title="remove() 删除第一个"></a>remove() 删除第一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E remove() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="offer-E-e-offerLast-E-e-添加e到尾部"><a href="#offer-E-e-offerLast-E-e-添加e到尾部" class="headerlink" title="offer(E e)/offerLast(E e) 添加e到尾部"></a>offer(E e)/offerLast(E e) 添加e到尾部</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean offer(E e) &#123;&#125;</span><br><span class="line"></span><br><span class="line">public boolean offerLast(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="offerFirst-E-e-push-E-e-添加e到头部"><a href="#offerFirst-E-e-push-E-e-添加e到头部" class="headerlink" title="offerFirst(E e)/push(E e) 添加e到头部"></a>offerFirst(E e)/push(E e) 添加e到头部</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean offerFirst(E e) &#123;&#125;</span><br><span class="line"></span><br><span class="line">public void push(E e)&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="peekLast-获取list尾"><a href="#peekLast-获取list尾" class="headerlink" title="peekLast() 获取list尾"></a>peekLast() 获取list尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E peekLast() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="pollLast-获取list尾-并删除"><a href="#pollLast-获取list尾-并删除" class="headerlink" title="pollLast() 获取list尾,并删除"></a>pollLast() 获取list尾,并删除</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E pollLast</span><br></pre></td></tr></table></figure>
+
 <h2 id="pop-删除头"><a href="#pop-删除头" class="headerlink" title="pop() 删除头"></a>pop() 删除头</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E pop()&#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="removeLastOccurrence-Object-o-从后面开始删除第一个匹配的元素"><a href="#removeLastOccurrence-Object-o-从后面开始删除第一个匹配的元素" class="headerlink" title="removeLastOccurrence(Object o)从后面开始删除第一个匹配的元素"></a>removeLastOccurrence(Object o)从后面开始删除第一个匹配的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean removeLastOccurrence(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="listIterator-int-index-从指定的位置开始返回一个listIterator"><a href="#listIterator-int-index-从指定的位置开始返回一个listIterator" class="headerlink" title="listIterator(int index)从指定的位置开始返回一个listIterator"></a>listIterator(int index)从指定的位置开始返回一个listIterator</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public ListIterator&lt;E&gt; listIterator(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="descendingIterator-逆序迭代器"><a href="#descendingIterator-逆序迭代器" class="headerlink" title="descendingIterator() 逆序迭代器"></a>descendingIterator() 逆序迭代器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public Iterator&lt;E&gt; descendingIterator() &#123;</span><br><span class="line">		//内部类</span><br><span class="line">        return new DescendingIterator();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="descendingIterator-逆序迭代器"><a href="#descendingIterator-逆序迭代器" class="headerlink" title="descendingIterator() 逆序迭代器"></a>descendingIterator() 逆序迭代器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public Iterator&lt;E&gt; descendingIterator() &#123;</span><br><span class="line">		&#x2F;&#x2F;内部类</span><br><span class="line">        return new DescendingIterator();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="clone-浅拷贝"><a href="#clone-浅拷贝" class="headerlink" title="clone() 浅拷贝"></a>clone() 浅拷贝</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Object clone() &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="toArray-转换成Object数组"><a href="#toArray-转换成Object数组" class="headerlink" title="toArray() 转换成Object数组"></a>toArray() 转换成Object数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Object[] toArray() &#123;&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="toArray-T-a-转换成指定类型的数组"><a href="#toArray-T-a-转换成指定类型的数组" class="headerlink" title="toArray(T[] a) 转换成指定类型的数组"></a>toArray(T[] a) 转换成指定类型的数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T[] toArray(T[] a) &#123;</span><br><span class="line">        if (a.length &lt; size)</span><br><span class="line">            a = (T[])java.lang.reflect.Array.newInstance(</span><br><span class="line">                                a.getClass().getComponentType(), size);</span><br><span class="line">        int i = 0;</span><br><span class="line">        Object[] result = a;</span><br><span class="line">        for (Node&lt;E&gt; x = first; x != null; x = x.next)</span><br><span class="line">            result[i++] = x.item;</span><br><span class="line"></span><br><span class="line">        if (a.length &gt; size)</span><br><span class="line">            a[size] = null;</span><br><span class="line"></span><br><span class="line">        return a;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.zybuluo.com/pastqing/note/208830" target="_blank" rel="external">https://www.zybuluo.com/pastqing/note/208830</a></p>
-<p><a href="http://blog.csdn.net/u013256816/article/details/50916689" target="_blank" rel="external">http://blog.csdn.net/u013256816/article/details/50916689</a></p>
+
+<h2 id="toArray-T-a-转换成指定类型的数组"><a href="#toArray-T-a-转换成指定类型的数组" class="headerlink" title="toArray(T[] a) 转换成指定类型的数组"></a>toArray(T[] a) 转换成指定类型的数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T[] toArray(T[] a) &#123;</span><br><span class="line">        if (a.length &lt; size)</span><br><span class="line">            a &#x3D; (T[])java.lang.reflect.Array.newInstance(</span><br><span class="line">                                a.getClass().getComponentType(), size);</span><br><span class="line">        int i &#x3D; 0;</span><br><span class="line">        Object[] result &#x3D; a;</span><br><span class="line">        for (Node&lt;E&gt; x &#x3D; first; x !&#x3D; null; x &#x3D; x.next)</span><br><span class="line">            result[i++] &#x3D; x.item;</span><br><span class="line"></span><br><span class="line">        if (a.length &gt; size)</span><br><span class="line">            a[size] &#x3D; null;</span><br><span class="line"></span><br><span class="line">        return a;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.zybuluo.com/pastqing/note/208830" target="_blank" rel="noopener">https://www.zybuluo.com/pastqing/note/208830</a></p>
+<p><a href="http://blog.csdn.net/u013256816/article/details/50916689" target="_blank" rel="noopener">http://blog.csdn.net/u013256816/article/details/50916689</a></p>
 
     </div>
 
@@ -525,6 +589,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

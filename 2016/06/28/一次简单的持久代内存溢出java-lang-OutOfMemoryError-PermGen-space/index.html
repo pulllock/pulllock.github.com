@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="简介昨天拿到服务器之后,便部署新开发的项目上去.顺带测试,运行不久,发现程序运行缓慢,随即提示java.lang.OutOfMemoryError: PermGen space.以前没遇到过这种情况,记录下来.服务器上的软件以及设置是一个酱油弄的,没仔细去查看,不知道是不是有问题.">
@@ -106,6 +106,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -150,11 +151,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -246,12 +274,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>昨天拿到服务器之后,便部署新开发的项目上去.顺带测试,运行不久,发现程序运行缓慢,随即提示java.lang.OutOfMemoryError: PermGen space.以前没遇到过这种情况,记录下来.<br>服务器上的软件以及设置是一个酱油弄的,没仔细去查看,不知道是不是有问题.<br><a id="more"></a></p>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>昨天拿到服务器之后,便部署新开发的项目上去.顺带测试,运行不久,发现程序运行缓慢,随即提示java.lang.OutOfMemoryError: PermGen space.以前没遇到过这种情况,记录下来.<br>服务器上的软件以及设置是一个酱油弄的,没仔细去查看,不知道是不是有问题.</p>
+<a id="more"></a>
 <h2 id="查看tomcat-pid"><a href="#查看tomcat-pid" class="headerlink" title="查看tomcat pid"></a>查看tomcat pid</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jps -l </span><br><span class="line">发现两个tomcat</span><br><span class="line">jps -v</span><br><span class="line">找到我部署程序的那个tomcat pid 32365</span><br></pre></td></tr></table></figure>
 <h2 id="查看虚拟机相关信息"><a href="#查看虚拟机相关信息" class="headerlink" title="查看虚拟机相关信息"></a>查看虚拟机相关信息</h2><h3 id="查看jstat-gc"><a href="#查看jstat-gc" class="headerlink" title="查看jstat -gc"></a>查看jstat -gc</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -gc 32365</span><br><span class="line">S0C    S1C    S0U    S1U      EC       EU        OC         OU       PC     PU    YGC     YGCT    FGC    FGCT     GCT</span><br><span class="line">6848.0 6848.0 0.0    0.0   54976.0   742.8    137236.0   75708.3   65536.0 65535.9    115    1.345  688   172.945  174.290</span><br></pre></td></tr></table></figure>
 <p>发现PC和PU两个数值相同了,持久代已经使用完.</p>
 <p>参数代表含义如下:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">S0C 年轻代中第一个survivor（幸存区）的容量 (字节)</span><br><span class="line">S1C 年轻代中第二个survivor（幸存区）的容量 (字节)</span><br><span class="line">S0U 年轻代中第一个survivor（幸存区）目前已使用空间 (字节)</span><br><span class="line">S1U 年轻代中第二个survivor（幸存区）目前已使用空间 (字节)</span><br><span class="line">EC 年轻代中Eden（伊甸园）的容量 (字节)</span><br><span class="line">EU 年轻代中Eden（伊甸园）目前已使用空间 (字节)</span><br><span class="line">OC Old代的容量 (字节)</span><br><span class="line">OU Old代目前已使用空间 (字节)</span><br><span class="line">PC Perm(持久代)的容量 (字节)</span><br><span class="line">PU Perm(持久代)目前已使用空间 (字节)</span><br><span class="line">YGC 从应用程序启动到采样时年轻代中gc次数</span><br><span class="line">YGCT 从应用程序启动到采样时年轻代中gc所用时间(s)</span><br><span class="line">FGC 从应用程序启动到采样时old代(全gc)gc次数</span><br><span class="line">FGCT 从应用程序启动到采样时old代(全gc)gc所用时间(s)</span><br><span class="line">GCT 从应用程序启动到采样时gc用的总时间(s)</span><br></pre></td></tr></table></figure>
+
 <h3 id="查看jstat-gcpermcapacity"><a href="#查看jstat-gcpermcapacity" class="headerlink" title="查看jstat -gcpermcapacity"></a>查看jstat -gcpermcapacity</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -gcpermcapacity 32365</span><br><span class="line">PGCMN      PGCMX       PGC         PC      YGC   FGC    FGCT     GCT</span><br><span class="line">12288.0    65536.0    65536.0    65536.0   115   610  153.078  154.423</span><br></pre></td></tr></table></figure>
 <p>持久代初始大小(PGCMN)12M,最大(PGCMX)64M,上面一步显示,64M已经用完.可以考虑增加持久代大小64M增大到256M.</p>
 <p>参数代表含义如下:</p>
@@ -261,8 +291,8 @@
 <li>添加如下内容到setenv.sh <code>export CATALINA_OPTS=&quot;$CATALINA_OPTS -XX:PermSize=256m -XX:MaxPermSize=256m&quot;</code></li>
 <li>重启tomcat</li>
 </ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://stackoverflow.com/questions/19769675/tomcat-7-outofmemoryerror-from-uncaughtexceptionhandler" target="_blank" rel="external">http://stackoverflow.com/questions/19769675/tomcat-7-outofmemoryerror-from-uncaughtexceptionhandler</a></p>
-<p><a href="http://tdcq.iteye.com/blog/1990666" target="_blank" rel="external">http://tdcq.iteye.com/blog/1990666</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://stackoverflow.com/questions/19769675/tomcat-7-outofmemoryerror-from-uncaughtexceptionhandler" target="_blank" rel="noopener">http://stackoverflow.com/questions/19769675/tomcat-7-outofmemoryerror-from-uncaughtexceptionhandler</a></p>
+<p><a href="http://tdcq.iteye.com/blog/1990666" target="_blank" rel="noopener">http://tdcq.iteye.com/blog/1990666</a></p>
 
     </div>
 
@@ -497,6 +527,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="HashTable继承Dictionary类，实现Map接口。其中Dictionary类是任何可将键映射到相应值的类（如 Hashtable）的抽象父类。每个键和每个值都是一个对象。在任何一个 Dictionary 对象中，每个键至多与一个值相关联。Map是”key-value键值对”接口。">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -249,6 +277,7 @@
 <p>HashTable继承Dictionary类，实现Map接口。其中Dictionary类是任何可将键映射到相应值的类（如 Hashtable）的抽象父类。每个键和每个值都是一个对象。在任何一个 Dictionary 对象中，每个键至多与一个值相关联。Map是”key-value键值对”接口。</p>
 </blockquote>
 <a id="more"></a>
+
 <h1 id="HashTable与HashMap的区别"><a href="#HashTable与HashMap的区别" class="headerlink" title="HashTable与HashMap的区别"></a>HashTable与HashMap的区别</h1><ol>
 <li>HashTable基于Dictionary类，而HashMap是基于AbstractMap。Dictionary是什么？它是任何可将键映射到相应值的类的抽象父类，而AbstractMap是基于Map接口的骨干实现，它以最大限度地减少实现此接口所需的工作。</li>
 <li>HashMap可以允许存在一个为null的key和任意个为null的value，但是HashTable中的key和value都不允许为null。当HashMap遇到为null的key时，它会调用putForNullKey方法来进行处理。对于value没有进行任何处理，只要是对象都可以。而当HashTable遇到null时，他会直接抛出NullPointerException异常信息。</li>
@@ -257,27 +286,47 @@
 <h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><blockquote>
 <p>jdk1.7.0_71</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">//用于存储数据的表</span><br><span class="line">private transient Entry&lt;K,V&gt;[] table;</span><br><span class="line">//表中键值对的数</span><br><span class="line">private transient int count;</span><br><span class="line">//下次扩充的临界值 capacity * loadFactor</span><br><span class="line">private int threshold;</span><br><span class="line">//哈希表的负载因子</span><br><span class="line">private float loadFactor;</span><br><span class="line">//在使用迭代器遍历的时候，用来检查列表中的元素是否发生结构性变化（列表元素数量发生改变的一个计数）了，主要在多线程环境下需要使用，防止一个线程正在迭代遍历，另一个线程修改了这个列表的结构。</span><br><span class="line">private transient int modCount;</span><br><span class="line">//容量阈值，默认大小为Integer.MAX_VALUE</span><br><span class="line">static final int ALTERNATIVE_HASHING_THRESHOLD_DEFAULT = Integer.MAX_VALUE;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;用于存储数据的表</span><br><span class="line">private transient Entry&lt;K,V&gt;[] table;</span><br><span class="line">&#x2F;&#x2F;表中键值对的数</span><br><span class="line">private transient int count;</span><br><span class="line">&#x2F;&#x2F;下次扩充的临界值 capacity * loadFactor</span><br><span class="line">private int threshold;</span><br><span class="line">&#x2F;&#x2F;哈希表的负载因子</span><br><span class="line">private float loadFactor;</span><br><span class="line">&#x2F;&#x2F;在使用迭代器遍历的时候，用来检查列表中的元素是否发生结构性变化（列表元素数量发生改变的一个计数）了，主要在多线程环境下需要使用，防止一个线程正在迭代遍历，另一个线程修改了这个列表的结构。</span><br><span class="line">private transient int modCount;</span><br><span class="line">&#x2F;&#x2F;容量阈值，默认大小为Integer.MAX_VALUE</span><br><span class="line">static final int ALTERNATIVE_HASHING_THRESHOLD_DEFAULT &#x3D; Integer.MAX_VALUE;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Holder-静态内部类-存放一些在虚拟机启动后才能初始化的值"><a href="#Holder-静态内部类-存放一些在虚拟机启动后才能初始化的值" class="headerlink" title="Holder 静态内部类,存放一些在虚拟机启动后才能初始化的值"></a>Holder 静态内部类,存放一些在虚拟机启动后才能初始化的值</h2><h3 id="容量阈值，初始化hashSeed的时候会用到该值"><a href="#容量阈值，初始化hashSeed的时候会用到该值" class="headerlink" title="容量阈值，初始化hashSeed的时候会用到该值"></a>容量阈值，初始化hashSeed的时候会用到该值</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">static final int ALTERNATIVE_HASHING_THRESHOLD;</span><br></pre></td></tr></table></figure>
+
 <h3 id="static静态块"><a href="#static静态块" class="headerlink" title="static静态块"></a>static静态块</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">获取系统变量jdk.map.althashing.threshold</span><br><span class="line">jdk.map.althashing.threshold系统变量默认为-1，如果为-1，则将阈值设为Integer.MAX_VALUE</span><br></pre></td></tr></table></figure>
+
 <h2 id="Hashtable-int-initialCapacity-float-loadFactor-指定容量和负载因子-构造"><a href="#Hashtable-int-initialCapacity-float-loadFactor-指定容量和负载因子-构造" class="headerlink" title="Hashtable(int initialCapacity, float loadFactor) 指定容量和负载因子 构造"></a>Hashtable(int initialCapacity, float loadFactor) 指定容量和负载因子 构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public Hashtable(int initialCapacity, float loadFactor) &#123;</span><br><span class="line">	...</span><br><span class="line">	initHashSeedAsNeeded();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Hashtable-int-initialCapacity-指定初始容量的构造-负载因子为0-75f"><a href="#Hashtable-int-initialCapacity-指定初始容量的构造-负载因子为0-75f" class="headerlink" title="Hashtable(int initialCapacity) 指定初始容量的构造,负载因子为0.75f"></a>Hashtable(int initialCapacity) 指定初始容量的构造,负载因子为0.75f</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Hashtable(int initialCapacity) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="Hashtable-默认初始容量11和默认负载因子0-75f的构造"><a href="#Hashtable-默认初始容量11和默认负载因子0-75f的构造" class="headerlink" title="Hashtable() 默认初始容量11和默认负载因子0.75f的构造"></a>Hashtable() 默认初始容量11和默认负载因子0.75f的构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Hashtable()&#123;&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Hashtable-Map-lt-extends-K-extends-V-gt-m-用map初始化"><a href="#Hashtable-Map-lt-extends-K-extends-V-gt-m-用map初始化" class="headerlink" title="Hashtable(Map&lt;? extends K, ? extends V&gt; m) 用map初始化"></a>Hashtable(Map&lt;? extends K, ? extends V&gt; m) 用map初始化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public Hashtable(Map&lt;? extends K, ? extends V&gt; m) &#123;</span><br><span class="line">	this(Math.max(2*t.size(), 11), 0.75f);</span><br><span class="line">		//把元素放入到Hashtable中</span><br><span class="line">        putAll(t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Hashtable-Map-lt-extends-K-extends-V-gt-m-用map初始化"><a href="#Hashtable-Map-lt-extends-K-extends-V-gt-m-用map初始化" class="headerlink" title="Hashtable(Map&lt;? extends K, ? extends V&gt; m) 用map初始化"></a>Hashtable(Map&lt;? extends K, ? extends V&gt; m) 用map初始化</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public Hashtable(Map&lt;? extends K, ? extends V&gt; m) &#123;</span><br><span class="line">	this(Math.max(2*t.size(), 11), 0.75f);</span><br><span class="line">		&#x2F;&#x2F;把元素放入到Hashtable中</span><br><span class="line">        putAll(t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="size-key-value映射个数"><a href="#size-key-value映射个数" class="headerlink" title="size() key-value映射个数"></a>size() key-value映射个数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public synchronized int size() &#123;</span><br><span class="line">        return size;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="isEmpty-是否为空"><a href="#isEmpty-是否为空" class="headerlink" title="isEmpty()是否为空"></a>isEmpty()是否为空</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean isEmpty() &#123;</span><br><span class="line">        return size == 0;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="isEmpty-是否为空"><a href="#isEmpty-是否为空" class="headerlink" title="isEmpty()是否为空"></a>isEmpty()是否为空</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean isEmpty() &#123;</span><br><span class="line">        return size &#x3D;&#x3D; 0;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="keys-返回keys枚举"><a href="#keys-返回keys枚举" class="headerlink" title="keys() 返回keys枚举"></a>keys() 返回keys枚举</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public synchronized Enumeration&lt;K&gt; keys() &#123;</span><br><span class="line">        return this.&lt;K&gt;getEnumeration(KEYS);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="elements-返回values枚举"><a href="#elements-返回values枚举" class="headerlink" title="elements() 返回values枚举"></a>elements() 返回values枚举</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public synchronized elements&lt;V&gt; keys() &#123;</span><br><span class="line">        return this.&lt;V&gt;getEnumeration(VALUES);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="contains-Object-value-是否包含指定value"><a href="#contains-Object-value-是否包含指定value" class="headerlink" title="contains(Object value)是否包含指定value"></a>contains(Object value)是否包含指定value</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public synchronized boolean contains(Object value) &#123;&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="containsValue-Object-value-是否包含value"><a href="#containsValue-Object-value-是否包含value" class="headerlink" title="containsValue(Object value) 是否包含value"></a>containsValue(Object value) 是否包含value</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean containsValue(Object value) &#123;&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="containsKey-Object-key-是否包含key"><a href="#containsKey-Object-key-是否包含key" class="headerlink" title="containsKey(Object key) 是否包含key"></a>containsKey(Object key) 是否包含key</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean containsKey(Object key) &#123;</span><br><span class="line">        return getEntry(key) != null;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="get-Object-key-根据key获取value"><a href="#get-Object-key-根据key获取value" class="headerlink" title="get(Object key) 根据key获取value"></a>get(Object key) 根据key获取value</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public synchronized V get(Object key) &#123;&#125;</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">## put(K key, V value) 将指定的key value放入Hashtable中,若已存在key,就替换旧值</span><br></pre></td></tr></table></figure>
-<p>public synchronized V put(K key, V value) {}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## remove(Object key) 根据key删除</span><br></pre></td></tr></table></figure></p>
-<p>public synchronized V remove(Object key) {<br>    removeEntryForKey(key);<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## putAll(Map&lt;? extends K, ? extends V&gt; m) 把指定的元素 全部放入HashMap中,已经存在的key,会把旧value覆盖掉</span><br></pre></td></tr></table></figure></p>
-<p>public synchronized void putAll(Map&lt;? extends K, ? extends V&gt; m) {}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## clear() 清空</span><br></pre></td></tr></table></figure></p>
-<p>public synchronized void clear(){}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## clone() 浅拷贝</span><br></pre></td></tr></table></figure></p>
-<p>public Object clone() {}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## toString()</span><br></pre></td></tr></table></figure></p>
-<p>public synchronized String toString() {}<br>```</p>
+
+<h2 id="containsKey-Object-key-是否包含key"><a href="#containsKey-Object-key-是否包含key" class="headerlink" title="containsKey(Object key) 是否包含key"></a>containsKey(Object key) 是否包含key</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean containsKey(Object key) &#123;</span><br><span class="line">        return getEntry(key) !&#x3D; null;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="get-Object-key-根据key获取value"><a href="#get-Object-key-根据key获取value" class="headerlink" title="get(Object key) 根据key获取value"></a>get(Object key) 根据key获取value</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public synchronized V get(Object key) &#123;&#125;</span><br><span class="line">&#96;&#96;&#96; </span><br><span class="line"></span><br><span class="line">## put(K key, V value) 将指定的key value放入Hashtable中,若已存在key,就替换旧值</span><br></pre></td></tr></table></figure>
+<p>public synchronized V put(K key, V value) {}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## remove(Object key) 根据key删除</span><br></pre></td></tr></table></figure>
+<p>public synchronized V remove(Object key) {<br>    removeEntryForKey(key);<br>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## putAll(Map&lt;? extends K, ? extends V&gt; m) 把指定的元素 全部放入HashMap中,已经存在的key,会把旧value覆盖掉</span><br></pre></td></tr></table></figure>
+<p>public synchronized void putAll(Map&lt;? extends K, ? extends V&gt; m) {}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## clear() 清空</span><br></pre></td></tr></table></figure>
+<p>public synchronized void clear(){}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## clone() 浅拷贝</span><br></pre></td></tr></table></figure>
+<p>public Object clone() {}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## toString()</span><br></pre></td></tr></table></figure>
+<p>public synchronized String toString() {}</p>
+<p>```</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1>
     </div>
 
@@ -511,6 +560,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="一个小学生">
@@ -102,6 +102,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -146,11 +147,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -243,7 +271,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>从头开始写一个迷你的dubbo，仅用作学习用，学习的过程中更深入的了解下dubbo，同时也补充下其他的知识。<br>
+          <p>从头开始写一个迷你的dubbo，仅用作学习用，学习的过程中更深入的了解下dubbo，同时也补充下其他的知识。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/#more" rel="contents">
@@ -342,7 +370,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。<br>
+          <p>我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/#more" rel="contents">
@@ -441,7 +469,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>关于Servlet的学习还是在上学的时候，自学Java，也就是只是了解了Servlet是什么以及怎么使用，现在慢慢的明白很多很多的框架等等都是在Servlet上做的扩展，也开始明白自己的基础不好。现在回头来学习一下Servlet的相关知识。<br>
+          <p>关于Servlet的学习还是在上学的时候，自学Java，也就是只是了解了Servlet是什么以及怎么使用，现在慢慢的明白很多很多的框架等等都是在Servlet上做的扩展，也开始明白自己的基础不好。现在回头来学习一下Servlet的相关知识。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/04/13/Java%20Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/#more" rel="contents">
@@ -540,7 +568,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>有关AOP相关概念以及Spring AOP相关概念和Spring AOP的使用不再重复。关于AOP在Spring中的地位，不用说相信我们都知道，也都会用，但是对于更深入的东西，还未接触过，这里就对Spring AOP的相关源码进行说明一下，看看到底Spring中AOP是怎么实现的。<br>
+          <p>有关AOP相关概念以及Spring AOP相关概念和Spring AOP的使用不再重复。关于AOP在Spring中的地位，不用说相信我们都知道，也都会用，但是对于更深入的东西，还未接触过，这里就对Spring AOP的相关源码进行说明一下，看看到底Spring中AOP是怎么实现的。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/#more" rel="contents">
@@ -639,7 +667,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>动态代理是指在运行时动态生成代理类。不需要我们像静态代理那个去手动写一个个的代理类。生成动态代理类有很多方式：Java动态代理，CGLIB，Javassist，ASM库等。这里主要说一下Java动态代理的实现。<br>
+          <p>动态代理是指在运行时动态生成代理类。不需要我们像静态代理那个去手动写一个个的代理类。生成动态代理类有很多方式：Java动态代理，CGLIB，Javassist，ASM库等。这里主要说一下Java动态代理的实现。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/#more" rel="contents">
@@ -1327,6 +1355,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

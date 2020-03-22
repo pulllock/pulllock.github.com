@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Java多线程简介Java中内置了对多线程的支持，让多线程的开发方便很多，但同时也带来了另外的复杂，线程间的交互以及很多的不确定性让多线程又显得很复杂。在此只是针对Java中多线程的基础做些说明，有关线程和进程的区别，以及多线程的好处和更深层的暂不多说。">
@@ -107,6 +107,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -151,11 +152,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -249,6 +277,7 @@
       
         <h1 id="Java多线程简介"><a href="#Java多线程简介" class="headerlink" title="Java多线程简介"></a>Java多线程简介</h1><p>Java中内置了对多线程的支持，让多线程的开发方便很多，但同时也带来了另外的复杂，线程间的交互以及很多的不确定性让多线程又显得很复杂。在此只是针对Java中多线程的基础做些说明，有关线程和进程的区别，以及多线程的好处和更深层的暂不多说。</p>
 <a id="more"></a>
+
 <h1 id="线程的状态"><a href="#线程的状态" class="headerlink" title="线程的状态"></a>线程的状态</h1><p>线程的状态定义在Thread类中一个State枚举类型：</p>
 <ul>
 <li>新建状态（NEW），通过<code>new Thread</code>新建的线程处于新建状态，通常会调用start()方法来启动线程。</li>
@@ -319,8 +348,9 @@
 <p>前面两个不再举例子，最后一种代码如下：</p>
 <p>CallableDemo：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class CallableDemo implements Callable&lt;Integer&gt;&#123;</span><br><span class="line">    @Override</span><br><span class="line">    public Integer call() throws Exception &#123;</span><br><span class="line">        return new Random().nextInt(1000);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>CallableAndFutureTest：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class CallableAndFutureTest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Callable&lt;Integer&gt; callable = new CallableDemo();</span><br><span class="line">        FutureTask&lt;Integer&gt; futureTask = new FutureTask&lt;Integer&gt;(callable);</span><br><span class="line">        new Thread(futureTask).start();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(5000);</span><br><span class="line">            System.out.println(futureTask.get());</span><br><span class="line">        &#125;catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (ExecutionException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class CallableAndFutureTest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Callable&lt;Integer&gt; callable &#x3D; new CallableDemo();</span><br><span class="line">        FutureTask&lt;Integer&gt; futureTask &#x3D; new FutureTask&lt;Integer&gt;(callable);</span><br><span class="line">        new Thread(futureTask).start();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(5000);</span><br><span class="line">            System.out.println(futureTask.get());</span><br><span class="line">        &#125;catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (ExecutionException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1 id="线程间协作"><a href="#线程间协作" class="headerlink" title="线程间协作"></a>线程间协作</h1><p>线程之间的通信协作可以使用Object对象中的wait()方法，notify()方法，notifyAll()方法来实现。</p>
 <p><code>wait(),wait(long),wait(long,int)</code> 该方法将当前线程进入休眠状态，wait()方法只能使用在同步方法或者同步块中调用。调用wait()方法后，当前线程释放锁。该线程处于该对象的等待池中。</p>
 <p><code>notify()，notifyAll()</code> 该方法用来通知那些可能在等待该对象的对象锁的其他线程。notify()方法必须在同步方法或代码块中调用。被唤醒的对象进入该对象的锁池中，锁池中的线程会去竞争该对象锁。</p>
@@ -557,6 +587,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 

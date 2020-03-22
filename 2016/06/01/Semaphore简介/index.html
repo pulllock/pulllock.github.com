@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="Semaphore简介 Semaphore是并发包中提供的用于控制某资源同时被访问的个数 操作系统的信号量是个很重要的概念，在进程控制方面都有应用。Java 并发库 的Semaphore 可以很轻松完成信号量控制，Semaphore可以控制某个资源可被同时访问的个数，通过 acquire() 获取一个许可，如果没有就等待，而 release() 释放一个许可。 Semaphore维护了当前访问的个">
@@ -105,6 +105,7 @@
 
   <div class="site-nav-right">
     <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
@@ -149,11 +150,38 @@
     <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
 
   </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
   </ul>
 </nav>
 
 
 
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
 
 </div>
     </header>
@@ -256,17 +284,25 @@
 <li>Semaphore类只是一个资源数量的抽象表示,并不负责管理资源对象本身,可能有多个线程同时获取到资源使用许可,因此需要使用同步机制避免数据竞争.</li>
 </ol>
 <a id="more"></a>
+
 <h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><blockquote>
 <p>jdk1.7.0_71</p>
 </blockquote>
-<h2 id="Semaphore-int-permits"><a href="#Semaphore-int-permits" class="headerlink" title="Semaphore(int permits)"></a>Semaphore(int permits)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//指定许可数初始化,非公平模式</span><br><span class="line">public Semaphore(int permits) &#123;</span><br><span class="line">        sync = new NonfairSync(permits);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Semaphore-int-permits-boolean-fair"><a href="#Semaphore-int-permits-boolean-fair" class="headerlink" title="Semaphore(int permits,boolean fair)"></a>Semaphore(int permits,boolean fair)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//可在初始化时指定第二个参数为true,使用公平模式</span><br><span class="line">public Semaphore(int permits, boolean fair) &#123;</span><br><span class="line">        sync = fair ? new FairSync(permits) : new NonfairSync(permits);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Semaphore-int-permits"><a href="#Semaphore-int-permits" class="headerlink" title="Semaphore(int permits)"></a>Semaphore(int permits)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;指定许可数初始化,非公平模式</span><br><span class="line">public Semaphore(int permits) &#123;</span><br><span class="line">        sync &#x3D; new NonfairSync(permits);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Semaphore-int-permits-boolean-fair"><a href="#Semaphore-int-permits-boolean-fair" class="headerlink" title="Semaphore(int permits,boolean fair)"></a>Semaphore(int permits,boolean fair)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;可在初始化时指定第二个参数为true,使用公平模式</span><br><span class="line">public Semaphore(int permits, boolean fair) &#123;</span><br><span class="line">        sync &#x3D; fair ? new FairSync(permits) : new NonfairSync(permits);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="acquire-阻塞-获取许可-可以被中断"><a href="#acquire-阻塞-获取许可-可以被中断" class="headerlink" title="acquire() 阻塞,获取许可,可以被中断"></a>acquire() 阻塞,获取许可,可以被中断</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void acquire() throws InterruptedException &#123;</span><br><span class="line">        sync.acquireSharedInterruptibly(1);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="acquireUninterruptibly-获取许可-不可中断"><a href="#acquireUninterruptibly-获取许可-不可中断" class="headerlink" title="acquireUninterruptibly()获取许可,不可中断"></a>acquireUninterruptibly()获取许可,不可中断</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void acquireUninterruptibly() &#123;</span><br><span class="line">        sync.acquireShared(1);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h2 id="tryAcquire-非阻塞-获取许可"><a href="#tryAcquire-非阻塞-获取许可" class="headerlink" title="tryAcquire()非阻塞,获取许可"></a>tryAcquire()非阻塞,获取许可</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean tryAcquire() &#123;</span><br><span class="line">        return sync.nonfairTryAcquireShared(1) &gt;= 0;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="tryAcquire-非阻塞-获取许可"><a href="#tryAcquire-非阻塞-获取许可" class="headerlink" title="tryAcquire()非阻塞,获取许可"></a>tryAcquire()非阻塞,获取许可</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean tryAcquire() &#123;</span><br><span class="line">        return sync.nonfairTryAcquireShared(1) &gt;&#x3D; 0;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="tryAcquire-long-timeout-TimeUnit-unit-非阻塞-获取许可"><a href="#tryAcquire-long-timeout-TimeUnit-unit-非阻塞-获取许可" class="headerlink" title="tryAcquire(long timeout,TimeUnit unit)非阻塞,获取许可"></a>tryAcquire(long timeout,TimeUnit unit)非阻塞,获取许可</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public boolean tryAcquire(long timeout, TimeUnit unit)</span><br><span class="line">        throws InterruptedException &#123;</span><br><span class="line">        return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="release-释放许可"><a href="#release-释放许可" class="headerlink" title="release()释放许可"></a>release()释放许可</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void release() &#123;</span><br><span class="line">        sync.releaseShared(1);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://www.cnblogs.com/whgw/archive/2011/09/29/2195555.html" target="_blank" rel="external">http://www.cnblogs.com/whgw/archive/2011/09/29/2195555.html</a></p>
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://www.cnblogs.com/whgw/archive/2011/09/29/2195555.html" target="_blank" rel="noopener">http://www.cnblogs.com/whgw/archive/2011/09/29/2195555.html</a></p>
 
     </div>
 
@@ -500,6 +536,10 @@
   
 
 
+
+
+  
+<script src="/js/local-search.js"></script>
 
 
 
