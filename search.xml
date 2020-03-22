@@ -3,6 +3,13 @@
   
     
     <entry>
+      <title><![CDATA[Spring中Bean的生命周期总结]]></title>
+      <url>%2F2020%2F03%2F22%2FSpring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93%2F</url>
+      <content type="text"><![CDATA[总结一下Spring中Bean的生命周期，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。 Spring中Bean的生命周期或者说任何一个物体的生命周期都可以大体分为：初始化、使用、销毁，哪怕是Spring IOC容器也可以这样总结。这里说要总结生命周期，其实就是把这三步稍微详细的再说一下。大体的过程如下： 手动或者自动的触发获取一个Bean，使用BeanFactory的时候需要我们代码自己获取Bean，ApplicationContext则是在IOC启动的时候自动初始化一个Bean。 IOC会根据BeanDefinition来实例化这个Bean，如果这个Bean还有依赖其他的Bean则会先初始化依赖的Bean，这里又涉及到了循环依赖的解决。实例化Bean的时候根据工厂方法、构造方法或者简单初始化等选择具体的实例来进行实例化，最终都是使用反射进行实例化。 Bean实例化完成，也就是一个对象实例化完成后，会继续填充这个Bean的各个属性，也是使用反射机制将属性设置到Bean中去。 填充完属性后，会调用各种Aware方法，将需要的组件设置到当前Bean中。BeanFactory这种低级容器需要我们手动注册Aware接口，而ApplicationContext这种高级容器在IOC启动的时候就自动给我们注册了Aware等接口。 接下来如果Bean实现了PostProcessor一系列的接口，会先调用其中的postProcessBeforeInitialization方法。BeanFactory这种低级容器需要我们手动注册PostProcessor接口，而ApplicationContext这种高级容器在IOC启动的时候就自动给我们注册了PostProcessor等接口。 如果Bean实现了InitializingBean接口，则会调用对应的afterPropertiesSet方法。 如果Bean设置了init-method属性，则会调用init-method指定的方法。 接下来如果Bean实现了PostProcessor一系列的接口，会先调用其中的postProcessAfterInitialization方法。BeanFactory这种低级容器需要我们手动注册PostProcessor接口，而ApplicationContext这种高级容器在IOC启动的时候就自动给我们注册了PostProcessor等接口。 到这里Bean就可以使用了。 容器关闭的时候需要销毁Bean。 如果Bean实现了DisposableBean，则调用destroy方法。 如果Bean配置了destroy-method属性，则调用指定的destroy-method方法。 在实例化完Bean和填充属性之前还会涉及到AOP的处理，在处理依赖Bean的时候还会涉及到循环依赖的处理等等细节。]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Spring中IOC容器的初始化过程总结]]></title>
       <url>%2F2020%2F03%2F22%2FSpring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93%2F</url>
       <content type="text"><![CDATA[总结一下Spring IOC容器的初始化过程，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。 Spring IOC容器初始化过程总得说起来也简单，基本是整个Spring启动的过程。大体流程： Spring启动 -&gt; 加载配置文件 -&gt; 将配置文件转化成Resource -&gt; 从Resource中解析转换成BeanDefinition -&gt; 主动或则被动触发Bean的初始化过程 -&gt; 应用程序中使用Bean -&gt; 销毁Bean -&gt; 容器关闭。 其实总的流程就这么简单，但是具体实现有很多很多的细节需要处理，讲完就是一本书。这里就是简单总结，所以内容会很少很少。 Spring启动。 加载配置文件，xml、JavaConfig、注解、其他形式等等，将描述我们自己定义的和Spring内置的定义的Bean加载进来。 加载完配置文件后将配置文件转化成统一的Resource来处理。 使用Resource解析将我们定义的一些配置都转化成Spring内部的标识形式：BeanDefinition。 在低级的容器BeanFactory中，到这里就可以宣告Spring容器初始化完成了，Bean的初始化是在我们使用Bean的时候触发的；在高级的容器ApplicationContext中，会自动触发那些lazy-init=false的单例Bean，让Bean以及依赖的Bean进行初始化的流程，初始化完成Bean之后高级容器也初始化完成了。 在我们的应用中使用Bean。 Spring容器关闭，销毁各个Bean。 这中间还会有很多其他的工作，对于我们从宏观上来了解Spring的整体没有影响，不做过多阐述。]]></content>
