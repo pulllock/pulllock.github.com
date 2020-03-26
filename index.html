@@ -1035,13 +1035,13 @@
 <p>SDS除了能保存字符串值，还能作为缓冲区buffer：AOF模块中的AOF缓冲区、客户端状态中的输入缓冲区。</p>
 <h1 id="SDS定义"><a href="#SDS定义" class="headerlink" title="SDS定义"></a>SDS定义</h1> <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span>&#123;</span></span><br><span class="line">    <span class="comment">// 字符数组，用于保存字符串</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// buf数组中已使用字节的数量，等于SDS所保存字符串的长度</span></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// buf数组中未使用字节的数量</span></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="/.com//SDS-1.png" alt="SDS-1"></p>
+<p><img src="SDS-1.png" alt="SDS-1"></p>
 <ol>
 <li>free=0，表示SDS没有分配未使用空间</li>
 <li>len=5，表示SDS保存了一个5字节长的字符串</li>
 <li>buf是一个char类型数组，前面5个保存了实际的字符，最后一个字节保存了空字符<code>\0</code></li>
 </ol>
-<p><img src="/.com//SDS-2.png" alt="SDS-2"></p>
+<p><img src="SDS-2.png" alt="SDS-2"></p>
 <ol>
 <li>free=5，表示为buf数组分配了5字节未使用空间</li>
 </ol>

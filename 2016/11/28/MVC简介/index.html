@@ -27,13 +27,13 @@
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="MVC简介面试的时候被问到关于MVC相关的知识，才发现自己只会说出来什么叫MVC，但是其详细的东西自己却无法顺利的表述出来，特在此记录下。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://dachengxi.github.com/.com//springmvc.png">
+<meta property="og:image" content="http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/springmvc.png">
 <meta property="article:published_time" content="2016-11-28T13:34:00.000Z">
 <meta property="article:modified_time" content="2016-11-29T01:44:00.000Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="MVC简介">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://dachengxi.github.com/.com//springmvc.png">
+<meta name="twitter:image" content="http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/springmvc.png">
 
 <link rel="canonical" href="http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/">
 
@@ -307,7 +307,7 @@
 <h3 id="Model2"><a href="#Model2" class="headerlink" title="Model2"></a>Model2</h3><p>Model2采用JSP+Servlet+JavaBean来实现，其实这时候就可以认为是我们的Web MVC模型了，在实际使用中也是使用的这种模式。</p>
 <p>JSP 使用html和jsp的标签来负责实现表现层；Servlet负责接收用户的请求，转交给模型层进行处理，返回结果给视图层等功能；JavaBean负责业务逻辑的处理，也就是模型层的功能。</p>
 <p>到这里为止，开发过程中遇到的方式都已经介绍完了，也走到了MVC模式这一步。下面会简单介绍下MVC的框架相关知识。</p>
-<h2 id="Spring-Web-MVC"><a href="#Spring-Web-MVC" class="headerlink" title="Spring Web MVC"></a>Spring Web MVC</h2><p>先看一下Spring官方的一张请求处理流程图：<br><img src="/.com//springmvc.png" alt="请求处理流程"><br>再看一下具体的流程：</p>
+<h2 id="Spring-Web-MVC"><a href="#Spring-Web-MVC" class="headerlink" title="Spring Web MVC"></a>Spring Web MVC</h2><p>先看一下Spring官方的一张请求处理流程图：<br><img src="springmvc.png" alt="请求处理流程"><br>再看一下具体的流程：</p>
 <ol>
 <li>第一步，用户发送请求（Incoming request）到前端控制器（Front controller）</li>
 <li>前端控制器（Front controller）根据实际的请求信息来决定把请求委托给具体的页面控制器（Controller）。页面控制器用来处理实际的请求内容，直接返回或者需要Model层进行数据处理。</li>
