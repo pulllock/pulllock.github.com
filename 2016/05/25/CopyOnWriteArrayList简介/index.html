@@ -284,7 +284,7 @@
 </ol>
 <a id="more"></a>
 
-<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>CopyOnWriteArrayList跟ArrayList一样实现了List<E>, RandomAccess, Cloneable, Serializable接口，但是没有继承AbstractList。</p>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>CopyOnWriteArrayList跟ArrayList一样实现了List<E>, RandomAccess, Cloneable, Serializable接口，但是没有继承AbstractList。</E></p>
 <p>初始化时候新建一个容量为0的数组。</p>
 <h1 id="add-E-e-方法"><a href="#add-E-e-方法" class="headerlink" title="add(E e)方法"></a>add(E e)方法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;</span><br><span class="line">	&#x2F;&#x2F;获得锁，添加的时候首先进行锁定</span><br><span class="line">    final ReentrantLock lock &#x3D; this.lock;</span><br><span class="line">    lock.lock();</span><br><span class="line">    try &#123;</span><br><span class="line">    	&#x2F;&#x2F;获取当前数组</span><br><span class="line">        Object[] elements &#x3D; getArray();</span><br><span class="line">        &#x2F;&#x2F;获取当前数组的长度</span><br><span class="line">        int len &#x3D; elements.length;</span><br><span class="line">        &#x2F;&#x2F;这个是重点，创建新数组，容量为旧数组长度加1，将旧数组拷贝到新数组中</span><br><span class="line">        Object[] newElements &#x3D; Arrays.copyOf(elements, len + 1);</span><br><span class="line">        &#x2F;&#x2F;要添加的数据添加到新数组的末尾</span><br><span class="line">        newElements[len] &#x3D; e;</span><br><span class="line">        &#x2F;&#x2F;将数组引用指向新数组，完成了添加元素操作</span><br><span class="line">        setArray(newElements);</span><br><span class="line">        return true;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">    	&#x2F;&#x2F;解锁</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -513,20 +513,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">107</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

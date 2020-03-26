@@ -27,13 +27,13 @@
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="这里仅仅是对Tomcat7中主要组件进行简单说明，详细的可以查看下tomcat的相关文档。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://dachengxi.github.com/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/tomcat7.gif">
+<meta property="og:image" content="http://dachengxi.github.com/.com//tomcat7.gif">
 <meta property="article:published_time" content="2017-05-05T15:41:35.000Z">
 <meta property="article:modified_time" content="2017-05-09T14:42:29.000Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="tomcat7架构">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://dachengxi.github.com/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/tomcat7.gif">
+<meta name="twitter:image" content="http://dachengxi.github.com/.com//tomcat7.gif">
 
 <link rel="canonical" href="http://dachengxi.github.com/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/">
 
@@ -278,7 +278,7 @@
         <p>这里仅仅是对Tomcat7中主要组件进行简单说明，详细的可以查看下tomcat的相关文档。</p>
 <a id="more"></a>
 <p>首先看下网上找来的一张架构图，还有其他的类似的图，可以自行谷歌一下。看图片也大概能了解tomcat整体的组成。</p>
-<p><img src="tomcat7.gif" alt="tomcat7架构简介"></p>
+<p><img src="/.com//tomcat7.gif" alt="tomcat7架构简介"></p>
 <h1 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h1><p>Server表示整个容器，Tomcat提供了一个默认的Server接口的实现，用户几乎很少自己实现Server接口。</p>
 <h1 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h1><p>Service是一个中间组件，存活于Server中，绑定一个或者多个Connector到一个Engine上。用户很少自己实现Service接口，默认实现已经足够用。</p>
 <h1 id="Engine"><a href="#Engine" class="headerlink" title="Engine"></a>Engine</h1><p>表示一个特定Service的请求处理流程。一个Service可能有多个Connector，Engine接受并处理这些来自Connector的所有请求，将响应传回给适当的Connector以传输到客户端。Engine也很少由用户自定义实现。</p>
@@ -415,20 +415,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">107</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

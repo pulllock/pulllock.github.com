@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Redis中的字符串使用的是Redis自定义的抽象类型，而不是直接使用C语言的字符串表示。Redis的字符串叫做：简单动态字符串Simple Dynamic String，简称SDS。 SDS除了能保存字符串值，还能作为缓冲区buffer：AOF模块中的AOF缓冲区、客户端状态中的输入缓冲区。 SDS定义 12345678910struct sdshdr&amp;#123;    &#x2F;&#x2F; 字符数组，用于保存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis简单动态字符串SDS">
+<meta property="og:url" content="http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="Redis中的字符串使用的是Redis自定义的抽象类型，而不是直接使用C语言的字符串表示。Redis的字符串叫做：简单动态字符串Simple Dynamic String，简称SDS。 SDS除了能保存字符串值，还能作为缓冲区buffer：AOF模块中的AOF缓冲区、客户端状态中的输入缓冲区。 SDS定义 12345678910struct sdshdr&amp;#123;    &#x2F;&#x2F; 字符数组，用于保存">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://dachengxi.github.com/.com//SDS-1.png">
+<meta property="og:image" content="http://dachengxi.github.com/.com//SDS-2.png">
+<meta property="article:published_time" content="2019-03-13T12:05:32.000Z">
+<meta property="article:modified_time" content="2020-03-26T12:34:10.992Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="sds">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://dachengxi.github.com/.com//SDS-1.png">
+
+<link rel="canonical" href="http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Redis简单动态字符串SDS | 大程熙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大程熙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">小角落</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-book">
+
+    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis简单动态字符串SDS
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-13 20:05:32 20:05:32" itemprop="dateCreated datePublished" datetime="2019-03-13T20:05:32+08:00">2019-03-13 20:05:32</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-26 20:34:10 20:34:10" itemprop="dateModified" datetime="2020-03-26T20:34:10+08:00">2020-03-26 20:34:10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/03/13/Redis简单动态字符串SDS/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Redis中的字符串使用的是Redis自定义的抽象类型，而不是直接使用C语言的字符串表示。Redis的字符串叫做：简单动态字符串Simple Dynamic String，简称SDS。</p>
+<p>SDS除了能保存字符串值，还能作为缓冲区buffer：AOF模块中的AOF缓冲区、客户端状态中的输入缓冲区。</p>
+<h1 id="SDS定义"><a href="#SDS定义" class="headerlink" title="SDS定义"></a>SDS定义</h1> <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span>&#123;</span></span><br><span class="line">    <span class="comment">// 字符数组，用于保存字符串</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// buf数组中已使用字节的数量，等于SDS所保存字符串的长度</span></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// buf数组中未使用字节的数量</span></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/.com//SDS-1.png" alt="SDS-1"></p>
+<ol>
+<li>free=0，表示SDS没有分配未使用空间</li>
+<li>len=5，表示SDS保存了一个5字节长的字符串</li>
+<li>buf是一个char类型数组，前面5个保存了实际的字符，最后一个字节保存了空字符<code>\0</code></li>
+</ol>
+<p><img src="/.com//SDS-2.png" alt="SDS-2"></p>
+<ol>
+<li>free=5，表示为buf数组分配了5字节未使用空间</li>
+</ol>
+<h1 id="SDS与C字符串的区别"><a href="#SDS与C字符串的区别" class="headerlink" title="SDS与C字符串的区别"></a>SDS与C字符串的区别</h1><h2 id="常数复杂度获取字符串长度"><a href="#常数复杂度获取字符串长度" class="headerlink" title="常数复杂度获取字符串长度"></a>常数复杂度获取字符串长度</h2><p>C字符串不记录自身长度，需要遍历字符串，直到遇到结尾空字符串，时间复杂度为O(N)。SDS记录了自身长度，获取长度的时间复杂度为O(1)。</p>
+<h2 id="杜绝缓冲区溢出"><a href="#杜绝缓冲区溢出" class="headerlink" title="杜绝缓冲区溢出"></a>杜绝缓冲区溢出</h2><p>C字符串不记录自身长度，修改字符串容易产生缓冲区溢出问题。SDS修改字符串时会先检查空间是否满足要求，不满足的话会自动将SDS空间扩充到所需大小，再执行修改，也就不会产生缓冲区溢出问题。</p>
+<h2 id="减少修改字符串时带来的内存重分配次数"><a href="#减少修改字符串时带来的内存重分配次数" class="headerlink" title="减少修改字符串时带来的内存重分配次数"></a>减少修改字符串时带来的内存重分配次数</h2><p>C字符串每次增长或缩短，程序都需要对这个C字符数组进行内存充分配操作：</p>
+<ol>
+<li>增长C字符串时，程序先通过内存重分配来扩展底层数组空间大小，否则会产生缓冲区溢出。</li>
+<li>缩短C字符串时，程序先通过内存充分配来释放不再使用的空间，否则会产生内存泄露。</li>
+</ol>
+<p>C字符串的这种方式会对Redis产生性能影响，SDS通过未使用空间实现了空间预分配和惰性空间释放两种优化策略。</p>
+<h3 id="空间预分配"><a href="#空间预分配" class="headerlink" title="空间预分配"></a>空间预分配</h3><p>SDS需要进行空间扩展的时候，先会分配必须要的空间，还会分配额外未使用空间，通过空间预分配可以减少连续执行字符串增长操作所需的内存重分配次数：</p>
+<ol>
+<li>SDS修改后，长度len小于1MB时，会分配一个长度也为len的未使用空间。比如修改后SDS长度len=13，则分配free=13，SDS长度实际为：<code>len + free + 1 = 13 + 13 + 1</code></li>
+<li>SDS修改后，长度len大于等于1MB时，会分配一个长度为1MB的未使用空间。比如修改后SDS长度len=2MB，则分配free=1MB，SDS长度实际为：<code>len + free + 1 = 2MB + 1MB + 1byte</code></li>
+</ol>
+<h3 id="惰性空间释放"><a href="#惰性空间释放" class="headerlink" title="惰性空间释放"></a>惰性空间释放</h3><p>SDS需要进行字符串缩短操作时，不会立即回收缩短后空闲出来的空间，而是分配给free，等待将来使用。</p>
+<h2 id="二进制安全"><a href="#二进制安全" class="headerlink" title="二进制安全"></a>二进制安全</h2><p>C字符串中的字符必须符合某种编码，除了末尾字符，其他字符不能是空字符。C字符串只能保存文本数据，不能保存图像、音频、视频、压缩文件等二进制数据。</p>
+<p>SDS是二进制安全的，buf数组里的数据没有任何限制，buf数组里不保存字符，而保存二进制数据。</p>
+<h2 id="兼容部分C字符串函数"><a href="#兼容部分C字符串函数" class="headerlink" title="兼容部分C字符串函数"></a>兼容部分C字符串函数</h2><p>SDS可使用部分的C字符串函数</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><table>
+<thead>
+<tr>
+<th>C字符串</th>
+<th>SDS</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>获取长度时间复杂度O(N)</td>
+<td>获取长度时间复杂度O(1)</td>
+</tr>
+<tr>
+<td>API不安全，可能造成缓冲区溢出</td>
+<td>API安全，不会造成缓冲区溢出</td>
+</tr>
+<tr>
+<td>修改长度N次，需要N次内存重分配</td>
+<td>修改长度N次，最多需要N次内存重分配</td>
+</tr>
+<tr>
+<td>只能保存文本数据</td>
+<td>可以保存文本和二进制数据</td>
+</tr>
+<tr>
+<td>可使用C的所有字符串函数</td>
+<td>可使用部分C的字符串函数</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"># redis</a>
+              <a href="/tags/sds/" rel="tag"># sds</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" rel="prev" title="Dubbo中SPI源码解析">
+      <i class="fa fa-chevron-left"></i> Dubbo中SPI源码解析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/19/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/" rel="next" title="Spring中扩展点汇总">
+      Spring中扩展点汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS定义"><span class="nav-number">1.</span> <span class="nav-text">SDS定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS与C字符串的区别"><span class="nav-number">2.</span> <span class="nav-text">SDS与C字符串的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常数复杂度获取字符串长度"><span class="nav-number">2.1.</span> <span class="nav-text">常数复杂度获取字符串长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#杜绝缓冲区溢出"><span class="nav-number">2.2.</span> <span class="nav-text">杜绝缓冲区溢出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#减少修改字符串时带来的内存重分配次数"><span class="nav-number">2.3.</span> <span class="nav-text">减少修改字符串时带来的内存重分配次数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间预分配"><span class="nav-number">2.3.1.</span> <span class="nav-text">空间预分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惰性空间释放"><span class="nav-number">2.3.2.</span> <span class="nav-text">惰性空间释放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二进制安全"><span class="nav-number">2.4.</span> <span class="nav-text">二进制安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#兼容部分C字符串函数"><span class="nav-number">2.5.</span> <span class="nav-text">兼容部分C字符串函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="dachengxi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">dachengxi</p>
+  <div class="site-description" itemprop="description">一个小学生</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">107</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://cxis.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/";
+    this.page.identifier = "2019/03/13/Redis简单动态字符串SDS/";
+    this.page.title = "Redis简单动态字符串SDS";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://cxis.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>

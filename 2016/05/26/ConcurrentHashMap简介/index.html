@@ -27,13 +27,13 @@
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程环境下，能保证程序执行的正确性，每次同步执行的时候都要锁住整个结构。HashMap不是同步的，在单线程情况下效率高。 ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计。它默认将Hash表分为16个分段，get，put，remove等">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/ConcurrentHashMap.png">
+<meta property="og:image" content="http://dachengxi.github.com/.com//ConcurrentHashMap.png">
 <meta property="article:published_time" content="2016-05-26T03:00:23.000Z">
 <meta property="article:modified_time" content="2016-08-03T06:35:10.000Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="ConcurrentHashMap">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/ConcurrentHashMap.png">
+<meta name="twitter:image" content="http://dachengxi.github.com/.com//ConcurrentHashMap.png">
 
 <link rel="canonical" href="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/">
 
@@ -288,7 +288,7 @@
 <h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>ConcurrentHashMap继承AbstractMap，实现了ConcurrentMap,Serializable接口。ConcurrentMap继承了Map，添加了一些原子性方法，如putIfAbsent，remove，replace等。</p>
 <h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><p>ConcurrentHashMap是由Segment数组结构，HashEntry数组结构和链表组成。Segment是可重入锁ReentrantLock，扮演锁角色。每个Segment的结构和HashMap类似，数组加链表存储结构。</p>
 <p>HashEntry的key，hash采用final，可以避免并发修改问题，HashEntry链的尾部是不能修改的，而next和value采用volatile，可以避免使用同步造成的并发性能灾难。</p>
-<p><img src="ConcurrentHashMap.png" alt=""></p>
+<p><img src="/.com//ConcurrentHashMap.png" alt></p>
 <h1 id="Segment-lt-K-V-gt"><a href="#Segment-lt-K-V-gt" class="headerlink" title="Segment&lt;K,V&gt;"></a>Segment&lt;K,V&gt;</h1><p>Segment是ConcurrentHashMap的内部类，继承ReentrantLock，实现了Serializable接口。操作基本上都在Segment上，Segment中的table是一个HashEntry数组，数据就存放到这个数组中。看到这里对比下HashMap的存储结构，就大概能明白。具体方法在接下来的ConcurrentHashMap的具体方法中讲解。</p>
 <h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><p>ConcurrentHashMap初始化是通过initialCapacity，loadFactor，concurrencyLevel等参数来初始化Segment数组，段偏移量segmentShift，段掩码segmentMask和每个segment里的HashEntry数组。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public ConcurrentHashMap(int initialCapacity,</span><br><span class="line">                             float loadFactor, int concurrencyLevel) &#123;</span><br><span class="line">    &#x2F;&#x2F;校验参数</span><br><span class="line">    if (!(loadFactor &gt; 0) || initialCapacity &lt; 0 || concurrencyLevel &lt;&#x3D; 0)</span><br><span class="line">        throw new IllegalArgumentException();</span><br><span class="line">    &#x2F;&#x2F;并发级别数大于最大Segment数量</span><br><span class="line">    if (concurrencyLevel &gt; MAX_SEGMENTS)</span><br><span class="line">        concurrencyLevel &#x3D; MAX_SEGMENTS;</span><br><span class="line">    &#x2F;&#x2F; Find power-of-two sizes best matching arguments</span><br><span class="line">    int sshift &#x3D; 0;</span><br><span class="line">    int ssize &#x3D; 1;</span><br><span class="line">    while (ssize &lt; concurrencyLevel) &#123;</span><br><span class="line">        ++sshift;</span><br><span class="line">        ssize &lt;&lt;&#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    this.segmentShift &#x3D; 32 - sshift;</span><br><span class="line">    this.segmentMask &#x3D; ssize - 1;</span><br><span class="line">    if (initialCapacity &gt; MAXIMUM_CAPACITY)</span><br><span class="line">        initialCapacity &#x3D; MAXIMUM_CAPACITY;</span><br><span class="line">    int c &#x3D; initialCapacity &#x2F; ssize;</span><br><span class="line">    if (c * ssize &lt; initialCapacity)</span><br><span class="line">        ++c;</span><br><span class="line">    int cap &#x3D; MIN_SEGMENT_TABLE_CAPACITY;</span><br><span class="line">    while (cap &lt; c)</span><br><span class="line">        cap &lt;&lt;&#x3D; 1;</span><br><span class="line">    &#x2F;&#x2F; create segments and segments[0]</span><br><span class="line">    Segment&lt;K,V&gt; s0 &#x3D;</span><br><span class="line">        new Segment&lt;K,V&gt;(loadFactor, (int)(cap * loadFactor),</span><br><span class="line">                         (HashEntry&lt;K,V&gt;[])new HashEntry[cap]);</span><br><span class="line">    Segment&lt;K,V&gt;[] ss &#x3D; (Segment&lt;K,V&gt;[])new Segment[ssize];</span><br><span class="line">    UNSAFE.putOrderedObject(ss, SBASE, s0); &#x2F;&#x2F; ordered write of segments[0]</span><br><span class="line">    this.segments &#x3D; ss;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -513,20 +513,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">107</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -27,13 +27,13 @@
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="SPI，Service Provider Interface，主要是被框架的开发人员使用，比如java.sql.Driver接口，其他不同厂商可以针对同一接口做出不同的实现，mysql和postgresql都有不同的实现提供给用户，而Java的SPI机制可以为某个接口寻找服务实现。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://dachengxi.github.com/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/drivermanager.png">
+<meta property="og:image" content="http://dachengxi.github.com/.com//drivermanager.png">
 <meta property="article:published_time" content="2017-04-17T07:18:47.000Z">
 <meta property="article:modified_time" content="2017-04-17T07:20:42.000Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="Java SPI">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://dachengxi.github.com/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/drivermanager.png">
+<meta name="twitter:image" content="http://dachengxi.github.com/.com//drivermanager.png">
 
 <link rel="canonical" href="http://dachengxi.github.com/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">
 
@@ -310,7 +310,7 @@
 <p>在遍历的时候，首先调用<code>driversIterator.hasNext()</code>方法，这里会搜索classpath下以及jar包中所有的<code>META-INF/services</code>目录下的<code>java.sql.Driver</code>文件，并找到文件中的实现类的名字，此时并没有实例化具体的实现类（ServiceLoader具体的源码实现在下面）。</p>
 <p>然后是调用<code>driversIterator.next();</code>方法，此时就会根据驱动名字具体实例化各个实现类了。现在驱动就被找到并实例化了。</p>
 <p>可以看下截图，我在测试项目中添加了两个jar包，<code>mysql-connector-java-6.0.6.jar</code>和<code>postgresql-42.0.0.0.jar</code>，跟踪到DriverManager中之后：</p>
-<p><img src="drivermanager.png" alt="Java中SPI机制深入及源码解析"></p>
+<p><img src="/.com//drivermanager.png" alt="Java中SPI机制深入及源码解析"></p>
 <p>可以看到此时迭代器中有两个驱动，mysql和postgresql的都被加载了。有关两个驱动都加载了，具体使用哪个驱动，请自行深入jdbc的源码。这里不做过多解析。</p>
 <h1 id="SPI的使用步骤总结"><a href="#SPI的使用步骤总结" class="headerlink" title="SPI的使用步骤总结"></a>SPI的使用步骤总结</h1><p>看完上面的数据库驱动的解析，应该都能知道大概的流程了：</p>
 <ol>
@@ -460,20 +460,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">107</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

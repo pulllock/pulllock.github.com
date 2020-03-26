@@ -27,16 +27,16 @@
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="分析总结一下Dubbo的架构，通过对Dubbo、RocketMQ、Tair等架构的类比，从整体上来理解一般分布式框架、应用的组成。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://dachengxi.github.com/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/dubbo-architecture.jpg">
-<meta property="og:image" content="http://dachengxi.github.com/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/tair-architecture.jpg">
-<meta property="og:image" content="http://dachengxi.github.com/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/rocketmq-architecture.jpg">
+<meta property="og:image" content="http://dachengxi.github.com/.com//dubbo-architecture.jpg">
+<meta property="og:image" content="http://dachengxi.github.com/.com//tair-architecture.jpg">
+<meta property="og:image" content="http://dachengxi.github.com/.com//rocketmq-architecture.jpg">
 <meta property="article:published_time" content="2020-03-19T14:32:11.000Z">
 <meta property="article:modified_time" content="2020-03-19T16:13:17.056Z">
 <meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="dubbo">
 <meta property="article:tag" content="dubbo架构">
+<meta property="article:tag" content="dubbo">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://dachengxi.github.com/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/dubbo-architecture.jpg">
+<meta name="twitter:image" content="http://dachengxi.github.com/.com//dubbo-architecture.jpg">
 
 <link rel="canonical" href="http://dachengxi.github.com/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/">
 
@@ -281,18 +281,18 @@
         <p>分析总结一下Dubbo的架构，通过对Dubbo、RocketMQ、Tair等架构的类比，从整体上来理解一般分布式框架、应用的组成。</p>
 <a id="more"></a>
 <h1 id="Dubbo架构"><a href="#Dubbo架构" class="headerlink" title="Dubbo架构"></a>Dubbo架构</h1><p>Dubbo在日常开发中我们应该是接触的最多的一个框架，它的组成我们最熟悉的应该就是三部分：Provider、Consumer、Registry。以下是官方的架构图：</p>
-<p><img src="dubbo-architecture.jpg" alt="Dubbo Architecture"></p>
+<p><img src="/.com//dubbo-architecture.jpg" alt="Dubbo Architecture"></p>
 <p>使用的时候，第一步我们要启动注册中心。注册中心用来注册服务、发现服务，充当着整个系统的中心点，提供指挥或者导航的作用。</p>
 <p>第二步，启动服务提供者，服务提供者启动后会把自己注册到注册中心，告诉注册中心我可以使用了。这里服务提供者是把自己告诉给注册中心，而不是服务使用者，服务提供者不知道服务使用者是谁，也不知道服务使用者在哪里，也不知道有多少服务使用者，但是我就把自己告诉注册中心，剩下的你们自己决定怎么使用。</p>
 <p>试想一下如果服务提供者要把自己亲自告诉服务使用者，那会是怎样的场景。</p>
 <p>第三步，启动服务消费者，服务消费者启动后会向注册中心订阅服务，也就是向注册中心要自己需要的服务，找到需要的服务后，就可以调用服务了。</p>
 <p>这根我们现实生活中的很多场景都类似，我们需要一个中心点，比如交通指挥中心、电力指挥中心，甚至于社区中心都可以类比。这种中心实际上还是以前的中心化管理方式，只不过我们可以让中心复制出来几个，让一个或者几个中心对外服务，其他的作为备份，用来做高可用方案，保证任一时刻中心都能对外服务。</p>
 <h1 id="Tair架构"><a href="#Tair架构" class="headerlink" title="Tair架构"></a>Tair架构</h1><p>我们再看下Tair的架构，最重要的也是三个：ConfigServer、DataServer、Client。下面是架构图：</p>
-<p><img src="tair-architecture.jpg" alt="Tair Architecture"></p>
+<p><img src="/.com//tair-architecture.jpg" alt="Tair Architecture"></p>
 <p>其中ConfigServer就是类似传统应用系统的中心节点，DataServer会保持和ConfigServer的心跳，ConfigServer知道DataServer的信息。Client会到ConfigServer中获取DataServer信息，然后才能知道要去哪里找数据。</p>
 <p>同样ConfigServer也是采用主备方案来保证高可用，如果从宏观上看其实它还是一个中心节点，没有变。</p>
 <h1 id="RocketMQ架构"><a href="#RocketMQ架构" class="headerlink" title="RocketMQ架构"></a>RocketMQ架构</h1><p>接下来看看RocketMQ的架构设计，它由四部分组成：NameServer、Broker、Producer、Consumer，以下是架构图：</p>
-<p><img src="rocketmq-architecture.jpg" alt="RocketMQ Architecture"></p>
+<p><img src="/.com//rocketmq-architecture.jpg" alt="RocketMQ Architecture"></p>
 <p>这里NameServer用来管理Broker，Producer和Consumer从NameServer中获取Broker的信息，整体的逻辑和上面Dubbo以及Tair类似。NameServer这次不是采用主备这种带有等级意义的关系，而是采用平等关系，Broker向所有的NameServer注册，而Producer和Consumer则选择其中一台NameServer进行通信，因为NameServer上存储的信息都一样。</p>
 <p>这样宏观看下来其实NameServer还是中心，只不过它也是通过同时部署多台服务器来保证高可用。</p>
 <h1 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h1><p>另外像zookeeper我们也可以理解成类似的，只不过zookeeper的中心可认为是动态中心，它的Leader角色可以进行选举更换。</p>
@@ -327,8 +327,8 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/dubbo/" rel="tag"># dubbo</a>
               <a href="/tags/dubbo%E6%9E%B6%E6%9E%84/" rel="tag"># dubbo架构</a>
+              <a href="/tags/dubbo/" rel="tag"># dubbo</a>
           </div>
 
         
@@ -426,20 +426,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">107</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

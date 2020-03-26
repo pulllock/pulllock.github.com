@@ -303,7 +303,7 @@
 <h2 id="isTerminated"><a href="#isTerminated" class="headerlink" title="isTerminated()"></a>isTerminated()</h2><p>程序是否已经终止。已经关闭并且所有的任务都执行完成，返回true，其他返回false。</p>
 <h2 id="awaitTermination"><a href="#awaitTermination" class="headerlink" title="awaitTermination()"></a>awaitTermination()</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">boolean awaitTermination(long timeout, TimeUnit unit)</span><br><span class="line">        throws InterruptedException;</span><br></pre></td></tr></table></figure>
 <p>请求关闭、发生超时或者当前线程中断，无论哪一个首先发生之后，都将导致阻塞，直到所有任务完成执行。如果程序终止，返回true，如果超时，返回false，等待时发生中断，抛出异常。</p>
-<h2 id="submit-Callable-task"><a href="#submit-Callable-task" class="headerlink" title="submit(Callable task)"></a>submit(Callable<T> task)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; Future&lt;T&gt; submit(Callable&lt;T&gt; task);</span><br></pre></td></tr></table></figure>
+<h2 id="submit-Callable-task"><a href="#submit-Callable-task" class="headerlink" title="submit(Callable task)"></a>submit(Callable<T> task)</T></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; Future&lt;T&gt; submit(Callable&lt;T&gt; task);</span><br></pre></td></tr></table></figure>
 <p>向Executor提交一个Clallable任务，并返回一个Future；</p>
 <h2 id="submit-Runnable-task-T-result"><a href="#submit-Runnable-task-T-result" class="headerlink" title="submit(Runnable task, T result)"></a>submit(Runnable task, T result)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; Future&lt;T&gt; submit(Runnable task, T result);</span><br></pre></td></tr></table></figure>
 <p>向Executor提交一个Runnable任务，并返回一个Future；</p>
@@ -538,20 +538,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">105</span>
+        <span class="site-state-item-count">107</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
