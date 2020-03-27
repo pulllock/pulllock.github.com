@@ -994,7 +994,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-27 11:48:16 11:48:16" itemprop="dateModified" datetime="2020-03-27T11:48:16+08:00">2020-03-27 11:48:16</time>
+                <time title="修改时间：2020-03-27 11:58:45 11:58:45" itemprop="dateModified" datetime="2020-03-27T11:58:45+08:00">2020-03-27 11:58:45</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1032,32 +1032,14 @@
 
       
           <p>Redis过期时间保存在过期字典中，键的过期策略有三种：定时删除、惰性删除、定期删除。Redis采用了惰性删除和定期删除两种策略配合。</p>
-<h1 id="过期键删除策略"><a href="#过期键删除策略" class="headerlink" title="过期键删除策略"></a>过期键删除策略</h1><ul>
-<li>定时删除，设置过期键同时设置一个定时器，可保证过期键尽快删除，内存友好，CPU不友好，占用CPU。主动删除策略。</li>
-<li>惰性删除，每次从键空间获取键时，如果过期就删除，没过期就返回该键，CPU友好，内存不友好，不能及时删除过期键。被动删除策略。</li>
-<li>定期删除，每隔一段时间检查一次，删除过期键。主动删除策略。</li>
-</ul>
-<h1 id="Redis过期键删除策略"><a href="#Redis过期键删除策略" class="headerlink" title="Redis过期键删除策略"></a>Redis过期键删除策略</h1><p>Redis使用惰性删除和定期删除配合，在CPU时间和内存之间取得平衡。</p>
-<h2 id="RDB功能对过期键的处理"><a href="#RDB功能对过期键的处理" class="headerlink" title="RDB功能对过期键的处理"></a>RDB功能对过期键的处理</h2><ul>
-<li>生成RDB文件，使用SAVE或者BGSAVE新建RDB文件时，会对键检查，过期的键不会保存到RDB中。</li>
-<li>载入RDB文件，主服务器载入RDB文件，过期键会被忽略。</li>
-<li>载入RDB文件，从服务载入RDB文件，不会检查过期键，全部载入数据库中。主从服务器同步的时候，从服务器数据库会被清空。</li>
-</ul>
-<h2 id="AOF功能对过期键的处理"><a href="#AOF功能对过期键的处理" class="headerlink" title="AOF功能对过期键的处理"></a>AOF功能对过期键的处理</h2><ul>
-<li>服务器AOF持久化模式运行时，如果键过期，还没被惰性删除或定期删除，AOF文件不会做处理。</li>
-<li>当键被惰性删除或定期删除，程序会向AOF文件追加一条DEL命令，显式记录删除该键。</li>
-<li>AOF重写时，会对键校验，已过期的键不会保存到重写后的AOF文件中。</li>
-</ul>
-<h2 id="复制功能对过期键的处理"><a href="#复制功能对过期键的处理" class="headerlink" title="复制功能对过期键的处理"></a>复制功能对过期键的处理</h2><ul>
-<li>从服务器的过期键删除动作由主服务器控制。</li>
-<li>主服务器删除一个过期键后，会显式向所有从服务器发送一个DEL命令，告知删除过期键。</li>
-<li>从服务器执行客户端发送的读命令时，碰到过期键也不会删除。</li>
-<li>从服务器只有在接收到主服务器发来的DEL命令才会删除过期键。</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li>《redis设计与实现》（第二版）</li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/03/26/Redis%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
