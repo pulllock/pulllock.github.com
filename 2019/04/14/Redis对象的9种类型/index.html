@@ -20,20 +20,22 @@
     var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet。">
+  <meta name="description" content="Redis中基本数据结构有：简单动态字符串SDS、双端链表、跳表、字典、整数集合、压缩列表。但是Redis并没有直接使用这些数据结构来存放键值对，而是在这些基本数据结构之上构建了Redis的对象来表示。Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet、bitmaps、HyperLogLogs、Streams、GeoHash。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis对象">
-<meta property="og:url" content="http://dachengxi.github.com/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:title" content="Redis对象的9种类型">
+<meta property="og:url" content="http://dachengxi.github.com/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/index.html">
 <meta property="og:site_name" content="大程熙">
-<meta property="og:description" content="Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet。">
+<meta property="og:description" content="Redis中基本数据结构有：简单动态字符串SDS、双端链表、跳表、字典、整数集合、压缩列表。但是Redis并没有直接使用这些数据结构来存放键值对，而是在这些基本数据结构之上构建了Redis的对象来表示。Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet、bitmaps、HyperLogLogs、Streams、GeoHash。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-03-20T12:30:02.000Z">
-<meta property="article:modified_time" content="2020-03-29T09:13:38.542Z">
+<meta property="og:image" content="http://dachengxi.github.com/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/redisObject-1.png">
+<meta property="article:published_time" content="2019-04-14T13:11:03.000Z">
+<meta property="article:modified_time" content="2020-03-29T14:08:02.464Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://dachengxi.github.com/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/redisObject-1.png">
 
-<link rel="canonical" href="http://dachengxi.github.com/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/">
+<link rel="canonical" href="http://dachengxi.github.com/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/">
 
 
 <script id="page-configurations">
@@ -46,7 +48,7 @@
   };
 </script>
 
-  <title>Redis对象 | 大程熙</title>
+  <title>Redis对象的9种类型 | 大程熙</title>
   
 
 
@@ -206,7 +208,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -219,7 +221,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Redis对象
+          Redis对象的9种类型
         </h1>
 
         <div class="post-meta">
@@ -229,7 +231,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-03-20 20:30:02 20:30:02" itemprop="dateCreated datePublished" datetime="2019-03-20T20:30:02+08:00">2019-03-20 20:30:02</time>
+              <time title="创建时间：2019-04-14 21:11:03 21:11:03" itemprop="dateCreated datePublished" datetime="2019-04-14T21:11:03+08:00">2019-04-14 21:11:03</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -250,8 +252,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/03/20/Redis对象/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/04/14/Redis对象的9种类型/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,146 +268,70 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet。</p>
+        <p>Redis中基本数据结构有：简单动态字符串SDS、双端链表、跳表、字典、整数集合、压缩列表。但是Redis并没有直接使用这些数据结构来存放键值对，而是在这些基本数据结构之上构建了Redis的对象来表示。Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet、bitmaps、HyperLogLogs、Streams、GeoHash。</p>
 <a id="more"></a>
 
+<p>使用对象而不使用基本的数据结构来直接表示的好处是：</p>
 <ul>
-<li>Redis执行命令前可以根据对象类型判断一个对象是否可以执行给定的命令。</li>
-<li>可以针对不同使用场景为对象设置不同的数据结构实现，优化对象在不同场景下的使用效率。</li>
-<li>Redis对象系统实现了基于引用计数计数的内存回收机制。</li>
-<li>还通过引用计数计数实现了对象共享机制，让多个数据库键共享同一个对象来节约内存。</li>
-<li>对象还带有访问时间记录信息，可以在启用了maxmemory功能时，优先删除一些键。</li>
+<li>Redis可以为不同场景下使用的对象来设置不同的数据结构。</li>
+<li>Redis可以根据对象的类型来判断一个对象是否可以执行指定的命令。</li>
+<li>Redis对象系统实现了基于引用计数的内存回收机制。</li>
+<li>Redis对象中还记录了关于键的其他信息，比如访问时间，用来实现键过期策略以及内存淘汰机制。</li>
 </ul>
-<h1 id="对象的类型和编码"><a href="#对象的类型和编码" class="headerlink" title="对象的类型和编码"></a>对象的类型和编码</h1><p>Redis中的键和值都是对象，对象结构如下：</p>
+<p>Redis对象的的结构：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">redisObject &#123;</span><br><span class="line">  <span class="comment">// 类型</span></span><br><span class="line">  <span class="keyword">unsigned</span> type:<span class="number">4</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 编码</span></span><br><span class="line">  <span class="keyword">unsigned</span> encoding:<span class="number">4</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 指向底层实现数据结构的指针</span></span><br><span class="line">  <span class="keyword">void</span> * ptr;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// lru，记录对象最后一次被访问的时间</span></span><br><span class="line">  <span class="keyword">unsigned</span> lru:<span class="number">22</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 引用计数</span></span><br><span class="line">  <span class="keyword">int</span> refcount;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><ul>
-<li>对于键，总是一个字符串对象</li>
-<li>对于值，类型可以是：字符串、列表、哈希、集合、有序集合对象。</li>
-</ul>
-<p>对象的类型：</p>
-<table>
-<thead>
-<tr>
-<th>类型常量</th>
-<th>对象名称</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>REDIS_STRING</td>
-<td>字符串对象</td>
-</tr>
-<tr>
-<td>REDIS_LIST</td>
-<td>列表对象</td>
-</tr>
-<tr>
-<td>REDIS_HASH</td>
-<td>哈希对象</td>
-</tr>
-<tr>
-<td>REDIS_SET</td>
-<td>集合对象</td>
-</tr>
-<tr>
-<td>REDIS_ZSET</td>
-<td>有序集合对象</td>
-</tr>
-</tbody></table>
-<h2 id="编码和底层实现"><a href="#编码和底层实现" class="headerlink" title="编码和底层实现"></a>编码和底层实现</h2><p>对象的ptr指针指向对象的具体底层实现数据结构，数据结构由对象的encoding属性决定。</p>
-<p>对象的编码：</p>
-<table>
-<thead>
-<tr>
-<th>编码常量</th>
-<th>编码对应的底层数据结构</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>REDIS_ENCODING_INT</td>
-<td>long类型的整数</td>
-</tr>
-<tr>
-<td>REDIS_ENCODING_EMBSTR</td>
-<td>embstr编码的简单动态字符串</td>
-</tr>
-<tr>
-<td>REDIS_ENCODING_RAW</td>
-<td>简单动态字符串</td>
-</tr>
-<tr>
-<td>REDIS_ENCODING_HT</td>
-<td>字典</td>
-</tr>
-<tr>
-<td>REDIS_ENCODING_LINKEDLIST</td>
-<td>双端链表</td>
-</tr>
-<tr>
-<td>REDIS_ENCODING_ZIPLIST</td>
-<td>压缩列表</td>
-</tr>
-<tr>
-<td>REDIS_ENCODING_INTSET</td>
-<td>整数集合</td>
-</tr>
-<tr>
-<td>REDIS_ENCODING_SKIPSET</td>
-<td>跳表和字典</td>
-</tr>
-</tbody></table>
-<h1 id="字符串对象"><a href="#字符串对象" class="headerlink" title="字符串对象"></a>字符串对象</h1><p>字符串的对象编码可以是：</p>
+<p><img src="redisObject-1.png" alt="redisObject-1"></p>
+<h1 id="字符串对象"><a href="#字符串对象" class="headerlink" title="字符串对象"></a>字符串对象</h1><p>字符串对象的编码可以是：int、raw、embstr：</p>
 <ul>
-<li>int，整数值</li>
-<li>raw，字符串，长度大于32字节，使用SDS保存，编码设置为raw</li>
-<li>embstr，字符串，长度小于32字节，使用embstr编码方式来保存字符串</li>
+<li>如果一个字符串对象保存的是整数值，并且整数值可以用long来表示，这个字符串编码是int。</li>
+<li>如果一个字符串对象保存的是字符串值，并且字符串长度大于32字节，将使用SDS简单动态字符串来表示，对象编码是raw。</li>
+<li>如果一个字符串对象保存的是字符串值，并且字符串长度小于32字节，将使用embstr编码的方式来保存这个字符串。</li>
+<li>long double类型表示的浮点数在Redis中也是作为字符串来保存的。</li>
 </ul>
-<p>embstr是专门用于保存短字符串的一种优化编码方式，embstr会一次内存分配来创建redisObject和sdshdr接口，而raw编码方式会调用两次分别创建。</p>
-<h2 id="编码转换"><a href="#编码转换" class="headerlink" title="编码转换"></a>编码转换</h2><p>int编码的字符串和embstr编码的字符串可以抓换为raw编码的字符串对象。</p>
-<h1 id="列表对象"><a href="#列表对象" class="headerlink" title="列表对象"></a>列表对象</h1><p>列表对象编码可以是：</p>
+<h2 id="embstr"><a href="#embstr" class="headerlink" title="embstr"></a>embstr</h2><p>embstr是用来保存短字符串的一种优化编码方式，和raw编码一样使用redisObject结构和sdshdr结构来表示字符串对象，但raw编码会调用两次内存分配来分别创建redisObject和sdshdr，而embstr会一次内存分配来分配一块连续空间，依次包含redisObject和sdshdr。</p>
+<h2 id="编码的转换"><a href="#编码的转换" class="headerlink" title="编码的转换"></a>编码的转换</h2><p>int编码和embstr编码的字符串在一定条件下会转换为raw编码的字符串对象：</p>
 <ul>
-<li>ziplist，压缩列表，每个压缩列表节点entry保存一个列表元素。</li>
-<li>linkedlist，双端链表，每个双端列表节点node保存了一个字符串对象，每个字符串对象都保存了一个列表元素。</li>
+<li>int编码的字符串值修改为不是整数的字符串值，就变成了raw编码的字符串对象。</li>
+<li>embstr编码的字符串对象实际上是只读的，如果修改embstr字符串的值，会成一个raw编码的字符串对象，然后再修改，最后就变成了一个raw编码的字符串对象。</li>
 </ul>
-<h2 id="编码转换-1"><a href="#编码转换-1" class="headerlink" title="编码转换"></a>编码转换</h2><ul>
-<li>列表对象保存的所有字符串元素长度都小于64字节，并且列表对象保存的对象元素数量小于512个，使用ziplist编码。</li>
-<li>其他的都是用linkedlist编码。</li>
-</ul>
-<h1 id="哈希对象"><a href="#哈希对象" class="headerlink" title="哈希对象"></a>哈希对象</h1><p>哈希对象的编码可以是：</p>
+<h1 id="列表对象"><a href="#列表对象" class="headerlink" title="列表对象"></a>列表对象</h1><p>列表对象的编码可以是：ziplist、linkedlist：</p>
 <ul>
-<li>ziplist，压缩列表，有新键值对加入到哈希对象，先将键的压缩列表节点推入压缩列表尾部，然后再将值的压缩列表节点推入压缩列表尾部。</li>
-<li>hashtable，字典，哈希对象中每个键值对都是用一个字典键值对来保存。</li>
+<li>ziplist编码的列表对象使用压缩列表作为底层实现，每个压缩列表节点保存一个列表元素。</li>
+<li>linkedlist编码的列表对象使用双端链表作为底层实现，每个双端链表节点都保存了一个字符串对象，每个字符串对象都保存了一个列表元素。</li>
 </ul>
-<h2 id="编码转换-2"><a href="#编码转换-2" class="headerlink" title="编码转换"></a>编码转换</h2><ul>
-<li>哈希对象所有的键值对的键和值的字符串长度都小于64字节，并且哈希对象保存的键值对数量小于512个，使用ziplist编码</li>
-<li>其他的使用hashtable编码</li>
-</ul>
-<h1 id="集合对象"><a href="#集合对象" class="headerlink" title="集合对象"></a>集合对象</h1><p>集合对象的编码可以是：</p>
+<h2 id="编码的转换-1"><a href="#编码的转换-1" class="headerlink" title="编码的转换"></a>编码的转换</h2><p>当列表对象保存的所有的字符串元素长度都小于64字节并且列表保存的元素数量小于512个，列表对象使用ziplist编码，否则使用linkedlist编码。</p>
+<h1 id="哈希对象"><a href="#哈希对象" class="headerlink" title="哈希对象"></a>哈希对象</h1><p>哈希对象的编码可以是：ziplist、hashtable：</p>
 <ul>
-<li>intset，整数集合</li>
-<li>hashtable，字典，每个键都是一个字符串对象，每个字符串对象保存了一个集合元素，字典的值全部都是NULL</li>
+<li>ziplist编码的哈希对象使用压缩列表作为底层实现。当要加入哈希对象时，会先将保存了键的压缩列表节点推入压缩列表表尾，然后再将保存了值的压缩列表节点推入压缩列表表尾。保存了同一键值对的两个节点总是挨在一起。</li>
+<li>hashtable编码的哈希对象使用字典作为底层实现，哈希对象中的每个键都是一个字符串对象，对象中保存了键；哈希对象中每个值都是一个字符串对象，对象中保存了值。</li>
 </ul>
-<h2 id="编码转换-3"><a href="#编码转换-3" class="headerlink" title="编码转换"></a>编码转换</h2><ul>
-<li>所有元素都是整数值，并且保存的元素数量不超过512个，使用intset编码</li>
-<li>其他的使用hashtable编码</li>
-</ul>
-<h1 id="有序集合对象"><a href="#有序集合对象" class="headerlink" title="有序集合对象"></a>有序集合对象</h1><p>有序集合对象编码可以是：</p>
+<h2 id="编码的转换-2"><a href="#编码的转换-2" class="headerlink" title="编码的转换"></a>编码的转换</h2><p>当哈希对象保存的所有键值对的键值的字符串长度都小于64字节，并且键值对数量小于512个，就使用ziplist编码，否则使用hashtable编码。</p>
+<h1 id="集合对象"><a href="#集合对象" class="headerlink" title="集合对象"></a>集合对象</h1><p>集合对象编码可以是：intset、hashtable：</p>
 <ul>
-<li>ziplist，压缩列表，每个元素使用两个紧挨在一起的压缩列表节点来保存</li>
-<li>skiplist，跳表，skiplist编码的有序集合对象使用zset结构作为底层实现，一个zset结构同时包含一个字典和一个跳表。字典查询快，跳表范围查找快。</li>
+<li>intset编码的集合对象使用整数集合作为底层实现，集合对象包含的所有元素都保存在整数集合里。</li>
+<li>hashtable编码的集合对象使用字典作为底层实现，字典的每个键都是一个字符串对象，每个字符串对象都包含了一个集合元素，字典的值全部设置为NULL。</li>
 </ul>
-<h2 id="编码转换-4"><a href="#编码转换-4" class="headerlink" title="编码转换"></a>编码转换</h2><ul>
-<li>有序集合保存数量小于128个并且所有元素长度都小于64字节，使用ziplist编码</li>
-<li>其他的使用skiplist编码</li>
+<h2 id="编码的转换-3"><a href="#编码的转换-3" class="headerlink" title="编码的转换"></a>编码的转换</h2><p>集合对象保存的都是整数值并且元素数量不超过512个，则使用intset编码，否则使用hashtable编码。</p>
+<h1 id="有序集合对象"><a href="#有序集合对象" class="headerlink" title="有序集合对象"></a>有序集合对象</h1><p>有序集合对象的编码可以是：ziplist、skiplist：</p>
+<ul>
+<li>ziplist编码的有序集合对象使用压缩列表作为底层实现，每个集合元素使用两个紧挨在一起的压缩列表节点表示，第一个节点保存元素的成员member，第二个节点保存元素的分值score。压缩列表内容按分值从小到大排序。</li>
+<li>skiplist编码的有序集合对象使用zset结构作为底层实现，一个zset同时包含一个字典和一个跳表，跳表按照分值从小到大保存了所有集合元素，每个跳表节点的object属性保存了元素成员，跳表的score属性保存了元素的分值，通过跳表可对有序集合进行范围操作。zset的字典为有序集合创建了一个从成员到分值的映射，字典中每个键值对都保存了一个集合元素，键保存了元素的成员，值保存了元素的分值，通过字典可以使用O(1)复杂度查找成员的分值。</li>
+<li>有序集合的每个元素的成员都是一个字符串对象，每个元素分值都是一个double类型的浮点数。</li>
 </ul>
-<h1 id="内存回收"><a href="#内存回收" class="headerlink" title="内存回收"></a>内存回收</h1><p>使用引用计数技术实现内存回收机制，redisObject结构中有个refCount属性，用来记录对象的引用计数信息。</p>
-<h1 id="对象共享"><a href="#对象共享" class="headerlink" title="对象共享"></a>对象共享</h1><p>引用计数属性还带有对象共享的作用。</p>
-<p>Redis在初始化服务器时，创建一万个字符串对象，包含了0-9999所有整数值，服务器会使用这些共享对象。</p>
-<h1 id="对象的空转时长"><a href="#对象的空转时长" class="headerlink" title="对象的空转时长"></a>对象的空转时长</h1><p>redisObject结构中还包含一个lru属性，记录了对象最后一次被命令程序访问的时间。</p>
-<p>如果服务器开了maxmemory选项，并且回收内存的算法为volatile-lru或者allkeys-lru，当服务器占用内存数超过了maxmemory值，空转时长较高的那部分键会被优先释放掉，从而回收内存。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li>《redis设计与实现》（第二版）</li>
-</ul>
+<h2 id="编码的转换-4"><a href="#编码的转换-4" class="headerlink" title="编码的转换"></a>编码的转换</h2><p>当有序集合对象保存的元素数量小于128并且所有元素成员的长度都小于64字节，则使用ziplist编码，否则使用skiplist编码。</p>
+<h1 id="bitmap"><a href="#bitmap" class="headerlink" title="bitmap"></a>bitmap</h1><p>bitmap不是一种真实的数据结构，本质上是String数据结构。</p>
+<h1 id="GeoHash"><a href="#GeoHash" class="headerlink" title="GeoHash"></a>GeoHash</h1><p>GeoHash本身也不是一种数据结构，而是借助ZSet实现的，将将维度使用52位整数进行编码，放进zset中，score是GeoHash的52位整数值。</p>
+<p>Geo查询内部使用zset查询，通过score排序就可得到附近的坐标，将score还原成经纬度就可以得到结果。</p>
+<p>处理的过程：</p>
+<ol>
+<li>将二维坐标转换为一维整数编码值</li>
+<li>使用zset存储，score就是整数编码值</li>
+<li>使用zrangbyrank获取score相近的元素zrangebyscore</li>
+<li>通过score还原成坐标</li>
+</ol>
+<h1 id="HyperLogLog"><a href="#HyperLogLog" class="headerlink" title="HyperLogLog"></a>HyperLogLog</h1><p>Redis高级数据结构，用来统计基数。</p>
+<h1 id="Steams"><a href="#Steams" class="headerlink" title="Steams"></a>Steams</h1><p>Redis5.0引入的全新数据结构，是一个内存版的kafka，有Consumer Groups的概念，Streams底层数据结构是radix tree。</p>
 
     </div>
 
@@ -444,12 +370,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/03/19/Redis%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8/" rel="prev" title="Redis压缩列表">
-      <i class="fa fa-chevron-left"></i> Redis压缩列表
+    <a href="/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/" rel="prev" title="Redis内存淘汰机制">
+      <i class="fa fa-chevron-left"></i> Redis内存淘汰机制
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/03/25/Redis%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C%E5%AE%9E%E7%8E%B0/" rel="next" title="Redis数据库实现以及各种操作实现">
-      Redis数据库实现以及各种操作实现 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/03/19/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/" rel="next" title="Spring中扩展点汇总">
+      Spring中扩展点汇总 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -517,7 +443,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#对象的类型和编码"><span class="nav-number">1.</span> <span class="nav-text">对象的类型和编码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类型"><span class="nav-number">1.1.</span> <span class="nav-text">类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编码和底层实现"><span class="nav-number">1.2.</span> <span class="nav-text">编码和底层实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串对象"><span class="nav-number">2.</span> <span class="nav-text">字符串对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码转换"><span class="nav-number">2.1.</span> <span class="nav-text">编码转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#列表对象"><span class="nav-number">3.</span> <span class="nav-text">列表对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码转换-1"><span class="nav-number">3.1.</span> <span class="nav-text">编码转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#哈希对象"><span class="nav-number">4.</span> <span class="nav-text">哈希对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码转换-2"><span class="nav-number">4.1.</span> <span class="nav-text">编码转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集合对象"><span class="nav-number">5.</span> <span class="nav-text">集合对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码转换-3"><span class="nav-number">5.1.</span> <span class="nav-text">编码转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#有序集合对象"><span class="nav-number">6.</span> <span class="nav-text">有序集合对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码转换-4"><span class="nav-number">6.1.</span> <span class="nav-text">编码转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存回收"><span class="nav-number">7.</span> <span class="nav-text">内存回收</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对象共享"><span class="nav-number">8.</span> <span class="nav-text">对象共享</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对象的空转时长"><span class="nav-number">9.</span> <span class="nav-text">对象的空转时长</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">10.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串对象"><span class="nav-number">1.</span> <span class="nav-text">字符串对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#embstr"><span class="nav-number">1.1.</span> <span class="nav-text">embstr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编码的转换"><span class="nav-number">1.2.</span> <span class="nav-text">编码的转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#列表对象"><span class="nav-number">2.</span> <span class="nav-text">列表对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码的转换-1"><span class="nav-number">2.1.</span> <span class="nav-text">编码的转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#哈希对象"><span class="nav-number">3.</span> <span class="nav-text">哈希对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码的转换-2"><span class="nav-number">3.1.</span> <span class="nav-text">编码的转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集合对象"><span class="nav-number">4.</span> <span class="nav-text">集合对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码的转换-3"><span class="nav-number">4.1.</span> <span class="nav-text">编码的转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#有序集合对象"><span class="nav-number">5.</span> <span class="nav-text">有序集合对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#编码的转换-4"><span class="nav-number">5.1.</span> <span class="nav-text">编码的转换</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bitmap"><span class="nav-number">6.</span> <span class="nav-text">bitmap</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GeoHash"><span class="nav-number">7.</span> <span class="nav-text">GeoHash</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">8.</span> <span class="nav-text">HyperLogLog</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Steams"><span class="nav-number">9.</span> <span class="nav-text">Steams</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -672,9 +598,9 @@
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/";
-    this.page.identifier = "2019/03/20/Redis对象/";
-    this.page.title = "Redis对象";
+    this.page.url = "http://dachengxi.github.com/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/";
+    this.page.identifier = "2019/04/14/Redis对象的9种类型/";
+    this.page.title = "Redis对象的9种类型";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {
