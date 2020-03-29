@@ -59,6 +59,20 @@
 
     
     <entry>
+      <title><![CDATA[Redis事务]]></title>
+      <url>%2F2019%2F04%2F14%2FRedis%E4%BA%8B%E5%8A%A1%2F</url>
+      <content type="text"><![CDATA[Redis事务会将多个命令请求打包，一次性的按照顺序执行多个命令，在事务执行期间，服务器不会中断事务去执行其他客户端的请求命令，会一直执行完。涉及到的命令：MULTI、EXEC、WATCH。 MULTI命令的执行标志着事务的开始 事务开始后的普通命令会被放入一个事务队列，返回给客户端QUEUED回复 EXEC命令的执行表示提交事务，会遍历事务队列执行所有的命令，然后将所有的结果返回给客户端 WATCH命令是一个乐观缩，在EXEC命令执行前监视任意数量的数据库键，在EXEC执行时会检查键是否被修改，如果被修改了服务器拒绝执行事务，向客户端返回空回复表示事务执行失败。 参考 《redis设计与实现》（第二版）]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Redis发布与订阅]]></title>
+      <url>%2F2019%2F04%2F14%2FRedis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85%2F</url>
+      <content type="text"><![CDATA[Redis支持发布订阅功能，SUBSCRIBE命令可以让客户端订阅一个或者多个频道，PSUBSCRIBE可以让客户端订阅一个或多个模式的，PUBLISH用来发布消息。 频道的订阅和退订客户端执行SUBSCRIBE可以订阅频道，订阅关系保存在服务器状态的pubsub_channels字典里： 键时某个被订阅的频道 值是一个链表，记录了所有订阅这个频道的客户端 退订频道的时候使用UNSUBSCRIBE命令，服务器会把客户端从pubsub_channels字典中删除。 发送消息客户端使用PUBLISH &lt;channel&gt; &lt;message&gt;来发送消息给频道channel，服务器会执行： 将消息发送给所有订阅了这个channel的订阅者 如果有模式频道匹配到，则将消息发送给订阅了这个模式的订阅者 参考 《redis设计与实现》（第二版）]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Redis集群Cluster]]></title>
       <url>%2F2019%2F04%2F13%2FRedis%E9%9B%86%E7%BE%A4Cluster%2F</url>
       <content type="text"><![CDATA[Redis提供的分布式解决方案：Redis Cluster集群，使用分片sharding来进行数据共享，还提供了复制和故障转移功能。 Redis集群通常由多个节点node组成，节点通过CLUSTER MEET命令连接起来组成集群。 Redis集群通过分片方式保存数据库中的键值对，集群的整个数据库分为16384个槽slot，数据库中的每个键都属于这16384个槽的其中一个，集群中每个节点可以处理0到最多16384个槽。 一个节点出了会记录自己负责的槽外，还会把自己负责的slots数组通过消息发送给集群其他的节点，告知其他节点自己负责的槽有哪些。 在集群中执行命令客户端向节点发送命令时，接收命令的节点会计算出键对应属于哪个槽： 如果键对应的槽属于自己，直接执行命令。 如果键对应的槽属于其他节点，会向客户端返回MOVED错误，指引客户端转向redirect到正确的节点，并再次发送要执行的命令。 重新分片Redis集群可以通过重新分片将某节点的槽指派给另外一个节点，所有的对应的键值对也会被迁移到新的目标节点。 redis-trib向目标节点发送：CLUSTER SETSLOT &lt;slot&gt; IMPORTING &lt;source_id&gt;，让目标节点准备好从源节点导入键值对 redis-trib向源节点发送：CLUSTER SETSLOT &lt;slot&gt; MIGRATING &lt;target_id&gt;，让源标节点准备好从源节点迁移键值对到目标节点 redis-trib向源节点发送：CLUSTER GETKEYSINSLOT &lt;slot&gt; &lt;count&gt;，获得最多count个键值对的键 针对每个键，redis-trib向源节点发送：MIGRATE &lt;target_ip&gt; &lt;target_port&gt; &lt;key_name&gt; 0 &lt;timeout，将被选中的键原子的从源节点迁移到目标节点 重复迁移步骤直到完成 redis-trib向集群中任一节点发送CLUSTER SETSLOT &lt;slot&gt; NODE &lt;target_id&gt;，将槽指派配目标节点，这会通知整个集群。 复制和故障转移Redis集群中的节点分为主节点和从节点，从节点会复制主节点，主节点下线时从节点代替主节点处理命令请求。 集群中每个节点定期向集群中其他节点发送PING消息，用来检测对方是否在线，如果不在线就会将其标记疑似下线，并且各个节点会通过相互发消息交换集群中各个节点状态信息，如果一个集群中半数以上的节点都将某一个节点报告为疑似下线，那么这个节点会被标记为已下线，并广播给集群其他的节点，该节点已下线。 当从节点发现主节点已下线，就开始故障转移： 有一个从节点会被选中，执行SLAVEOF no one，变成新的主节点 新的主节点会撤销所有对已下线主节点的槽指派，并把这些槽指派给自己 新的主节点向集群发送PONG消息，让其他的节点知道自己变成了主节点 新的主节点开始对外服务 参考 《redis设计与实现》（第二版）]]></content>
