@@ -3,6 +3,13 @@
   
     
     <entry>
+      <title><![CDATA[SpringBoot启动流程简易图]]></title>
+      <url>%2F2020%2F04%2F02%2FSpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E7%AE%80%E6%98%93%E5%9B%BE%2F</url>
+      <content type="text"><![CDATA[简单总结了下SpringBoot的启动流程，可能还有遗漏或者理解不对的地方。直接使用processon画了一张图，供后面详细阅读源码使用。 这里是源文件SpringBootStartup.pos，可以导入processon修改。 下面是导出的图片：]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Spring同一个类中的注解方法调用AOP失效问题总结]]></title>
       <url>%2F2020%2F03%2F23%2FSpring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8AOP%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93%2F</url>
       <content type="text"><![CDATA[Spring中在同一个类中两个方法调用，会导致代理失效，比如同一个类中一个方法A调用另外一个带事务的方法B，会发现B方法的事务不生效；同一个类中一个方法A调用另外一个带注解的清除缓存的方法B，会发现清除缓存不成功。 Spring中仅支持方法级别的代理。 Spring中代理是动态代理，也就是在运行时生成代理，代理可以大概使用以下代码来描述下： 1234567891011121314@Servicepublic class A &#123; public void a() &#123; ...; b(); ...; &#125; @Transactional public void b() &#123; ...; &#125;&#125; 而在运行时生成的代理大概如下： 12345678910111213public class A$Proxy &#123; A serviceA = new A(); public void a() &#123; serviceA.a(); &#125; public void b() &#123; transaction start(); serviceA.b(); transaction end(); &#125;&#125; 如果我们调用A这个Bean其实调用的是A$Proxy，对于a方法的调用其实是调用的A中的a方法，而A中的a调用的是A中的b方法，并没有调用A$Proxy中的b方法来实施事务。 解决办法： 将方法写到两个类中去。 开启expose-proxy 开启expose-proxy后，我们代码需要类似如下处理： 1234567891011121314@Servicepublic class A &#123; public void a() &#123; ...; ((A)AopContext.currentProxy()).b(); ...; &#125; @Transactional public void b() &#123; ...; &#125;&#125; 这种方法在Spring中的实现大概是：Spring在代理使用的时候，会将当前代理设置到AopContext中去：AopContext.setCurrentProxy(proxy)，所以在我们上面修改后的代码里AopContext.currentProxy()就可以拿到A$Proxy，再调用b方法的时候，就是调用的A$Proxy中的增强过的b方法了。]]></content>
