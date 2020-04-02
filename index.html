@@ -819,7 +819,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2020/03/19/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/05/25/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -833,7 +833,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/03/19/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/" class="post-title-link" itemprop="url">Spring中扩展点汇总</a>
+            <a href="/2019/05/25/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">SpringBoot自动配置的原理</a>
         </h2>
 
         <div class="post-meta">
@@ -843,7 +843,95 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-03-19 22:10:13 22:10:13" itemprop="dateCreated datePublished" datetime="2020-03-19T22:10:13+08:00">2020-03-19 22:10:13</time>
+              <time title="创建时间：2019-05-25 21:09:31 21:09:31" itemprop="dateCreated datePublished" datetime="2019-05-25T21:09:31+08:00">2019-05-25 21:09:31</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringBoot/" itemprop="url" rel="index"><span itemprop="name">SpringBoot</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/05/25/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84%E5%8E%9F%E7%90%86/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/25/SpringBoot自动配置的原理/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>需要先了解一下Spring的@Import注解和@Enable注解的实现原理，以及SpringFactoriesLoader的实现，再来看SpringBoot的自动配置原理就基本上会明白了。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/05/25/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84%E5%8E%9F%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/05/18/Spring%E7%9A%84@Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/18/Spring%E7%9A%84@Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">Spring的@Enable注解的实现机制</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-18 20:13:22 20:13:22" itemprop="dateCreated datePublished" datetime="2019-05-18T20:13:22+08:00">2019-05-18 20:13:22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -864,8 +952,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2020/03/19/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/19/Spring中扩展点汇总/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/05/18/Spring%E7%9A%84@Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/18/Spring的@Enable注解的实现机制/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -880,10 +968,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>通过阅读Spring的源码，按照自己的理解，汇总了一下Spring中常用的扩展点，可能还有遗漏或者理解不对的地方。直接使用processon画了一张图，按照容器的初始化以及bean的实例化和初始化等过程来描述。</p>
+          <p>如果要了解Spring中@Enable的实现机制，需要提前了解下@Import的用途和实现方式，每个@Enable注解上都会有@Import注解，@Import中导入自定的ImportSelector或者ImportBeanDefinitionRegistrar或者配置，这里面会实现相关功能会引入相关功能。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/03/19/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/#more" rel="contents">
+              <a class="btn" href="/2019/05/18/Spring%E7%9A%84@Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -907,7 +995,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/05/15/Spring%E7%9A%84@Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -921,7 +1009,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">Redis内存模型</a>
+            <a href="/2019/05/15/Spring%E7%9A%84@Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/" class="post-title-link" itemprop="url">Spring的@Import是怎样工作的</a>
         </h2>
 
         <div class="post-meta">
@@ -931,7 +1019,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-04 17:30:28 17:30:28" itemprop="dateCreated datePublished" datetime="2019-05-04T17:30:28+08:00">2019-05-04 17:30:28</time>
+              <time title="创建时间：2019-05-15 21:04:35 21:04:35" itemprop="dateCreated datePublished" datetime="2019-05-15T21:04:35+08:00">2019-05-15 21:04:35</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -939,7 +1027,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
+                  <a href="/categories/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
                 </span>
             </span>
 
@@ -952,8 +1040,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/04/Redis内存模型/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/05/15/Spring%E7%9A%84@Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/15/Spring的@Import是怎样工作的/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -968,98 +1056,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Redis内存主要可以分为：数据部分、Redis进程本身、缓冲区内存、内存碎片这四个部分。Redis默认通过jemalloc来分配内存。</p>
+          <p>Spring提供了JavaConfig配置的方式，可以将原来的xml配置文件使用JavaConfig配置的方式来替换。xml配置文件可以类比@Configuration注解的文件，@Import注解可以类比xml配置文件中的<code>&lt;import&gt;</code>标签，@Bean注解可以类比xml配置文件的<code>&lt;bean&gt;</code>标签。<code>&lt;import&gt;</code>标签用来将多个分散的xml配置文件整合起来，@Import注解可以将多个分散的@Configuration整合起来。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大程熙">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/" class="post-title-link" itemprop="url">Redis分布式锁及其他分布式锁实现方式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-20 21:10:02 21:10:02" itemprop="dateCreated datePublished" datetime="2019-04-20T21:10:02+08:00">2019-04-20 21:10:02</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/04/20/Redis分布式锁及其他分布式锁实现方式/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Redis实现分布式锁大概有几种方案：使用set命令同时指定过期时间和NX、使用lua脚本和setnx加过期时间配合、基于Redlock算法的Redisson实现。分布式锁除了可以使用Redis实现外，还可以使用其他的实现，比如：mysql数据库方式、Tair实现、Zookeeper等等。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#more" rel="contents">
+              <a class="btn" href="/2019/05/15/Spring%E7%9A%84@Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1083,7 +1083,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1151,7 +1151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">110</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1164,7 +1164,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">106</span>
+        <span class="site-state-item-count">104</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
