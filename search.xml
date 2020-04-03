@@ -61,7 +61,7 @@
     <entry>
       <title><![CDATA[MyBatis的Configuration图解]]></title>
       <url>%2F2019%2F06%2F07%2FMyBatis%E7%9A%84Configuration%E5%9B%BE%E8%A7%A3%2F</url>
-      <content type="text"><![CDATA[MyBatis的配置文件mybatis-config.xml、映射配置文件mapper.xml以及Mapper接口中的注解信息等等，都会在解析后保存在Configuration对象中。Configuration对象是核心内容。 以下是画的思维导图，这里是processon的源文件：，可以自行导入。]]></content>
+      <content type="text"><![CDATA[MyBatis的配置文件mybatis-config.xml、映射配置文件mapper.xml以及Mapper接口中的注解信息等等，都会在解析后保存在Configuration对象中。Configuration对象是核心内容。 以下是画的思维导图，这里是processon的源文件：MyBatisConfiguration.pos，可以自行导入。]]></content>
     </entry>
 
     
