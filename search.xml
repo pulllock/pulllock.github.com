@@ -59,6 +59,13 @@
 
     
     <entry>
+      <title><![CDATA[MyBatis中的装饰器模式]]></title>
+      <url>%2F2019%2F07%2F07%2FMyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F%2F</url>
+      <content type="text"><![CDATA[在MyBatis的Executor和缓存的学习的时候，提到了CachingExecutor使用了装饰器模式来增加二级缓存，这里对MyBatis中的装饰器模式进行简单学习。 装饰器模式（Decorator Pattern）可以向一个现有的对象增加一些额外的功能，而又不改变其结构。MyBatis中CachingExecutor就是使用了装饰器模式来给普通的Executor增加了缓存功能，也就是二级缓存。 装饰器模式中的角色： 抽象组件（Component），一般就是一个接口，定义了一些规范。 具体组件实现（ConcreteComponent），接口具体的实现类。 装饰器（Decorator），实现抽象组件接口，并且内部持有一个Component实现。 具体装饰器（ConcreteDecorator），向组件添加新的功能 CachingExecutorMyBatis中CachingExecutor的实现与标准的装饰器模式有一点点的不同： 抽象组件：Executor 具体组件实现：SimpleExecutor、ReuseExecutor、BatchExecutor 装饰器：CachingExecutor 具体装饰器：CachingExecutor 简要代码如下： 123public interface Executor &#123; // ...&#125; 123public class SimpleExecutor extends BaseExecutor &#123; // ...&#125; 12345678910111213141516171819public class CachingExecutor implements Executor &#123; private Executor delegate; // ... public CachingExecutor(Executor delegate) &#123; this.delegate = delegate; // ... &#125; public &lt;E&gt; List&lt;E&gt; query(/*.....*/) throws SQLException &#123; // ... 查询缓存 delegate.query(); // ... 写缓存 &#125; // ... &#125; CacheMyBatis中的一级缓存也是使用了装饰器模式： 抽象组件：Cache 具体组件实现：PerpetualCache 装饰器：FifoCache、LruCache、WeakCache、BlockingCache等等 具体装饰器：FifoCache、LruCache、WeakCache、BlockingCache等等 简要代码如下： 123public interface Cache &#123; // ...&#125; 123public class PerpetualCache implements Cache &#123; // ...&#125; 12345678910111213141516public class LruCache implements Cache &#123; private final Cache delegate; public LruCache(Cache delegate) &#123; this.delegate = delegate; &#125; // ... @Override public void putObject(Object key, Object value) &#123; delegate.putObject(key, value); // 基于LinkedHashMap实现了LRU cycleKeyList(key); &#125;&#125;]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[MyBatis缓存机制介绍]]></title>
       <url>%2F2019%2F07%2F06%2FMyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D%2F</url>
       <content type="text"><![CDATA[MyBatis提供一级缓存和二级缓存，默认一级缓存是开启的，二级缓存是需要手动开启的。MyBatis的一级缓存是SqlSession级别的，二级缓存是mapper级别的，多个SqlSession可共享同一个二级缓存。如果开始了二级缓存，查询数据会先查询二级缓存，在查询一级缓存，最后才是查库。 一级缓存一级缓存是SqlSession级别的，SqlSession会持有Executor，使用Executor来进行真正的操作，在BaseExecutor中有个localCache对象，就是实现一级缓存的。 一级缓存有两种：Session级别的和Statement级别的，默认就是Session级别，Statement级别的缓存只针对一次Statement有效。 多个SqlSession并发的情况下，写数据库可能会引起脏数据。 SqlSession执行了插入、更新、删除操作，就会清空一级缓存。 二级缓存二级缓存是多个SqlSession共享的，mapper级别的缓存，默认没有开启，需要手动开启。开启后，SqlSession会持有一个CachingExecutor，这个Executor使用装饰器模式，增加了二级缓存功能。 二级缓存在分布式环境下是很不安全的，因为它是单机的缓存，分布式环境会导致读取到脏数据。 MyBatis整合Spring后的一级缓存Spring整合MyBatis后，MyBatis将SqlSession交给了Spring管理，如果说不是同一个事务每次操作都是新的SqlSession，不会命中一级缓存；如果是同一个事务，可以使用同一个SqlSession。]]></content>
