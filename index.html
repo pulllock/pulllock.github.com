@@ -907,7 +907,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/07/07/MyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/07/20/MyBatis%E7%9A%84MappedStatement%E4%BB%8B%E7%BB%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -921,7 +921,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/07/07/MyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">MyBatis中的装饰器模式</a>
+            <a href="/2019/07/20/MyBatis%E7%9A%84MappedStatement%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">MyBatis的MappedStatement介绍</a>
         </h2>
 
         <div class="post-meta">
@@ -931,7 +931,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-07 20:48:19 20:48:19" itemprop="dateCreated datePublished" datetime="2019-07-07T20:48:19+08:00">2019-07-07 20:48:19</time>
+              <time title="创建时间：2019-07-20 20:01:04 20:01:04" itemprop="dateCreated datePublished" datetime="2019-07-20T20:01:04+08:00">2019-07-20 20:01:04</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -952,8 +952,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/07/07/MyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/07/MyBatis中的装饰器模式/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/07/20/MyBatis%E7%9A%84MappedStatement%E4%BB%8B%E7%BB%8D/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/20/MyBatis的MappedStatement介绍/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -968,10 +968,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>在MyBatis的Executor和缓存的学习的时候，提到了CachingExecutor使用了装饰器模式来增加二级缓存，这里对MyBatis中的装饰器模式进行简单学习。</p>
+          <p>MyBatis中的SqlSession在使用Executor进行具体的操作之前，会先到Configuration中获取一个MappedStatement，MappedStatement是对mapper文件中的select、update、delete、insert等结点的封装。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/07/07/MyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+              <a class="btn" href="/2019/07/20/MyBatis%E7%9A%84MappedStatement%E4%BB%8B%E7%BB%8D/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -995,7 +995,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/07/06/MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/07/08/MyBatis%E4%B8%AD%E7%9A%84%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1009,7 +1009,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/07/06/MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">MyBatis缓存机制介绍</a>
+            <a href="/2019/07/08/MyBatis%E4%B8%AD%E7%9A%84%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">MyBatis中的策略模式</a>
         </h2>
 
         <div class="post-meta">
@@ -1019,7 +1019,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-07-06 21:58:17 21:58:17" itemprop="dateCreated datePublished" datetime="2019-07-06T21:58:17+08:00">2019-07-06 21:58:17</time>
+              <time title="创建时间：2019-07-08 22:11:40 22:11:40" itemprop="dateCreated datePublished" datetime="2019-07-08T22:11:40+08:00">2019-07-08 22:11:40</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1040,8 +1040,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/07/06/MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/06/MyBatis缓存机制介绍/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/07/08/MyBatis%E4%B8%AD%E7%9A%84%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/07/08/MyBatis中的策略模式/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -1056,10 +1056,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>MyBatis提供一级缓存和二级缓存，默认一级缓存是开启的，二级缓存是需要手动开启的。MyBatis的一级缓存是SqlSession级别的，二级缓存是mapper级别的，多个SqlSession可共享同一个二级缓存。如果开始了二级缓存，查询数据会先查询二级缓存，在查询一级缓存，最后才是查库。</p>
+          <p>MyBatis的DefaultSqlSession使用具体Executor的时候，用的是策略模式。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/07/06/MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/#more" rel="contents">
+              <a class="btn" href="/2019/07/08/MyBatis%E4%B8%AD%E7%9A%84%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1151,20 +1151,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-count">127</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">97</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
