@@ -20,17 +20,20 @@
     var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="一个小学生">
-<meta property="og:type" content="website">
-<meta property="og:title" content="大程熙">
-<meta property="og:url" content="http://dachengxi.github.com/tags/Spring-AOP/index.html">
+  <meta name="description" content="简述一下APIGateway的设计思路，准备从头写一个网关。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APIGateway设计的思路">
+<meta property="og:url" content="http://dachengxi.github.com/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/index.html">
 <meta property="og:site_name" content="大程熙">
-<meta property="og:description" content="一个小学生">
+<meta property="og:description" content="简述一下APIGateway的设计思路，准备从头写一个网关。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-06T13:53:08.000Z">
+<meta property="article:modified_time" content="2020-04-09T13:53:10.806Z">
 <meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="APIGateway">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://dachengxi.github.com/tags/Spring-AOP/">
+<link rel="canonical" href="http://dachengxi.github.com/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/">
 
 
 <script id="page-configurations">
@@ -38,12 +41,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签: Spring AOP | 大程熙</title>
+  <title>APIGateway设计的思路 | 大程熙</title>
   
 
 
@@ -198,54 +201,170 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          APIGateway设计的思路
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-06 21:53:08 21:53:08" itemprop="dateCreated datePublished" datetime="2020-04-06T21:53:08+08:00">2020-04-06 21:53:08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/APIGateway/" itemprop="url" rel="index"><span itemprop="name">APIGateway</span></a>
+                </span>
+            </span>
+
+          
   
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">Spring AOP
-          <small>标签</small>
-        </h2>
-      </div>
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/06/APIGateway设计的思路/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2017</span>
+        <p>简述一下APIGateway的设计思路，准备从头写一个网关。</p>
+<a id="more"></a>
+
+<h1 id="API网关的职能"><a href="#API网关的职能" class="headerlink" title="API网关的职能"></a>API网关的职能</h1><ul>
+<li>请求接入，承接所有外部请求。</li>
+<li>中介策略，承担了外部请求和实际服务中间的功能，比如：鉴权、验签、路由、流控、缓存、黑白名单过滤等等。</li>
+<li>业务聚合，所有后端业务服务都可以在这里聚合，通过某种方式将业务服务都聚集到这里。</li>
+<li>统一管理，提供管理工具、后台服务等等，可以对服务进行注册、修改以及各种配置。</li>
+</ul>
+<h1 id="API网关需要实现的功能"><a href="#API网关需要实现的功能" class="headerlink" title="API网关需要实现的功能"></a>API网关需要实现的功能</h1><ul>
+<li>流控，控制流量，针对同一个ip在指定的时间段内访问次数做限制</li>
+<li>验签解密，校验参数、验证签名信息、将加密的信息解密</li>
+<li>接口验证，验证接口是否存在、接口信息是否是当前调用者的接口</li>
+<li>接口权限验证，调用的ip是否在白名单内</li>
+<li>业务参数验证，校验业务接口参数是否正确</li>
+<li>调用业务接口，可以使用dubbo泛化调用</li>
+<li>熔断降级，业务方接口不可用的时候或者业务方处理速度变慢，考虑进行熔断降级</li>
+<li>加密返回，将调用结果封装、加密、返回</li>
+<li>管理控制台，负责接口服务注册、配置等</li>
+</ul>
+<h1 id="实现要点"><a href="#实现要点" class="headerlink" title="实现要点"></a>实现要点</h1><ul>
+<li>实现方式使用责任链模式，链中每个模块负责一个功能</li>
+<li>本地缓存和分布式缓存配合，需要考虑本地缓存的更新，可以使用zookeeper通知或者MQ通知</li>
+<li>异步处理请求，使用Jetty容器部署应用</li>
+<li>线程池隔离，请求接收、请求处理、服务调用可以使用不同线程池进行隔离</li>
+<li>日志记录，请求以及处理等日志记录，方便问题查询</li>
+<li>数据统计，接口的调用信息统计，方便直观查看接口调用情况</li>
+<li>报警监控，针对异常或者其他错误选择报警</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.infoq.cn/article/EeE1xZeic4UdpbmR*03t" target="_blank" rel="noopener">https://www.infoq.cn/article/EeE1xZeic4UdpbmR*03t</a></li>
+<li><a href="https://tech.youzan.com/api-gateway-in-practice/" target="_blank" rel="noopener">https://tech.youzan.com/api-gateway-in-practice/</a></li>
+<li><a href="http://www.zhikestreet.com/content/p/22.html" target="_blank" rel="noopener">http://www.zhikestreet.com/content/p/22.html</a></li>
+</ul>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2017-04-12T14:12:55+08:00"
-              content="2017-04-12 14:12:55">
-          04-12
-        </time>
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
+        <p>支付宝</p>
       </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2017/04/12/AOP%E6%A6%82%E5%BF%B5%EF%BC%8C%E5%8E%9F%E7%90%86%EF%BC%8C%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/" itemprop="url">
-            <span itemprop="name">AOP概念，原理，应用介绍</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-    </div>
   </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/APIGateway/" rel="tag"># APIGateway</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/02/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E7%AE%80%E6%98%93%E5%9B%BE/" rel="prev" title="SpringBoot启动流程简易图">
+      <i class="fa fa-chevron-left"></i> SpringBoot启动流程简易图
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/" rel="next" title="APIGateway设计文档">
+      APIGateway设计文档 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
   
   
   
 
-  
-
+  </div>
 
 
           </div>
           
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -292,6 +411,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#API网关的职能"><span class="nav-number">1.</span> <span class="nav-text">API网关的职能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#API网关需要实现的功能"><span class="nav-number">2.</span> <span class="nav-text">API网关需要实现的功能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现要点"><span class="nav-number">3.</span> <span class="nav-text">实现要点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -307,7 +427,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-count">130</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -443,6 +563,26 @@
   }
   // defer loading until the whole page loading is completed
   window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://dachengxi.github.com/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/";
+    this.page.identifier = "2020/04/06/APIGateway设计的思路/";
+    this.page.title = "APIGateway设计的思路";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://cxis.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
 </script>
 
   <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
