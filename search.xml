@@ -3,9 +3,16 @@
   
     
     <entry>
+      <title><![CDATA[APIGateway总结]]></title>
+      <url>%2F2020%2F04%2F13%2FAPIGateway%E6%80%BB%E7%BB%93%2F</url>
+      <content type="text"><![CDATA[用了几天时间来设计和实现一个APIGateway，这里进行一下文档和代码的汇总。 文档汇总： APIGateway设计的思路 APIGateway设计文档 APIGateway中责任链模式的使用 APIGateway中加密验签介绍 APIGateway中流控介绍 APIGatewat中使用Dubbo泛化调用 APIGateway中获取客户端IP的方法 APIGateway总结 代码： https://github.com/dachengxi/APIGateway 实现了基本功能，还有很多的细节没有实现，完整的实现还是需要根据实际的需求来，这里仅仅作为学习使用。]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[APIGateway中获取客户端IP的方法]]></title>
       <url>%2F2020%2F04%2F12%2FAPIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95%2F</url>
-      <content type="text"></content>
+      <content type="text"><![CDATA[在使用ServletRequest获取客户端ip的时候，不仅仅只使用getRemoteHost来获取，还要使用XFF（X-Forwarded-For）。 X-Forwarded-For是HTTP扩展头部，不是HTTP/1.1协议中的定义，但是现在基本是标准了，X-Forwarded-For存储了客户端IP和请求链路上各个代理IP。 加入一个请求从IP1位置开始，经过IP2，IP3，IP4三个代理然后到达服务端，那么使用ServletRequest的getRemoteHost获取到的IP是：IP4，X-Forwarded-For中存储的是： 1X-Forwarded-For: IP1, IP2, IP3 我们可以使用X-Forwarded-For中的值来获取真是IP： 123456// ...String xff = request.getHeader(X_FORWARDED_FOR);if (StringUtils.isNotEmpty(xff)) &#123; clientIp = xff.split(",")[0];&#125;// ... 但是如果伪造请求链路，客户端请求的时候手动添加X-Forwarded-For的值，就可能不能获取到正确的IP。]]></content>
     </entry>
 
     
