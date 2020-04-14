@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Java运行时数据区域在此讨论的内容是根据Java虚拟机规范（Java SE 7）相关内容做的总结。可能有不对的地方。 Java虚拟机定义了程序运行期间使用到的运行时数据区域，其中一些与虚拟机生命周期相同，另外一些与线程的生命周期相同。">
+  <meta name="description" content="JVM创建对象的过程简单记录一下JJVM创建对象的过程，就是new一个对象的时候发生了哪些事情。Java程序执行的过程在此不作说明，对象的创建过程只是程序执行过程的一部分。有关整个程序执行的过程，等熟悉了虚拟机之后在作说明。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java运行时数据区域简介">
-<meta property="og:url" content="http://dachengxi.github.com/2016/11/30/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:title" content="JVM创建对象的过程简介">
+<meta property="og:url" content="http://dachengxi.github.com/2016/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/index.html">
 <meta property="og:site_name" content="大程熙">
-<meta property="og:description" content="Java运行时数据区域在此讨论的内容是根据Java虚拟机规范（Java SE 7）相关内容做的总结。可能有不对的地方。 Java虚拟机定义了程序运行期间使用到的运行时数据区域，其中一些与虚拟机生命周期相同，另外一些与线程的生命周期相同。">
+<meta property="og:description" content="JVM创建对象的过程简单记录一下JJVM创建对象的过程，就是new一个对象的时候发生了哪些事情。Java程序执行的过程在此不作说明，对象的创建过程只是程序执行过程的一部分。有关整个程序执行的过程，等熟悉了虚拟机之后在作说明。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2016-11-30T15:28:39.000Z">
-<meta property="article:modified_time" content="2016-12-01T02:27:18.000Z">
+<meta property="article:published_time" content="2016-06-01T15:45:51.000Z">
+<meta property="article:modified_time" content="2020-04-14T11:54:52.890Z">
 <meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="Java运行时数据区域简介">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://dachengxi.github.com/2016/11/30/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/">
+<link rel="canonical" href="http://dachengxi.github.com/2016/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>Java运行时数据区域简介 | 大程熙</title>
+  <title>JVM创建对象的过程简介 | 大程熙</title>
   
 
 
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/11/30/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -219,7 +219,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Java运行时数据区域简介
+          JVM创建对象的过程简介
         </h1>
 
         <div class="post-meta">
@@ -229,7 +229,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-11-30 23:28:39 23:28:39" itemprop="dateCreated datePublished" datetime="2016-11-30T23:28:39+08:00">2016-11-30 23:28:39</time>
+              <time title="创建时间：2016-06-01 23:45:51 23:45:51" itemprop="dateCreated datePublished" datetime="2016-06-01T23:45:51+08:00">2016-06-01 23:45:51</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -237,7 +237,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">Java虚拟机</span></a>
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
                 </span>
             </span>
 
@@ -250,8 +250,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2016/11/30/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/30/Java运行时数据区域简介/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2016/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/06/01/JVM创建对象的过程简介/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,54 +266,37 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="Java运行时数据区域"><a href="#Java运行时数据区域" class="headerlink" title="Java运行时数据区域"></a>Java运行时数据区域</h1><p>在此讨论的内容是根据Java虚拟机规范（Java SE 7）相关内容做的总结。可能有不对的地方。</p>
-<p>Java虚拟机定义了程序运行期间使用到的运行时数据区域，其中一些与虚拟机生命周期相同，另外一些与线程的生命周期相同。</p>
+        <h1 id="JVM创建对象的过程"><a href="#JVM创建对象的过程" class="headerlink" title="JVM创建对象的过程"></a>JVM创建对象的过程</h1><p>简单记录一下JJVM创建对象的过程，就是new一个对象的时候发生了哪些事情。Java程序执行的过程在此不作说明，对象的创建过程只是程序执行过程的一部分。有关整个程序执行的过程，等熟悉了虚拟机之后在作说明。</p>
 <a id="more"></a>
 
-<p>Java运行时数据区域分为：</p>
+<h1 id="对象创建过程简述"><a href="#对象创建过程简述" class="headerlink" title="对象创建过程简述"></a>对象创建过程简述</h1><p>Java中对象的创建就是在堆上分配内存空间的过程，此处说的对象创建仅限于new关键字创建的普通Java对象，不包括数组对象的创建。</p>
+<p>大致过程如下：</p>
+<ol>
+<li>检测类是否被加载</li>
+<li>为对象分配内存</li>
+<li>为分配的内存空间初始化零值</li>
+<li>对对象进行其他设置</li>
+<li>执行init方法</li>
+</ol>
+<h2 id="检测类是否被加载"><a href="#检测类是否被加载" class="headerlink" title="检测类是否被加载"></a>检测类是否被加载</h2><p>当虚拟机执行到new时，会先去常量池中查找这个类的符号引用。如果能找到符号引用，说明此类已经被加载到方法区（方法区存储虚拟机已经加载的类的信息），可以继续执行；如果找不到符号引用，就会使用类加载器执行类的加载过程，类加载完成后继续执行。</p>
+<h2 id="为对象分配内存"><a href="#为对象分配内存" class="headerlink" title="为对象分配内存"></a>为对象分配内存</h2><p>类加载完成以后，虚拟机就开始为对象分配内存，此时所需内存的大小就已经确定了。只需要在堆上分配所需要的内存即可。</p>
+<p>具体的分配内存有两种情况：第一种情况是内存空间绝对规整，第二种情况是内存空间是不连续的。</p>
 <ul>
-<li>程序计数器（Program Counter）</li>
-<li>Java虚拟机栈（Java Virtual Machine Stack）</li>
-<li>堆（Heap）</li>
-<li>方法区（Method Area）</li>
-<li>本地方法栈（Native Method Stack）</li>
+<li><p>对于内存绝对规整的情况相对简单一些，虚拟机只需要在被占用的内存和可用空间之间移动指针即可，这种方式被称为指针碰撞。</p>
+</li>
+<li><p>对于内存不规整的情况稍微复杂一点，这时候虚拟机需要维护一个列表，来记录哪些内存是可用的。分配内存的时候需要找到一个可用的内存空间，然后在列表上记录下已被分配，这种方式成为空闲列表。</p>
+</li>
 </ul>
-<h2 id="程序计数器（Program-Counter）"><a href="#程序计数器（Program-Counter）" class="headerlink" title="程序计数器（Program Counter）"></a>程序计数器（Program Counter）</h2><p>程序计数器是线程私有的，每条线程都有自己的程序计数器。如果一个线程正在执行的方法是Java方法，程序计数器保存的是Java虚拟机正在执行的字节码指令的地址；如果正在执行的方法是native的，程序计数器的值为undefined。</p>
-<h2 id="Java虚拟机栈（Java-Virtual-Machine-Stack）"><a href="#Java虚拟机栈（Java-Virtual-Machine-Stack）" class="headerlink" title="Java虚拟机栈（Java Virtual Machine Stack）"></a>Java虚拟机栈（Java Virtual Machine Stack）</h2><p>Java虚拟机栈也是线程私有的，与线程同时创建，用于存储栈帧（Fremas），栈帧用来存储局部变量表等信息。方法从调用到执行完成的过程就对应着一个栈帧从入栈到出栈的过程。</p>
-<p>Java虚拟机栈可以被实现为固定大小的，此时每一条线程的Java虚拟机栈在线程创建的时候容量就已经确定；还可以被实现为根据计算动态扩展和收缩的。</p>
-<p>Java虚拟机栈可能会发生异常：</p>
+<p>分配内存的时候也需要考虑线程安全问题，有两种解决方案：</p>
 <ul>
-<li>如果线程请求的栈容量超过Java虚拟机栈允许的最大容量，会抛出StackOverflowError异常。</li>
-<li>如果虚拟机栈可动态扩展，申请不到足够的内存去完成扩展，或者建立新线程时没有足够的内存去创建虚拟机栈，会抛出OutOfMemoryError异常。</li>
+<li>第一种是采用同步的办法，使用CAS来保证操作的原子性。</li>
+<li>另一种是每个线程分配内存都在自己的空间内进行，即是每个线程都在堆中预先分配一小块内存，称为本地线程分配缓冲（TLAB），分配内存的时候再TLAB上分配，互不干扰。</li>
 </ul>
-<h2 id="堆（Heap）"><a href="#堆（Heap）" class="headerlink" title="堆（Heap）"></a>堆（Heap）</h2><p>堆是各个线程共享的运行时内存区域，也是所有的类实例和数组对象分配内存的区域。堆在虚拟机启动的时候被创建。</p>
-<p>堆的容量可以是固定大小的，也可以是动态扩展和自动收缩的。Java堆的内存不需要保证是连续的。</p>
-<p>Java堆可能发生异常情况：</p>
-<ul>
-<li>实际所需的堆超过了最大容量，抛出OutOfMemoryError异常。</li>
-</ul>
-<h2 id="方法区（Method-Area）"><a href="#方法区（Method-Area）" class="headerlink" title="方法区（Method Area）"></a>方法区（Method Area）</h2><p>方法区也是被各个线程所共享的运行时内存区域。用于存储类的结构信息，例如运行时常量池，字段，方法数据，构造函数，普通方法的字节码内容，还包括一些在类，实例，接口初始化时用到的特殊方法。</p>
-<p>方法区在虚拟机启动的时候被创建。方法区的容量可以是固定大小的，也可以是动态扩展和自动收缩的。内存空间不需要保证是连续的。</p>
-<p>方法区可能发生异常的情况：</p>
-<ul>
-<li>方法区的内存不能满足内存分配时，会抛出OutOfMemoryError异常。</li>
-</ul>
-<h2 id="本地方法栈（Native-Method-Stack）"><a href="#本地方法栈（Native-Method-Stack）" class="headerlink" title="本地方法栈（Native Method Stack）"></a>本地方法栈（Native Method Stack）</h2><p>用来支持native方法。跟虚拟机栈功能类似。抛出的异常情况也类似。</p>
-<h1 id="简要总结"><a href="#简要总结" class="headerlink" title="简要总结"></a>简要总结</h1><p>程序计数器为线程私有，用来指示程序运行时的位置。</p>
-<p>Java虚拟机栈是线程私有的，用来存储局部变量表等，出栈入栈对应着方法的结束开始。</p>
-<p>堆是线程共享的区域，虚拟机启动时创建，创建的实例对象和数组都分配在堆上。</p>
-<p>方法区是线程共享的区域，虚拟机启动时创建，用来存储类的信息，常量字段等等。</p>
-<p>本地方法栈用来执行本地方法的。</p>
-<h1 id="其他相关的内容"><a href="#其他相关的内容" class="headerlink" title="其他相关的内容"></a>其他相关的内容</h1><h2 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h2><p>运行时常量池分配在方法区中，在类和接口被加载到虚拟机后，运行时常量池就会被创建出来。是类或者接口的常量池表示形式，用于存储编译期生成的各种字面量和符号引用。</p>
-<p>可能会发生异常的情况：</p>
-<ul>
-<li>构造运行时常量池所需的内存空间超过了方法区能提供的最大值，会抛出OutOfMemoryError异常。</li>
-</ul>
-<h2 id="栈帧"><a href="#栈帧" class="headerlink" title="栈帧"></a>栈帧</h2><p>栈帧是线程私有的，随着方法的调用而创建，随着方法的结束而销毁。栈帧分配在Java虚拟机栈中，存储着局部变量表，操作数栈，和指向当前方法所属类的运行时常量池的引用。</p>
-<p>局部变量表和操作数栈的容量是编译期确定的。</p>
-<h2 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h2><p>局部变量表存在于栈帧中，长度由编译器确定。局部变量表可以保存基本数据类型（boolean，byte，char，short，float，long，double），reference类型，returnAddress类型。long和double类型使用两个局部变量保存。</p>
-<p>局部变量表用来完成方法调用时的参数传递。当方法被调用时，参数会传递到从0开始的连续局部变量表位置上。当实例方法被调用时，第0个局部变量存储的是this。</p>
-<h2 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h2><p>操作数栈存在于栈帧内部，长度由编译期确定。作用是计算时候临时数据的存储区域。</p>
+<h2 id="为分配的内存空间初始化零值"><a href="#为分配的内存空间初始化零值" class="headerlink" title="为分配的内存空间初始化零值"></a>为分配的内存空间初始化零值</h2><p>对象的内存分配完成后，还需要将对象的内存空间都初始化为零值，这样能保证对象即使没有赋初值，也可以直接使用。</p>
+<h2 id="对对象进行其他设置"><a href="#对对象进行其他设置" class="headerlink" title="对对象进行其他设置"></a>对对象进行其他设置</h2><p>分配完内存空间，初始化零值之后，虚拟机还需要对对象进行其他必要的设置，设置的地方都在对象头中，包括这个对象所属的类，类的元数据信息，对象的hashcode，GC分代年龄等信息。</p>
+<h2 id="执行init方法"><a href="#执行init方法" class="headerlink" title="执行init方法"></a>执行init方法</h2><p>执行完上面的步骤之后，在虚拟机里这个对象就算创建成功了，但是对于Java程序来说还需要执行init方法才算真正的创建完成，因为这个时候对象只是被初始化零值了，还没有真正的去根据程序中的代码分配初始值，调用了init方法之后，这个对象才真正能使用。</p>
+<p>到此为止一个对象就产生了，这就是new关键字创建对象的过程。过程如下：</p>
+<p>检测类是否被加载–&gt;为对象分配内存空间–&gt;初始零值–&gt;进行必要的设置–&gt;调用init方法进行初始化。</p>
 
     </div>
 
@@ -343,7 +326,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/" rel="tag"># Java运行时数据区域简介</a>
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
           </div>
 
         
@@ -352,12 +335,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2016/11/30/Java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/" rel="prev" title="Java同步简介">
-      <i class="fa fa-chevron-left"></i> Java同步简介
+    <a href="/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/" rel="prev" title="CyclicBarrier简介">
+      <i class="fa fa-chevron-left"></i> CyclicBarrier简介
     </a></div>
       <div class="post-nav-item">
-    <a href="/2016/12/01/Java%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/" rel="next" title="Java创建对象的过程简介">
-      Java创建对象的过程简介 <i class="fa fa-chevron-right"></i>
+    <a href="/2016/06/03/%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81%E7%AE%80%E4%BB%8B/" rel="next" title="乐观锁与悲观锁简介">
+      乐观锁与悲观锁简介 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -425,7 +408,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Java运行时数据区域"><span class="nav-number">1.</span> <span class="nav-text">Java运行时数据区域</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#程序计数器（Program-Counter）"><span class="nav-number">1.1.</span> <span class="nav-text">程序计数器（Program Counter）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java虚拟机栈（Java-Virtual-Machine-Stack）"><span class="nav-number">1.2.</span> <span class="nav-text">Java虚拟机栈（Java Virtual Machine Stack）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#堆（Heap）"><span class="nav-number">1.3.</span> <span class="nav-text">堆（Heap）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法区（Method-Area）"><span class="nav-number">1.4.</span> <span class="nav-text">方法区（Method Area）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#本地方法栈（Native-Method-Stack）"><span class="nav-number">1.5.</span> <span class="nav-text">本地方法栈（Native Method Stack）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简要总结"><span class="nav-number">2.</span> <span class="nav-text">简要总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他相关的内容"><span class="nav-number">3.</span> <span class="nav-text">其他相关的内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#运行时常量池"><span class="nav-number">3.1.</span> <span class="nav-text">运行时常量池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#栈帧"><span class="nav-number">3.2.</span> <span class="nav-text">栈帧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#局部变量表"><span class="nav-number">3.3.</span> <span class="nav-text">局部变量表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#操作数栈"><span class="nav-number">3.4.</span> <span class="nav-text">操作数栈</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM创建对象的过程"><span class="nav-number">1.</span> <span class="nav-text">JVM创建对象的过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对象创建过程简述"><span class="nav-number">2.</span> <span class="nav-text">对象创建过程简述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#检测类是否被加载"><span class="nav-number">2.1.</span> <span class="nav-text">检测类是否被加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为对象分配内存"><span class="nav-number">2.2.</span> <span class="nav-text">为对象分配内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为分配的内存空间初始化零值"><span class="nav-number">2.3.</span> <span class="nav-text">为分配的内存空间初始化零值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对对象进行其他设置"><span class="nav-number">2.4.</span> <span class="nav-text">对对象进行其他设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行init方法"><span class="nav-number">2.5.</span> <span class="nav-text">执行init方法</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -441,20 +424,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">135</span>
+          <span class="site-state-item-count">133</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -580,9 +563,9 @@
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2016/11/30/Java%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E7%AE%80%E4%BB%8B/";
-    this.page.identifier = "2016/11/30/Java运行时数据区域简介/";
-    this.page.title = "Java运行时数据区域简介";
+    this.page.url = "http://dachengxi.github.com/2016/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/";
+    this.page.identifier = "2016/06/01/JVM创建对象的过程简介/";
+    this.page.title = "JVM创建对象的过程简介";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {

@@ -28,9 +28,9 @@
 <meta property="og:description" content="此处的内容是根据Java虚拟机规范（Java SE 7）相关内容以及深入理解Java虚拟机等做的总结。可能有不对的地方。了解这些区域，可以从总体上看下虚拟机内部是怎么构造的，网上也有相关的图片介绍，可以适当的记下图片内容，这样可以有一个立体的感受，更容易记忆。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2017-05-06T15:28:39.000Z">
-<meta property="article:modified_time" content="2017-05-07T09:25:59.000Z">
+<meta property="article:modified_time" content="2020-04-14T11:54:52.891Z">
 <meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="JVM运行时数据区域">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://dachengxi.github.com/2017/05/06/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E4%BB%8B%E7%BB%8D/">
@@ -239,10 +239,6 @@
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
                   <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
                 </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" itemprop="url" rel="index"><span itemprop="name">Java虚拟机</span></a>
-                </span>
             </span>
 
           
@@ -290,12 +286,11 @@
 <li>如果线程请求的栈容量超过Java虚拟机栈允许的最大容量，会抛出StackOverflowError异常。</li>
 <li>如果虚拟机栈可动态扩展，申请不到足够的内存去完成扩展，或者建立新线程时没有足够的内存去创建虚拟机栈，会抛出OutOfMemoryError异常。</li>
 </ul>
-<h2 id="栈帧"><a href="#栈帧" class="headerlink" title="栈帧"></a>栈帧</h2><p>栈帧随着方法的调用而创建，随着方法的结束（正常或者异常结束）而销毁，是用来存储数据和部分过程结果的数据结构，同时也被用来处理动态链接（Dynamic Linking）、方法返回值和异常分派（Dispatch Exception）。</p>
-<p>栈帧存在于Java虚拟机栈中，栈帧中包含局部变量表、操作数栈和指向当前方法所属类的运行时常量池的引用。</p>
-<p>局部变量表和操作数栈的容量在编译期确定，通过方法的Code属性保存并提供给栈帧使用。栈帧的容量大小仅仅取决于Java虚拟机的实现和方法调用时可分配的内存。</p>
+<h2 id="栈帧"><a href="#栈帧" class="headerlink" title="栈帧"></a>栈帧</h2><p>栈帧是线程私有的，随着方法的调用而创建，随着方法的结束而销毁。栈帧分配在Java虚拟机栈中，存储着局部变量表，操作数栈，和指向当前方法所属类的运行时常量池的引用。</p>
+<p>局部变量表和操作数栈的容量是编译期确定的。</p>
 <h2 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h2><p>局部变量表存在于栈帧中，长度在编译期决定，存储在类和接口的二进制表示中，也就是存储在方法的Code属性中并提供给栈帧使用。</p>
 <p>局部变量表可以保存类型为boolean、byte、char、short、int、float、reference、returnAddress，而long和double类型需要两个局部变量表来存储。</p>
-<p>局部变量表还用来完成方法调用时参数的传递，一个方法被调用，它的参数会传递至0开始的连续局部变量表位置上。对于实例方法来说，局部变量表第0个位置是用来存储实例方法所在对象的引用，也就是我们通常说的this。</p>
+<p>局部变量表用来完成方法调用时的参数传递。当方法被调用时，参数会传递到从0开始的连续局部变量表位置上。当实例方法被调用时，第0个局部变量存储的是this。</p>
 <h2 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h2><p>操作数栈存在于栈帧中，是一个LIFO的栈，长度由编译期确定，也是存储在方法的Code属性中提供给栈帧使用。</p>
 <p>操作数栈会有一个确定的栈深度，一个long或者double类型的数据会占用两个单位的栈深度，其他数据类型则会占用一个单位深度。</p>
 <h2 id="动态链接"><a href="#动态链接" class="headerlink" title="动态链接"></a>动态链接</h2><p>栈帧内部包含一个指向运行时常量池的引用（运行时常量池的解释在下面，可以先看一下运行时常量池），这个引用用来支持当前方法的代码实现动态链接。</p>
@@ -313,7 +308,7 @@
 <li>方法区的内存不能满足内存分配时，会抛出OutOfMemoryError异常。</li>
 </ul>
 <h2 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h2><p>运行时常量池分配在方法区中，类和接口被加载到虚拟机之后，运行时常量池就被创建了。</p>
-<p>运行时常量池是类或接口的常量池的运行时表示形式，包括从编译期可知的数值字面量和运行期解析后才能获得的方法或字段引用。</p>
+<p>运行时常量池是类或接口的常量池的运行时表示形式，于存储编译期生成的各种字面量和符号引用。</p>
 <p>可能会发生异常的情况：</p>
 <ul>
 <li>构造运行时常量池所需的内存空间超过了方法区能提供的最大值，会抛出OutOfMemoryError异常。</li>
@@ -358,7 +353,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F/" rel="tag"># JVM运行时数据区域</a>
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
           </div>
 
         
@@ -456,20 +451,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">135</span>
+          <span class="site-state-item-count">133</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
