@@ -22,13 +22,13 @@
 
   <meta name="description" content="CMS是老年代的垃圾收集器，使用标记-清除算法，是并发的收集器。可与Serial收集器和Parallel New收集器配合使用。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM中FullGC耗时过高">
+<meta property="og:title" content="JVM中的CMS垃圾收集器">
 <meta property="og:url" content="http://dachengxi.github.com/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/index.html">
 <meta property="og:site_name" content="大程熙">
 <meta property="og:description" content="CMS是老年代的垃圾收集器，使用标记-清除算法，是并发的收集器。可与Serial收集器和Parallel New收集器配合使用。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2017-07-01T09:04:04.000Z">
-<meta property="article:modified_time" content="2020-04-16T12:02:08.040Z">
+<meta property="article:modified_time" content="2020-04-16T14:47:36.009Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>JVM中FullGC耗时过高 | 大程熙</title>
+  <title>JVM中的CMS垃圾收集器 | 大程熙</title>
   
 
 
@@ -219,7 +219,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          JVM中FullGC耗时过高
+          JVM中的CMS垃圾收集器
         </h1>
 
         <div class="post-meta">
@@ -594,7 +594,7 @@
   var disqus_config = function() {
     this.page.url = "http://dachengxi.github.com/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/";
     this.page.identifier = "2017/07/01/JVM中的CMS垃圾收集器/";
-    this.page.title = "JVM中FullGC耗时过高";
+    this.page.title = "JVM中的CMS垃圾收集器";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {
