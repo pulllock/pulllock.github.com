@@ -20,22 +20,20 @@
     var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="MVC简介面试的时候被问到关于MVC相关的知识，才发现自己只会说出来什么叫MVC，但是其详细的东西自己却无法顺利的表述出来，特在此记录下。">
+  <meta name="description" content="当发生YGC时，JVM先检查老年代最大的可用连续空间是否大于新生代所有对象总和，如果大于，这次YGC是安全的；如果不大于则会看HandlePromotionFailure参数配置的值。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MVC简介">
-<meta property="og:url" content="http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:title" content="JVM空间分配担保">
+<meta property="og:url" content="http://dachengxi.github.com/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/index.html">
 <meta property="og:site_name" content="大程熙">
-<meta property="og:description" content="MVC简介面试的时候被问到关于MVC相关的知识，才发现自己只会说出来什么叫MVC，但是其详细的东西自己却无法顺利的表述出来，特在此记录下。">
+<meta property="og:description" content="当发生YGC时，JVM先检查老年代最大的可用连续空间是否大于新生代所有对象总和，如果大于，这次YGC是安全的；如果不大于则会看HandlePromotionFailure参数配置的值。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/springmvc.png">
-<meta property="article:published_time" content="2016-11-28T13:34:00.000Z">
-<meta property="article:modified_time" content="2016-11-29T01:44:00.000Z">
+<meta property="article:published_time" content="2017-07-01T15:12:17.000Z">
+<meta property="article:modified_time" content="2020-04-16T15:30:04.357Z">
 <meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="MVC简介">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/springmvc.png">
 
-<link rel="canonical" href="http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/">
+<link rel="canonical" href="http://dachengxi.github.com/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/">
 
 
 <script id="page-configurations">
@@ -48,7 +46,7 @@
   };
 </script>
 
-  <title>MVC简介 | 大程熙</title>
+  <title>JVM空间分配担保 | 大程熙</title>
   
 
 
@@ -208,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -221,7 +219,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          MVC简介
+          JVM空间分配担保
         </h1>
 
         <div class="post-meta">
@@ -231,7 +229,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2016-11-28 21:34:00 21:34:00" itemprop="dateCreated datePublished" datetime="2016-11-28T21:34:00+08:00">2016-11-28 21:34:00</time>
+              <time title="创建时间：2017-07-01 23:12:17 23:12:17" itemprop="dateCreated datePublished" datetime="2017-07-01T23:12:17+08:00">2017-07-01 23:12:17</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -239,7 +237,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/J2EE%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">J2EE基础</span></a>
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
                 </span>
             </span>
 
@@ -252,8 +250,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2016/11/28/MVC%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/11/28/MVC简介/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/07/01/JVM空间分配担保/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -268,47 +266,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="MVC简介"><a href="#MVC简介" class="headerlink" title="MVC简介"></a>MVC简介</h1><p>面试的时候被问到关于MVC相关的知识，才发现自己只会说出来什么叫MVC，但是其详细的东西自己却无法顺利的表述出来，特在此记录下。</p>
+        <p>当发生YGC时，JVM先检查老年代最大的可用连续空间是否大于新生代所有对象总和，如果大于，这次YGC是安全的；如果不大于则会看HandlePromotionFailure参数配置的值。</p>
 <a id="more"></a>
 
-<h2 id="MVC基础"><a href="#MVC基础" class="headerlink" title="MVC基础"></a>MVC基础</h2><p>MVC是Model-View-Controller的简称，是一种软件架构模式，也是经过很多人的长期实践最后得出来的很适合软件开发的一种模式。</p>
-<p>M（Model）模型层，这应该是最底层的一层，这一层中我们需要处理的是业务逻辑和数据等等方面的东西，包括核心业务代码的编写，访问数据库或者文件进行数据处理，数据库等很多方面。</p>
-<p>V（View）视图层，这一层是最上面的一层，用户可以看到并且进行操作的地方。</p>
-<p>C（Controller）控制层，这部分处于中间，负责转发和处理请求，接收来自视图层用户的操作等，负责处理和转发；会根据情况传递到模型层，模型层做完处理之后，再由控制层根据实际情况返回到视图层去展示。另外一种情况是在模型层处理完之后，可以直接将结果返回给视图层。</p>
-<h3 id="Web-MVC"><a href="#Web-MVC" class="headerlink" title="Web MVC"></a>Web MVC</h3><p>Web开发中的MVC模式跟标准的MVC模式一样，但是Web MVC不能在模型层将结果主动推送给视图层，因为Web模式下是基于请求-响应模型的。其他的定义和流程都和标准MVC模式是一样的。</p>
-<h2 id="Web如何进化到MVC"><a href="#Web如何进化到MVC" class="headerlink" title="Web如何进化到MVC"></a>Web如何进化到MVC</h2><p>这里的Web进化主要利用Java开发方面的历程作说明，当然最开始的CGI不算是Java中的过程，但是还是需要它作为开头。</p>
-<p>大致的历程为：<code>CGI --&gt; Servlet --&gt; JSP --&gt; Model1 --&gt; Model2</code></p>
-<h3 id="CGI"><a href="#CGI" class="headerlink" title="CGI"></a>CGI</h3><p>由于没有使用过CGI这种技术做过开发，只能使用维基上的定义来简单说明下。CGI是通用网关接口（Common Gateway Interface）的简称，多使用Perl语言编写，接受用户的请求，然后根据请求的返回给用户HTML页面。但是每次CGI请求都会生成一个新的进程去处理，对服务器来说压力太大，请求大的时候很快就会垮掉。</p>
-<h3 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h3><p>Servlet技术和CGI技术的作用是一样的，但是Servlet是Java体系中最早用来解决Web的技术。Java是平台无关的，同样Servlet也是，它比CGI更加的高高效，CGI针对请求生成的是进程级别的，而Servlet生成的是线程级别的。</p>
-<h4 id="Servlet的生命周期"><a href="#Servlet的生命周期" class="headerlink" title="Servlet的生命周期"></a>Servlet的生命周期</h4><ol>
-<li><p>加载和实例化</p>
-<p> Servlet容器负责加载和实例化Servlet。</p>
-</li>
-<li><p>初始化</p>
-<p> Servlet在实例化之后，会调用init()方法初始化。</p>
-</li>
-<li><p>服务</p>
-<p> Servlet的service()方法对请求进行处理。</p>
-</li>
-<li><p>销毁</p>
-<p> Servlet的destory()方法用来销毁Servlet实例，释放资源等。</p>
-</li>
-</ol>
-<h4 id="Servlet缺点"><a href="#Servlet缺点" class="headerlink" title="Servlet缺点"></a>Servlet缺点</h4><p>Servlet技术让Java有了Web方面的更好的选择，后来的技术很大一部分都是在Servlet的基础上发展来的。但是Servlet直接做开发还是显得很繁琐，我在使用Servlet做开发的时候遇到过很多的弊端，直接点说就是Servlet做开发时，把MVC的分层直接放到一起了，甚至html代码也得在Servlet里面直接输出。这样的做法对于后期维护修改或者页面的调试很是麻烦。现在直接用Servlet做开发已经很少用了，但是还是得作为必须要去学习的基础知识。</p>
-<h3 id="JSP"><a href="#JSP" class="headerlink" title="JSP"></a>JSP</h3><p>JSP技术使用在html页面中嵌入脚本语言的方式来处理Servlet技术的不足，相对于Servlet来说有了很多进步，开发页面更加方便简单。但是实质上JSP最后还是被编译成了Servlet，表现逻辑以及控制和模型等方面的逻辑还是混杂在了一起，看起来好像是跟Servlet反过来一样。这种做法同样不可取。</p>
-<h3 id="Model1"><a href="#Model1" class="headerlink" title="Model1"></a>Model1</h3><p>这种技术是JSP和JavaBean的组合，相对于JSP来说只是将业务逻辑放到了单独的JavaBean中去，可以理解为是JSP的增强，对JSP页面进行了简化，但是JSP页面仍然将表现逻辑，控制逻辑，业务逻辑等混杂到一起。这种做法仍然不可取。</p>
-<h3 id="Model2"><a href="#Model2" class="headerlink" title="Model2"></a>Model2</h3><p>Model2采用JSP+Servlet+JavaBean来实现，其实这时候就可以认为是我们的Web MVC模型了，在实际使用中也是使用的这种模式。</p>
-<p>JSP 使用html和jsp的标签来负责实现表现层；Servlet负责接收用户的请求，转交给模型层进行处理，返回结果给视图层等功能；JavaBean负责业务逻辑的处理，也就是模型层的功能。</p>
-<p>到这里为止，开发过程中遇到的方式都已经介绍完了，也走到了MVC模式这一步。下面会简单介绍下MVC的框架相关知识。</p>
-<h2 id="Spring-Web-MVC"><a href="#Spring-Web-MVC" class="headerlink" title="Spring Web MVC"></a>Spring Web MVC</h2><p>先看一下Spring官方的一张请求处理流程图：<br><img src="springmvc.png" alt="请求处理流程"><br>再看一下具体的流程：</p>
-<ol>
-<li>第一步，用户发送请求（Incoming request）到前端控制器（Front controller）</li>
-<li>前端控制器（Front controller）根据实际的请求信息来决定把请求委托给具体的页面控制器（Controller）。页面控制器用来处理实际的请求内容，直接返回或者需要Model层进行数据处理。</li>
-<li>页面控制器（Controller）接收到请求后进行处理，处理完成后返回model数据，并委托给前端控制器（Front controller）进行渲染。</li>
-<li>前端控制器（Front controller）根据逻辑视图名和model数据选择视图模板（View template）进行渲染，渲染完成后返回给前端控制器（Front controller）。</li>
-<li>最后前端控制器将渲染后的最终结果返回给用户。</li>
-</ol>
-<p>对应具体的源码分析不在此做过多说明。</p>
+<p>HandlePromotionFailure为true表示允许担保失败，JVM会继续检查老年代最大可用连续空间是否大于历次晋升到老年代的对象的平均大小，如果大于，则尝试进行一次YGC，但这次YGC是有风险的；如果小于则进行一次Full GC。</p>
+<p>HandlePromotionFailure为false表示不允许担保失败，JVM会进行一次Full GC。</p>
+<p>上面说的YGC是有风险的解释：</p>
+<p>新生代使用复制算法，如果出现大量对象在YGC之后都存活，Suvivor放不下这些对象，就需要空间分配担保，把这些对象放进老年代。老年代如果根据历次晋升到老年代的对象的平均大小来做判断，并不一定会准确，有可能会出现担保失败，出现担保失败就会触发一次Full GC。虽然有这种概率出现，但是大部分情况都能分配担保成功，可以避免频繁Full GC。</p>
 
     </div>
 
@@ -338,7 +302,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/MVC%E7%AE%80%E4%BB%8B/" rel="tag"># MVC简介</a>
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
           </div>
 
         
@@ -347,12 +311,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/" rel="prev" title="Executor框架简介">
-      <i class="fa fa-chevron-left"></i> Executor框架简介
+    <a href="/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" rel="prev" title="JVM中的CMS垃圾收集器">
+      <i class="fa fa-chevron-left"></i> JVM中的CMS垃圾收集器
     </a></div>
       <div class="post-nav-item">
-    <a href="/2016/11/29/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/" rel="next" title="Java多线程简介">
-      Java多线程简介 <i class="fa fa-chevron-right"></i>
+    <a href="/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/" rel="next" title="上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题">
+      上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -420,7 +384,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MVC简介"><span class="nav-number">1.</span> <span class="nav-text">MVC简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MVC基础"><span class="nav-number">1.1.</span> <span class="nav-text">MVC基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-MVC"><span class="nav-number">1.1.1.</span> <span class="nav-text">Web MVC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web如何进化到MVC"><span class="nav-number">1.2.</span> <span class="nav-text">Web如何进化到MVC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CGI"><span class="nav-number">1.2.1.</span> <span class="nav-text">CGI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet"><span class="nav-number">1.2.2.</span> <span class="nav-text">Servlet</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Servlet的生命周期"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">Servlet的生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Servlet缺点"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">Servlet缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP"><span class="nav-number">1.2.3.</span> <span class="nav-text">JSP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Model1"><span class="nav-number">1.2.4.</span> <span class="nav-text">Model1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Model2"><span class="nav-number">1.2.5.</span> <span class="nav-text">Model2</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Web-MVC"><span class="nav-number">1.3.</span> <span class="nav-text">Spring Web MVC</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -575,9 +538,9 @@
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2016/11/28/MVC%E7%AE%80%E4%BB%8B/";
-    this.page.identifier = "2016/11/28/MVC简介/";
-    this.page.title = "MVC简介";
+    this.page.url = "http://dachengxi.github.com/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/";
+    this.page.identifier = "2017/07/01/JVM空间分配担保/";
+    this.page.title = "JVM空间分配担保";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {
