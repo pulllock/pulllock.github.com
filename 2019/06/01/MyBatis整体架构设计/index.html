@@ -272,6 +272,10 @@
 <a id="more"></a>
 
 <p>MyBatis整体上分为三层：接口层、核心处理层、基础支持层：</p>
+<p>学习一下MyBatis整体架构设计，以及主要模块的功能说明。</p>
+<!--more-->
+
+<p>MyBatis整体上分为三层：接口层、核心处理层、基础支持层：</p>
 <p><img src="mybatis-1.png" alt="Mybatis整体架构设计"></p>
 <p>图片源自《MyBatis技术内幕》</p>
 <h1 id="接口层"><a href="#接口层" class="headerlink" title="接口层"></a>接口层</h1><p>接口层是提供给应用程序使用的，也就是使用SqlSession来执行sql语句。</p>
@@ -306,6 +310,41 @@
 <li>解析器模块，解析mybatis-config-xml配置文件以及映射文件，为处理动态SQL语句中占位符提供支持</li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>《MyBatis技术内幕》</li>
+</ul>
+<p>图片源自《MyBatis技术内幕》</p>
+<h1 id="接口层-1"><a href="#接口层-1" class="headerlink" title="接口层"></a>接口层</h1><p>接口层是提供给应用程序使用的，也就是使用SqlSession来执行sql语句。</p>
+<h1 id="核心处理层-1"><a href="#核心处理层-1" class="headerlink" title="核心处理层"></a>核心处理层</h1><ul>
+<li>配置解析</li>
+<li>参数映射</li>
+<li>SQL解析</li>
+<li>SQL执行</li>
+<li>结果集映射</li>
+<li>插件</li>
+</ul>
+<h2 id="配置解析-1"><a href="#配置解析-1" class="headerlink" title="配置解析"></a>配置解析</h2><p>配置解析发生在MyBatis启动阶段，加载mybatis-config.xml配置文件以及我们自定义的mapper.xml文件或者是注解定义的Mapper接口文件，MyBatis解析这些文件后会生成对应的对象，保存在Configuration对象中。</p>
+<h2 id="参数映射-1"><a href="#参数映射-1" class="headerlink" title="参数映射"></a>参数映射</h2><p>Java类型和JDBC类型之间的转换。</p>
+<h2 id="SQL解析-1"><a href="#SQL解析-1" class="headerlink" title="SQL解析"></a>SQL解析</h2><p>MyBatis提供动态SQL功能，MyBatis会根据传入的实参，解析映射文件中定义的动态SQL节点并生成可执行的SQL，然后处理SQL中占位符绑定传入的实参。</p>
+<h2 id="SQL执行-1"><a href="#SQL执行-1" class="headerlink" title="SQL执行"></a>SQL执行</h2><p>SQL执行涉及多个组件：</p>
+<ul>
+<li>Executor维护一级和二级缓存，提供事务管理相关操作，将数据库相关操作委托给StatementHandler完成。</li>
+<li>StatementHandler调用ParmeterHandler完成SQL实参绑定，然后通过Statement执行SQL得到结果。</li>
+<li>ResultSetHandler进行结果集映射，得到结果对象返回。</li>
+</ul>
+<h2 id="结果集映射-1"><a href="#结果集映射-1" class="headerlink" title="结果集映射"></a>结果集映射</h2><p>ResultSetHandler进行结果集映射，将从数据库中查询的结果映射成我们需要的Java对象。</p>
+<h2 id="插件-1"><a href="#插件-1" class="headerlink" title="插件"></a>插件</h2><p>MyBatis提供插件接口，可以进行扩展，比如可以拦截SQL进行重写。</p>
+<h1 id="基础支持层-1"><a href="#基础支持层-1" class="headerlink" title="基础支持层"></a>基础支持层</h1><ul>
+<li>数据源模块</li>
+<li>事务管理模块</li>
+<li>缓存模块，提供了一级缓存和二级缓存</li>
+<li>Binding模块，将用户自定义的Mapper接口和映射配置文件关联起来</li>
+<li>反射模块，对Java原生反射进行封装，优化，加缓存提高性能</li>
+<li>类型转换，JDBC和Java类型之间的转换，SQL绑定实参和映射结果集都会使用</li>
+<li>日志模块</li>
+<li>资源加载，对类加载器进行封装</li>
+<li>解析器模块，解析mybatis-config-xml配置文件以及映射文件，为处理动态SQL语句中占位符提供支持</li>
+</ul>
+<h1 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h1><ul>
 <li>《MyBatis技术内幕》</li>
 </ul>
 
@@ -419,7 +458,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#接口层"><span class="nav-number">1.</span> <span class="nav-text">接口层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核心处理层"><span class="nav-number">2.</span> <span class="nav-text">核心处理层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置解析"><span class="nav-number">2.1.</span> <span class="nav-text">配置解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数映射"><span class="nav-number">2.2.</span> <span class="nav-text">参数映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL解析"><span class="nav-number">2.3.</span> <span class="nav-text">SQL解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL执行"><span class="nav-number">2.4.</span> <span class="nav-text">SQL执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果集映射"><span class="nav-number">2.5.</span> <span class="nav-text">结果集映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插件"><span class="nav-number">2.6.</span> <span class="nav-text">插件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础支持层"><span class="nav-number">3.</span> <span class="nav-text">基础支持层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#接口层"><span class="nav-number">1.</span> <span class="nav-text">接口层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核心处理层"><span class="nav-number">2.</span> <span class="nav-text">核心处理层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置解析"><span class="nav-number">2.1.</span> <span class="nav-text">配置解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数映射"><span class="nav-number">2.2.</span> <span class="nav-text">参数映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL解析"><span class="nav-number">2.3.</span> <span class="nav-text">SQL解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL执行"><span class="nav-number">2.4.</span> <span class="nav-text">SQL执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果集映射"><span class="nav-number">2.5.</span> <span class="nav-text">结果集映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插件"><span class="nav-number">2.6.</span> <span class="nav-text">插件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础支持层"><span class="nav-number">3.</span> <span class="nav-text">基础支持层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接口层-1"><span class="nav-number">5.</span> <span class="nav-text">接口层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#核心处理层-1"><span class="nav-number">6.</span> <span class="nav-text">核心处理层</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#配置解析-1"><span class="nav-number">6.1.</span> <span class="nav-text">配置解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数映射-1"><span class="nav-number">6.2.</span> <span class="nav-text">参数映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL解析-1"><span class="nav-number">6.3.</span> <span class="nav-text">SQL解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL执行-1"><span class="nav-number">6.4.</span> <span class="nav-text">SQL执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果集映射-1"><span class="nav-number">6.5.</span> <span class="nav-text">结果集映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插件-1"><span class="nav-number">6.6.</span> <span class="nav-text">插件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#基础支持层-1"><span class="nav-number">7.</span> <span class="nav-text">基础支持层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-1"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

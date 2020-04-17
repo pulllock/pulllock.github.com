@@ -271,6 +271,9 @@
         <p>这里仅仅是对Tomcat7中主要组件进行简单说明，详细的可以查看下tomcat的相关文档。</p>
 <a id="more"></a>
 <p>首先看下网上找来的一张架构图，还有其他的类似的图，可以自行谷歌一下。看图片也大概能了解tomcat整体的组成。</p>
+<p>这里仅仅是对Tomcat7中主要组件进行简单说明，详细的可以查看下tomcat的相关文档。</p>
+<!--more-->
+<p>首先看下网上找来的一张架构图，还有其他的类似的图，可以自行谷歌一下。看图片也大概能了解tomcat整体的组成。</p>
 <p><img src="tomcat7.gif" alt="tomcat7架构简介"></p>
 <h1 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h1><p>Server表示整个容器，Tomcat提供了一个默认的Server接口的实现，用户几乎很少自己实现Server接口。</p>
 <h1 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h1><p>Service是一个中间组件，存活于Server中，绑定一个或者多个Connector到一个Engine上。用户很少自己实现Service接口，默认实现已经足够用。</p>
@@ -279,6 +282,15 @@
 <h1 id="Connector"><a href="#Connector" class="headerlink" title="Connector"></a>Connector</h1><p>Connector处理和客户端的通信。Tomcat中有很多可用的Connector。</p>
 <h1 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h1><p>Context表示一个web应用，一个Host可能包含多个Context，每个Context都有一个唯一的path。</p>
 <h1 id="总的架构"><a href="#总的架构" class="headerlink" title="总的架构"></a>总的架构</h1><p>Server可以表示是Tomcat，一个Tomcat中只有一个Server，一个Server下面可以有多个Service，每一个Service中包含多个Connector和一个Engine，每个Engine包含多个Host，每个Host包含多个Context。</p>
+<p>Engine其实是一个Container，Container是Engine，Host，Context的父接口，这里把Engine称为Container，所以此时可以有如下表示：一个Server下面有多个Service，每个Service包含多个Connector和一个Container。</p>
+<p>多个Connector和一个Container组成一个Service，这个Service就可以向外提供服务了。</p>
+<h1 id="Server-1"><a href="#Server-1" class="headerlink" title="Server"></a>Server</h1><p>Server表示整个容器，Tomcat提供了一个默认的Server接口的实现，用户几乎很少自己实现Server接口。</p>
+<h1 id="Service-1"><a href="#Service-1" class="headerlink" title="Service"></a>Service</h1><p>Service是一个中间组件，存活于Server中，绑定一个或者多个Connector到一个Engine上。用户很少自己实现Service接口，默认实现已经足够用。</p>
+<h1 id="Engine-1"><a href="#Engine-1" class="headerlink" title="Engine"></a>Engine</h1><p>表示一个特定Service的请求处理流程。一个Service可能有多个Connector，Engine接受并处理这些来自Connector的所有请求，将响应传回给适当的Connector以传输到客户端。Engine也很少由用户自定义实现。</p>
+<h1 id="Host-1"><a href="#Host-1" class="headerlink" title="Host"></a>Host</h1><p>Host是一个网络名称同Tomcat服务器的关联。Engine可能存在多个Host。</p>
+<h1 id="Connector-1"><a href="#Connector-1" class="headerlink" title="Connector"></a>Connector</h1><p>Connector处理和客户端的通信。Tomcat中有很多可用的Connector。</p>
+<h1 id="Context-1"><a href="#Context-1" class="headerlink" title="Context"></a>Context</h1><p>Context表示一个web应用，一个Host可能包含多个Context，每个Context都有一个唯一的path。</p>
+<h1 id="总的架构-1"><a href="#总的架构-1" class="headerlink" title="总的架构"></a>总的架构</h1><p>Server可以表示是Tomcat，一个Tomcat中只有一个Server，一个Server下面可以有多个Service，每一个Service中包含多个Connector和一个Engine，每个Engine包含多个Host，每个Host包含多个Context。</p>
 <p>Engine其实是一个Container，Container是Engine，Host，Context的父接口，这里把Engine称为Container，所以此时可以有如下表示：一个Server下面有多个Service，每个Service包含多个Connector和一个Container。</p>
 <p>多个Connector和一个Container组成一个Service，这个Service就可以向外提供服务了。</p>
 
@@ -392,7 +404,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Server"><span class="nav-number">1.</span> <span class="nav-text">Server</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Service"><span class="nav-number">2.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Engine"><span class="nav-number">3.</span> <span class="nav-text">Engine</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Host"><span class="nav-number">4.</span> <span class="nav-text">Host</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Connector"><span class="nav-number">5.</span> <span class="nav-text">Connector</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Context"><span class="nav-number">6.</span> <span class="nav-text">Context</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总的架构"><span class="nav-number">7.</span> <span class="nav-text">总的架构</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Server"><span class="nav-number">1.</span> <span class="nav-text">Server</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Service"><span class="nav-number">2.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Engine"><span class="nav-number">3.</span> <span class="nav-text">Engine</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Host"><span class="nav-number">4.</span> <span class="nav-text">Host</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Connector"><span class="nav-number">5.</span> <span class="nav-text">Connector</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Context"><span class="nav-number">6.</span> <span class="nav-text">Context</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总的架构"><span class="nav-number">7.</span> <span class="nav-text">总的架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Server-1"><span class="nav-number">8.</span> <span class="nav-text">Server</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Service-1"><span class="nav-number">9.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Engine-1"><span class="nav-number">10.</span> <span class="nav-text">Engine</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Host-1"><span class="nav-number">11.</span> <span class="nav-text">Host</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Connector-1"><span class="nav-number">12.</span> <span class="nav-text">Connector</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Context-1"><span class="nav-number">13.</span> <span class="nav-text">Context</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总的架构-1"><span class="nav-number">14.</span> <span class="nav-text">总的架构</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

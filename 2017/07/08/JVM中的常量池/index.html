@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://dachengxi.github.com/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/JVM_Internal_Architecture.png">
 <meta property="article:published_time" content="2017-07-08T03:42:10.000Z">
-<meta property="article:modified_time" content="2020-04-17T15:31:45.148Z">
+<meta property="article:modified_time" content="2020-04-17T15:40:15.567Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -272,7 +272,8 @@
 <a id="more"></a>
 
 <p>可以先看下JVM运行时数据区域图：</p>
-<p><img src="JVM_Internal_Architecture.png" alt="JVM内部结构"></p>
+<img src="/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/JVM_Internal_Architecture.png" class="JVM内部结构">
+
 <p>图片来自：<a href="https://blog.jamesdbloom.com/JVMInternals.html" target="_blank" rel="noopener">https://blog.jamesdbloom.com/JVMInternals.html</a></p>
 <p>在Non Heap非堆中包含了Code Cache和永久代，永久代中包含Interned String和方法区，方法区中包含了运行时常量池。</p>
 <h1 id="Class文件常量池"><a href="#Class文件常量池" class="headerlink" title="Class文件常量池"></a>Class文件常量池</h1><p>编译后的class文件中，除了包含类的版本、字段、方法、接口等的描述信息外，还包含常量池表（Constant Pool Table），用来存放编译器生成的字面量（Literal）和符号引用（Symbolic References）。</p>

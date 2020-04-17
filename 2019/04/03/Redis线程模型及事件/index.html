@@ -273,6 +273,11 @@
 
 <h1 id="文件事件"><a href="#文件事件" class="headerlink" title="文件事件"></a>文件事件</h1><p>Redis基于Reactor模式，采用I/O多路复用来处理请求，以单线程来运行，可以实现高性能网络通信模型。</p>
 <p>文件事件处理器组成：套接字、I/O多路复用程序、文件事件分派器、事件处理器。</p>
+<p>Redis使用事件驱动模型，主要处理：文件事件，也就是和客户端的网络通信等等；以及时间事件，也就是一些定时任务之类的抽象。</p>
+<!--more-->
+
+<h1 id="文件事件-1"><a href="#文件事件-1" class="headerlink" title="文件事件"></a>文件事件</h1><p>Redis基于Reactor模式，采用I/O多路复用来处理请求，以单线程来运行，可以实现高性能网络通信模型。</p>
+<p>文件事件处理器组成：套接字、I/O多路复用程序、文件事件分派器、事件处理器。</p>
 <p><img src="event-1.png" alt="event-1"></p>
 <p>I/O多路复用监听多个套接字，向文件事件派发器传送产生了事件的套接字，如果存在并发，I/O多路复用程序会将所有产生事件的套接字放到一个队列里，按顺序向事件派发器传送。派发器根据套接字产生的事件调用响应的事件处理器。</p>
 <h2 id="事件类型"><a href="#事件类型" class="headerlink" title="事件类型"></a>事件类型</h2><ul>
@@ -286,6 +291,20 @@
 <h1 id="时间事件"><a href="#时间事件" class="headerlink" title="时间事件"></a>时间事件</h1><p>Redis使用周期性事件。</p>
 <p>服务器将所有时间事件放到一个无序链表，每当时间事件执行器运行，会遍历链表，查找已到达的时间事件，并调用相关事件处理器。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>《redis设计与实现》（第二版）</li>
+</ul>
+<p>I/O多路复用监听多个套接字，向文件事件派发器传送产生了事件的套接字，如果存在并发，I/O多路复用程序会将所有产生事件的套接字放到一个队列里，按顺序向事件派发器传送。派发器根据套接字产生的事件调用响应的事件处理器。</p>
+<h2 id="事件类型-1"><a href="#事件类型-1" class="headerlink" title="事件类型"></a>事件类型</h2><ul>
+<li>AE_READABLE事件</li>
+<li>AE_WRITABLE事件</li>
+</ul>
+<p>服务器监听套接字的AE_READABLE事件，Redis客户端发起连接，会触发连接应答处理器执行，处理器会对客户端连接请求应答，然后创建客户端套接字，以及客户端状态，并将客户端套接字的AE_READABLE事件与命令请求关联，使得客户端可以向主服务器发送命令请求。</p>
+<p>客户端向服务器发送一个命令请求，客户端套接字会产生一个AE_READABLE事件，引发命令请求处理器执行，处理器读取客户端命令，然后传给相应程序去执行。</p>
+<p>执行命令后产生相应的回复，需要传回给客户端，服务器会将客户端套接字的AE_WRITABLE事件与命令处理回复处理器进行关联。</p>
+<p>客户端尝试读取命令回复的时候，客户端套接字产生AE_WRITABLE事件，触发命令回复处理器执行，当命令回复处理器将命令全部写回套接字后，服务器就会解除客户端套接字的AE_WRITABLE事件与命令回复处理器间的关联。</p>
+<h1 id="时间事件-1"><a href="#时间事件-1" class="headerlink" title="时间事件"></a>时间事件</h1><p>Redis使用周期性事件。</p>
+<p>服务器将所有时间事件放到一个无序链表，每当时间事件执行器运行，会遍历链表，查找已到达的时间事件，并调用相关事件处理器。</p>
+<h1 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h1><ul>
 <li>《redis设计与实现》（第二版）</li>
 </ul>
 
@@ -399,7 +418,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#文件事件"><span class="nav-number">1.</span> <span class="nav-text">文件事件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#事件类型"><span class="nav-number">1.1.</span> <span class="nav-text">事件类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#时间事件"><span class="nav-number">2.</span> <span class="nav-text">时间事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#文件事件"><span class="nav-number">1.</span> <span class="nav-text">文件事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文件事件-1"><span class="nav-number">2.</span> <span class="nav-text">文件事件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#事件类型"><span class="nav-number">2.1.</span> <span class="nav-text">事件类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#时间事件"><span class="nav-number">3.</span> <span class="nav-text">时间事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#事件类型-1"><span class="nav-number">4.1.</span> <span class="nav-text">事件类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#时间事件-1"><span class="nav-number">5.</span> <span class="nav-text">时间事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-1"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

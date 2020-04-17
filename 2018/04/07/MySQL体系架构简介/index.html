@@ -272,6 +272,10 @@
 <a id="more"></a>
 
 <p>MySQL架构体系如图：</p>
+<p>MySQL逻辑架构可以分为三层：应用层、MySQL服务层、存储引擎层。</p>
+<!--more-->
+
+<p>MySQL架构体系如图：</p>
 <p><img src="MySQL-Architecture.png" alt="MySQL-Architecture"></p>
 <ul>
 <li>连接池组件</li>
@@ -297,6 +301,41 @@
 <li>缓存，提高查询效率。</li>
 </ul>
 <h1 id="存储引擎层"><a href="#存储引擎层" class="headerlink" title="存储引擎层"></a>存储引擎层</h1><ul>
+<li><p>存储引擎，与文件打交道的子系统，是插件式的表存储引擎。</p>
+</li>
+<li><p>物理文件，包括：redolog、undolog、binlog、errorlog、querylog、slowlog、data、index等。</p>
+</li>
+<li><p>连接池组件</p>
+</li>
+<li><p>管理服务和工具组件</p>
+</li>
+<li><p>SQL接口</p>
+</li>
+<li><p>SQL解析器</p>
+</li>
+<li><p>查询优化器</p>
+</li>
+<li><p>缓存组件</p>
+</li>
+<li><p>存储引擎，插件式表存储引擎</p>
+</li>
+<li><p>物理文件</p>
+</li>
+</ul>
+<h1 id="应用层-1"><a href="#应用层-1" class="headerlink" title="应用层"></a>应用层</h1><p>应用层也就是连接池组件，主要分为：</p>
+<ul>
+<li>连接处理，使用线程池</li>
+<li>用户鉴权，校验用户名密码</li>
+<li>安全管理，判断用户的权限，看用户有哪些可执行的操作</li>
+</ul>
+<h1 id="MySQL服务层-1"><a href="#MySQL服务层-1" class="headerlink" title="MySQL服务层"></a>MySQL服务层</h1><ul>
+<li>管理服务和工具组件，提供数据库管理功能：备份和恢复、安全管理、复制管理、集群管理、分区分库分表管理、元数据管理</li>
+<li>SQL接口，接收用户的SQL命令并处理：DML、DDL、存储过程、视图、触发器</li>
+<li>SQL解析器，解析查询语句，生成语法树。</li>
+<li>查询优化器，对查询语句进行优化，选择合适的索引等。</li>
+<li>缓存，提高查询效率。</li>
+</ul>
+<h1 id="存储引擎层-1"><a href="#存储引擎层-1" class="headerlink" title="存储引擎层"></a>存储引擎层</h1><ul>
 <li>存储引擎，与文件打交道的子系统，是插件式的表存储引擎。</li>
 <li>物理文件，包括：redolog、undolog、binlog、errorlog、querylog、slowlog、data、index等。</li>
 </ul>
@@ -411,7 +450,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#应用层"><span class="nav-number">1.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL服务层"><span class="nav-number">2.</span> <span class="nav-text">MySQL服务层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#存储引擎层"><span class="nav-number">3.</span> <span class="nav-text">存储引擎层</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#应用层"><span class="nav-number">1.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL服务层"><span class="nav-number">2.</span> <span class="nav-text">MySQL服务层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#存储引擎层"><span class="nav-number">3.</span> <span class="nav-text">存储引擎层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#应用层-1"><span class="nav-number">4.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL服务层-1"><span class="nav-number">5.</span> <span class="nav-text">MySQL服务层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#存储引擎层-1"><span class="nav-number">6.</span> <span class="nav-text">存储引擎层</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

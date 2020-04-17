@@ -30,6 +30,12 @@
 <meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-1.png">
 <meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-2.png">
 <meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-3.png">
+<meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-1.png">
+<meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-2.png">
+<meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-3.png">
+<meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-1.png">
+<meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-2.png">
+<meta property="og:image" content="http://dachengxi.github.com/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB-3.png">
 <meta property="article:published_time" content="2019-04-02T12:01:00.000Z">
 <meta property="article:modified_time" content="2020-03-27T09:55:08.490Z">
 <meta property="article:author" content="dachengxi">
@@ -295,7 +301,32 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">redisServer &#123;</span><br><span class="line">  <span class="comment">// 计数器，记录距离上一次成功执行SAVE或者BGSAVE命令后，服务器</span></span><br><span class="line">  <span class="comment">// 对数据库进行了多少次修改</span></span><br><span class="line">  <span class="keyword">long</span> <span class="keyword">long</span> dirty;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 上一次执行SAVE命令或者BGSAVE命令的时间</span></span><br><span class="line">  <span class="keyword">time_t</span> lastsave;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>Redis服务器会周期性的每隔100ms检查，如果条件满足了，就会执行BGSAVE命令。</p>
-<h2 id="RDB文件结构"><a href="#RDB文件结构" class="headerlink" title="RDB文件结构"></a>RDB文件结构</h2><p><img src="RDB-1.png" alt="RDB-1"></p>
+<h2 id="RDB文件结构"><a href="#RDB文件结构" class="headerlink" title="RDB文件结构"></a>RDB文件结构</h2><p>Redis可以将内存中的数据库状态持久化到磁盘中去，提供了两种持久化方法：RDB持久化和AOF持久化。</p>
+<!--more-->
+
+<h1 id="RDB持久化-1"><a href="#RDB持久化-1" class="headerlink" title="RDB持久化"></a>RDB持久化</h1><h2 id="RDB创建和加载-1"><a href="#RDB创建和加载-1" class="headerlink" title="RDB创建和加载"></a>RDB创建和加载</h2><p>RDB文件创建有两个命令：SAVE和BGSAVE</p>
+<ul>
+<li>SAVE，会阻塞Redis服务进程，直到RDB文件创建完毕，此期间服务器不能处理任何命令请求。</li>
+<li>BGSAVE，会派生一个子进程去创建RDB文件，服务器进程继续处理命令请求。</li>
+</ul>
+<p>RDB文件恢复是在服务器启动的时候自动执行的，只要Redis服务器启动时检测到RDB文件存在，就自动载入RDB文件，RDB载入期间，服务器会一直处于阻塞，直到载入完成才能提供服务。</p>
+<p>由于AOF文件更新频率会比RDB文件更新频率高，所以：</p>
+<ul>
+<li>如果开启了AOF，则优先使用AOF来还原数据库状态。</li>
+<li>如果AOF未开启，则使用RDB来还原数据库状态。</li>
+</ul>
+<p>另外，SAVE、BGSAVE、BGREWRITEAOF三个命令之间也会有一些互斥的关系：</p>
+<ul>
+<li>SAVE命令执行期间，Redis服务器会被阻塞，所有客户端的请求都会被拒绝。</li>
+<li>BGSAVE是子进程，在执行期间，SAVE命令会被拒绝，新的BGSAVE命令也会被拒绝。</li>
+<li>BGSAVE运行期间，BGREWRITEAOF命令会被延迟到BGSAVE命令执行完毕。</li>
+<li>BGREWRITEAOF执行期间，BGSAVE命令会被拒绝。</li>
+</ul>
+<h2 id="dirty计数器和lastsave属性-1"><a href="#dirty计数器和lastsave属性-1" class="headerlink" title="dirty计数器和lastsave属性"></a>dirty计数器和lastsave属性</h2><p>Redis服务器维持着一个dirty计数器和leastsave属性：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">redisServer &#123;</span><br><span class="line">  <span class="comment">// 计数器，记录距离上一次成功执行SAVE或者BGSAVE命令后，服务器</span></span><br><span class="line">  <span class="comment">// 对数据库进行了多少次修改</span></span><br><span class="line">  <span class="keyword">long</span> <span class="keyword">long</span> dirty;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 上一次执行SAVE命令或者BGSAVE命令的时间</span></span><br><span class="line">  <span class="keyword">time_t</span> lastsave;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Redis服务器会周期性的每隔100ms检查，如果条件满足了，就会执行BGSAVE命令。</p>
+<h2 id="RDB文件结构-1"><a href="#RDB文件结构-1" class="headerlink" title="RDB文件结构"></a>RDB文件结构</h2><p><img src="RDB-1.png" alt="RDB-1"></p>
 <ul>
 <li>REDIS，用来快速检查载入的文件是否是RDB文件</li>
 <li>db_verson，记录了RDB文件版本号。</li>
@@ -342,6 +373,208 @@
 <li>对新AOF文件改名，并原子的覆盖现有AOF文件，完成新旧文件的替换。</li>
 </ol>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><p>《redis设计与实现》（第二版）</p>
+</li>
+<li><p>REDIS，用来快速检查载入的文件是否是RDB文件</p>
+</li>
+<li><p>db_verson，记录了RDB文件版本号。</p>
+</li>
+<li><p>SELECTDB，程序读入这个值的时候表示接下来要读取的是数据库号码。</p>
+</li>
+<li><p>db_number，图中的0和3表示0号数据库和3号数据库，空的数据库不会有。</p>
+</li>
+<li><p>pairs，key_value_pairs保存了数据库中所有键值对数据，如果带有过期时间也会和键值对保存在一起。</p>
+</li>
+<li><p>EOF，表示RDB文件正文结束。</p>
+</li>
+<li><p>check_sum，通过对前面部分计算得出的一个校验和，用来检查RDB是否出错或损坏。</p>
+</li>
+</ul>
+<p>不带过期时间的键值对key_value_pairs：</p>
+<p>Redis可以将内存中的数据库状态持久化到磁盘中去，提供了两种持久化方法：RDB持久化和AOF持久化。</p>
+<!--more-->
+
+<h1 id="RDB持久化-2"><a href="#RDB持久化-2" class="headerlink" title="RDB持久化"></a>RDB持久化</h1><h2 id="RDB创建和加载-2"><a href="#RDB创建和加载-2" class="headerlink" title="RDB创建和加载"></a>RDB创建和加载</h2><p>RDB文件创建有两个命令：SAVE和BGSAVE</p>
+<ul>
+<li>SAVE，会阻塞Redis服务进程，直到RDB文件创建完毕，此期间服务器不能处理任何命令请求。</li>
+<li>BGSAVE，会派生一个子进程去创建RDB文件，服务器进程继续处理命令请求。</li>
+</ul>
+<p>RDB文件恢复是在服务器启动的时候自动执行的，只要Redis服务器启动时检测到RDB文件存在，就自动载入RDB文件，RDB载入期间，服务器会一直处于阻塞，直到载入完成才能提供服务。</p>
+<p>由于AOF文件更新频率会比RDB文件更新频率高，所以：</p>
+<ul>
+<li>如果开启了AOF，则优先使用AOF来还原数据库状态。</li>
+<li>如果AOF未开启，则使用RDB来还原数据库状态。</li>
+</ul>
+<p>另外，SAVE、BGSAVE、BGREWRITEAOF三个命令之间也会有一些互斥的关系：</p>
+<ul>
+<li>SAVE命令执行期间，Redis服务器会被阻塞，所有客户端的请求都会被拒绝。</li>
+<li>BGSAVE是子进程，在执行期间，SAVE命令会被拒绝，新的BGSAVE命令也会被拒绝。</li>
+<li>BGSAVE运行期间，BGREWRITEAOF命令会被延迟到BGSAVE命令执行完毕。</li>
+<li>BGREWRITEAOF执行期间，BGSAVE命令会被拒绝。</li>
+</ul>
+<h2 id="dirty计数器和lastsave属性-2"><a href="#dirty计数器和lastsave属性-2" class="headerlink" title="dirty计数器和lastsave属性"></a>dirty计数器和lastsave属性</h2><p>Redis服务器维持着一个dirty计数器和leastsave属性：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">redisServer &#123;</span><br><span class="line">  <span class="comment">// 计数器，记录距离上一次成功执行SAVE或者BGSAVE命令后，服务器</span></span><br><span class="line">  <span class="comment">// 对数据库进行了多少次修改</span></span><br><span class="line">  <span class="keyword">long</span> <span class="keyword">long</span> dirty;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 上一次执行SAVE命令或者BGSAVE命令的时间</span></span><br><span class="line">  <span class="keyword">time_t</span> lastsave;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Redis服务器会周期性的每隔100ms检查，如果条件满足了，就会执行BGSAVE命令。</p>
+<h2 id="RDB文件结构-2"><a href="#RDB文件结构-2" class="headerlink" title="RDB文件结构"></a>RDB文件结构</h2><p><img src="RDB-1.png" alt="RDB-1"></p>
+<ul>
+<li>REDIS，用来快速检查载入的文件是否是RDB文件</li>
+<li>db_verson，记录了RDB文件版本号。</li>
+<li>SELECTDB，程序读入这个值的时候表示接下来要读取的是数据库号码。</li>
+<li>db_number，图中的0和3表示0号数据库和3号数据库，空的数据库不会有。</li>
+<li>pairs，key_value_pairs保存了数据库中所有键值对数据，如果带有过期时间也会和键值对保存在一起。</li>
+<li>EOF，表示RDB文件正文结束。</li>
+<li>check_sum，通过对前面部分计算得出的一个校验和，用来检查RDB是否出错或损坏。</li>
+</ul>
+<p>不带过期时间的键值对key_value_pairs：</p>
+<p><img src="RDB-2.png" alt="RDB-2"></p>
+<p>带过期时间的键值对key_value_pairs：</p>
+<p><img src="RDB-3.png" alt="RDB-3"></p>
+<ul>
+<li>TYPE记录了value的类型。</li>
+<li>EXPIRETIME_MS，表示接下来读入的是一个毫秒为单位的过期时间。</li>
+<li>ms，毫秒为单位的UNIX时间戳，表示键值对的过期时间。</li>
+</ul>
+<h1 id="AOF持久化-1"><a href="#AOF持久化-1" class="headerlink" title="AOF持久化"></a>AOF持久化</h1><p>AOF（Append Only File），通过保存Redis服务器所执行的写命令来记录数据库状态，而RDB是保存数据库中的键值对数据来记录数据库状态。</p>
+<h2 id="AOF持久化实现-1"><a href="#AOF持久化实现-1" class="headerlink" title="AOF持久化实现"></a>AOF持久化实现</h2><p>AOF持久化功能实现分为：</p>
+<ul>
+<li>命令追加append，执行完一个写命令后，会以协议格式将写命令追加到服务器的aof_buff缓冲区末尾。</li>
+<li>文件写入</li>
+<li>文件同步sync</li>
+</ul>
+<p>文件写入和同步有三个选项appendfsync：</p>
+<ul>
+<li>always，每个事件都要将aof_buf缓冲区中所有内容写入到AOF文件中，并且同步AOF文件，效率最慢，但是最安全，出现故障只会丢失一个事件循环中的命令数据。</li>
+<li>everysec，每个事件循环都要将aof_buf缓冲区所有内容写到AOF文件，并且每隔一秒就要在子线程中对AOF进行同步一次，效率足够快，出现故障会丢失1秒的数据。默认选项是这个。</li>
+<li>no，每个事件循环都要将aof_buf缓冲区内容写到AOF文件中，但AOF文件同步则由操作系统决定，由于不进行同步操作，效率最好，但是出现故障丢失的数据是积累一段时间的数据。</li>
+</ul>
+<h2 id="AOF文件载入和数据还原-1"><a href="#AOF文件载入和数据还原-1" class="headerlink" title="AOF文件载入和数据还原"></a>AOF文件载入和数据还原</h2><p>服务器读取并重新执行一遍AOF文件中保存的写命令：</p>
+<ol>
+<li>创建一个不带网络连接的伪客户端</li>
+<li>从AOF文件中分析读取一条写命令</li>
+<li>使用伪客户端执行被读出的写命令</li>
+</ol>
+<h2 id="AOF重写-1"><a href="#AOF重写-1" class="headerlink" title="AOF重写"></a>AOF重写</h2><p>AOF持久化记录了被执行的写命令，AOF文件会越来越大，会对服务器造成影响，恢复时间也会很长，AOF采用重写rewrite来解决文件膨胀问题，创建一个新的AOF文件代替现有的AOF文件，新旧文件保存的数据库状态相同，但是新文件不会包含冗余的命令，体积会比旧文件小很多。</p>
+<p>简单说就是根据数据库现有状态，将现有一个键值对的数据汇总成一条写命令，而不是原来的若干条命令。这样就减少了AOF文件的大小。</p>
+<h2 id="AOF后台重写-1"><a href="#AOF后台重写-1" class="headerlink" title="AOF后台重写"></a>AOF后台重写</h2><p>由于AOF重写会阻塞服务，所以需要采用后台重写，后台重写使用子进程来处理。子进程开始重写文件后，主进程还在继续提供服务，会有新的命令进来，会造成重写后的AOF文件和数据库状态不一致，Redis使用AOF重写缓冲区来解决，Redis服务器执行一个写命令后，会同时将这个命令发送给AOF缓冲区和AOF重写缓冲区。</p>
+<p>子进程完成AOF重写工作后，会向父进程发一个信号，父进程会调用处理函数：</p>
+<ol>
+<li>将AOF重写缓冲区所有内容写到新的AOF文件中，新的AOF文件和服务器当前数据库状态就保持一致了。</li>
+<li>对新AOF文件改名，并原子的覆盖现有AOF文件，完成新旧文件的替换。</li>
+</ol>
+<h1 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>《redis设计与实现》（第二版）</li>
+</ul>
+<p>带过期时间的键值对key_value_pairs：</p>
+<p>Redis可以将内存中的数据库状态持久化到磁盘中去，提供了两种持久化方法：RDB持久化和AOF持久化。</p>
+<!--more-->
+
+<h1 id="RDB持久化-3"><a href="#RDB持久化-3" class="headerlink" title="RDB持久化"></a>RDB持久化</h1><h2 id="RDB创建和加载-3"><a href="#RDB创建和加载-3" class="headerlink" title="RDB创建和加载"></a>RDB创建和加载</h2><p>RDB文件创建有两个命令：SAVE和BGSAVE</p>
+<ul>
+<li>SAVE，会阻塞Redis服务进程，直到RDB文件创建完毕，此期间服务器不能处理任何命令请求。</li>
+<li>BGSAVE，会派生一个子进程去创建RDB文件，服务器进程继续处理命令请求。</li>
+</ul>
+<p>RDB文件恢复是在服务器启动的时候自动执行的，只要Redis服务器启动时检测到RDB文件存在，就自动载入RDB文件，RDB载入期间，服务器会一直处于阻塞，直到载入完成才能提供服务。</p>
+<p>由于AOF文件更新频率会比RDB文件更新频率高，所以：</p>
+<ul>
+<li>如果开启了AOF，则优先使用AOF来还原数据库状态。</li>
+<li>如果AOF未开启，则使用RDB来还原数据库状态。</li>
+</ul>
+<p>另外，SAVE、BGSAVE、BGREWRITEAOF三个命令之间也会有一些互斥的关系：</p>
+<ul>
+<li>SAVE命令执行期间，Redis服务器会被阻塞，所有客户端的请求都会被拒绝。</li>
+<li>BGSAVE是子进程，在执行期间，SAVE命令会被拒绝，新的BGSAVE命令也会被拒绝。</li>
+<li>BGSAVE运行期间，BGREWRITEAOF命令会被延迟到BGSAVE命令执行完毕。</li>
+<li>BGREWRITEAOF执行期间，BGSAVE命令会被拒绝。</li>
+</ul>
+<h2 id="dirty计数器和lastsave属性-3"><a href="#dirty计数器和lastsave属性-3" class="headerlink" title="dirty计数器和lastsave属性"></a>dirty计数器和lastsave属性</h2><p>Redis服务器维持着一个dirty计数器和leastsave属性：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">redisServer &#123;</span><br><span class="line">  <span class="comment">// 计数器，记录距离上一次成功执行SAVE或者BGSAVE命令后，服务器</span></span><br><span class="line">  <span class="comment">// 对数据库进行了多少次修改</span></span><br><span class="line">  <span class="keyword">long</span> <span class="keyword">long</span> dirty;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 上一次执行SAVE命令或者BGSAVE命令的时间</span></span><br><span class="line">  <span class="keyword">time_t</span> lastsave;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Redis服务器会周期性的每隔100ms检查，如果条件满足了，就会执行BGSAVE命令。</p>
+<h2 id="RDB文件结构-3"><a href="#RDB文件结构-3" class="headerlink" title="RDB文件结构"></a>RDB文件结构</h2><p><img src="RDB-1.png" alt="RDB-1"></p>
+<ul>
+<li>REDIS，用来快速检查载入的文件是否是RDB文件</li>
+<li>db_verson，记录了RDB文件版本号。</li>
+<li>SELECTDB，程序读入这个值的时候表示接下来要读取的是数据库号码。</li>
+<li>db_number，图中的0和3表示0号数据库和3号数据库，空的数据库不会有。</li>
+<li>pairs，key_value_pairs保存了数据库中所有键值对数据，如果带有过期时间也会和键值对保存在一起。</li>
+<li>EOF，表示RDB文件正文结束。</li>
+<li>check_sum，通过对前面部分计算得出的一个校验和，用来检查RDB是否出错或损坏。</li>
+</ul>
+<p>不带过期时间的键值对key_value_pairs：</p>
+<p><img src="RDB-2.png" alt="RDB-2"></p>
+<p>带过期时间的键值对key_value_pairs：</p>
+<p><img src="RDB-3.png" alt="RDB-3"></p>
+<ul>
+<li>TYPE记录了value的类型。</li>
+<li>EXPIRETIME_MS，表示接下来读入的是一个毫秒为单位的过期时间。</li>
+<li>ms，毫秒为单位的UNIX时间戳，表示键值对的过期时间。</li>
+</ul>
+<h1 id="AOF持久化-2"><a href="#AOF持久化-2" class="headerlink" title="AOF持久化"></a>AOF持久化</h1><p>AOF（Append Only File），通过保存Redis服务器所执行的写命令来记录数据库状态，而RDB是保存数据库中的键值对数据来记录数据库状态。</p>
+<h2 id="AOF持久化实现-2"><a href="#AOF持久化实现-2" class="headerlink" title="AOF持久化实现"></a>AOF持久化实现</h2><p>AOF持久化功能实现分为：</p>
+<ul>
+<li>命令追加append，执行完一个写命令后，会以协议格式将写命令追加到服务器的aof_buff缓冲区末尾。</li>
+<li>文件写入</li>
+<li>文件同步sync</li>
+</ul>
+<p>文件写入和同步有三个选项appendfsync：</p>
+<ul>
+<li>always，每个事件都要将aof_buf缓冲区中所有内容写入到AOF文件中，并且同步AOF文件，效率最慢，但是最安全，出现故障只会丢失一个事件循环中的命令数据。</li>
+<li>everysec，每个事件循环都要将aof_buf缓冲区所有内容写到AOF文件，并且每隔一秒就要在子线程中对AOF进行同步一次，效率足够快，出现故障会丢失1秒的数据。默认选项是这个。</li>
+<li>no，每个事件循环都要将aof_buf缓冲区内容写到AOF文件中，但AOF文件同步则由操作系统决定，由于不进行同步操作，效率最好，但是出现故障丢失的数据是积累一段时间的数据。</li>
+</ul>
+<h2 id="AOF文件载入和数据还原-2"><a href="#AOF文件载入和数据还原-2" class="headerlink" title="AOF文件载入和数据还原"></a>AOF文件载入和数据还原</h2><p>服务器读取并重新执行一遍AOF文件中保存的写命令：</p>
+<ol>
+<li>创建一个不带网络连接的伪客户端</li>
+<li>从AOF文件中分析读取一条写命令</li>
+<li>使用伪客户端执行被读出的写命令</li>
+</ol>
+<h2 id="AOF重写-2"><a href="#AOF重写-2" class="headerlink" title="AOF重写"></a>AOF重写</h2><p>AOF持久化记录了被执行的写命令，AOF文件会越来越大，会对服务器造成影响，恢复时间也会很长，AOF采用重写rewrite来解决文件膨胀问题，创建一个新的AOF文件代替现有的AOF文件，新旧文件保存的数据库状态相同，但是新文件不会包含冗余的命令，体积会比旧文件小很多。</p>
+<p>简单说就是根据数据库现有状态，将现有一个键值对的数据汇总成一条写命令，而不是原来的若干条命令。这样就减少了AOF文件的大小。</p>
+<h2 id="AOF后台重写-2"><a href="#AOF后台重写-2" class="headerlink" title="AOF后台重写"></a>AOF后台重写</h2><p>由于AOF重写会阻塞服务，所以需要采用后台重写，后台重写使用子进程来处理。子进程开始重写文件后，主进程还在继续提供服务，会有新的命令进来，会造成重写后的AOF文件和数据库状态不一致，Redis使用AOF重写缓冲区来解决，Redis服务器执行一个写命令后，会同时将这个命令发送给AOF缓冲区和AOF重写缓冲区。</p>
+<p>子进程完成AOF重写工作后，会向父进程发一个信号，父进程会调用处理函数：</p>
+<ol>
+<li>将AOF重写缓冲区所有内容写到新的AOF文件中，新的AOF文件和服务器当前数据库状态就保持一致了。</li>
+<li>对新AOF文件改名，并原子的覆盖现有AOF文件，完成新旧文件的替换。</li>
+</ol>
+<h1 id="参考-2"><a href="#参考-2" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><p>《redis设计与实现》（第二版）</p>
+</li>
+<li><p>TYPE记录了value的类型。</p>
+</li>
+<li><p>EXPIRETIME_MS，表示接下来读入的是一个毫秒为单位的过期时间。</p>
+</li>
+<li><p>ms，毫秒为单位的UNIX时间戳，表示键值对的过期时间。</p>
+</li>
+</ul>
+<h1 id="AOF持久化-3"><a href="#AOF持久化-3" class="headerlink" title="AOF持久化"></a>AOF持久化</h1><p>AOF（Append Only File），通过保存Redis服务器所执行的写命令来记录数据库状态，而RDB是保存数据库中的键值对数据来记录数据库状态。</p>
+<h2 id="AOF持久化实现-3"><a href="#AOF持久化实现-3" class="headerlink" title="AOF持久化实现"></a>AOF持久化实现</h2><p>AOF持久化功能实现分为：</p>
+<ul>
+<li>命令追加append，执行完一个写命令后，会以协议格式将写命令追加到服务器的aof_buff缓冲区末尾。</li>
+<li>文件写入</li>
+<li>文件同步sync</li>
+</ul>
+<p>文件写入和同步有三个选项appendfsync：</p>
+<ul>
+<li>always，每个事件都要将aof_buf缓冲区中所有内容写入到AOF文件中，并且同步AOF文件，效率最慢，但是最安全，出现故障只会丢失一个事件循环中的命令数据。</li>
+<li>everysec，每个事件循环都要将aof_buf缓冲区所有内容写到AOF文件，并且每隔一秒就要在子线程中对AOF进行同步一次，效率足够快，出现故障会丢失1秒的数据。默认选项是这个。</li>
+<li>no，每个事件循环都要将aof_buf缓冲区内容写到AOF文件中，但AOF文件同步则由操作系统决定，由于不进行同步操作，效率最好，但是出现故障丢失的数据是积累一段时间的数据。</li>
+</ul>
+<h2 id="AOF文件载入和数据还原-3"><a href="#AOF文件载入和数据还原-3" class="headerlink" title="AOF文件载入和数据还原"></a>AOF文件载入和数据还原</h2><p>服务器读取并重新执行一遍AOF文件中保存的写命令：</p>
+<ol>
+<li>创建一个不带网络连接的伪客户端</li>
+<li>从AOF文件中分析读取一条写命令</li>
+<li>使用伪客户端执行被读出的写命令</li>
+</ol>
+<h2 id="AOF重写-3"><a href="#AOF重写-3" class="headerlink" title="AOF重写"></a>AOF重写</h2><p>AOF持久化记录了被执行的写命令，AOF文件会越来越大，会对服务器造成影响，恢复时间也会很长，AOF采用重写rewrite来解决文件膨胀问题，创建一个新的AOF文件代替现有的AOF文件，新旧文件保存的数据库状态相同，但是新文件不会包含冗余的命令，体积会比旧文件小很多。</p>
+<p>简单说就是根据数据库现有状态，将现有一个键值对的数据汇总成一条写命令，而不是原来的若干条命令。这样就减少了AOF文件的大小。</p>
+<h2 id="AOF后台重写-3"><a href="#AOF后台重写-3" class="headerlink" title="AOF后台重写"></a>AOF后台重写</h2><p>由于AOF重写会阻塞服务，所以需要采用后台重写，后台重写使用子进程来处理。子进程开始重写文件后，主进程还在继续提供服务，会有新的命令进来，会造成重写后的AOF文件和数据库状态不一致，Redis使用AOF重写缓冲区来解决，Redis服务器执行一个写命令后，会同时将这个命令发送给AOF缓冲区和AOF重写缓冲区。</p>
+<p>子进程完成AOF重写工作后，会向父进程发一个信号，父进程会调用处理函数：</p>
+<ol>
+<li>将AOF重写缓冲区所有内容写到新的AOF文件中，新的AOF文件和服务器当前数据库状态就保持一致了。</li>
+<li>对新AOF文件改名，并原子的覆盖现有AOF文件，完成新旧文件的替换。</li>
+</ol>
+<h1 id="参考-3"><a href="#参考-3" class="headerlink" title="参考"></a>参考</h1><ul>
 <li>《redis设计与实现》（第二版）</li>
 </ul>
 
@@ -455,7 +688,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RDB持久化"><span class="nav-number">1.</span> <span class="nav-text">RDB持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB创建和加载"><span class="nav-number">1.1.</span> <span class="nav-text">RDB创建和加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dirty计数器和lastsave属性"><span class="nav-number">1.2.</span> <span class="nav-text">dirty计数器和lastsave属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB文件结构"><span class="nav-number">1.3.</span> <span class="nav-text">RDB文件结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AOF持久化"><span class="nav-number">2.</span> <span class="nav-text">AOF持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF持久化实现"><span class="nav-number">2.1.</span> <span class="nav-text">AOF持久化实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF文件载入和数据还原"><span class="nav-number">2.2.</span> <span class="nav-text">AOF文件载入和数据还原</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF重写"><span class="nav-number">2.3.</span> <span class="nav-text">AOF重写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF后台重写"><span class="nav-number">2.4.</span> <span class="nav-text">AOF后台重写</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RDB持久化"><span class="nav-number">1.</span> <span class="nav-text">RDB持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB创建和加载"><span class="nav-number">1.1.</span> <span class="nav-text">RDB创建和加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dirty计数器和lastsave属性"><span class="nav-number">1.2.</span> <span class="nav-text">dirty计数器和lastsave属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB文件结构"><span class="nav-number">1.3.</span> <span class="nav-text">RDB文件结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RDB持久化-1"><span class="nav-number">2.</span> <span class="nav-text">RDB持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB创建和加载-1"><span class="nav-number">2.1.</span> <span class="nav-text">RDB创建和加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dirty计数器和lastsave属性-1"><span class="nav-number">2.2.</span> <span class="nav-text">dirty计数器和lastsave属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB文件结构-1"><span class="nav-number">2.3.</span> <span class="nav-text">RDB文件结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AOF持久化"><span class="nav-number">3.</span> <span class="nav-text">AOF持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF持久化实现"><span class="nav-number">3.1.</span> <span class="nav-text">AOF持久化实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF文件载入和数据还原"><span class="nav-number">3.2.</span> <span class="nav-text">AOF文件载入和数据还原</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF重写"><span class="nav-number">3.3.</span> <span class="nav-text">AOF重写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF后台重写"><span class="nav-number">3.4.</span> <span class="nav-text">AOF后台重写</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RDB持久化-2"><span class="nav-number">5.</span> <span class="nav-text">RDB持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB创建和加载-2"><span class="nav-number">5.1.</span> <span class="nav-text">RDB创建和加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dirty计数器和lastsave属性-2"><span class="nav-number">5.2.</span> <span class="nav-text">dirty计数器和lastsave属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB文件结构-2"><span class="nav-number">5.3.</span> <span class="nav-text">RDB文件结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AOF持久化-1"><span class="nav-number">6.</span> <span class="nav-text">AOF持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF持久化实现-1"><span class="nav-number">6.1.</span> <span class="nav-text">AOF持久化实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF文件载入和数据还原-1"><span class="nav-number">6.2.</span> <span class="nav-text">AOF文件载入和数据还原</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF重写-1"><span class="nav-number">6.3.</span> <span class="nav-text">AOF重写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF后台重写-1"><span class="nav-number">6.4.</span> <span class="nav-text">AOF后台重写</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-1"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RDB持久化-3"><span class="nav-number">8.</span> <span class="nav-text">RDB持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB创建和加载-3"><span class="nav-number">8.1.</span> <span class="nav-text">RDB创建和加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dirty计数器和lastsave属性-3"><span class="nav-number">8.2.</span> <span class="nav-text">dirty计数器和lastsave属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB文件结构-3"><span class="nav-number">8.3.</span> <span class="nav-text">RDB文件结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AOF持久化-2"><span class="nav-number">9.</span> <span class="nav-text">AOF持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF持久化实现-2"><span class="nav-number">9.1.</span> <span class="nav-text">AOF持久化实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF文件载入和数据还原-2"><span class="nav-number">9.2.</span> <span class="nav-text">AOF文件载入和数据还原</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF重写-2"><span class="nav-number">9.3.</span> <span class="nav-text">AOF重写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF后台重写-2"><span class="nav-number">9.4.</span> <span class="nav-text">AOF后台重写</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-2"><span class="nav-number">10.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AOF持久化-3"><span class="nav-number">11.</span> <span class="nav-text">AOF持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF持久化实现-3"><span class="nav-number">11.1.</span> <span class="nav-text">AOF持久化实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF文件载入和数据还原-3"><span class="nav-number">11.2.</span> <span class="nav-text">AOF文件载入和数据还原</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF重写-3"><span class="nav-number">11.3.</span> <span class="nav-text">AOF重写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF后台重写-3"><span class="nav-number">11.4.</span> <span class="nav-text">AOF后台重写</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-3"><span class="nav-number">12.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
