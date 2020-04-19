@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://dachengxi.github.com/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/JVM_Internal_Architecture.png">
 <meta property="article:published_time" content="2017-07-08T03:42:10.000Z">
-<meta property="article:modified_time" content="2020-04-17T15:40:15.567Z">
+<meta property="article:modified_time" content="2020-04-19T11:13:18.019Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -302,7 +302,7 @@
 <li>使用new关键字创建String对象，比如<code>String s = new String(&quot;abcd&quot;);</code>，如果字符串常量池中不存在这个字符串常量，会创建两个对象，一个是在字符串常量池中的字符串常量：abcd，一个是在堆中的String对象，返回给变量的是String对象引用。如果字符串常量池中已经存在这个字符串常量，则会创建一个对象，是在堆中的String对象，返回给变量的是String对象引用。</li>
 </ul>
 <h2 id="字符串常量池的位置"><a href="#字符串常量池的位置" class="headerlink" title="字符串常量池的位置"></a>字符串常量池的位置</h2><ul>
-<li>HotSpot在JDK1.6以及之前，字符串常量池在方法区中，属于运行时常量池。</li>
+<li>HotSpot在JDK1.6以及之前，字符串常量池在永久代中。</li>
 <li>在JDK1.7以及之后，字符串常量池移动到了堆中。</li>
 </ul>
 <h2 id="字符串常量池的实现"><a href="#字符串常量池的实现" class="headerlink" title="字符串常量池的实现"></a>字符串常量池的实现</h2><p>在HotSpot中，字符串常量池是一个叫做StringTable的全局的哈希表，也就是一个Hashtable。</p>
@@ -362,8 +362,8 @@
       <i class="fa fa-chevron-left"></i> JVM空间分配担保
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/" rel="next" title="上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题">
-      上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题 <i class="fa fa-chevron-right"></i>
+    <a href="/2017/07/14/JVM%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95%E5%8C%BA%E3%80%81%E6%B0%B8%E4%B9%85%E4%BB%A3%E4%BB%A5%E5%8F%8AMetaspace/" rel="next" title="JVM中的方法区、永久代以及Metaspace">
+      JVM中的方法区、永久代以及Metaspace <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -447,7 +447,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-count">149</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
