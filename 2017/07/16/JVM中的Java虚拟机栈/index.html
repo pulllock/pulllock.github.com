@@ -28,7 +28,7 @@
 <meta property="og:description" content="JVM中的Java虚拟机栈学习。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2017-07-16T11:59:31.000Z">
-<meta property="article:modified_time" content="2020-04-19T12:52:17.968Z">
+<meta property="article:modified_time" content="2020-04-20T13:08:05.604Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -278,13 +278,60 @@
 <h1 id="动态链接"><a href="#动态链接" class="headerlink" title="动态链接"></a>动态链接</h1><p>栈帧内部包含一个指向运行时常量池的引用来支持当前方法的代码实现动态链接。Class文件中通过符号引用来描述一个方法调用其他方法或者访问其成员变量，动态链接作用就是将符号引用转换为直接引用。</p>
 <p>Class文件中的符号引用一部分会在类加载阶段或者第一次使用的时候被转化为直接引用，称为静态解析；另外一部分在每一次运行期间都转化为直接引用，称为动态链接。</p>
 <p>在类加载的解析阶段，其中一部分符号引用会转化为直接引用，也就是方法在程序运行之前就有一个可确定的调用版本，并且这个调用版本在运行时是不可变的，在编译期间就完全确定，主要有：静态方法、私有方法、实例构造器、父类方法、被final修饰的方法。</p>
-<h2 id="分派"><a href="#分派" class="headerlink" title="分派"></a>分派</h2><h1 id="方法返回地址"><a href="#方法返回地址" class="headerlink" title="方法返回地址"></a>方法返回地址</h1><p>一个方法执行完毕，需要返回之前调用的地方，栈帧中需要保存一个方法的返回地址。</p>
+<h2 id="分派"><a href="#分派" class="headerlink" title="分派"></a>分派</h2><p>分派分为：</p>
+<ul>
+<li>静态分派：静态单分派、静态多分派</li>
+<li>动态分派：动态单分派、动态多分派</li>
+</ul>
+<h2 id="静态分派"><a href="#静态分派" class="headerlink" title="静态分派"></a>静态分派</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码<code>A a = new B();</code>中：</p>
+<ul>
+<li>A称为变量的静态类型（Static Type）或者叫外观类型（Apparent Type）</li>
+<li>B称为变量的实际类型（Actual Type）或者叫运行时类型（Runtime Type）。</li>
+</ul>
+<p>静态类型和实际类型在程序中都可能会发生变化：</p>
+<ul>
+<li>静态类型的变化仅仅在使用时发生，变量本身的静态类型不会改变，最终的静态类型在编译期是可知的；</li>
+<li>实际类型变化的结果在运行期才可确定，编译器在编译程序的时候并不知道对象的实际类型是什么。</li>
+</ul>
+<p>所有依赖静态类型来决定方法执行版本的分派，称为静态分派，发生在编译阶段，典型应用：方法重载。</p>
+<h2 id="动态分派"><a href="#动态分派" class="headerlink" title="动态分派"></a>动态分派</h2><p>动态分派和重写有密切关系。</p>
+<p>invokevirtual指令运行时的解析过程：</p>
+<ul>
+<li>找到操作数栈顶的第一个元素所指向的对象的实际类型，计作C。</li>
+<li>如果在类型C中找到与常量中的描述符和简单名称都相符的方法，则进行访问权限校验，如果通过则返回这个方法的直接引用，查找结束；不通过则返回IllegalAccessError异常。</li>
+<li>如果找不到，则按照继承关系从下往上依次对C的各个父类进行第二步的搜索和验证。</li>
+<li>如果没有找到合适的方法，抛出AbstractMethodError异常。</li>
+</ul>
+<p>invokevirtual第一步在运行期确定接收者的实际类型，invokevirtual指令不是把常量池中方法的符号引用解析到直接引用上就完成了，还会根据方法接收者的实际类型来选择方法版本，这就是Java中的重写本质。</p>
+<p>这种在运行期根据实际类型确定方法执行版本的分派过程称为动态分派。</p>
+<h2 id="单分派和多分派"><a href="#单分派和多分派" class="headerlink" title="单分派和多分派"></a>单分派和多分派</h2><p>方法的接收者和方法的参数称为方法的宗量，根据分派基于多少种宗量，可以将分派分为单分派和多分派：</p>
+<ul>
+<li>单分派，根据一个宗量对目标方法进行选择。Java的动态分派属于单分派。</li>
+<li>多分派，根据多个宗量对目标方法进行选择。Java的静态分派属于多分派。</li>
+</ul>
+<p>Java是静态多分派、动态单分派。</p>
+<h2 id="虚拟机动态分派的实现"><a href="#虚拟机动态分派的实现" class="headerlink" title="虚拟机动态分派的实现"></a>虚拟机动态分派的实现</h2><p>动态分派的方法版本选择过程需要运行时在接收者类型的方法元数据中搜索合适的目标方法，JVM机遇性能考虑，运行时不会反复搜素类型元数据，而是在方法区建立一个虚方法表，用来代替元数据查找，提高性能。</p>
+<p>虚方法表中存放各个方法的实际入口地址，某个方法没有被子类重写，子类的虚方法表中的地址入口和父类相同方法的入口是一样的，都指向父类的实现入口。如果子类重写了这个方法，子类虚方法表的地址会被替换为子类实现版本的入口地址。</p>
+<h2 id="类加载的解析阶段回顾"><a href="#类加载的解析阶段回顾" class="headerlink" title="类加载的解析阶段回顾"></a>类加载的解析阶段回顾</h2><p>熟悉了上面的之后，可以回头来看下类加载的解析阶段。类加载过程有：加载、连接（验证、准备、解析）、初始化，其中的解析阶段是将常量池中的符号引用转换为直接引用，但是Java虚拟机规范中没有规定解析阶段发生的具体时间，只要求了在执行anewarray、checkcast、getfield、getstatic、instanceof、invokedynamic、invokeinterface、invokespecial、invokestatic、invokevirtual、ldc、ldc_w、ldc2_w、multianewarray、new、putfield和putstatic这17个用于操作符号引用的字节码指令之前，先对它们所使用的符号引用进行解析。所以虚拟机实现可以根据需<br>要来自行判断，到底是在类被加载器加载时就对常量池中的符号引用进行解析，还是等到一个符号引用将要被使用前才去解析它。</p>
+<ul>
+<li><p>在类加载的解析阶段，其中一部分符号引用会转化为直接引用，也就是方法在程序运行之前就有一个可确定的调用版本，并且这个调用版本在运行时是不可变的，在编译期间就完全确定，主要有：静态方法、私有方法、实例构造器、父类方法、被final修饰的方法。</p>
+</li>
+<li><p>动态分派可以在运行时进行解析。</p>
+</li>
+</ul>
+<h1 id="方法返回地址"><a href="#方法返回地址" class="headerlink" title="方法返回地址"></a>方法返回地址</h1><p>一个方法执行完毕，需要返回之前调用的地方，栈帧中需要保存一个方法的返回地址。</p>
 <p><strong>方法正常调用完成</strong></p>
 <p>在方法的执行过程中没有任何异常（JVM抛出的异常和throw显式抛出的异常）抛出，就是正常调用完成。正常调用完成可能会有返回值返回给调用者。</p>
 <p><strong>方法异常调用完成</strong></p>
 <p>异常调用是指JVM抛出的异常或者throw显式抛出的异常，并且异常在该方法中没有处理，方法就不会有返回值返回给调用者。</p>
 <p>无论正常还是异常调用完成，都必须返回到方法被调用的位置，方法返回时需要在栈帧中保存一些信息，用来恢复调用者这个方法的那个方法的执行状态。方法正常调用完成，调用者的程序计数器可以作为返回地址；方法异常完成，返回地址使用异常处理器表来确定。</p>
 <p>方法退出的过程实际上等同于把当前栈帧出栈，因此退出时可能执行的操作有：恢复上层方法的<br>局部变量表和操作数栈，把返回值（如果有的话）压入调用者栈帧的操作数栈中，调整PC计数器的值以指向方法调用指令后面的一条指令等。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>《深入理解Java虚拟机》</li>
+<li>《Java虚拟机规范》</li>
+</ul>
 
     </div>
 
@@ -396,7 +443,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#栈帧"><span class="nav-number">1.</span> <span class="nav-text">栈帧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#局部变量表"><span class="nav-number">2.</span> <span class="nav-text">局部变量表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#操作数栈"><span class="nav-number">3.</span> <span class="nav-text">操作数栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#动态链接"><span class="nav-number">4.</span> <span class="nav-text">动态链接</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分派"><span class="nav-number">4.1.</span> <span class="nav-text">分派</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法返回地址"><span class="nav-number">5.</span> <span class="nav-text">方法返回地址</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#栈帧"><span class="nav-number">1.</span> <span class="nav-text">栈帧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#局部变量表"><span class="nav-number">2.</span> <span class="nav-text">局部变量表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#操作数栈"><span class="nav-number">3.</span> <span class="nav-text">操作数栈</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#动态链接"><span class="nav-number">4.</span> <span class="nav-text">动态链接</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分派"><span class="nav-number">4.1.</span> <span class="nav-text">分派</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#静态分派"><span class="nav-number">4.2.</span> <span class="nav-text">静态分派</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态分派"><span class="nav-number">4.3.</span> <span class="nav-text">动态分派</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单分派和多分派"><span class="nav-number">4.4.</span> <span class="nav-text">单分派和多分派</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚拟机动态分派的实现"><span class="nav-number">4.5.</span> <span class="nav-text">虚拟机动态分派的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载的解析阶段回顾"><span class="nav-number">4.6.</span> <span class="nav-text">类加载的解析阶段回顾</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法返回地址"><span class="nav-number">5.</span> <span class="nav-text">方法返回地址</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
