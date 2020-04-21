@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JVM中的Class类文件结构学习。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM中的Class类文件结构">
+<meta property="og:url" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="大程熙">
+<meta property="og:description" content="JVM中的Class类文件结构学习。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/descriptor.png">
+<meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/constant-pool-1.png">
+<meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/constant-pool-2.png">
+<meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/access_flags.png">
+<meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/field_access_flags.png">
+<meta property="article:published_time" content="2017-08-19T09:48:33.000Z">
+<meta property="article:modified_time" content="2020-04-21T15:14:37.608Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/descriptor.png">
+
+<link rel="canonical" href="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JVM中的Class类文件结构 | 大程熙</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">大程熙</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">小角落</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-book">
+
+    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大程熙">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM中的Class类文件结构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-08-19 17:48:33 17:48:33" itemprop="dateCreated datePublished" datetime="2017-08-19T17:48:33+08:00">2017-08-19 17:48:33</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/19/JVM中的Class类文件结构/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>JVM中的Class类文件结构学习。</p>
+<a id="more"></a>
+
+<p>Class文件是一组以8字节位基础单位的二进制流，使用类似C语言结构体的伪结构存储数据，只有两种数据类型：无符号数和表。</p>
+<p>无符号数用来描述数字、索引引用、数量值或者按照UTF8编码构成的字符串值，分为：</p>
+<ul>
+<li>u1，1个字节</li>
+<li>u2，2个字节</li>
+<li>u4，4个字节</li>
+<li>u8，8个字节</li>
+</ul>
+<p>表由多个无符号数或者其他表作为数据项，构成了复合数据类型。</p>
+<p>文件格式如下表：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u4</td>
+<td>magic</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>minor_version</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>major_version</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>constant_pool_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>cp_info</td>
+<td>constant_pool</td>
+<td>constant_pool_count - 1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>access_flags</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>this_class</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>super_class</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>interfaces_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>interfaces</td>
+<td>interfaces_count</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>fields_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>field_info</td>
+<td>fields</td>
+<td>fields_count</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>methods_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>method_info</td>
+<td>methods</td>
+<td>methods_count</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>attributes_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>attribute_info</td>
+<td>attributes</td>
+<td>attributes_count</td>
+</tr>
+</tbody></table>
+<p>可以这样记忆，前面几个先记住：</p>
+<ul>
+<li>魔数</li>
+<li>次版本号</li>
+<li>主版本号</li>
+<li>常量池数量</li>
+<li>常量池</li>
+</ul>
+<p>后面几个按照我们平时写一个类的顺序来记忆：</p>
+<ul>
+<li>访问标志</li>
+<li>this_class</li>
+<li>父类</li>
+<li>接口数量</li>
+<li>接口</li>
+<li>字段数量</li>
+<li>字段</li>
+<li>方法数量</li>
+<li>方法</li>
+<li>属性数量</li>
+<li>属性</li>
+</ul>
+<h1 id="描述符"><a href="#描述符" class="headerlink" title="描述符"></a>描述符</h1><p>描述符用来描述：</p>
+<ul>
+<li>字段的数据类型</li>
+<li>方法的参数列表（包括数量、类型以及顺序）</li>
+<li>返回值</li>
+</ul>
+<p>描述符标识字符含义：</p>
+<img src="/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/descriptor.png" class="image-20200421204704104">
+
+<ul>
+<li>数组类型，每一维度使用一个前置的<code>[</code>字符来描述。</li>
+<li>描述方法时，按照先参数列表，后返回值的顺序描述</li>
+</ul>
+<h1 id="魔数"><a href="#魔数" class="headerlink" title="魔数"></a>魔数</h1><p>Class文件头4个字节是魔数Magic Number，用来确定这个文件是否为一个能被虚拟机接受的Class文件，值是：0xCAFEBABE</p>
+<h1 id="主次版本号"><a href="#主次版本号" class="headerlink" title="主次版本号"></a>主次版本号</h1><p>第5个字节和6个字节是次版本号Minor Version，第7字节和8字节是主版本号Major Version。</p>
+<p>高版本的JDK能向下兼容以前版本的Class文件，但不能运行更高版本的Class文件。</p>
+<h1 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h1><p>一个u2类型表示常量池的容量计数constant_pool_count，从1开始。</p>
+<p>常量池主要用来存放：字面量和符号引用。</p>
+<ul>
+<li>字面量比较接近Java语言层面的常量概念，比如：文本字符串、被声明为final的常量值等。</li>
+<li>符号引用，主要包括：<ul>
+<li>被模块导出或者开放的包（Package）</li>
+<li>类和接口的全限定名（Fully Qualified Name）</li>
+<li>字段的名称和描述符（Descriptor）</li>
+<li>方法的名称和描述符</li>
+<li>方法句柄和方法类型（Method Handle、Method Type、Invoke Dynamic）</li>
+<li>动态调用点和动态常量（Dynamically-Computed Call Site、Dynamically-Computed Constant）</li>
+</ul>
+</li>
+</ul>
+<p>常量池中的常量都是一个表，表的其实第一位是u1类型的标志位，代表当前常量属于哪种常量类型，共有17种常量类型：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>标志</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CONSTANT_Utf8_info</td>
+<td>1</td>
+<td>UTF-8编码的字符串</td>
+</tr>
+<tr>
+<td>CONSTANT_Integer_info</td>
+<td>3</td>
+<td>整形字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Float_info</td>
+<td>4</td>
+<td>浮点型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Long_info</td>
+<td>5</td>
+<td>长整型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Double_info</td>
+<td>6</td>
+<td>双精度浮点型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Class_info</td>
+<td>7</td>
+<td>类或接口的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_String_info</td>
+<td>8</td>
+<td>字符串类型字面量</td>
+</tr>
+<tr>
+<td>CONSTANT_Fieldref_info</td>
+<td>9</td>
+<td>字段的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_Methodref_info</td>
+<td>10</td>
+<td>类中方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_InterfaceMethodRef_info</td>
+<td>11</td>
+<td>接口中方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_NameAndType_info</td>
+<td>12</td>
+<td>字段或方法的部分符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_MethodHandle_info</td>
+<td>15</td>
+<td>方法句柄</td>
+</tr>
+<tr>
+<td>CONSTANT_MethodType_info</td>
+<td>16</td>
+<td>方法类型</td>
+</tr>
+<tr>
+<td>CONSTANT_Dynamic_info</td>
+<td>17</td>
+<td>动态计算常量</td>
+</tr>
+<tr>
+<td>CONSTANT_InvokeDynamic_info</td>
+<td>18</td>
+<td>动态方法调用点</td>
+</tr>
+<tr>
+<td>CONSTANT_Module_info</td>
+<td>19</td>
+<td>模块</td>
+</tr>
+<tr>
+<td>CONSTANT_Package_info</td>
+<td>20</td>
+<td>模块中开放或导出的包</td>
+</tr>
+</tbody></table>
+<h2 id="CONSTANT-Class-info"><a href="#CONSTANT-Class-info" class="headerlink" title="CONSTANT_Class_info"></a>CONSTANT_Class_info</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u1</td>
+<td>tag</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>name_index</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>tag，标志位，用来区分常量类型，CONSTANT_Class_info是7</li>
+<li>name_index，是常量池的索引值，指向常量池中一个CONSTANT_Utf8_info类型常量，代表这个类或接口的全限定名</li>
+</ul>
+<h2 id="CONSTANT-Utf8-info"><a href="#CONSTANT-Utf8-info" class="headerlink" title="CONSTANT_Utf8_info"></a>CONSTANT_Utf8_info</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u1</td>
+<td>tag</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u1</td>
+<td>bytes</td>
+<td>length</td>
+</tr>
+</tbody></table>
+<ul>
+<li>tag，标志位，用来区分常量类型，CONSTANT_Utf8_info是1</li>
+<li>length，表示这个UTF-8编码的字符串长度是多少字节</li>
+<li>bytes，使用UTF-8缩略编码表示的字符串，长度是length</li>
+</ul>
+<p>Class文件中方法、字段等都需要引用CONSTANT_Utf8_info类型常量来描述名称，所以Java中方法、字段名的最大程度就是CONSTANT_Utf8_info类型的常量的最大长度，也就是length，u2类型，最大值65535，64KB。</p>
+<h2 id="常量池数据类型结构汇总图"><a href="#常量池数据类型结构汇总图" class="headerlink" title="常量池数据类型结构汇总图"></a>常量池数据类型结构汇总图</h2><img src="/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/constant-pool-1.png" class="常量池中的数据类型结构">
+
+<img src="/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/constant-pool-2.png" class="常量池中的数据类型结构续">
+
+<h1 id="访问标志"><a href="#访问标志" class="headerlink" title="访问标志"></a>访问标志</h1><p>常量池后面两个字节表示访问标志，access_flags，表示类或接口层次的访问信息，包括是类还是接口、是否public类型、是否abstract类型，类是否是final等等。</p>
+<img src="/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/access_flags.png" class="image-20200421201933205">
+
+<h1 id="this-class"><a href="#this-class" class="headerlink" title="this_class"></a>this_class</h1><p>this_class类索引，u2类型，用来确定这个类的全限定名，指向一个类型为CONSTANT_Class_info的类描述符常量，通过CONSTANT_Class_info中的索引值可以找到CONSTANT_Utf8_info类型的常量中的全限定名字符串。</p>
+<h1 id="super-class"><a href="#super-class" class="headerlink" title="super_class"></a>super_class</h1><p>super_class父类索引，u2类型，用来确定父类的全限定名，指向一个类型为CONSTANT_Class_info的类描述符常量，通过CONSTANT_Class_info中的索引值可以找到CONSTANT_Utf8_info类型的常量中的全限定名字符串。</p>
+<h1 id="interfaces"><a href="#interfaces" class="headerlink" title="interfaces"></a>interfaces</h1><p>interfaces接口索引集合，是一组u2类型的数据集合，描述类实现了哪些接口。</p>
+<p>interfaces前面有个u2类型的interfaces_count，表示接口索引表容量。</p>
+<h1 id="字段表集合"><a href="#字段表集合" class="headerlink" title="字段表集合"></a>字段表集合</h1><p>field_info字段表，描述类或者接口中声明的变量，包括：静态变量、实例变量，不包括方法中的局部变量。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>access_flags</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>descriptor_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>attributes_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>attribute_info</td>
+<td>attributes</td>
+<td>attributes_count</td>
+</tr>
+</tbody></table>
+<h2 id="access-flags"><a href="#access-flags" class="headerlink" title="access_flags"></a>access_flags</h2><p>字段修饰符，u2类型，如下</p>
+<img src="/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/field_access_flags.png" class="字段修饰符">
+
+<h2 id="name-index"><a href="#name-index" class="headerlink" title="name_index"></a>name_index</h2><p>name_index是对常量池项的引用，表示字段的简单名称。</p>
+<h2 id="descriptor-index"><a href="#descriptor-index" class="headerlink" title="descriptor_index"></a>descriptor_index</h2><p>descriptor_index是对常量池项的引用，表示字段和方法的描述符。</p>
+<h2 id="attributes"><a href="#attributes" class="headerlink" title="attributes"></a>attributes</h2><p>属性表集合，存储一些额外信息，比如<code>final static int m = 123</code>可能会存在一项名为ConstantValue的属性，指向常量123。</p>
+<p>字段表集合不会列出从父类或者父接口继承来的字段，但有可能会出现Java代码中不存在的字段，比如内部类中为了保持对外部类的访问性，编译器会自动添加指向外部类实例的字段。</p>
+<h1 id="方法表集合"><a href="#方法表集合" class="headerlink" title="方法表集合"></a>方法表集合</h1>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BC%98%E5%8C%96/" rel="prev" title="JVM中的锁优化">
+      <i class="fa fa-chevron-left"></i> JVM中的锁优化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/" rel="next" title="上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题">
+      上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#描述符"><span class="nav-number">1.</span> <span class="nav-text">描述符</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#魔数"><span class="nav-number">2.</span> <span class="nav-text">魔数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主次版本号"><span class="nav-number">3.</span> <span class="nav-text">主次版本号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常量池"><span class="nav-number">4.</span> <span class="nav-text">常量池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CONSTANT-Class-info"><span class="nav-number">4.1.</span> <span class="nav-text">CONSTANT_Class_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CONSTANT-Utf8-info"><span class="nav-number">4.2.</span> <span class="nav-text">CONSTANT_Utf8_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常量池数据类型结构汇总图"><span class="nav-number">4.3.</span> <span class="nav-text">常量池数据类型结构汇总图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#访问标志"><span class="nav-number">5.</span> <span class="nav-text">访问标志</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#this-class"><span class="nav-number">6.</span> <span class="nav-text">this_class</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#super-class"><span class="nav-number">7.</span> <span class="nav-text">super_class</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#interfaces"><span class="nav-number">8.</span> <span class="nav-text">interfaces</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字段表集合"><span class="nav-number">9.</span> <span class="nav-text">字段表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#access-flags"><span class="nav-number">9.1.</span> <span class="nav-text">access_flags</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#name-index"><span class="nav-number">9.2.</span> <span class="nav-text">name_index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#descriptor-index"><span class="nav-number">9.3.</span> <span class="nav-text">descriptor_index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#attributes"><span class="nav-number">9.4.</span> <span class="nav-text">attributes</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法表集合"><span class="nav-number">10.</span> <span class="nav-text">方法表集合</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="dachengxi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">dachengxi</p>
+  <div class="site-description" itemprop="description">一个小学生</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">152</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://cxis.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/";
+    this.page.identifier = "2017/08/19/JVM中的Class类文件结构/";
+    this.page.title = "JVM中的Class类文件结构";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://cxis.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>
