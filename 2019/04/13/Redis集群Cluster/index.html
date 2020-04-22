@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://dachengxi.github.com/2019/04/13/Redis%E9%9B%86%E7%BE%A4Cluster/cluster-1.png">
 <meta property="article:published_time" content="2019-04-13T14:20:27.000Z">
-<meta property="article:modified_time" content="2020-03-29T06:06:19.800Z">
+<meta property="article:modified_time" content="2020-04-22T15:23:21.171Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
@@ -279,18 +279,8 @@
 <li>如果键对应的槽属于自己，直接执行命令。</li>
 <li>如果键对应的槽属于其他节点，会向客户端返回MOVED错误，指引客户端转向redirect到正确的节点，并再次发送要执行的命令。</li>
 </ul>
-<p>Redis提供的分布式解决方案：Redis Cluster集群，使用分片sharding来进行数据共享，还提供了复制和故障转移功能。</p>
-<!--more-->
+<img src="/2019/04/13/Redis%E9%9B%86%E7%BE%A4Cluster/cluster-1.png" class="cluster-1">
 
-<p>Redis集群通常由多个节点node组成，节点通过CLUSTER MEET命令连接起来组成集群。</p>
-<p>Redis集群通过分片方式保存数据库中的键值对，集群的整个数据库分为16384个槽slot，数据库中的每个键都属于这16384个槽的其中一个，集群中每个节点可以处理0到最多16384个槽。</p>
-<p>一个节点出了会记录自己负责的槽外，还会把自己负责的slots数组通过消息发送给集群其他的节点，告知其他节点自己负责的槽有哪些。</p>
-<h1 id="在集群中执行命令-1"><a href="#在集群中执行命令-1" class="headerlink" title="在集群中执行命令"></a>在集群中执行命令</h1><p>客户端向节点发送命令时，接收命令的节点会计算出键对应属于哪个槽：</p>
-<ul>
-<li>如果键对应的槽属于自己，直接执行命令。</li>
-<li>如果键对应的槽属于其他节点，会向客户端返回MOVED错误，指引客户端转向redirect到正确的节点，并再次发送要执行的命令。</li>
-</ul>
-<p><img src="cluster-1.png" alt="cluster-1"></p>
 <h1 id="重新分片"><a href="#重新分片" class="headerlink" title="重新分片"></a>重新分片</h1><p>Redis集群可以通过重新分片将某节点的槽指派给另外一个节点，所有的对应的键值对也会被迁移到新的目标节点。</p>
 <ul>
 <li>redis-trib向目标节点发送：<code>CLUSTER SETSLOT &lt;slot&gt; IMPORTING &lt;source_id&gt;</code>，让目标节点准备好从源节点导入键值对</li>
@@ -310,27 +300,6 @@
 <li>新的主节点开始对外服务</li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li>《redis设计与实现》（第二版）</li>
-</ul>
-<h1 id="重新分片-1"><a href="#重新分片-1" class="headerlink" title="重新分片"></a>重新分片</h1><p>Redis集群可以通过重新分片将某节点的槽指派给另外一个节点，所有的对应的键值对也会被迁移到新的目标节点。</p>
-<ul>
-<li>redis-trib向目标节点发送：<code>CLUSTER SETSLOT &lt;slot&gt; IMPORTING &lt;source_id&gt;</code>，让目标节点准备好从源节点导入键值对</li>
-<li>redis-trib向源节点发送：<code>CLUSTER SETSLOT &lt;slot&gt; MIGRATING &lt;target_id&gt;</code>，让源标节点准备好从源节点迁移键值对到目标节点</li>
-<li>redis-trib向源节点发送：<code>CLUSTER GETKEYSINSLOT &lt;slot&gt; &lt;count&gt;</code>，获得最多count个键值对的键</li>
-<li>针对每个键，redis-trib向源节点发送：<code>MIGRATE &lt;target_ip&gt; &lt;target_port&gt; &lt;key_name&gt; 0 &lt;timeout</code>，将被选中的键原子的从源节点迁移到目标节点</li>
-<li>重复迁移步骤直到完成</li>
-<li>redis-trib向集群中任一节点发送<code>CLUSTER SETSLOT &lt;slot&gt; NODE &lt;target_id&gt;</code>，将槽指派配目标节点，这会通知整个集群。</li>
-</ul>
-<h1 id="复制和故障转移-1"><a href="#复制和故障转移-1" class="headerlink" title="复制和故障转移"></a>复制和故障转移</h1><p>Redis集群中的节点分为主节点和从节点，从节点会复制主节点，主节点下线时从节点代替主节点处理命令请求。</p>
-<p>集群中每个节点定期向集群中其他节点发送PING消息，用来检测对方是否在线，如果不在线就会将其标记疑似下线，并且各个节点会通过相互发消息交换集群中各个节点状态信息，如果一个集群中半数以上的节点都将某一个节点报告为疑似下线，那么这个节点会被标记为已下线，并广播给集群其他的节点，该节点已下线。</p>
-<p>当从节点发现主节点已下线，就开始故障转移：</p>
-<ul>
-<li>有一个从节点会被选中，执行<code>SLAVEOF no one</code>，变成新的主节点</li>
-<li>新的主节点会撤销所有对已下线主节点的槽指派，并把这些槽指派给自己</li>
-<li>新的主节点向集群发送PONG消息，让其他的节点知道自己变成了主节点</li>
-<li>新的主节点开始对外服务</li>
-</ul>
-<h1 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h1><ul>
 <li>《redis设计与实现》（第二版）</li>
 </ul>
 
@@ -444,7 +413,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#在集群中执行命令"><span class="nav-number">1.</span> <span class="nav-text">在集群中执行命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#在集群中执行命令-1"><span class="nav-number">2.</span> <span class="nav-text">在集群中执行命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重新分片"><span class="nav-number">3.</span> <span class="nav-text">重新分片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#复制和故障转移"><span class="nav-number">4.</span> <span class="nav-text">复制和故障转移</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重新分片-1"><span class="nav-number">6.</span> <span class="nav-text">重新分片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#复制和故障转移-1"><span class="nav-number">7.</span> <span class="nav-text">复制和故障转移</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-1"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#在集群中执行命令"><span class="nav-number">1.</span> <span class="nav-text">在集群中执行命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重新分片"><span class="nav-number">2.</span> <span class="nav-text">重新分片</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#复制和故障转移"><span class="nav-number">3.</span> <span class="nav-text">复制和故障转移</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

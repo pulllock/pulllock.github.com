@@ -28,11 +28,10 @@
 <meta property="og:description" content="Redis中的字符串使用的是Redis自定义的抽象类型，而不是直接使用C语言的字符串表示。Redis的字符串叫做：简单动态字符串Simple Dynamic String，简称SDS。 SDS除了能保存字符串值，还能作为缓冲区buffer：AOF模块中的AOF缓冲区、客户端状态中的输入缓冲区。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/SDS-1.png">
-<meta property="og:image" content="http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/SDS-2.png">
-<meta property="og:image" content="http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/SDS-1.png">
+<meta property="og:image" content="http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/SDS-2.png">
 <meta property="og:image" content="http://dachengxi.github.com/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/SDS-2.png">
 <meta property="article:published_time" content="2019-03-13T12:05:32.000Z">
-<meta property="article:modified_time" content="2020-03-31T13:18:55.440Z">
+<meta property="article:modified_time" content="2020-04-22T15:23:33.097Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
@@ -290,7 +289,7 @@
 <li>len=5，表示SDS保存了一个5字节长的字符串</li>
 <li>buf是一个char类型数组，前面5个保存了实际的字符，最后一个字节保存了空字符<code>\0</code></li>
 </ol>
-<p><img src="SDS-2.png" alt="SDS-2"></p>
+<p><img src="./Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/SDS-2.png" alt="SDS-2"></p>
 <ol>
 <li>free=5，表示为buf数组分配了5字节未使用空间</li>
 </ol>
@@ -347,19 +346,8 @@
 <li>len=5，表示SDS保存了一个5字节长的字符串</li>
 <li>buf是一个char类型数组，前面5个保存了实际的字符，最后一个字节保存了空字符<code>\0</code></li>
 </ol>
-<p>Redis中的字符串使用的是Redis自定义的抽象类型，而不是直接使用C语言的字符串表示。Redis的字符串叫做：简单动态字符串Simple Dynamic String，简称SDS。</p>
-<p>SDS除了能保存字符串值，还能作为缓冲区buffer：AOF模块中的AOF缓冲区、客户端状态中的输入缓冲区。</p>
-<!-- more -->
+<img src="/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/SDS-2.png" class="SDS-2">
 
-<h1 id="SDS定义-2"><a href="#SDS定义-2" class="headerlink" title="SDS定义"></a>SDS定义</h1> <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sdshdr</span>&#123;</span></span><br><span class="line">    <span class="comment">// 字符数组，用于保存字符串</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// buf数组中已使用字节的数量，等于SDS所保存字符串的长度</span></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// buf数组中未使用字节的数量</span></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="SDS-1.png" alt="SDS-1"></p>
-<ol>
-<li>free=0，表示SDS没有分配未使用空间</li>
-<li>len=5，表示SDS保存了一个5字节长的字符串</li>
-<li>buf是一个char类型数组，前面5个保存了实际的字符，最后一个字节保存了空字符<code>\0</code></li>
-</ol>
-<p><img src="SDS-2.png" alt="SDS-2"></p>
 <ol>
 <li>free=5，表示为buf数组分配了5字节未使用空间</li>
 </ol>
@@ -409,57 +397,6 @@
 </tr>
 </tbody></table>
 <h1 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h1><ul>
-<li>《redis设计与实现》（第二版）</li>
-</ul>
-<ol>
-<li>free=5，表示为buf数组分配了5字节未使用空间</li>
-</ol>
-<h1 id="SDS与C字符串的区别-2"><a href="#SDS与C字符串的区别-2" class="headerlink" title="SDS与C字符串的区别"></a>SDS与C字符串的区别</h1><h2 id="常数复杂度获取字符串长度-2"><a href="#常数复杂度获取字符串长度-2" class="headerlink" title="常数复杂度获取字符串长度"></a>常数复杂度获取字符串长度</h2><p>C字符串不记录自身长度，需要遍历字符串，直到遇到结尾空字符串，时间复杂度为O(N)。SDS记录了自身长度，获取长度的时间复杂度为O(1)。</p>
-<h2 id="杜绝缓冲区溢出-2"><a href="#杜绝缓冲区溢出-2" class="headerlink" title="杜绝缓冲区溢出"></a>杜绝缓冲区溢出</h2><p>C字符串不记录自身长度，修改字符串容易产生缓冲区溢出问题。SDS修改字符串时会先检查空间是否满足要求，不满足的话会自动将SDS空间扩充到所需大小，再执行修改，也就不会产生缓冲区溢出问题。</p>
-<h2 id="减少修改字符串时带来的内存重分配次数-2"><a href="#减少修改字符串时带来的内存重分配次数-2" class="headerlink" title="减少修改字符串时带来的内存重分配次数"></a>减少修改字符串时带来的内存重分配次数</h2><p>C字符串每次增长或缩短，程序都需要对这个C字符数组进行内存充分配操作：</p>
-<ol>
-<li>增长C字符串时，程序先通过内存重分配来扩展底层数组空间大小，否则会产生缓冲区溢出。</li>
-<li>缩短C字符串时，程序先通过内存充分配来释放不再使用的空间，否则会产生内存泄露。</li>
-</ol>
-<p>C字符串的这种方式会对Redis产生性能影响，SDS通过未使用空间实现了空间预分配和惰性空间释放两种优化策略。</p>
-<h3 id="空间预分配-2"><a href="#空间预分配-2" class="headerlink" title="空间预分配"></a>空间预分配</h3><p>SDS需要进行空间扩展的时候，先会分配必须要的空间，还会分配额外未使用空间，通过空间预分配可以减少连续执行字符串增长操作所需的内存重分配次数：</p>
-<ol>
-<li>SDS修改后，长度len小于1MB时，会分配一个长度也为len的未使用空间。比如修改后SDS长度len=13，则分配free=13，SDS长度实际为：<code>len + free + 1 = 13 + 13 + 1</code></li>
-<li>SDS修改后，长度len大于等于1MB时，会分配一个长度为1MB的未使用空间。比如修改后SDS长度len=2MB，则分配free=1MB，SDS长度实际为：<code>len + free + 1 = 2MB + 1MB + 1byte</code></li>
-</ol>
-<h3 id="惰性空间释放-2"><a href="#惰性空间释放-2" class="headerlink" title="惰性空间释放"></a>惰性空间释放</h3><p>SDS需要进行字符串缩短操作时，不会立即回收缩短后空闲出来的空间，而是分配给free，等待将来使用。</p>
-<h2 id="二进制安全-2"><a href="#二进制安全-2" class="headerlink" title="二进制安全"></a>二进制安全</h2><p>C字符串中的字符必须符合某种编码，除了末尾字符，其他字符不能是空字符。C字符串只能保存文本数据，不能保存图像、音频、视频、压缩文件等二进制数据。</p>
-<p>SDS是二进制安全的，buf数组里的数据没有任何限制，buf数组里不保存字符，而保存二进制数据。</p>
-<h2 id="兼容部分C字符串函数-2"><a href="#兼容部分C字符串函数-2" class="headerlink" title="兼容部分C字符串函数"></a>兼容部分C字符串函数</h2><p>SDS可使用部分的C字符串函数</p>
-<h1 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h1><table>
-<thead>
-<tr>
-<th>C字符串</th>
-<th>SDS</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>获取长度时间复杂度O(N)</td>
-<td>获取长度时间复杂度O(1)</td>
-</tr>
-<tr>
-<td>API不安全，可能造成缓冲区溢出</td>
-<td>API安全，不会造成缓冲区溢出</td>
-</tr>
-<tr>
-<td>修改长度N次，需要N次内存重分配</td>
-<td>修改长度N次，最多需要N次内存重分配</td>
-</tr>
-<tr>
-<td>只能保存文本数据</td>
-<td>可以保存文本和二进制数据</td>
-</tr>
-<tr>
-<td>可使用C的所有字符串函数</td>
-<td>可使用部分C的字符串函数</td>
-</tr>
-</tbody></table>
-<h1 id="参考-2"><a href="#参考-2" class="headerlink" title="参考"></a>参考</h1><ul>
 <li>《redis设计与实现》（第二版）</li>
 </ul>
 
@@ -573,7 +510,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS定义"><span class="nav-number">1.</span> <span class="nav-text">SDS定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS定义-1"><span class="nav-number">2.</span> <span class="nav-text">SDS定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS与C字符串的区别"><span class="nav-number">3.</span> <span class="nav-text">SDS与C字符串的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常数复杂度获取字符串长度"><span class="nav-number">3.1.</span> <span class="nav-text">常数复杂度获取字符串长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#杜绝缓冲区溢出"><span class="nav-number">3.2.</span> <span class="nav-text">杜绝缓冲区溢出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#减少修改字符串时带来的内存重分配次数"><span class="nav-number">3.3.</span> <span class="nav-text">减少修改字符串时带来的内存重分配次数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间预分配"><span class="nav-number">3.3.1.</span> <span class="nav-text">空间预分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惰性空间释放"><span class="nav-number">3.3.2.</span> <span class="nav-text">惰性空间释放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二进制安全"><span class="nav-number">3.4.</span> <span class="nav-text">二进制安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#兼容部分C字符串函数"><span class="nav-number">3.5.</span> <span class="nav-text">兼容部分C字符串函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS定义-2"><span class="nav-number">6.</span> <span class="nav-text">SDS定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS与C字符串的区别-1"><span class="nav-number">7.</span> <span class="nav-text">SDS与C字符串的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常数复杂度获取字符串长度-1"><span class="nav-number">7.1.</span> <span class="nav-text">常数复杂度获取字符串长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#杜绝缓冲区溢出-1"><span class="nav-number">7.2.</span> <span class="nav-text">杜绝缓冲区溢出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#减少修改字符串时带来的内存重分配次数-1"><span class="nav-number">7.3.</span> <span class="nav-text">减少修改字符串时带来的内存重分配次数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间预分配-1"><span class="nav-number">7.3.1.</span> <span class="nav-text">空间预分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惰性空间释放-1"><span class="nav-number">7.3.2.</span> <span class="nav-text">惰性空间释放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二进制安全-1"><span class="nav-number">7.4.</span> <span class="nav-text">二进制安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#兼容部分C字符串函数-1"><span class="nav-number">7.5.</span> <span class="nav-text">兼容部分C字符串函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结-1"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-1"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS与C字符串的区别-2"><span class="nav-number">10.</span> <span class="nav-text">SDS与C字符串的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常数复杂度获取字符串长度-2"><span class="nav-number">10.1.</span> <span class="nav-text">常数复杂度获取字符串长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#杜绝缓冲区溢出-2"><span class="nav-number">10.2.</span> <span class="nav-text">杜绝缓冲区溢出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#减少修改字符串时带来的内存重分配次数-2"><span class="nav-number">10.3.</span> <span class="nav-text">减少修改字符串时带来的内存重分配次数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间预分配-2"><span class="nav-number">10.3.1.</span> <span class="nav-text">空间预分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惰性空间释放-2"><span class="nav-number">10.3.2.</span> <span class="nav-text">惰性空间释放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二进制安全-2"><span class="nav-number">10.4.</span> <span class="nav-text">二进制安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#兼容部分C字符串函数-2"><span class="nav-number">10.5.</span> <span class="nav-text">兼容部分C字符串函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结-2"><span class="nav-number">11.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-2"><span class="nav-number">12.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS定义"><span class="nav-number">1.</span> <span class="nav-text">SDS定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS定义-1"><span class="nav-number">2.</span> <span class="nav-text">SDS定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS与C字符串的区别"><span class="nav-number">3.</span> <span class="nav-text">SDS与C字符串的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常数复杂度获取字符串长度"><span class="nav-number">3.1.</span> <span class="nav-text">常数复杂度获取字符串长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#杜绝缓冲区溢出"><span class="nav-number">3.2.</span> <span class="nav-text">杜绝缓冲区溢出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#减少修改字符串时带来的内存重分配次数"><span class="nav-number">3.3.</span> <span class="nav-text">减少修改字符串时带来的内存重分配次数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间预分配"><span class="nav-number">3.3.1.</span> <span class="nav-text">空间预分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惰性空间释放"><span class="nav-number">3.3.2.</span> <span class="nav-text">惰性空间释放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二进制安全"><span class="nav-number">3.4.</span> <span class="nav-text">二进制安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#兼容部分C字符串函数"><span class="nav-number">3.5.</span> <span class="nav-text">兼容部分C字符串函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SDS与C字符串的区别-1"><span class="nav-number">6.</span> <span class="nav-text">SDS与C字符串的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常数复杂度获取字符串长度-1"><span class="nav-number">6.1.</span> <span class="nav-text">常数复杂度获取字符串长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#杜绝缓冲区溢出-1"><span class="nav-number">6.2.</span> <span class="nav-text">杜绝缓冲区溢出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#减少修改字符串时带来的内存重分配次数-1"><span class="nav-number">6.3.</span> <span class="nav-text">减少修改字符串时带来的内存重分配次数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间预分配-1"><span class="nav-number">6.3.1.</span> <span class="nav-text">空间预分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#惰性空间释放-1"><span class="nav-number">6.3.2.</span> <span class="nav-text">惰性空间释放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二进制安全-1"><span class="nav-number">6.4.</span> <span class="nav-text">二进制安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#兼容部分C字符串函数-1"><span class="nav-number">6.5.</span> <span class="nav-text">兼容部分C字符串函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结-1"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考-1"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
