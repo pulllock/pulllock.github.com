@@ -35,8 +35,9 @@
 <meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/method_access_flags.png">
 <meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/attribute_info_1.png">
 <meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/attribute_info_2.png">
+<meta property="og:image" content="http://dachengxi.github.com/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/inner_class_access_flags.png">
 <meta property="article:published_time" content="2017-08-19T09:48:33.000Z">
-<meta property="article:modified_time" content="2020-04-21T15:57:39.913Z">
+<meta property="article:modified_time" content="2020-04-22T15:15:46.861Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -773,7 +774,471 @@
 <li>code_length，字节码长度</li>
 <li>code，存储编译后生成的字节码</li>
 </ul>
-<h3 id="异常表集合"><a href="#异常表集合" class="headerlink" title="异常表集合"></a>异常表集合</h3>
+<h3 id="异常表集合"><a href="#异常表集合" class="headerlink" title="异常表集合"></a>异常表集合</h3><p>异常表属性结构：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>start_pc</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>end_pc</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>handler_pc</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>catch_type</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>start_pc，从第start_pc行开始</li>
+<li>end_pc，到第end_pc行，不包含end_pc行</li>
+<li>handler_pc，转到第handler_pc行继续处理</li>
+<li>catch_type，出现了catch_type或子类的异常，catch_type指向一个CONSTANT_Class_info类型的常量索引</li>
+</ul>
+<h2 id="Exceptions属性"><a href="#Exceptions属性" class="headerlink" title="Exceptions属性"></a>Exceptions属性</h2><p>Exceptions，出现在方法表的属性集合中，用来列举出方法中可能抛出的受检查的异常，就是方法描述在throws后见列举的异常。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>number_of_exceptions</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>exception_index_table</td>
+<td>number_of_exceptions</td>
+</tr>
+</tbody></table>
+<ul>
+<li>number_of_exceptions，表示方法可能抛出number_of_exceptions个异常，每一个异常使用exception_index_table项表示</li>
+<li>exception_index_table，指向一个常量池中CONSTANT_Class_info型常量的索引</li>
+</ul>
+<h2 id="LineNumberTable属性"><a href="#LineNumberTable属性" class="headerlink" title="LineNumberTable属性"></a>LineNumberTable属性</h2><p>LineNumberTable用于描述Java源码行号与字节码行号对应关系</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>line_number_table_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>line_number_info</td>
+<td>line_number_table</td>
+<td>line_number_table_length</td>
+</tr>
+</tbody></table>
+<ul>
+<li>line_number_info表中包含start_pc和line_number两个u2类型的数据项，start_pc是字节码行号，line_number是Java源码行号</li>
+</ul>
+<h2 id="LocalVariableTable属性"><a href="#LocalVariableTable属性" class="headerlink" title="LocalVariableTable属性"></a>LocalVariableTable属性</h2><p>LocalVariableTable用于描述栈帧中局部变量表的变量与Java源码中定义的变量间的关系。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>local_variable_table_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>local_variable_info</td>
+<td>local_variable_table</td>
+<td>local_variable_table_length</td>
+</tr>
+</tbody></table>
+<ul>
+<li>local_variable_info，代表了栈帧与源码中的局部变量的关联</li>
+</ul>
+<h3 id="local-variable-info"><a href="#local-variable-info" class="headerlink" title="local_variable_info"></a>local_variable_info</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>start_pc</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>descriptor_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>index</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>start_pc，局部变量的生命周期开始的字节码偏移量</li>
+<li>length，局部变量生命周期作用范围覆盖长度</li>
+<li>name_index，指向常量池CONSTANT_Utf8_info类型常量索引，表示局部变量名称</li>
+<li>descriptor_index，指向常量池CONSTANT_Utf8_info类型常量索引，表示局部变量的描述符</li>
+<li>index，是局部变量在栈帧的局部变量表中变量槽的位置</li>
+</ul>
+<h2 id="LocalVariableTypeTable"><a href="#LocalVariableTypeTable" class="headerlink" title="LocalVariableTypeTable"></a>LocalVariableTypeTable</h2><p>和LocalVariableTable相似，仅仅把记录的字段描述符的descriptor_index替换成了字段的特征签名Signature。</p>
+<p>非泛型类型，描述符和特征签名描述的信息是一致的。泛型类型，描述符中的参数化类型被擦除掉，描述符不能准确描述泛型类型，就出现了LocalVariableTypeTable属性，使用字段的特征签名来完成泛型的描述</p>
+<h2 id="SourceFile"><a href="#SourceFile" class="headerlink" title="SourceFile"></a>SourceFile</h2><p>SourceFile用于记录生成这个Class文件的源码文件名称。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>sourcefile_index</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>sourcefile_index，指向常量池中CONSTANT_Utf8_info类型常量索引，是源码文件名</li>
+</ul>
+<h2 id="SourceDebugExtension"><a href="#SourceDebugExtension" class="headerlink" title="SourceDebugExtension"></a>SourceDebugExtension</h2><p>SourceDebugExtension，用来存储额外的代码调试信息。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u1</td>
+<td>debug_extension[attribute_length]</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>debug_extension，存储的是额外的调试信息，通过一组变长UTF-8格式来表示的字符串，一个类最多只有一个SourceDebugExtension属性。</li>
+</ul>
+<h2 id="ConstantValue属性"><a href="#ConstantValue属性" class="headerlink" title="ConstantValue属性"></a>ConstantValue属性</h2><p>ConstantValue用来通知虚拟机自动为静态变量赋值，static修饰的变量可以使用这个属性。</p>
+<p>实例变量赋值是在实例构造器<code>&lt;init&gt;</code>中进行，类变量有两种方式：在类构造器<code>&lt;clinit&gt;</code>方法中或者使用ConstantValue属性。</p>
+<p>Oracle的编译器是：如果是final static修饰，也就是一个常量，并且类型是基本类型或者是String类型，就会使用ConstantValue来进行初始化；如果没有被final修饰，或者类型非基本类型以及字符串，会选择在<code>&lt;clinit&gt;</code>方法中进行初始化。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>constantvalue_index</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>attribute_length，固定为2</li>
+<li>constant_value，表示常量池中个一个字面量的引用，根据字段类型不同，字面量可以是：CONSTANT_Long_info、CONSTANT_Float_info、CONSTANT_Double_info、CONSTANT_Integer_info、CONSTANT_String_info</li>
+</ul>
+<h2 id="InnerCalsses属性"><a href="#InnerCalsses属性" class="headerlink" title="InnerCalsses属性"></a>InnerCalsses属性</h2><p>InnerClasses属性记录内部类和宿主类之间的关联，属性结构：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>number_of_classes</td>
+<td>1</td>
+</tr>
+<tr>
+<td>inner_classes_info</td>
+<td>inner_classes</td>
+<td>number_of_classes</td>
+</tr>
+</tbody></table>
+<p>inner_classes_info代表每个内部类信息</p>
+<h3 id="inner-classes-info"><a href="#inner-classes-info" class="headerlink" title="inner_classes_info"></a>inner_classes_info</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>inner_class_info_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>outer_class_info_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>inner_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>inner_class_access_flags</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>inner_class_info_index，指向常量池CONSTANT_Class_info类型常量索引，代表内部类的符号引用</li>
+<li>outer_class_info_index，指向常量池CONSTANT_Class_info类型常量索引，代表外部类的符号引用</li>
+<li>inner_name_index，指向常量池CONSTANT_Utf8_info类型常量索引，代表内部类名称，匿名内部类为0</li>
+<li>inner_class_access_flags，内部类的访问标志</li>
+</ul>
+<img src="/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/inner_class_access_flags.png" class="inner_class_access_flags">
+
+<h2 id="Deprecated属性"><a href="#Deprecated属性" class="headerlink" title="Deprecated属性"></a>Deprecated属性</h2><p>Deprecated是布尔类型属性，表示某个类、字段、方法已经被标记为不推荐使用</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>attribute_length为0x00000000，因为没有任何属性值需要设置</li>
+</ul>
+<h2 id="Synthetic属性"><a href="#Synthetic属性" class="headerlink" title="Synthetic属性"></a>Synthetic属性</h2><p>Synthetic属性表示字段或方法不是由Java源码直接产生，而是编译器自行添加的。最典型的例子就是枚举类中自动生成的枚举元素数组和嵌套类的桥接方法。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>attribute_length为0x00000000，因为没有任何属性值需要设置</li>
+</ul>
+<h2 id="Signature属性"><a href="#Signature属性" class="headerlink" title="Signature属性"></a>Signature属性</h2><p>Signature在JDK5中增加，是一个可选定长属性，用于类、字段表、方法表结构的属性表中。用来记录泛型签名信息，Java泛型采用擦除法实现伪泛型，字节码Code属性中没有泛型信息。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>signature_index</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>signature_index必须是对一个常量池的有效索引，并且该索引是CONSTANT_Utf8_info结构，表示类签名或方法类型签名或字段类型签名。</li>
+</ul>
+<h2 id="MethodParameters属性"><a href="#MethodParameters属性" class="headerlink" title="MethodParameters属性"></a>MethodParameters属性</h2><p>MethodParameters在JDK8新加入的，用在方法表中的变长属性，记录方法的各个形参名称和信息。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>attribute_name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>attribute_length</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u1</td>
+<td>parameters_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>parameter</td>
+<td>parameters</td>
+<td>parameters_count</td>
+</tr>
+</tbody></table>
+<p>parameter属性结构：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>u2</td>
+<td>name_index</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u4</td>
+<td>access_flags</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<ul>
+<li>name_index指向常量池CONSTANT_Utf8_info类型的索引值，表示参数名称。</li>
+<li>access_flags，参数的状态，包含：ACC_FIANL被final修饰、ACC_SYNTHETIC编译器自动生成、ACC_MANDATED表示该参数是在源文件中隐式定义，比如this关键字。</li>
+</ul>
+<h2 id="运行时注解属性"><a href="#运行时注解属性" class="headerlink" title="运行时注解属性"></a>运行时注解属性</h2><p>JDK1.5：RuntimeVisibleAnnotations、RuntimeInvisibleAnnotations、RuntimeVisibleParameterAnnotations、RuntimeInvisibleParameterAnnotations用来存储源码中注解信息</p>
+<p>JDK1.8：RuntimeVisibleTypeAnnotations、RuntimeInvisibleTypeAnnotations，用来存储源码中类型注解信息</p>
+
     </div>
 
     
@@ -811,8 +1276,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BC%98%E5%8C%96/" rel="prev" title="JVM中的锁优化">
-      <i class="fa fa-chevron-left"></i> JVM中的锁优化
+    <a href="/2017/08/19/JVM%E4%B8%AD%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/" rel="prev" title="JVM中的字节码指令">
+      <i class="fa fa-chevron-left"></i> JVM中的字节码指令
     </a></div>
       <div class="post-nav-item">
     <a href="/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/" rel="next" title="上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题">
@@ -884,7 +1349,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#描述符"><span class="nav-number">1.</span> <span class="nav-text">描述符</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#魔数"><span class="nav-number">2.</span> <span class="nav-text">魔数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主次版本号"><span class="nav-number">3.</span> <span class="nav-text">主次版本号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常量池"><span class="nav-number">4.</span> <span class="nav-text">常量池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CONSTANT-Class-info"><span class="nav-number">4.1.</span> <span class="nav-text">CONSTANT_Class_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CONSTANT-Utf8-info"><span class="nav-number">4.2.</span> <span class="nav-text">CONSTANT_Utf8_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常量池数据类型结构汇总图"><span class="nav-number">4.3.</span> <span class="nav-text">常量池数据类型结构汇总图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#访问标志"><span class="nav-number">5.</span> <span class="nav-text">访问标志</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#this-class"><span class="nav-number">6.</span> <span class="nav-text">this_class</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#super-class"><span class="nav-number">7.</span> <span class="nav-text">super_class</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#interfaces"><span class="nav-number">8.</span> <span class="nav-text">interfaces</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字段表集合"><span class="nav-number">9.</span> <span class="nav-text">字段表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#access-flags"><span class="nav-number">9.1.</span> <span class="nav-text">access_flags</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#name-index"><span class="nav-number">9.2.</span> <span class="nav-text">name_index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#descriptor-index"><span class="nav-number">9.3.</span> <span class="nav-text">descriptor_index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#attributes"><span class="nav-number">9.4.</span> <span class="nav-text">attributes</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法表集合"><span class="nav-number">10.</span> <span class="nav-text">方法表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#access-flags-1"><span class="nav-number">10.1.</span> <span class="nav-text">access_flags</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#属性表集合"><span class="nav-number">11.</span> <span class="nav-text">属性表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Code属性"><span class="nav-number">11.1.</span> <span class="nav-text">Code属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#异常表集合"><span class="nav-number">11.1.1.</span> <span class="nav-text">异常表集合</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#描述符"><span class="nav-number">1.</span> <span class="nav-text">描述符</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#魔数"><span class="nav-number">2.</span> <span class="nav-text">魔数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#主次版本号"><span class="nav-number">3.</span> <span class="nav-text">主次版本号</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常量池"><span class="nav-number">4.</span> <span class="nav-text">常量池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CONSTANT-Class-info"><span class="nav-number">4.1.</span> <span class="nav-text">CONSTANT_Class_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CONSTANT-Utf8-info"><span class="nav-number">4.2.</span> <span class="nav-text">CONSTANT_Utf8_info</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常量池数据类型结构汇总图"><span class="nav-number">4.3.</span> <span class="nav-text">常量池数据类型结构汇总图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#访问标志"><span class="nav-number">5.</span> <span class="nav-text">访问标志</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#this-class"><span class="nav-number">6.</span> <span class="nav-text">this_class</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#super-class"><span class="nav-number">7.</span> <span class="nav-text">super_class</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#interfaces"><span class="nav-number">8.</span> <span class="nav-text">interfaces</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字段表集合"><span class="nav-number">9.</span> <span class="nav-text">字段表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#access-flags"><span class="nav-number">9.1.</span> <span class="nav-text">access_flags</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#name-index"><span class="nav-number">9.2.</span> <span class="nav-text">name_index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#descriptor-index"><span class="nav-number">9.3.</span> <span class="nav-text">descriptor_index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#attributes"><span class="nav-number">9.4.</span> <span class="nav-text">attributes</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#方法表集合"><span class="nav-number">10.</span> <span class="nav-text">方法表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#access-flags-1"><span class="nav-number">10.1.</span> <span class="nav-text">access_flags</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#属性表集合"><span class="nav-number">11.</span> <span class="nav-text">属性表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Code属性"><span class="nav-number">11.1.</span> <span class="nav-text">Code属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#异常表集合"><span class="nav-number">11.1.1.</span> <span class="nav-text">异常表集合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exceptions属性"><span class="nav-number">11.2.</span> <span class="nav-text">Exceptions属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LineNumberTable属性"><span class="nav-number">11.3.</span> <span class="nav-text">LineNumberTable属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LocalVariableTable属性"><span class="nav-number">11.4.</span> <span class="nav-text">LocalVariableTable属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#local-variable-info"><span class="nav-number">11.4.1.</span> <span class="nav-text">local_variable_info</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LocalVariableTypeTable"><span class="nav-number">11.5.</span> <span class="nav-text">LocalVariableTypeTable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SourceFile"><span class="nav-number">11.6.</span> <span class="nav-text">SourceFile</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SourceDebugExtension"><span class="nav-number">11.7.</span> <span class="nav-text">SourceDebugExtension</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConstantValue属性"><span class="nav-number">11.8.</span> <span class="nav-text">ConstantValue属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnerCalsses属性"><span class="nav-number">11.9.</span> <span class="nav-text">InnerCalsses属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#inner-classes-info"><span class="nav-number">11.9.1.</span> <span class="nav-text">inner_classes_info</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deprecated属性"><span class="nav-number">11.10.</span> <span class="nav-text">Deprecated属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synthetic属性"><span class="nav-number">11.11.</span> <span class="nav-text">Synthetic属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Signature属性"><span class="nav-number">11.12.</span> <span class="nav-text">Signature属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MethodParameters属性"><span class="nav-number">11.13.</span> <span class="nav-text">MethodParameters属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行时注解属性"><span class="nav-number">11.14.</span> <span class="nav-text">运行时注解属性</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -900,7 +1365,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">152</span>
+          <span class="site-state-item-count">153</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -913,7 +1378,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">94</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
