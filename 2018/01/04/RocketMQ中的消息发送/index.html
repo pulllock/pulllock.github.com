@@ -28,7 +28,7 @@
 <meta property="og:description" content="RocketMQ的消息发送过程学习。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-01-04T12:16:27.000Z">
-<meta property="article:modified_time" content="2020-04-23T14:01:25.770Z">
+<meta property="article:modified_time" content="2020-04-23T15:33:02.996Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="RocketMQ">
 <meta name="twitter:card" content="summary">
@@ -269,28 +269,47 @@
         <p>RocketMQ的消息发送过程学习。</p>
 <a id="more"></a>
 
-<p>NameServer存储Topic和Broker的信息，Broker启动的时候会向所有的NameServer注册。Producer在发送消息之前会先从NameServer获取Broker地址列表，按照负载均衡算法从列表中选择一台Broker服务器发送消息。</p>
-<p>NameServer和Broker保持长连接，每隔30s检测Broker是否存活，如果Broker宕机，从路由注册表中删除。路由变化不会马上通知Producer，这样实现降低了NameServer实现复杂度，Producer会通过容错机制来保证消息发送高可用。</p>
-<h1 id="NameServer路由注册"><a href="#NameServer路由注册" class="headerlink" title="NameServer路由注册"></a>NameServer路由注册</h1><p>NameServer主要存储了：</p>
+<p>RocketMQ发送消息有三种方式：同步发送、异步发送、单向发送。</p>
 <ul>
-<li>topicQueueTable，Topic队列路由信息，发消息时根据路由表进行负载均衡</li>
-<li>borkerAddrTable，Broker基础信息，包含Broker名字、所属集群名称、主备Broker地址</li>
-<li>clusterAddrTable，Broker集群信息，存储集群中所有Broker名称</li>
-<li>brokerLiveTable，Broker状态信息，NameServer每次收到心跳包就会更新该状态信息</li>
-<li>filterServerTable，Broker上的FilterServer列表，用于类模式消息过滤</li>
+<li>同步发送，Producer发送消息，同步等待，直到服务器返回发送结果</li>
+<li>异步发送，Producer发送消息，指定回调方法，发送消息后立刻返回。回调任务会在新线程中执行。</li>
+<li>单向发送，Producer发送消息，直接返回，不等待返回结果也不注册回调方法。</li>
 </ul>
-<p>路由注册通过Broker和NameServer的心跳功能实现，Broker启动时，向集群中所有NameServer发送心跳，每隔30秒向集群所有NameServer发心跳包。</p>
-<p>NameServer收到心跳包后，更新brokerLiveTable缓存中的信息。</p>
-<p>NameServer每隔10秒扫描brokerLiveTable，如果连续120s没有收到心跳包，NameServer会移除Broker的路由信息，同时关闭Socket连接。</p>
-<p>NameServer与Broker保持长连接。</p>
-<h1 id="NameServer路由删除"><a href="#NameServer路由删除" class="headerlink" title="NameServer路由删除"></a>NameServer路由删除</h1><p>Broker每隔30s向所有NameServer发送心跳包，NameServer每隔10s扫描brokerLiveTable状态，如果超过120秒Broker状态没更新，认为Broker失效，移除Broker并且关闭与Broker的连接。</p>
-<p>Broker如果是正常关闭，会触发路由删除。</p>
-<h1 id="路由发现"><a href="#路由发现" class="headerlink" title="路由发现"></a>路由发现</h1><p>Topic路由发生变化后，NameServer不会主动推送给客户端，而是由客户端定时拉取Topic最新路由。根据Topic名称拉取路由信息。</p>
-<p>路由信息包括：</p>
+<h1 id="消息组成"><a href="#消息组成" class="headerlink" title="消息组成"></a>消息组成</h1><ul>
+<li>topic，消息所属的Topic</li>
+<li>flag，消息的Flag</li>
+<li>properties，消息扩展属性</li>
+<li>消息体</li>
+</ul>
+<h2 id="消息扩展属性"><a href="#消息扩展属性" class="headerlink" title="消息扩展属性"></a>消息扩展属性</h2><p>消息扩展属性包括：</p>
 <ul>
-<li>orderTopicConfig，顺序消息配置内容</li>
-<li>queueData，topic队列元数据</li>
-<li>brokerDatas，topic分布的Broker元数据</li>
+<li>tag，消息tag，用于过滤消息</li>
+<li>keys，消息索引键，多个用空格隔开，可以使用这些key快速检索到消息</li>
+<li>waitStoreMsgOk，消息发送时是否等待消息存储完成后再返回</li>
+<li>delayTimeLevel，消息延迟级别，用于定时消息或消息重试</li>
+</ul>
+<h1 id="消息发送流程"><a href="#消息发送流程" class="headerlink" title="消息发送流程"></a>消息发送流程</h1><ul>
+<li>验证消息</li>
+<li>查找路由</li>
+<li>消息发送</li>
+<li>异常处理</li>
+</ul>
+<h2 id="验证消息"><a href="#验证消息" class="headerlink" title="验证消息"></a>验证消息</h2><ul>
+<li>确保生产者处于运行状态</li>
+<li>验证消息符合规范，topic名称、消息体不能为空、消息长度不能等于0，且不能超过4M</li>
+</ul>
+<h2 id="查找路由"><a href="#查找路由" class="headerlink" title="查找路由"></a>查找路由</h2><p>消息发送前会先根据Topic获取路由信息，找到要发送的Broker信息。会先从缓存中查找路由信息，如果缓存中不存在，则从NameServer中查询Topic对应的路由信息。如果最后还是找不到，抛异常。</p>
+<p>根据Topic获取到路由信息后，会从路由信息中选择一个要发送的消息队列，选择消息队列分两种情况：未开启故障规避机制和开启了故障规避机制</p>
+<p>选择发送的消息队列时采用的算法就是轮询。未开启故障规避的话，如果选择的队列所在Broker不可用，这时候轮询到下一个队列，可能还会在同一个Broker上，有可能队列还是不能用。如果开启故障规避的话，如果选择的当前队列所在Broker不可用，在轮询找下个对列的时候，会把这个Broker直接规避掉，从其他的Broker上的队列选取一个。</p>
+<h2 id="消息发送"><a href="#消息发送" class="headerlink" title="消息发送"></a>消息发送</h2><ul>
+<li>选择好队列后，从队列中获取到Broker的地址</li>
+<li>为消息分配全局唯一ID</li>
+<li>入股消息体超过4K，会采用zip压缩，并将消息系统标记记位COMPRESSED_FLAG</li>
+<li>如果是事务Prepared消息，将消息系统标记记为TRANSACTION_PREPARED_TYPE</li>
+<li>如果注册了消息发送钩子方法，消息发送前会先执行</li>
+<li>构建消息发送请求包，包括：生产者组、topic名称、默认创建topic的key、topic在单个broker默认队列数、队列ID、消息系统标记、发送时间、消息标记、扩展属性、消息重试次数、是否批量消息等</li>
+<li>根据发送方式，同步、异步、单向等进行网络传输</li>
+<li>如果注册了消息发送钩子方法，执行发送后的逻辑</li>
 </ul>
 
     </div>
@@ -403,7 +422,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#NameServer路由注册"><span class="nav-number">1.</span> <span class="nav-text">NameServer路由注册</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NameServer路由删除"><span class="nav-number">2.</span> <span class="nav-text">NameServer路由删除</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#路由发现"><span class="nav-number">3.</span> <span class="nav-text">路由发现</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#消息组成"><span class="nav-number">1.</span> <span class="nav-text">消息组成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息扩展属性"><span class="nav-number">1.1.</span> <span class="nav-text">消息扩展属性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息发送流程"><span class="nav-number">2.</span> <span class="nav-text">消息发送流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#验证消息"><span class="nav-number">2.1.</span> <span class="nav-text">验证消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查找路由"><span class="nav-number">2.2.</span> <span class="nav-text">查找路由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息发送"><span class="nav-number">2.3.</span> <span class="nav-text">消息发送</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
