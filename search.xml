@@ -388,6 +388,20 @@
 
     
     <entry>
+      <title><![CDATA[RocketMQ中的消息发送]]></title>
+      <url>%2F2018%2F01%2F04%2FRocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%2F</url>
+      <content type="text"><![CDATA[RocketMQ的消息发送过程学习。 NameServer存储Topic和Broker的信息，Broker启动的时候会向所有的NameServer注册。Producer在发送消息之前会先从NameServer获取Broker地址列表，按照负载均衡算法从列表中选择一台Broker服务器发送消息。 NameServer和Broker保持长连接，每隔30s检测Broker是否存活，如果Broker宕机，从路由注册表中删除。路由变化不会马上通知Producer，这样实现降低了NameServer实现复杂度，Producer会通过容错机制来保证消息发送高可用。 NameServer路由注册NameServer主要存储了： topicQueueTable，Topic队列路由信息，发消息时根据路由表进行负载均衡 borkerAddrTable，Broker基础信息，包含Broker名字、所属集群名称、主备Broker地址 clusterAddrTable，Broker集群信息，存储集群中所有Broker名称 brokerLiveTable，Broker状态信息，NameServer每次收到心跳包就会更新该状态信息 filterServerTable，Broker上的FilterServer列表，用于类模式消息过滤 路由注册通过Broker和NameServer的心跳功能实现，Broker启动时，向集群中所有NameServer发送心跳，每隔30秒向集群所有NameServer发心跳包。 NameServer收到心跳包后，更新brokerLiveTable缓存中的信息。 NameServer每隔10秒扫描brokerLiveTable，如果连续120s没有收到心跳包，NameServer会移除Broker的路由信息，同时关闭Socket连接。 NameServer与Broker保持长连接。 NameServer路由删除Broker每隔30s向所有NameServer发送心跳包，NameServer每隔10s扫描brokerLiveTable状态，如果超过120秒Broker状态没更新，认为Broker失效，移除Broker并且关闭与Broker的连接。 Broker如果是正常关闭，会触发路由删除。 路由发现Topic路由发生变化后，NameServer不会主动推送给客户端，而是由客户端定时拉取Topic最新路由。根据Topic名称拉取路由信息。 路由信息包括： orderTopicConfig，顺序消息配置内容 queueData，topic队列元数据 brokerDatas，topic分布的Broker元数据]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[RocketMQ中的NameServer]]></title>
+      <url>%2F2018%2F01%2F01%2FRocketMQ%E4%B8%AD%E7%9A%84NameServer%2F</url>
+      <content type="text"><![CDATA[RocketMQ的NameServer学习。 RocketMQ发送消息有三种方式：同步发送、异步发送、单向发送。 同步发送，Producer发送消息，同步等待，直到服务器返回发送结果 异步发送，Producer发送消息，指定回调方法，发送消息后立刻返回。回调任务会在新线程中执行。 单向发送，Producer发送消息，直接返回，不等待返回结果也不注册回调方法。 消息组成 topic，消息所属的Topic flag，消息的Flag properties，消息扩展属性 消息体 消息扩展属性消息扩展属性包括： tag，消息tag，用于过滤消息 keys，消息索引键，多个用空格隔开，可以使用这些key快速检索到消息 waitStoreMsgOk，消息发送时是否等待消息存储完成后再返回 delayTimeLevel，消息延迟级别，用于定时消息或消息重试 消息发送流程 验证消息 查找路由 消息发送 异常处理 验证消息 确保生产者处于运行状态 验证消息符合规范，topic名称、消息体不能为空、消息长度不能等于0，且不能超过4M 查找路由消息发送前会先根据Topic获取路由信息，找到要发送的Broker信息。会先从缓存中查找路由信息，如果缓存中不存在，则从NameServer中查询Topic对应的路由信息。如果最后还是找不到，抛异常。 根据Topic获取到路由信息后，会从路由信息中选择一个要发送的消息队列，选择消息队列分两种情况：未开启故障规避机制和开启了故障规避机制 选择发送的消息队列时采用的算法就是轮询。未开启故障规避的话，如果选择的队列所在Broker不可用，这时候轮询到下一个队列，可能还会在同一个Broker上，有可能队列还是不能用。如果开启故障规避的话，如果选择的当前队列所在Broker不可用，在轮询找下个对列的时候，会把这个Broker直接规避掉，从其他的Broker上的队列选取一个。 消息发送 选择好队列后，从队列中获取到Broker的地址 为消息分配全局唯一ID 入股消息体超过4K，会采用zip压缩，并将消息系统标记记位COMPRESSED_FLAG 如果是事务Prepared消息，将消息系统标记记为TRANSACTION_PREPARED_TYPE 如果注册了消息发送钩子方法，消息发送前会先执行 构建消息发送请求包，包括：生产者组、topic名称、默认创建topic的key、topic在单个broker默认队列数、队列ID、消息系统标记、发送时间、消息标记、扩展属性、消息重试次数、是否批量消息等 根据发送方式，同步、异步、单向等进行网络传输 如果注册了消息发送钩子方法，执行发送后的逻辑]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[RocketMQ架构]]></title>
       <url>%2F2018%2F01%2F01%2FRocketMQ%E6%9E%B6%E6%9E%84%2F</url>
       <content type="text"><![CDATA[RocketMQ包括：NameServer、Broker、Producer、Consumer。 NameServer NameServer存储Topic、Broker关系信息，NameServer间没有通信，单台宕机不影响其他NameServer和集群，整个NameServer集群宕机，已正常工作的Producer、Consumer、Broker能正常工作，新起来的就无法工作。 管理brokers，Broker服务启动时，会注册到NameServer上，两者保持心跳检测机制，保证NameServer知道Broker的存活。 NameServer存有全部Broker集群信息和生产者消费者客户端的请求信息。 Broker 负责存储消息、转发消息。 Broker节点与所有的NameServer节点保持长连接和心跳，定时将Topic信息注册到NameServer上。 Producer 消息生产者，负责产生消息 Consumer 消息消费者，消费消息 支持PUSH和PULL模式，支持集群消费和广播消费]]></content>
