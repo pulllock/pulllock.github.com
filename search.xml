@@ -3,6 +3,13 @@
   
     
     <entry>
+      <title><![CDATA[Spring中Placeholder的解析过程]]></title>
+      <url>%2F2020%2F05%2F05%2FSpring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%2F</url>
+      <content type="text"><![CDATA[Spring中Placeholder的解析过程简单梳理。 Spring版本是3.2.18.RELEASE 使用定义application.properties文件： 1placeholder.user.prefix=UserPrefix_ 在applicationContext.xml中引入application.properties文件： 1&lt;context:property-placeholder location="application.properties"/&gt; 在实际使用的地方注入，这里使用@Value注解： 12@Value("$&#123;placeholder.user.prefix&#125;")private String userPrefix; 解析 容器启动，读取xml配置文件，开始加载并解析成BeanDefinition 在解析成BeanDefinition的时候读取到&lt;context:property-placeholder，发现是自定义标签，使用ContextNamespaceHandler来处理，注册一个针对property-placeholder的处理器：PropertyPlaceholderBeanDefinitionParser PropertyPlaceholderBeanDefinitionParser解析&lt;context:property-placeholder location=&quot;application.properties&quot;/&gt;，转换为BeanDefinition，这个BeanDefinition里面持有了location，并且这个BeanDefinition对应的BeanClass是PropertyPlaceholderConfigurer PropertyPlaceholderConfigurer查看继承关系，会发现它实现了BeanFactoryPostProcessor接口，在容器启动的invokeBeanFactoryPostProcessors这一步，会调用BeanFactoryPostProcessor的postProcessBeanFactory方法，该方法PropertyResourceConfigurer中有个实现 PropertyResourceConfigurer的postProcessBeanFactory方法中会把application.properties文件中的属性解析出来：key=placeholder.user.prefix, value=UserPrefix_ 接下来会继续调用PropertyPlaceholderConfigurer的processProperties方法，会遍历BeanFactory中的每个BeanDefinition，尝试使用从properties中解析到的key和value来替换BeanDefinition中对应的属性的${}占位符。这一步不是处理我们声明的@Value注解位置的占位符。 在processProperties解析的最后会添加一个EmbeddedValueResolver到BeanFactory中，具体类型是：PlaceholderResolvingStringValueResolver，这个在Spring3.0新增的功能，用来解析embedded values的占位符，比如：注解的属性。 接下来在容器启动的finishBeanFactoryInitialization这一步，会初始化所有的非懒加载的单例Bean，在populateBean这一步填充属性，在应用属性值之前，会调用实现了InstantiationAwareBeanPostProcessor接口的实现类的postProcessPropertyValues方法，这一步可以在应用属性值到Bean之前改变属性，比如可以替换我们的@Value中的占位符为真正的值 AutowiredAnnotationBeanPostProcessor实现了InstantiationAwareBeanPostProcessor接口，用来处理@Autowired、@Value、@Inject注解，这里的postProcessPropertyValues方法就用来处理我们@Value注解 获取到注解元数据@Value(&quot;${placeholder.user.prefix}&quot;)以及要注入的属性private String userPrefix;，并且使用上面获得的PlaceholderResolvingStringValueResolver来替换占位符。 替换占位符的过程就是将前缀${和后缀}截取掉，获得真正的placeholder.user.prefix，这样就可以根据这个key在上面解析的属性中找到对应的值了。 解析出来key：placeholder.user.prefix之后，会调用PropertyPlaceholderConfigurer的resolvePlaceholder方法从上面解析的属性中根据key获取真正的值，这里会返回UserPrefix_ 接下来还有对表达式的解析，我们没使用，直接跳过。 拿到真正的值UserPrefix_后，使用反射将值赋值给private String userPrefix，这时候就完成了。 总结 在解析xml成BeanDefinition的时候拿到application.properties文件的位置 在调用BeanFactoryPostProcessor实现类的postProcessBeanFactory方法的时候会把application.properties文件中的内容解析key和value对应关系 在实例化Bean的时候会调用AutowiredAnnotationBeanPostProcessor来处理@Value注解，将占位符替换为上面解析到的key对应的value，使用反射设置值。]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[DynamicConfigCenter中基于Spring的Schema扩展功能]]></title>
       <url>%2F2020%2F05%2F04%2FDynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD%2F</url>
       <content type="text"><![CDATA[集成Spring，使用Spring的scheme扩展机制。 Spring的Schema扩展机制介绍可以自定义xml标签，将我们自定义的功能集成到Spring中去，大概步骤如下： classpath下的META-INF中定义文件：spring.handlers、spring.schemas，用来识别配置 编写xml的xsd文件描述自定义元素 编写NamespaceHandler实现类，来注册自定义标签的解析器 编写BeanDefinitionParser实现类，具体解析标签 DynamicConfigCenter中对Schema扩展机制的使用和实现实际使用 在xml配置文件中定义&lt;dcc:config .../&gt;用来启用自己写的解析placeholder的方法 在代码中使用@Value(&quot;${TestProject.user.prefix}&quot;)注入配置 如果本地配置文件有要使用的配置，优先使用本地配置文件中的配置 具体实现定义spring.schemas文件： 1https\://www.cxis.me/schema/dcc/dcc-config-1.0.xsd=me/cxis/dcc/spring/config/dcc-config.xsd 定义spring.handlers文件： 1https\://www.cxis.me/schema/dcc=me.cxis.dcc.spring.DccConfigNamespaceHandler 定义dcc-config.xsd文件 123456789101112131415161718192021&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;xsd:schema xmlns="https://www.cxis.me/schema/dcc" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans" targetNamespace="https://www.cxis.me/schema/dcc" elementFormDefault="qualified" attributeFormDefault="unqualified"&gt; &lt;xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="https://www.springframework.org/schema/beans/spring-beans.xsd"/&gt; &lt;xsd:element name="config"&gt; &lt;xsd:complexType&gt; &lt;xsd:complexContent&gt; &lt;xsd:extension base="beans:identifiedType"&gt; &lt;/xsd:extension&gt; &lt;/xsd:complexContent&gt; &lt;/xsd:complexType&gt; &lt;/xsd:element&gt;&lt;/xsd:schema&gt; 定义DccConfigNamespaceHandler： 1234567public class DccConfigNamespaceHandler extends NamespaceHandlerSupport &#123; @Override public void init() &#123; registerBeanDefinitionParser("config", new DccConfigDefinitionParser()); &#125;&#125; 定义DccConfigDefinitionParser： 1234567public class DccConfigDefinitionParser implements BeanDefinitionParser &#123; @Override public BeanDefinition parse(Element element, ParserContext parserContext) &#123; return null; &#125;&#125; 运行时监听zookeeper的变更，使用反射更新@Value注解的字段值。 具体代码参照https://github.com/dachengxi/DynamicConfigCenter中DynamicConfigCenter-client下的`me.cxis.dcc.spring.DccConfigPlaceholderConfigurer`。]]></content>
@@ -404,7 +411,7 @@
     <entry>
       <title><![CDATA[Kafka中的Broker]]></title>
       <url>%2F2018%2F05%2F03%2FKafka%E4%B8%AD%E7%9A%84Broker%2F</url>
-      <content type="text"><![CDATA[初识Kafka。 Kafka的Broker学习。 Broker主要功能是持久化消息和将消息队列中的消息从发送端传输到消费端。 消息设计Kafka消息实现方式本质使用ByteBuffer保存消息，同时依赖文件系统提供的页缓存机制，不依靠Java的堆缓存。ByteBuffer是紧凑的二进制字节结构，不需要padding操作，省去了很多不必要的对象开销。 V0消息格式 CRC，4字节，CRC校验码 magic，1字节，版本号，V0、V1、V2分别是0、1、2 attribute，1字节，属性，目前只使用低3位表示消息压缩类型 key长度，4字节，未指定key为-1 key值 value长度，4字节，未指定value为-1 value值 V1消息格式 V1增加了时间戳信息 attribute字段第4位用于指定时间戳类型 V0、V1日志项格式 V2消息格式 消息总长度 时间戳增量，不再使用8字节保存时间戳信息，而是保存增量 位移增量 消息头部，用来满足一些定制化需求 去除消息级CRC校验 废弃attribute字段 V2 batch格式 CRC，消息级的CRC移除，放入batch attribute，消息级的attribute被废弃。低3位保存压缩类型，第4位保存时间戳类型，5、6位保存事务类型和控制类型 集群管理Kafka支持自动化服务发现和成员管理，是基于Zookeeper实现，当一个Broker启动的时候会将自己注册到Zookeeper下的一个节点。 副本和ISR]]></content>
+      <content type="text"><![CDATA[初识Kafka。 Kafka的Broker学习。 Broker主要功能是持久化消息和将消息队列中的消息从发送端传输到消费端。 消息设计Kafka消息实现方式本质使用ByteBuffer保存消息，同时依赖文件系统提供的页缓存机制，不依靠Java的堆缓存。ByteBuffer是紧凑的二进制字节结构，不需要padding操作，省去了很多不必要的对象开销。 V0消息格式 CRC，4字节，CRC校验码 magic，1字节，版本号，V0、V1、V2分别是0、1、2 attribute，1字节，属性，目前只使用低3位表示消息压缩类型 key长度，4字节，未指定key为-1 key值 value长度，4字节，未指定value为-1 value值 V1消息格式 V1增加了时间戳信息 attribute字段第4位用于指定时间戳类型 V0、V1日志项格式 V2消息格式 消息总长度 时间戳增量，不再使用8字节保存时间戳信息，而是保存增量 位移增量 消息头部，用来满足一些定制化需求 去除消息级CRC校验 废弃attribute字段 V2 batch格式 CRC，消息级的CRC移除，放入batch attribute，消息级的attribute被废弃。低3位保存压缩类型，第4位保存时间戳类型，5、6位保存事务类型和控制类型 集群管理Kafka支持自动化服务发现和成员管理，是基于Zookeeper实现，当一个Broker启动的时候会将自己注册到Zookeeper下的一个节点。 副本和ISRKafka分区本质上是一个备份日志，利用多份相同的备份共同提供冗余机制来保持系统高可用性。这些备份称为副本replica。 Kafka把分区所有副本均匀的分配到所有broker上，并从这个副本中挑选一个作为leader副本对外提供服务，其他副本称为follower副本，只能被动向leader副本请求数据，保持和leader的同步。 ISR，in-sync replicas，是Kafka集群动态维护的一组同步副本集合，每个topic分区都有自己的ISR列表，ISR中的所有副本都于leader保持同步状态，leader副本总是包含在ISR中的，只有ISR中的副本才有资格被选举为leader。Producer写入的一条消息只有被ISR中所有副本都接收到，才被视为已提交状态。 参考 Apache kafka实战]]></content>
     </entry>
 
     
@@ -451,16 +458,16 @@
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的顺序消息]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
-      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
+      <title><![CDATA[RocketMQ中的消息存储]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
+      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
     </entry>
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的消息存储]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
-      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
+      <title><![CDATA[RocketMQ中的顺序消息]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
+      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
     </entry>
 
     
