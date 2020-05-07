@@ -28,7 +28,7 @@
 <meta property="og:description" content="初识Kafka。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-05-01T12:49:13.000Z">
-<meta property="article:modified_time" content="2020-04-28T15:35:11.906Z">
+<meta property="article:modified_time" content="2020-05-07T14:44:53.788Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="Kafka">
 <meta name="twitter:card" content="summary">
@@ -276,7 +276,22 @@
 <li>负载均衡、故障转移</li>
 <li>伸缩性</li>
 </ul>
-<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><h2 id="消息"><a href="#消息" class="headerlink" title="消息"></a>消息</h2><p>消息由消息头部、key、value组成：</p>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><ul>
+<li>Zookeeper集群，kafka用Zookeeper来负责集群元数据管理、控制器的选举等操作</li>
+<li>Producer，生产者，负责创建消息，投递到Kafka中</li>
+<li>Consumer，消费者，消费消息，连接到Kafka接收消息</li>
+<li>Broker，服务代理节点，负责存储消息</li>
+<li>Topic，消息以主题为单位归类，是一个逻辑概念，代表一类消息，通常可使用topic来区分实际业务。 topic通常会被多个消费者订阅。</li>
+<li>Partition，分区，主题是逻辑概念，可以细分为多个分区，一个分区只属于单个主题。同一主题下的不同分区包含消息是不同的，partition是不可修改的有序消息序列。用户对partition唯一能做的操作就是在消息序列尾部追加写入消息。partition上的每条消息都会被分配一个唯一的序列号，叫做位移offset</li>
+<li>Offset，topic的partition下每条消息都被分配一个唯一的offset，消费端也有offset概念，用来表示消费partition的消费进度。</li>
+<li>Replica，Kafka的备份日志称为副本replica，防止数据丢失。副本分为两类：领导者副本leader replica和追随者副本follower replica。follower replica不负责响应客户端发来的消息写入和消费者请求，只是被动的向leader replica获取数据。leader replica所在broker宕机时，Kafka会从剩余的replica中选举新的leader继续提供服务</li>
+<li>Leader，leader对外提供服务</li>
+<li>Follower，follower被动追随leader状态，保持与leader同步，当做leader后备。leader挂掉后就会有一个follower备选举成新的leader。</li>
+<li>ISR，ISR是in-sync replica，与leader replica保持同步的replica集合。Kafka为partition动态维护一个replica，该集合中所有replica保存的消息日志都与leader replica保持同步，只有这个集合中的replica才能被选举为leader，只有该集合中所有replica都接到了同一条消息，Kafka才会认为消息是已提交状态，也就是消息发送成功。如果replica落后于leader replica的进度，当达到一定程度时，Kaffka会将这些replica踢出ISR，当这些replica追上了leader进度时，Kafka会将他们加入到ISR中。</li>
+<li>HW，Hight Watermark，高水位，标识了一个特定的消息偏移量，消费者只能拉取到这个offset之前的消息</li>
+<li>LEO，Log End Offset，标识当前日志文件中下一条待写入消息的offset</li>
+</ul>
+<h2 id="消息"><a href="#消息" class="headerlink" title="消息"></a>消息</h2><p>消息由消息头部、key、value组成：</p>
 <ul>
 <li>CRC，4字节</li>
 <li>版本号，1字节</li>
@@ -288,16 +303,6 @@
 <li>value，v个字节，消息体，保存实际的消息数据</li>
 </ul>
 <p>Kafka使用紧凑的二进制字节数组来保存消息，没有多余的比特位浪费。</p>
-<h2 id="topic和partition"><a href="#topic和partition" class="headerlink" title="topic和partition"></a>topic和partition</h2><p>topic是一个逻辑概念，代表一类消息，通常可使用topic来区分实际业务。 topic通常会被多个消费者订阅。</p>
-<p>Kafka采用topic-partition-message三级结构来分散负载。topic由多个partition组成，partition是不可修改的有序消息序列。用户对partition唯一能做的操作就是在消息序列尾部追加写入消息。</p>
-<p>partition上的每条消息都会被分配一个唯一的序列号，叫做位移offset。</p>
-<h2 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h2><p>topic的partition下每条消息都被分配一个唯一的offset，消费端也有offset概念，用来表示消费partition的消费进度。</p>
-<h2 id="replica"><a href="#replica" class="headerlink" title="replica"></a>replica</h2><p>Kafka的备份日志成为副本replica，防止数据丢失。副本分为两类：领导者副本leader replica和追随者副本follower replica。</p>
-<p>follower replica不负责响应客户端发来的消息写入和消费者请求，只是被动的向leader replica获取数据。leader replica所在broker宕机时，Kafka会从剩余的replica中选举新的leader继续提供服务</p>
-<h2 id="leader和follower"><a href="#leader和follower" class="headerlink" title="leader和follower"></a>leader和follower</h2><p>leader对外提供服务，follower被动追随leader状态，保持与leader同步，当做leader后备。leader挂掉后就会有一个follower备选举成新的leader。</p>
-<p>Kafka保证同一partition的多个replica一定不会分配在同一台broker上。</p>
-<h2 id="ISR"><a href="#ISR" class="headerlink" title="ISR"></a>ISR</h2><p>ISR是in-sync replica，与leader replica保持同步的replica集合。Kafka为partition动态维护一个replica，该集合中所有replica保存的消息日志都与leader replica保持同步，只有这个集合中的replica才能被选举为leader，只有该集合中所有replica都接到了同一条消息，Kafka才会认为消息是已提交状态，也就是消息发送成功。</p>
-<p>如果replica落后于leader replica的进度，当达到一定程度时，Kaffka会将这些replica踢出ISR，当这些replica追上了leader进度时，Kafka会将他们加入到ISR中。</p>
 <h1 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h1><p>适合处理生产环境中流式数据：</p>
 <ul>
 <li>消息传输</li>
@@ -306,6 +311,10 @@
 <li>日志收集</li>
 <li>Event Sourcing</li>
 <li>流式处理</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>Apache kafka实战</li>
+<li>深入理解Kafka：核心设计与实践原理</li>
 </ul>
 
     </div>
@@ -418,7 +427,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息"><span class="nav-number">1.1.</span> <span class="nav-text">消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#topic和partition"><span class="nav-number">1.2.</span> <span class="nav-text">topic和partition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#offset"><span class="nav-number">1.3.</span> <span class="nav-text">offset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#replica"><span class="nav-number">1.4.</span> <span class="nav-text">replica</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leader和follower"><span class="nav-number">1.5.</span> <span class="nav-text">leader和follower</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ISR"><span class="nav-number">1.6.</span> <span class="nav-text">ISR</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用场景"><span class="nav-number">2.</span> <span class="nav-text">使用场景</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本概念"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#消息"><span class="nav-number">1.1.</span> <span class="nav-text">消息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用场景"><span class="nav-number">2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -434,7 +443,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">170</span>
+          <span class="site-state-item-count">175</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
