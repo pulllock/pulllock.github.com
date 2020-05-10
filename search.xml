@@ -409,9 +409,30 @@
 
     
     <entry>
+      <title><![CDATA[Kafka中的事务]]></title>
+      <url>%2F2018%2F05%2F25%2FKafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%2F</url>
+      <content type="text"><![CDATA[Kafka的事务学习。 参考 Apache kafka实战 深入理解Kafka：核心设计与实践原理]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Kafka为什么这么快]]></title>
+      <url>%2F2018%2F05%2F25%2FKafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB%2F</url>
+      <content type="text"><![CDATA[Kafka的高吞吐量和低延迟，速度快，原因大概是：顺序写盘、内存映射、页缓存、零拷贝、批量发送。 顺序写盘Kafka采用顺序写盘的方式，文件追加来写入消息，避免随机磁盘访问，所以写文件是很快的。 页缓存、内存映射文件Kafka大量使用操作系统页缓存，把磁盘中的数据缓存到内存中，把对磁盘的访问转换为对内存的访问。进程准备读取磁盘上的文件内容时，操作系统会先查看数据是否在页缓存中，如果命中直接返回，避免了对磁盘IO操作，没有命中的话，操作系统会向磁盘发起读请求并将读取的数据存入页缓存，再返回给进程。 写操作会把数据写入到操作系统的页缓存中，操作系统负责刷盘任务。 零拷贝零拷贝技术，就是指将数据从磁盘文件复制到网卡设备中，不需要经由应用程序转发，减少内核和用户模式的上下文切换。 如果不使用零拷贝，读取数据的过程如下： 操作系统从磁盘读取数据，写到内核空间读缓冲区中 应用程序从内核空间将数据读取到用户空间缓冲区 应用程序将数据写回到内和空间的Socket缓冲区 操作系统将Socket缓冲区中的数据拷贝到网卡缓冲区中 如果使用零拷贝，数据会从内核空间的读缓冲区直接拷贝到Socket缓冲区，再拷贝到网卡缓冲区中。省去了写入到用户空间和从用户空间拷贝的时间。 批量发送Kafka在发送消息的时候，会将消息缓存到消息累加器中，然后缓存的消息可以进行批量发送，从而减少网络传输带来的资源消耗。 参考 Apache kafka实战 深入理解Kafka：核心设计与实践原理]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Kafka中的副本]]></title>
+      <url>%2F2018%2F05%2F23%2FKafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC%2F</url>
+      <content type="text"><![CDATA[Kafka的副本学习。 Kafka分区本质上是一个备份日志，利用多份相同的备份共同提供冗余机制来保持系统高可用性。这些备份称为副本replica。 Kafka会把分区的所有副本均匀的分配到所有Broker上，并从这些副本中选一个作为Leader对外提供读写服务，其他的副本是Follower副本，只能向Leader请求数据，保持与Leader的同步。 如果Leader副本宕机，Follower副本会竞争成为新的Leader，但不是所有的Follower都有资格去成为Leader，对于落后Leader太多的是没有资格竞选Leader的。 ISRISR in-sync replicas，Kafka集群动态维护一组同步副本集合，每个Topic分区都有自己的ISR列表，ISR中所有副本都与Leader保持同步状态，Leader副本总是在ISR列表中。 只有在ISR中的副本才有资格选举为Leader。Producer写入的一条消息只有被ISR中所有副本都接收到，才被视为已提交。 参考 Apache kafka实战 深入理解Kafka：核心设计与实践原理]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Kafka中的负载均衡]]></title>
-      <url>%2F2018%2F05%2F20%2FKafka%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%2F</url>
-      <content type="text"><![CDATA[Kafka的负载均衡学习。 生产者发消息的负载均衡生产者发消息时，会根据Partition的策略来决定将消息发往哪个分区： 如果消息中指定了partition字段，就往指定的这个分区中发消息 如果没有指定partition，需要依赖分区器，根据key来计算partition的值。可以使用Kafka默认分区器或者我们自定义分区器 Kafka默认分区器默认分区器是DefaultPartitioner： 如果key不为null，默认对key进行哈希计算，来得到分区号。可以保证相同的key被发送到相同分区上 如果key为null，消息将以轮询的方式发送到主题的各个可用分区。 消费者的负载均衡消费者客户端可以使用partition.assignment.strategy来设置消费者与订阅主题之间的分区分配策略，有三种分区分配策略：RangeAssignor、RoundRobinAssignor、StickyAssignor，默认是RangeAssignor RangeAssignor，按照消费者总数和分区总数进行整除运算来获得一个跨度，然后将分区按照跨度进行平均分配，保证分区尽可能均匀的分配给所有消费者。会将消费组内所有订阅了这个主题的消费者按照名称字典序排序，然后为每个消费者划分固定的分区范围，如果不够平均分配，靠前的消费者会被多分配一个分区 RoundRobinAssignor，将消费组内所有消费者以及消费者订阅的主题分区按照字典序排序，通过轮询的方式将各个分区一次分配给每个消费者。 StickyAssignor，这总分配策略尽可能均匀分配、重分配时分配的分区尽可能与上次分配的保持相同。 参考 Apache kafka实战 深入理解Kafka：核心设计与实践原理]]></content>
+      <url>%2F2018%2F05%2F20%2FKafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%2F</url>
+      <content type="text"><![CDATA[Kafka的负载均衡学习。 生产者发消息的负载均衡生产者发消息时，会根据Partition的策略来决定将消息发往哪个分区： 如果消息中指定了partition字段，就往指定的这个分区中发消息 如果没有指定partition，需要依赖分区器，根据key来计算partition的值。可以使用Kafka默认分区器或者我们自定义分区器 Kafka默认分区器默认分区器是DefaultPartitioner： 如果key不为null，默认对key进行哈希计算，来得到分区号。可以保证相同的key被发送到相同分区上 如果key为null，消息将以轮询的方式发送到主题的各个可用分区。 消费者的负载均衡消费者客户端可以使用partition.assignment.strategy来设置消费者与订阅主题之间的分区分配策略，有三种分区分配策略：RangeAssignor、RoundRobinAssignor、StickyAssignor，默认是RangeAssignor RangeAssignor，按照消费者总数和分区总数进行整除运算来获得一个跨度，然后将分区按照跨度进行平均分配，保证分区尽可能均匀的分配给所有消费者。会将消费组内所有订阅了这个主题的消费者按照名称字典序排序，然后为每个消费者划分固定的分区范围，如果不够平均分配，靠前的消费者会被多分配一个分区 RoundRobinAssignor，将消费组内所有消费者以及消费者订阅的主题分区按照字典序排序，通过轮询的方式将各个分区一次分配给每个消费者。 StickyAssignor，这种分配策略尽可能均匀分配、重分配时分配的分区尽可能与上次分配的保持相同。 再均衡/重平衡 新版消费者客户端，每个消费组在服务端对应一个GroupCoordinator，GroupCoordinator用于管理消费组的组件。消费者客户端中的ConsumerCoordinator组件负责与GroupCoordinator进行交互。 触发消费者再均衡的操作 消费组成员发生变化，有新的消费者加入消费组；消费者宕机下线，真的宕机或者长时间GC、网络延迟导致心跳失败，GroupCoordinator会认为消费者已下线；有消费者主动退出消费组，发送LeaveGroupRequest请求，比如客户端取消对某些主题的订阅 消费组对应的GroupCoorinator节点发生了变更 消费组订阅的任一主题或主题分区数量发生变化 再均衡的流程 消费组先确定GroupCoordinator所在的Broker，并和Broker建立连接 加入组 同步更新分配方案 确定GroupCoordinator位置消费组在执行rebalance之前会先确定GroupCoordinator所在的Broker，创建和该Broker的连接。确定GroupCoordinator的算法和确定offset被提交到__consumer_offsets的算法相同。 加入组消费者组内的所有的消费者向GroupCoordinator发送JoinGroup请求。当收集完JoinGroup请求后，GroupCoordinator会从中选择一个消费者作为消费者组的Leader，把所有成员信息以及它们的订阅信息发送给这个Leader。 同步更新分配方案上一步选出来的消费者Leader开始指定分配方案，根据分配策略（range、round robin、sticky）决定每个消费者都负责哪些topic的哪些分区。分配完成后，Leader会把这个分配方案封装进SyncGroup请求发送给GroupCoordinator，GroupCoordinator接收到分配方案后，把属于每个消费者的方案单独抽取出来作为SyncGroup请求的response返还给各自的消费者。 参考 Apache kafka实战 深入理解Kafka：核心设计与实践原理]]></content>
     </entry>
 
     
