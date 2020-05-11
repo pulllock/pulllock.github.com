@@ -409,9 +409,23 @@
 
     
     <entry>
+      <title><![CDATA[Elasticsearch之Lucene学习]]></title>
+      <url>%2F2018%2F06%2F16%2FElasticsearch%E4%B9%8BLucene%E5%AD%A6%E4%B9%A0%2F</url>
+      <content type="text"><![CDATA[信息检索基础概念学习，包括分词算法、倒排索引等等。 Lucene基础学习。 文档是Lucene索引基本单位，比文档更小的单位是字段，字段由三个部分组成： name type value Lucene字段类型 TextField，字段内容会被索引并词条化，但不保存词向量 StringField，只会对该字段内容索引，不词条化，也不保存词向量，字符串值会被索引为一个单独的词项 IntPoint，适合索引值为int类型的字段 LongPoint，long类型 FloatPoint，float类型 DoublePoint，double类型 SortedDocValuesField，存储多值域的DocValues字段，适合索引字段值为文本并且需要按值进行分组、聚合等操作字段 NumbericDocValuesField，存储单个数值类型的DocValues字段 SortedNumbericDocValuesField，存储数值类型的有序数组列表的DocValues字段 StoredField，适合索引只需要保存字段值不进行其他操作的字段 参考 从Lucene到Elasticsearch全文检索实战 深入理解ElasticSearch]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Elasticsearch基础概念介绍]]></title>
+      <url>%2F2018%2F06%2F16%2FElasticsearch%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D%2F</url>
+      <content type="text"><![CDATA[信息检索基础概念学习，包括分词算法、倒排索引等等。 分词算法英文分词原理：输入文本、词汇分隔、词汇过滤（去除停留词）、词干提取（形态还原）、大写转小写、结果输出 中文分词原理，中文分词主要有三种方法： 基于词典匹配的分词 基于语义理解的分词 基于词频统计的分词 词典匹配分词按照一定的匹配策略将输入的字符串与机器字典词条进行匹配，实际上就是把一个句子从左向右扫描一遍，遇到字典中有的词就标识出来，遇到复合词就找到最长的次匹配，遇到不认识的字串则切分成单个单词。 常用词典分词方法： 正向最大匹配，从左到右方向 逆向最大匹配，从右到左方向 最少切分，每一句中切除的词数最小 语义理解分词模拟人脑对语言和句子的理解，达到识别词汇单元的效果。基本模式是把分词、句法、语义分析并行进行，利用句法和语义信息来处理分词的歧义。 词频统计分词词频统计分词方法只需要对语料中的字组频度进行统计，不需要切分词典。 倒排索引Inverted Index，也被称为反向索引，用来存储在全文搜索下某个单词在一个文档或一组文档中的存储位置的映射。 布尔检索模型布尔检索法是指利用布尔运算符连接各个检索词，由计算机进行逻辑运算，找出所需信息的一种检索方法。 有三种逻辑运算： AND* OR+ NOT- 优先级：NOT &gt; AND &gt; OR tf-idf权重计算tf-idf，词频-逆文档频率，用以计算词项对于一个文档集或一个语料库中的一份文件的重要程度。词项在一篇文档中出现的频率非常高，说明其重要性比较高，如果这个词项在文档集中的其他文档出现的频率也很高，说明这个词语可能是比较通用比较常见的。 tf（term frequency），词项频率，词在整篇文档中出现的次数。$$词频(tf_{t, d}) = \frac{单词在文档中的出现次数}{文档的总次数}$$Lucene采用了另外一种词频标准化方法：$$词频(tf_{t, d}) = \sqrt{单词在文档中的出现次数}$$ df（document frequency），文档频率，代表文档集中包含某个词的所有文档数目。df通常比较大，把它映射到一个较小的取值范围，用逆文档频率idf（inverse document frequency）来表示。$$逆文档频率(idf_t) = log(\frac{文档集总的文档数}{包含某个词的文档数+1})=log(\frac{N}{df_t + 1})$$上式中分母越大，说明词越常见，逆文档频率越小。分母加1是为了防止文档不包含某个词时分母为0的情况。 词项权重TF-IDF计算公式：$$tf-idf = 词频(tf_{t, d}) * 逆文档频率(idf_t)$$ 向量空间模型数学、数学 概率检索模型概率检索模型从概率排序原理推导而来，基本思想：给定一个查询，返回的文档能够按照查询和用户需求的相关性得分高低来排序。 数学、数学 参考 从Lucene到Elasticsearch全文检索实战 深入理解ElasticSearch]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Kafka中的事务]]></title>
       <url>%2F2018%2F05%2F25%2FKafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%2F</url>
-      <content type="text"><![CDATA[Kafka的事务学习。 参考 Apache kafka实战 深入理解Kafka：核心设计与实践原理]]></content>
+      <content type="text"><![CDATA[Kafka的事务学习。 消息中间件一般有三种交付语义： at most once，最多一次，消息可能会丢失，但是不会重复 at least once，最少一次，消息不会丢失，但可能会重复 exactly once，恰好一次，消息肯定并且只会被传输一次 Kafka的消息生产者提供的交付语义是at least once： 消息不会丢失：一旦消息被提交到日志文件，由于有多副本机制存在，消息就不会丢失 消息可能重复：发送消息后由于网络问题，生产者可能会重试消息发送，会导致消息重复写入 消费者交付语义和消费者处理消息提交消费位移的顺序有关： 消费者拉取完消息后，先处理消息再提交消费位移，可能在提交位移之前宕机，消费者重新上线后会从上一次位移提交位置拉取消息，出现重复消费，这对应了at least once 消费者拉取完消息后，先提交消费位移再处理消息，提交完位移后宕机，重新上线后，会从已经提交的位移处重新消费，发生消息丢失，这对应了at most once Kafka从0.11.0.0开始引入幂等和事务，来实现exactly once semantics（EOS）。 幂等生产者幂等性： 每个新生产者实例在初始化的时候会被分配一个PID（Producer Id） 每个PID发送消息到每个分区都有对应的序列号，序列号从0开始单挑递增，生产者每发送一条消息，就会将&lt;PID, 分区&gt;对应的序列号加1。序列号会被保存在日志中，即使分区Leader副本挂掉，新选出来的Leader也能执行消息去重。 Broker端： Broker会在内存中为每一对&lt;PID, 分区&gt;维护一个序列号，收到消息时，只有当他的序列号值比Broker中维护的序列号值大1，才会接收该消息。 Kafka幂等只能保证单个生产者中单分区的幂等。 事务幂等性不能跨分区，事务可以弥补，事务保证对多个分区写入操作的原子性。 为了实现事务，生产者应用程序必须提供一个唯一的transactionId。 消费者事务保证的语义比较弱，Kafka不能保证已提交的事务中所有消息都能被消费： 采用了日志压缩策略，事务中某些消息，比如相同key的可能会被清理掉 事务消息可能在同一分区的多个日志段中，老的日志段被删除时，对应消息可能会丢失 消费者可通过seek方法访问任意offset消息，可能漏掉事务中部分消息 消费者消费时，可能没有分配到事务内所有分区，就不能读取事务中所有消息 日志文件中还有一种消息，叫做控制消息，一种有两种类型：COMMIT和ABORT，用来表示事务已经成功提交或被成功终止。消费者可通过这个消息来判断对应事务是被提交还是被终止了。 Kafka还引入了事务协调器（TransactionCoordinator）来负责处理事务，每个生产者都会被指派一个特定的TransactionCoordinator，所有事务逻辑包括分派PID都由事务协调器来负责，事务协调器会把事务状态持久化到内部Topic__transaction_state中。 流程： 查找事务协调器 获取PID 开启事务 执行 提交或终止事务 查找事务协调器生产者会先找到事务协调器所在的Broker，Kafka收到FindCoordinatorRequet请求后，根据transactionId查找到对应的事务协调器节点，找到分区以及此分区的Leader副本所在Broker节点。 获取PID找到事务协调器节点后，需要为生产者分配一个PID。事务协调器收到InitProducerIdRequest 后，会把transactionId和对应的PID以消息的形式保存到Topic__transaction_state中。 开启事务生产者通过beginTransaction方法开启事务，生产者本地会标记已经开启了一个新事务，生产者发送第一条消息后，事务协调器才认为事务已经开启 执行 生产者给新分区发送消息前，会先向事务协调器发送AddPartitionsToTxnRequest请求，事务协调器会把&lt;transactionId, TopicPartition&gt;对应关系存储在主题__transaction_state中 生产者发送消息 生产者调用sendOffsetsToTransaction方法，可以再一个事务批次里处理消息的消费和发送，会先向事务协调器节点发送AddOffsetsToTxnRequest，事务协调器会将分区保存在__transaction_state中；之后生产者会发送TxnOffsetCommitRequest请求给事务协调器，将本次事务中包含的位移信息保存在主题__consumer_offset中。 提交或终止事务生产者可调用commitTransaction方法或abortTransaction方法来结束当前事务： 生产者发送EndTxnRequest到事务协调器节点，事务协调器会将PREPARE_COMMIT或PREPARE_ABORT消息写入__transaction_state主题中 事务协调器向事务中各个分区的Leader节点发消息，通过WriteTxnMarkerRequest请求将COMMIT或ABORT写入用户所使用的普通主题和__consumer_offsets中，写入的是控制消息，用来标识事务的终结。 将COMPLETE_COMMIT或COMPLETE_ABORT写入到主题__transaction_state中 参考 Apache kafka实战 深入理解Kafka：核心设计与实践原理]]></content>
     </entry>
 
     
