@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="信息检索基础概念学习，包括分词算法、倒排索引等等。">
+  <meta name="description" content="Elasticsearch基础概念学习。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Elasticsearch基础概念介绍">
-<meta property="og:url" content="http://dachengxi.github.com/2018/06/16/Elasticsearch%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:title" content="Elasticsearc的基础概念">
+<meta property="og:url" content="http://dachengxi.github.com/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/index.html">
 <meta property="og:site_name" content="大程熙">
-<meta property="og:description" content="信息检索基础概念学习，包括分词算法、倒排索引等等。">
+<meta property="og:description" content="Elasticsearch基础概念学习。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2018-06-16T05:56:43.000Z">
-<meta property="article:modified_time" content="2020-05-11T13:47:42.164Z">
+<meta property="article:published_time" content="2018-06-16T15:34:40.000Z">
+<meta property="article:modified_time" content="2020-05-11T15:49:29.232Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="Elasticsearch">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://dachengxi.github.com/2018/06/16/Elasticsearch%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D/">
+<link rel="canonical" href="http://dachengxi.github.com/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>Elasticsearch基础概念介绍 | 大程熙</title>
+  <title>Elasticsearc的基础概念 | 大程熙</title>
   
 
 
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/06/16/Elasticsearch%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -219,7 +219,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Elasticsearch基础概念介绍
+          Elasticsearc的基础概念
         </h1>
 
         <div class="post-meta">
@@ -229,7 +229,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-06-16 13:56:43 13:56:43" itemprop="dateCreated datePublished" datetime="2018-06-16T13:56:43+08:00">2018-06-16 13:56:43</time>
+              <time title="创建时间：2018-06-16 23:34:40 23:34:40" itemprop="dateCreated datePublished" datetime="2018-06-16T23:34:40+08:00">2018-06-16 23:34:40</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -250,8 +250,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2018/06/16/Elasticsearch%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/06/16/Elasticsearch基础概念介绍/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/06/16/Elasticsearch的基础概念/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,41 +266,66 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>信息检索基础概念学习，包括分词算法、倒排索引等等。</p>
+        <p>Elasticsearch基础概念学习。</p>
 <a id="more"></a>
 
-<h1 id="分词算法"><a href="#分词算法" class="headerlink" title="分词算法"></a>分词算法</h1><p>英文分词原理：输入文本、词汇分隔、词汇过滤（去除停留词）、词干提取（形态还原）、大写转小写、结果输出</p>
-<p>中文分词原理，中文分词主要有三种方法：</p>
-<ul>
-<li>基于词典匹配的分词</li>
-<li>基于语义理解的分词</li>
-<li>基于词频统计的分词</li>
+<h1 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h1><ul>
+<li>集群，一个或多个ES服务器节点组成集群，一个集群由一个唯一的名字标识，成为cluster name，默认名elasticsearch。具有相同集群名称的节点才会组成一个集群</li>
+<li>节点，是一个集群中的一个服务器，可以通过配置集群名称的方式来加入一个指定的集群</li>
+<li>索引，拥有几分相似特征的文档集合，数据结构是倒排索引。一个索引由一个名字来标识，必须全部小写字母，集群中可定义任意多的索引</li>
+<li>类型，在一个索引中，可以定义一种或多种类型，类型是索引的一个逻辑上的分类或分区，通常会为具有一组共同字段的文档定义一个类型</li>
+<li>文档，是一个可被索引的基础信息单元</li>
+<li>分片，创建索引的时候可指定分片数量，分片本身是一个功能完善且独立的索引。分片允许水平分割扩展，分片上可进行分布式并行的操作提高性能和吞吐量</li>
+<li>副本，分片的一份或多份拷贝，副本不和主分片在同一个节点，保证高可用。</li>
 </ul>
-<h2 id="词典匹配分词"><a href="#词典匹配分词" class="headerlink" title="词典匹配分词"></a>词典匹配分词</h2><p>按照一定的匹配策略将输入的字符串与机器字典词条进行匹配，实际上就是把一个句子从左向右扫描一遍，遇到字典中有的词就标识出来，遇到复合词就找到最长的次匹配，遇到不认识的字串则切分成单个单词。</p>
-<p>常用词典分词方法：</p>
-<ul>
-<li>正向最大匹配，从左到右方向</li>
-<li>逆向最大匹配，从右到左方向</li>
-<li>最少切分，每一句中切除的词数最小</li>
-</ul>
-<h2 id="语义理解分词"><a href="#语义理解分词" class="headerlink" title="语义理解分词"></a>语义理解分词</h2><p>模拟人脑对语言和句子的理解，达到识别词汇单元的效果。基本模式是把分词、句法、语义分析并行进行，利用句法和语义信息来处理分词的歧义。</p>
-<h2 id="词频统计分词"><a href="#词频统计分词" class="headerlink" title="词频统计分词"></a>词频统计分词</h2><p>词频统计分词方法只需要对语料中的字组频度进行统计，不需要切分词典。</p>
-<h1 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h1><p>Inverted Index，也被称为反向索引，用来存储在全文搜索下某个单词在一个文档或一组文档中的存储位置的映射。</p>
-<h1 id="布尔检索模型"><a href="#布尔检索模型" class="headerlink" title="布尔检索模型"></a>布尔检索模型</h1><p>布尔检索法是指利用布尔运算符连接各个检索词，由计算机进行逻辑运算，找出所需信息的一种检索方法。</p>
-<p>有三种逻辑运算：</p>
-<ul>
-<li>AND<code>*</code></li>
-<li>OR<code>+</code></li>
-<li>NOT<code>-</code></li>
-</ul>
-<p>优先级：<code>NOT &gt; AND &gt; OR</code></p>
-<h1 id="tf-idf权重计算"><a href="#tf-idf权重计算" class="headerlink" title="tf-idf权重计算"></a>tf-idf权重计算</h1><p>tf-idf，词频-逆文档频率，用以计算词项对于一个文档集或一个语料库中的一份文件的重要程度。词项在一篇文档中出现的频率非常高，说明其重要性比较高，如果这个词项在文档集中的其他文档出现的频率也很高，说明这个词语可能是比较通用比较常见的。</p>
-<p>tf（term frequency），词项频率，词在整篇文档中出现的次数。<br>$$<br>词频(tf_{t, d}) = \frac{单词在文档中的出现次数}{文档的总次数}<br>$$<br>Lucene采用了另外一种词频标准化方法：<br>$$<br>词频(tf_{t, d}) = \sqrt{单词在文档中的出现次数}<br>$$</p>
-<p>df（document frequency），文档频率，代表文档集中包含某个词的所有文档数目。df通常比较大，把它映射到一个较小的取值范围，用逆文档频率idf（inverse document frequency）来表示。<br>$$<br>逆文档频率(idf_t) = log(\frac{文档集总的文档数}{包含某个词的文档数+1})=log(\frac{N}{df_t + 1})<br>$$<br>上式中分母越大，说明词越常见，逆文档频率越小。分母加1是为了防止文档不包含某个词时分母为0的情况。</p>
-<p>词项权重TF-IDF计算公式：<br>$$<br>tf-idf = 词频(tf_{t, d}) * 逆文档频率(idf_t)<br>$$</p>
-<h1 id="向量空间模型"><a href="#向量空间模型" class="headerlink" title="向量空间模型"></a>向量空间模型</h1><p>数学、数学</p>
-<h1 id="概率检索模型"><a href="#概率检索模型" class="headerlink" title="概率检索模型"></a>概率检索模型</h1><p>概率检索模型从概率排序原理推导而来，基本思想：给定一个查询，返回的文档能够按照查询和用户需求的相关性得分高低来排序。</p>
-<p>数学、数学</p>
+<h1 id="对比RDMS"><a href="#对比RDMS" class="headerlink" title="对比RDMS"></a>对比RDMS</h1><table>
+<thead>
+<tr>
+<th>RDMS</th>
+<th>Elasticsearch</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据库database</td>
+<td>索引index</td>
+</tr>
+<tr>
+<td>表table</td>
+<td>类型type</td>
+</tr>
+<tr>
+<td>行row</td>
+<td>文档document</td>
+</tr>
+<tr>
+<td>列column</td>
+<td>字段field</td>
+</tr>
+<tr>
+<td>表结构schema</td>
+<td>映射Mapping</td>
+</tr>
+<tr>
+<td>索引</td>
+<td>全文索引</td>
+</tr>
+<tr>
+<td>sql</td>
+<td>查询DSL</td>
+</tr>
+<tr>
+<td>select * from table</td>
+<td>GET http://…</td>
+</tr>
+<tr>
+<td>update table set</td>
+<td>PUT http://…</td>
+</tr>
+<tr>
+<td>delete</td>
+<td>DELETE http://…</td>
+</tr>
+</tbody></table>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li>从Lucene到Elasticsearch全文检索实战</li>
 <li>深入理解ElasticSearch</li>
@@ -343,12 +368,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/" rel="prev" title="Kafka中的事务">
-      <i class="fa fa-chevron-left"></i> Kafka中的事务
+    <a href="/2018/06/16/Elasticsearch%E4%B9%8BLucene%E5%AD%A6%E4%B9%A0/" rel="prev" title="Elasticsearch之Lucene学习">
+      <i class="fa fa-chevron-left"></i> Elasticsearch之Lucene学习
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/06/16/Elasticsearch%E4%B9%8BLucene%E5%AD%A6%E4%B9%A0/" rel="next" title="Elasticsearch之Lucene学习">
-      Elasticsearch之Lucene学习 <i class="fa fa-chevron-right"></i>
+    <a href="/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%EF%BC%8C%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/" rel="next" title="ArrayList的初始容量现在为0，不再是10了">
+      ArrayList的初始容量现在为0，不再是10了 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -416,7 +441,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#分词算法"><span class="nav-number">1.</span> <span class="nav-text">分词算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#词典匹配分词"><span class="nav-number">1.1.</span> <span class="nav-text">词典匹配分词</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语义理解分词"><span class="nav-number">1.2.</span> <span class="nav-text">语义理解分词</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#词频统计分词"><span class="nav-number">1.3.</span> <span class="nav-text">词频统计分词</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#倒排索引"><span class="nav-number">2.</span> <span class="nav-text">倒排索引</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#布尔检索模型"><span class="nav-number">3.</span> <span class="nav-text">布尔检索模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tf-idf权重计算"><span class="nav-number">4.</span> <span class="nav-text">tf-idf权重计算</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#向量空间模型"><span class="nav-number">5.</span> <span class="nav-text">向量空间模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概率检索模型"><span class="nav-number">6.</span> <span class="nav-text">概率检索模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#核心概念"><span class="nav-number">1.</span> <span class="nav-text">核心概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对比RDMS"><span class="nav-number">2.</span> <span class="nav-text">对比RDMS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -432,7 +457,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-count">181</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -571,9 +596,9 @@
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2018/06/16/Elasticsearch%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D/";
-    this.page.identifier = "2018/06/16/Elasticsearch基础概念介绍/";
-    this.page.title = "Elasticsearch基础概念介绍";
+    this.page.url = "http://dachengxi.github.com/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/";
+    this.page.identifier = "2018/06/16/Elasticsearch的基础概念/";
+    this.page.title = "Elasticsearc的基础概念";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {
