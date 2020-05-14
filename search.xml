@@ -584,16 +584,16 @@
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的顺序消息]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
-      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
+      <title><![CDATA[RocketMQ中的主从复制]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
+      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
     </entry>
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的主从复制]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
-      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
+      <title><![CDATA[RocketMQ中的顺序消息]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
+      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
     </entry>
 
     
