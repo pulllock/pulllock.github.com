@@ -409,6 +409,55 @@
 
     
     <entry>
+      <title><![CDATA[Lucene中的文档删除]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4%2F</url>
+      <content type="text"><![CDATA[Lucene中文档删除的更深入学习。 IndexReader删除文档IndexReader和IndexWriter都可以删除文档： IndexReader能够根据文档号删除文档 IndexReader可通过Term对象删除文档，IndexReader会返回被删除的文档号，IndexReader可以立即决定删除哪个文档；IndexWriter不会返回删除的文档号，因为它仅仅是将被删除的Term进行缓存，后续在进行实际的删除操作 IndexReader删除操作会立即生效，IndexWriter的删除操作必须等到程序打开一个新的Reader时才能被感知 IndexWriter可通过Query删除，IndexReader不行 IndexReader的undeleteAll方法可以反向操作索引中所有被挂起的删除。只能对未进行段合并的文档进行反删除操作。之所以能这样，是因为IndexWriter只是将被删除文档标记为已删除状态，但并未真正移除这些文档，最终的删除操作是在该文档所对应段进行合并时才执行 回收被删除文档所使用的磁盘空间Lucene使用bit数组的形式来标识文档被删除，操作很快，但是对应的磁盘空间仍占用。对于一个倒排索引，给定的文档项可能是分散在各处的，在删除文档时试图回收占用磁盘空间是不实际的，只有在发生段合并操作时，这些磁盘才能被回收。 也可以显式调用expungeDeletes方法来回收被删除文档占用的磁盘空间，该调用会对被挂起的删除操作相关的所有段进行合并 参考 Lucene实战]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Lucene中的索引缓冲、刷新和提交]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E3%80%81%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4%2F</url>
+      <content type="text"><![CDATA[Lucene中的索引缓冲、刷新和提交学习。 缓冲和刷新创建和删除文档操作时，会先被缓存之内存，而不是立即写盘，这些操作会以 衅端的形式周期性的写入索引的Directory，IndexWriter刷盘操作时机如下： 当缓存占用空间超过设置的阈值，setRAMBufferSizeMB来设置 在指定文档号对应的文档被添加进索引之后，通过调用setMaxBufferedDocs来完成刷新操作 在删除和查询语句等操作占用内存总量超过预设值时，可通过调用setMaxBufferedDeleteTerm方法来触发刷新操作 默认情况下IndexWriter在RAM用量为16M的时候启动刷新操作。 发生刷新操作时，Writer会在Directory目录创建新的段和被删除文件，这些文件对于新打开的IndexReader不可见也不可用，直到Writer提交更改以及重新打开Reader后。 刷新操作是用来释放缓存的更改 提交操作是用来让所有更改在索引中保持可见。 IndexReader所看到的一直是索引的起始状态，也就是IndexWriter被打开时的状态，直到IndexWriter提交更改为止。 索引提交IndexWriter的commit方法调用，都会创建一个新的索引提交，新打开或重启的IndexReader和IndexSearcher只能看到上次提交后的索引状态，IndexWriter在两次提交之间完成的更改对Reader来说不可见。而近实时搜索功能能够在不用首次向磁盘提交更改的情况下对IndexWriter所做的更改进行搜索。 如果需要取消所有更改，可在上一次索引提交更改后，调用rollback方法删除当前IndexWriter包含的所有更改。 IndexWriter的提交步骤： 刷新所有缓存的文档和文档删除操作 对所有新创建的文件进行同步，包括刷新的文件，还包括上一次调用commit方法或从打开IndexWriter后已完成的段合并操作所生成的所有文件。IndexWriter调用Directory.sync方法实现，该方法会在所有挂起的写操作都写到磁盘后才返回 写入和同步下一个segment_X文件，一旦完成，IndexReader会立即看到上一次提交后发生的所有变化。 通过调用IndexDeletionPolicy删除旧的提交。 两阶段提交对于需要提交包括Lucene索引和其他外部资源等事务的应用程序，Lucene提供了prepareCommit方法，该方法完成了上面步骤的前两步或前三部，但不能使新的segment_X文件对Reader可见，调用prepareCommit后还需要调用rollback或commit方法。 索引删除策略IndexDeletionPolicy负责通知IndexWriter何时能够安全删除旧的提交，默认策略KeepOnlyLastCommitDeletionPolicy，会在每次创建完新的提交后删除先前的提交。 参考 Lucene实战]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Lucene中的Directory]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84Directory%2F</url>
+      <content type="text"><![CDATA[Lucene的Directory学习。 Directory提供一个简单的文件类存储API，子类实现如下： SimpleFSDirectory，使用java.io.*API将文件存入文件系统，不能很好的支持多线程操作，如果要支持多线程，需要在内部加锁；不支持按位置读取 NIOFSDirectory，使用nio API将文件保存至文件系统，能支持多线程操作 MMapDirectory，使用内存映射进行文件访问，Java没有提供方法来取消文件在内存中的映射关系，只有在JVM进行垃圾回收时才会关闭文件和释放内存 RAMDirectory，所有文件存入RAM FileSwitchDirectory，使用两个文件目录，根据文件扩展名在两个目录间切换使用 TODO 参考 Lucene实战]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Lucene中的并发、线程安全及锁机制]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E3%80%81%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6%2F</url>
+      <content type="text"><![CDATA[Lucene中的并发、线程安全及锁机制学习。 线程安全和多虚拟机安全 任意数量的只读的IndexReader都可以同时打开一个索引同一个索引 对于一个索引，一次只能有一个Writer打开它。Lucene采用文件锁来保障，一旦建立起IndexWriter对象，系统会分配一个锁给它 IndexReader对象可以在IndexWriter对象正在修改索引时打开索引 任意多个线程可以共享同一个IndexReader或IndexWriter 锁机制Lucene采用基于文件的锁。 NativeFSLockFactory，FSDirectory的默认锁，使用nio本地操作系统锁。 SimpleFSLockFactory，使用Java的File.createNewFile API SingleInstanceLockFactory，在内存中创建一个完全的锁，是RAMDirectory默认的锁实现 NoLockFactory，关闭锁机制 这些锁的实现都是不公平的。 参考 Lucene实战]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Lucene中的Field]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84Field%2F</url>
+      <content type="text"><![CDATA[Lucene的Field学习。 Field.Store枚举用来确定一个Field是否需要存储原始值，以便后续搜索时能恢复这个原始数据。 YES，存储原始值，原始的字符串全部被保存在索引中，并且IndexReader可以恢复它。对于需要展示搜索结果的Field很有用，尽量不要存储Field太大的原始数据 NO，不存储原始值，比如说一些正文信息等。 TODO 参考 Lucene实战]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Lucene中的索引过程和基本操作]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%2F</url>
+      <content type="text"><![CDATA[Lucene索引过程学习。 索引过程1提取数据 -&gt; 分析文本 -&gt; 添加文档到索引 提取文本建立索引数据时，需要先从数据中提取纯文本格式信息。 提取完文档后还需要建立Document文档。 分析文档建立Document和Field后，会对文本进行分析，将文本分割成词项，这一步就是进行分词等操作。比如需要将词项转换为小写，去掉一些stop words等等。 向索引添加文档分析完数据后，就可以将分析结果写入索引文件。存储的时候是使用倒排索引的数据结构进行存储。进行关键字快速查找时，这种数据结构能有效利用磁盘空间。 Lucene索引都包含一个或多个段segment，每个段都是一个独立索引，包含整个文档索引的一个子集。 每个段都包含多个文件，各个独立的文件共同组成了索引的不同组成部分（Term向量、存储的Field、倒排索引等等）。 如果使用了混合文件格式，上面说的索引文件都会被压缩成一个单一的文件，这种方式能够在搜索期间减少打开文件数量。 还有个特殊文件叫段文件，segments_x x=1,2,3...，该文件指向所有激活的segment，Lucene会首先打开该文件，然后打开它所指向的其他文件，其中的x（x=1,2,3…)被称为the generation，是一个整数，Lucene每次向索引提交更改的时候，都会将这个数字加1 IndexWriter会周期性的选择一些segment，将它们合并到一个新segment中，然后删除老的segment 索引基本操作向索引添加文档 addDocument(Document)，添加文档，其中使用的Analyzer在创建IndexWriter时，由IndexWriterConfig中指定。 删除索引中的文档 deleteDocuments(Term...)，删除包含指定词项的文档 deleteDocuments(Query...)，删除匹配查询语句的文档 更新索引中的文档Lucene只能删除整个旧文档，然后向索引中添加新文档。这就要求新文档必须包含旧文档中所有Field，包括未发生变化的Field。 updateDocument(Term, Document)，首先删除包含Term的文档，然后添加新文档 参考 Lucene实战]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Lucene中的基础核心类]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB%2F</url>
+      <content type="text"><![CDATA[Lucene索引创建和搜索索引的核心类学习。 索引过程中的核心类IndexWriterIndexWriter负责创建新索引或者打开已有索引，向索引中添加、删除、更新被索引文档的信息。IndexWriter需要开辟一定空间来存储索引，由Directory完成。 DirectoryDirectory描述了索引的存放位置，子类负责具体指定索引的存储路径。 AnalyzerAnalyzer负责从被索引文本中提取词汇单元，也就是分词。 DocumentDocument文档，代表一些域Field的集合。包含多个Field对象的容器。 Field索引中的每个文档都包含一个或者多个不同命名的域，这些域包含在Field中，每个域都有域名和对应值 搜索过程中的核心类IndexSearcherIndexSearcher用来搜索由IndexWriter创建的索引。IndexSearcher可看做一个以只读方式打开索引的类，需要利用Directory来找到索引位置。 TermTerm对象是搜索功能的基本单元，包含域名和值 QueryQuery查询，有很多子类：TermQuery、BooleanQuery、PhraseQuery、PrefixQuery、PhrasePrefixQuery、TermRangeQuery、NumbericRangeQuery、FilteredQuery、SpanQuery TermQuery词项查询，用来匹配指定域中包含特定项的文档。 TopDocs是一个简单的指针容器，指针一般指向前N个排名的搜索结果。 参考 Lucene实战]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Elasticsearch的基础概念]]></title>
       <url>%2F2018%2F06%2F16%2FElasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%2F</url>
       <content type="text"><![CDATA[Elasticsearch基础概念学习。 核心概念 集群，一个或多个ES服务器节点组成集群，一个集群由一个唯一的名字标识，成为cluster name，默认名elasticsearch。具有相同集群名称的节点才会组成一个集群 节点，是一个集群中的一个服务器，可以通过配置集群名称的方式来加入一个指定的集群 索引，拥有几分相似特征的文档集合，数据结构是倒排索引。一个索引由一个名字来标识，必须全部小写字母，集群中可定义任意多的索引 类型，在一个索引中，可以定义一种或多种类型，类型是索引的一个逻辑上的分类或分区，通常会为具有一组共同字段的文档定义一个类型 文档，是一个可被索引的基础信息单元 分片，创建索引的时候可指定分片数量，分片本身是一个功能完善且独立的索引。分片允许水平分割扩展，分片上可进行分布式并行的操作提高性能和吞吐量 副本，分片的一份或多份拷贝，副本不和主分片在同一个节点，保证高可用。 对比RDMS RDMS Elasticsearch 数据库database 索引index 表table 类型type 行row 文档document 列column 字段field 表结构schema 映射Mapping 索引 全文索引 sql 查询DSL select * from table GET http://… update table set PUT http://… delete DELETE http://… 字段类型核心类型 类型 具体类型 字符串类型 string、text、keyword 数字类型 long、integer、short、byte、double、float、half_float、scaled_float 日期类型 date 布尔类型 boolean 二进制类型 binary 范围类型 range string，es5.x之后不再支持string，由text或keyword取代 text，要被全文搜索，字段内容会被分析，被分词器分成词项，生成倒排索引；text类型字段不用于排序，很少用于聚合 keyword，适用于索引结构化的字段，通常用于过滤、排序、聚合，keyword类型字段只能通过精确值搜索到 数字类型，尽可能选择范围小的数据类型，字段长度越短，索引和搜索的效率越高 date，es内部使用长整型毫秒数存储 boolean，true、false binary，接受base64编码的字符串 复合类型 类型 具体类型 数组类型 array 对象类型 object 嵌套类型 nested array，es没有专用数组类型，一个数组中值必须是同一种类型 object，JSON具有层级关系，文档内部包含对象，内部对象还包含内部对象，但是写入到es后文档就会被索引成简单的扁平key-value对 nested，是object类型的一个特例，当对象数组独立索引和查询，Lucene没有内部对象概念，es将对象层次扁平化，转化成字段名字和值构成的简单列表 地理类型 类型 具体类型 地理坐标 geo_point 地理图形 geo_shape geo_point，存储地理位置信息的经纬度，可查找一定范围内的地理位置；通过地理位置或相对中心点距离来聚合文档；把距离因素整合到文档评分中；通过距离对文档排序 geo_shape，可以存储一块区域，比如矩形、三角形等，GeoJSON是一种对各种地理数据结构进行编码的格式 特殊类型 类型 具体类型 IP类型 ip 范围类型 completion 令牌计数类型 token_count 附件类型 attachment 抽取类型 precolator ip，存储IPv4或IPv6的地址 range，range类型使用场景包括时间选择表单、年龄范围选择表单等 token_count，用于统计字符串分词后的词项个数，本质上是一个整形字段 元字段元字段是映射中描述文档本身的字段。 文档属性的元字段 具体属性 作用 _index 文档所属索引 _uid 包含_type和_id的复合字段 _type 文档的类型 _id 文档id _index，多索引查询时，支持对索引名进行term、terms查询、聚合分析、使用脚本和排序。是一个虚拟字段 _type，可根据该元字段进行查询、聚合、脚本和排序 _id，可用于term查询、terms查询、match查询、query_string查询、simple_query_string查询，但不能用于聚合、脚本、排序 _uid，是_type和_id的组合，取值为{type}#{id} 源文档的元字段 具体属性 作用 _source 文档的原始JSON字符串 _size _source字段的大小 索引的元字段 具体属性 作用 _all 包含索引全部字段的超级字段 _field_names 文档中包含非空值的所有字段 路由的元字段 具体属性 作用 _parent 指定文档间的父子关系 _routing 将文档路由到特定分片的自定义路由值 自定义元字段 具体属性 作用 _meta 用于自定义元数据 映射参数 analyzer，用于指定文本段的分词器，对索引和查询都有效 search_analyzer normalizer，用于解析前标准化配置，比如把所有字符转化为小写 boost，用于设置字段的权重 coerce，用于清除脏数据 copy_to，用于自定义_all字段，可以把多个字段的值复制到一个超级字段 doc_values，为了加快排序、聚合操作，在建立倒排索引的时候，额外增加一个列式存储映射，是一种空间换时间的做法 dynamic，用于检测新发现的字段 enabled，ES默认会索引所有字段，有些字段只需要存储，没有查询和聚合的需求，可以使用该参数来控制 fielddata，text字段在查询时会生成一个fielddata数据结构，在字段首次被聚合、排序或者使用脚本的时候生成 format，用于指定日期格式 ignore_above，用于指定字段分词和索引的字符串最大长度，超过最大长度会被忽略，只用于keyword类型 ignore_malformed，可忽略不规则数据 include_in_all，用指定字段的值是否包含在_all字段中 index，指定字段是否索引，不索引就不可搜索 index_options，控制索引时存储哪些信息到倒排索引中 fields，可让同一字段有多种不同的索引方式 norms，用于标准化文档，以便查询时计算文档的相关性 null_value，可让值为null的字段显式的可索引可搜索 position_increment_gap，为支持近似或短语查询，text类型字段被解析的时候会考虑词项的位置信息 properties，类型的映射、普通字段、object类型和nested类型字段都称为properties similarity，用于指定文档评分模型 store，可设置不存储 term_vector，词向量 参考 从Lucene到Elasticsearch全文检索实战 深入理解ElasticSearch]]></content>
@@ -535,16 +584,16 @@
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的主从复制]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
-      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
+      <title><![CDATA[RocketMQ中的顺序消息]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
+      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
     </entry>
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的顺序消息]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
-      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
+      <title><![CDATA[RocketMQ中的主从复制]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
+      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
     </entry>
 
     
