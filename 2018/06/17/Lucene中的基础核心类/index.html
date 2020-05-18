@@ -28,7 +28,7 @@
 <meta property="og:description" content="Lucene索引创建和搜索索引的核心类学习。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-06-17T03:33:26.000Z">
-<meta property="article:modified_time" content="2020-05-14T15:08:45.469Z">
+<meta property="article:modified_time" content="2020-05-18T14:24:34.847Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="Lucene">
 <meta name="twitter:card" content="summary">
@@ -279,6 +279,8 @@
 <h2 id="Query"><a href="#Query" class="headerlink" title="Query"></a>Query</h2><p>Query查询，有很多子类：TermQuery、BooleanQuery、PhraseQuery、PrefixQuery、PhrasePrefixQuery、TermRangeQuery、NumbericRangeQuery、FilteredQuery、SpanQuery</p>
 <h2 id="TermQuery"><a href="#TermQuery" class="headerlink" title="TermQuery"></a>TermQuery</h2><p>词项查询，用来匹配指定域中包含特定项的文档。</p>
 <h2 id="TopDocs"><a href="#TopDocs" class="headerlink" title="TopDocs"></a>TopDocs</h2><p>是一个简单的指针容器，指针一般指向前N个排名的搜索结果。</p>
+<h2 id="ScoreDoc"><a href="#ScoreDoc" class="headerlink" title="ScoreDoc"></a>ScoreDoc</h2><p>提供对TopDocs中每条搜索结果的访问接口</p>
+<h2 id="QueryParser"><a href="#QueryParser" class="headerlink" title="QueryParser"></a>QueryParser</h2><p>将用户输入的查询表达式处理成具体的Query对象</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li>Lucene实战</li>
 </ul>
@@ -393,7 +395,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#索引过程中的核心类"><span class="nav-number">1.</span> <span class="nav-text">索引过程中的核心类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IndexWriter"><span class="nav-number">1.1.</span> <span class="nav-text">IndexWriter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Directory"><span class="nav-number">1.2.</span> <span class="nav-text">Directory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Analyzer"><span class="nav-number">1.3.</span> <span class="nav-text">Analyzer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Document"><span class="nav-number">1.4.</span> <span class="nav-text">Document</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Field"><span class="nav-number">1.5.</span> <span class="nav-text">Field</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搜索过程中的核心类"><span class="nav-number">2.</span> <span class="nav-text">搜索过程中的核心类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IndexSearcher"><span class="nav-number">2.1.</span> <span class="nav-text">IndexSearcher</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Term"><span class="nav-number">2.2.</span> <span class="nav-text">Term</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Query"><span class="nav-number">2.3.</span> <span class="nav-text">Query</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TermQuery"><span class="nav-number">2.4.</span> <span class="nav-text">TermQuery</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TopDocs"><span class="nav-number">2.5.</span> <span class="nav-text">TopDocs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#索引过程中的核心类"><span class="nav-number">1.</span> <span class="nav-text">索引过程中的核心类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IndexWriter"><span class="nav-number">1.1.</span> <span class="nav-text">IndexWriter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Directory"><span class="nav-number">1.2.</span> <span class="nav-text">Directory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Analyzer"><span class="nav-number">1.3.</span> <span class="nav-text">Analyzer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Document"><span class="nav-number">1.4.</span> <span class="nav-text">Document</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Field"><span class="nav-number">1.5.</span> <span class="nav-text">Field</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#搜索过程中的核心类"><span class="nav-number">2.</span> <span class="nav-text">搜索过程中的核心类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IndexSearcher"><span class="nav-number">2.1.</span> <span class="nav-text">IndexSearcher</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Term"><span class="nav-number">2.2.</span> <span class="nav-text">Term</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Query"><span class="nav-number">2.3.</span> <span class="nav-text">Query</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TermQuery"><span class="nav-number">2.4.</span> <span class="nav-text">TermQuery</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TopDocs"><span class="nav-number">2.5.</span> <span class="nav-text">TopDocs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ScoreDoc"><span class="nav-number">2.6.</span> <span class="nav-text">ScoreDoc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QueryParser"><span class="nav-number">2.7.</span> <span class="nav-text">QueryParser</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -409,7 +411,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">188</span>
+          <span class="site-state-item-count">191</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

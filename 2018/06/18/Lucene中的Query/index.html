@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="信息检索基础概念学习，包括分词算法、倒排索引等等。 Lucene基础学习。">
+  <meta name="description" content="Lucene中的各种Query学习。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Elasticsearch之Lucene学习">
-<meta property="og:url" content="http://dachengxi.github.com/2018/06/16/Elasticsearch%E4%B9%8BLucene%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:title" content="Lucene中的Query">
+<meta property="og:url" content="http://dachengxi.github.com/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/index.html">
 <meta property="og:site_name" content="大程熙">
-<meta property="og:description" content="信息检索基础概念学习，包括分词算法、倒排索引等等。 Lucene基础学习。">
+<meta property="og:description" content="Lucene中的各种Query学习。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2018-06-16T08:01:30.000Z">
-<meta property="article:modified_time" content="2020-05-11T13:47:42.163Z">
+<meta property="article:published_time" content="2018-06-18T03:25:37.000Z">
+<meta property="article:modified_time" content="2020-05-18T14:24:34.847Z">
 <meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="Elasticsearch">
+<meta property="article:tag" content="Lucene">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://dachengxi.github.com/2018/06/16/Elasticsearch%E4%B9%8BLucene%E5%AD%A6%E4%B9%A0/">
+<link rel="canonical" href="http://dachengxi.github.com/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>Elasticsearch之Lucene学习 | 大程熙</title>
+  <title>Lucene中的Query | 大程熙</title>
   
 
 
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/06/16/Elasticsearch%E4%B9%8BLucene%E5%AD%A6%E4%B9%A0/">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -219,7 +219,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Elasticsearch之Lucene学习
+          Lucene中的Query
         </h1>
 
         <div class="post-meta">
@@ -229,7 +229,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-06-16 16:01:30 16:01:30" itemprop="dateCreated datePublished" datetime="2018-06-16T16:01:30+08:00">2018-06-16 16:01:30</time>
+              <time title="创建时间：2018-06-18 11:25:37 11:25:37" itemprop="dateCreated datePublished" datetime="2018-06-18T11:25:37+08:00">2018-06-18 11:25:37</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -237,7 +237,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Elasticsearch/" itemprop="url" rel="index"><span itemprop="name">Elasticsearch</span></a>
+                  <a href="/categories/Lucene/" itemprop="url" rel="index"><span itemprop="name">Lucene</span></a>
                 </span>
             </span>
 
@@ -250,8 +250,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2018/06/16/Elasticsearch%E4%B9%8BLucene%E5%AD%A6%E4%B9%A0/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/06/16/Elasticsearch之Lucene学习/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/06/18/Lucene中的Query/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -266,31 +266,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>信息检索基础概念学习，包括分词算法、倒排索引等等。</p>
-<p>Lucene基础学习。</p>
+        <p>Lucene中的各种Query学习。</p>
 <a id="more"></a>
 
-<p>文档是Lucene索引基本单位，比文档更小的单位是字段，字段由三个部分组成：</p>
+<p>Lucene的Query包含：TermQuery、TermRangeQuery、NumbericRangeQuery、PrefixQuery、BooleanQuery、PhraseQuery、WildcardQuery、FuzzyQuery、MatchAllDocsQuery</p>
+<h1 id="TermQuery"><a href="#TermQuery" class="headerlink" title="TermQuery"></a>TermQuery</h1><p>通过项进行搜索，对索引中特定项进行搜索，Term是最小的索引片段，Term包含了一个Field Name和一个Field Value。</p>
+<h1 id="TermRangeQuery"><a href="#TermRangeQuery" class="headerlink" title="TermRangeQuery"></a>TermRangeQuery</h1><p>在指定的项范围内搜索，索引中各个Term对象会按照字典编排顺序进行排序。适用于文本范围查询。</p>
+<h1 id="NumbericRangeQuery"><a href="#NumbericRangeQuery" class="headerlink" title="NumbericRangeQuery"></a>NumbericRangeQuery</h1><p>在指定的数字范围内搜索，如果使用NumbericField来索引Field，就可使用NumbericRangeQuery在某个特定范围内搜索该Field。</p>
+<h1 id="PrefixQuery"><a href="#PrefixQuery" class="headerlink" title="PrefixQuery"></a>PrefixQuery</h1><p>通过字符串前缀搜索</p>
+<h1 id="BooleanQuery"><a href="#BooleanQuery" class="headerlink" title="BooleanQuery"></a>BooleanQuery</h1><p>组合查询，可将各种查询组合成复杂的查询方式，可进行逻辑AND、OR、NOT组合。</p>
 <ul>
-<li>name</li>
-<li>type</li>
-<li>value</li>
+<li>BooleanClause.Occur.MUST，必须匹配该查询子句</li>
+<li>BooleanClause.Occur.SHOULD，该查询自己是可选的</li>
+<li>BooleanClause.Occur.MUST_NOT，不包含匹配该查询子句的文档</li>
 </ul>
-<h1 id="Lucene字段类型"><a href="#Lucene字段类型" class="headerlink" title="Lucene字段类型"></a>Lucene字段类型</h1><ul>
-<li>TextField，字段内容会被索引并词条化，但不保存词向量</li>
-<li>StringField，只会对该字段内容索引，不词条化，也不保存词向量，字符串值会被索引为一个单独的词项</li>
-<li>IntPoint，适合索引值为int类型的字段</li>
-<li>LongPoint，long类型</li>
-<li>FloatPoint，float类型</li>
-<li>DoublePoint，double类型</li>
-<li>SortedDocValuesField，存储多值域的DocValues字段，适合索引字段值为文本并且需要按值进行分组、聚合等操作字段</li>
-<li>NumbericDocValuesField，存储单个数值类型的DocValues字段</li>
-<li>SortedNumbericDocValuesField，存储数值类型的有序数组列表的DocValues字段</li>
-<li>StoredField，适合索引只需要保存字段值不进行其他操作的字段</li>
+<h1 id="PhraseQuery"><a href="#PhraseQuery" class="headerlink" title="PhraseQuery"></a>PhraseQuery</h1><p>通过短语搜索，会根据各个词项的位置信息定位某个距离范围内的词项对应的文档</p>
+<h1 id="WildcardQuery"><a href="#WildcardQuery" class="headerlink" title="WildcardQuery"></a>WildcardQuery</h1><p>通配符查询：</p>
+<ul>
+<li><code>*</code>代表0个或多个字母</li>
+<li><code>?</code>代表0个或1个字母</li>
 </ul>
+<h1 id="FuzzyQuery"><a href="#FuzzyQuery" class="headerlink" title="FuzzyQuery"></a>FuzzyQuery</h1><p>搜索类似项，模糊查询，用于匹配与指定项相似的项。</p>
+<h1 id="MatchAllDoscQuery"><a href="#MatchAllDoscQuery" class="headerlink" title="MatchAllDoscQuery"></a>MatchAllDoscQuery</h1><p>匹配所有文档</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li>从Lucene到Elasticsearch全文检索实战</li>
-<li>深入理解ElasticSearch</li>
+<li>Lucene实战</li>
 </ul>
 
     </div>
@@ -321,7 +320,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Elasticsearch/" rel="tag"># Elasticsearch</a>
+              <a href="/tags/Lucene/" rel="tag"># Lucene</a>
           </div>
 
         
@@ -330,12 +329,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2018/06/16/Elasticsearch%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="prev" title="Elasticsearc之信息检索基础概念">
-      <i class="fa fa-chevron-left"></i> Elasticsearc之信息检索基础概念
+    <a href="/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Segment%E5%90%88%E5%B9%B6/" rel="prev" title="Lucene中的Segment合并">
+      <i class="fa fa-chevron-left"></i> Lucene中的Segment合并
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="next" title="Elasticsearch的基础概念">
-      Elasticsearch的基础概念 <i class="fa fa-chevron-right"></i>
+    <a href="/2018/06/18/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/" rel="next" title="Lucene中的索引结构">
+      Lucene中的索引结构 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -403,7 +402,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Lucene字段类型"><span class="nav-number">1.</span> <span class="nav-text">Lucene字段类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TermQuery"><span class="nav-number">1.</span> <span class="nav-text">TermQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TermRangeQuery"><span class="nav-number">2.</span> <span class="nav-text">TermRangeQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NumbericRangeQuery"><span class="nav-number">3.</span> <span class="nav-text">NumbericRangeQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PrefixQuery"><span class="nav-number">4.</span> <span class="nav-text">PrefixQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BooleanQuery"><span class="nav-number">5.</span> <span class="nav-text">BooleanQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PhraseQuery"><span class="nav-number">6.</span> <span class="nav-text">PhraseQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#WildcardQuery"><span class="nav-number">7.</span> <span class="nav-text">WildcardQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FuzzyQuery"><span class="nav-number">8.</span> <span class="nav-text">FuzzyQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MatchAllDoscQuery"><span class="nav-number">9.</span> <span class="nav-text">MatchAllDoscQuery</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">10.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -419,7 +418,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">188</span>
+          <span class="site-state-item-count">191</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -558,9 +557,9 @@
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2018/06/16/Elasticsearch%E4%B9%8BLucene%E5%AD%A6%E4%B9%A0/";
-    this.page.identifier = "2018/06/16/Elasticsearch之Lucene学习/";
-    this.page.title = "Elasticsearch之Lucene学习";
+    this.page.url = "http://dachengxi.github.com/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/";
+    this.page.identifier = "2018/06/18/Lucene中的Query/";
+    this.page.title = "Lucene中的Query";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {
