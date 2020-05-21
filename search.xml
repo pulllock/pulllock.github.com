@@ -3,6 +3,20 @@
   
     
     <entry>
+      <title><![CDATA[LogCollector设计文档]]></title>
+      <url>%2F2020%2F05%2F20%2FLogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%2F</url>
+      <content type="text"><![CDATA[LogCollector的模块和整体架构。 LogCollector-client，需要应用依赖此库，用来收集JVM等日志信息转发到localAgent上 LogCollector-localAgent，作为Kafka的消息发送端，将接收到的日志发送到server上、监听日志文件收集日志文件发送到Kafka LogCollector-server，处理收到的消息，可进行业务处理和分析，存储到Elasticsearch中 整体架构使用drawio画图，这是源文件：LogCollector整体架构 参考 https://www.jianshu.com/p/8b45af25cbe9 https://www.jianshu.com/p/63d7d4d0e598 https://www.cnblogs.com/wzj4858/p/8252730.html]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[LogCollector的设计思路]]></title>
+      <url>%2F2020%2F05%2F20%2FLogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%2F</url>
+      <content type="text"><![CDATA[大概列一下日志收集系统需要实现的功能。 日志收集方案有很多种解决方案，日志收集工具也比较多，比如Logstash、Filebeat、Flume、Scribe等等。具体的可查看参考文档和网上一系列的文章。 要自己实现一套日志收集的系统，现有的工具可以作为参考，根据实际情况进行开发，下面大概列一下日志收集系统实现需要的东西，做一个简单的日志收集系统。 系统日志收集，应用心跳收集、可实现为一个库，应用程序需要依赖此库 日志收集的代理，需要部署在和应用相同的服务器上，应用日志收集、接收和转发应用发来的心跳和日志 依赖Kafka，日志收集代理会把消息发送到Kafka上 日志收集服务器，作为Kafka的消费者，消费日志消息，并可进行加工处理、转发消息 依赖Elasticsearch，日志收集服务器可将日志存储到Elasticsearch 参考 https://www.jianshu.com/p/8b45af25cbe9 https://www.jianshu.com/p/63d7d4d0e598 https://www.cnblogs.com/wzj4858/p/8252730.html]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[Spring中Placeholder的解析过程]]></title>
       <url>%2F2020%2F05%2F05%2FSpring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%2F</url>
       <content type="text"><![CDATA[Spring中Placeholder的解析过程简单梳理。 Spring版本是3.2.18.RELEASE 使用定义application.properties文件： 1placeholder.user.prefix=UserPrefix_ 在applicationContext.xml中引入application.properties文件： 1&lt;context:property-placeholder location="application.properties"/&gt; 在实际使用的地方注入，这里使用@Value注解： 12@Value("$&#123;placeholder.user.prefix&#125;")private String userPrefix; 解析 容器启动，读取xml配置文件，开始加载并解析成BeanDefinition 在解析成BeanDefinition的时候读取到&lt;context:property-placeholder，发现是自定义标签，使用ContextNamespaceHandler来处理，注册一个针对property-placeholder的处理器：PropertyPlaceholderBeanDefinitionParser PropertyPlaceholderBeanDefinitionParser解析&lt;context:property-placeholder location=&quot;application.properties&quot;/&gt;，转换为BeanDefinition，这个BeanDefinition里面持有了location，并且这个BeanDefinition对应的BeanClass是PropertyPlaceholderConfigurer PropertyPlaceholderConfigurer查看继承关系，会发现它实现了BeanFactoryPostProcessor接口，在容器启动的invokeBeanFactoryPostProcessors这一步，会调用BeanFactoryPostProcessor的postProcessBeanFactory方法，该方法PropertyResourceConfigurer中有个实现 PropertyResourceConfigurer的postProcessBeanFactory方法中会把application.properties文件中的属性解析出来：key=placeholder.user.prefix, value=UserPrefix_ 接下来会继续调用PropertyPlaceholderConfigurer的processProperties方法，会遍历BeanFactory中的每个BeanDefinition，尝试使用从properties中解析到的key和value来替换BeanDefinition中对应的属性的${}占位符。这一步不是处理我们声明的@Value注解位置的占位符。 在processProperties解析的最后会添加一个EmbeddedValueResolver到BeanFactory中，具体类型是：PlaceholderResolvingStringValueResolver，这个在Spring3.0新增的功能，用来解析embedded values的占位符，比如：注解的属性。 接下来在容器启动的finishBeanFactoryInitialization这一步，会初始化所有的非懒加载的单例Bean，在populateBean这一步填充属性，在应用属性值之前，会调用实现了InstantiationAwareBeanPostProcessor接口的实现类的postProcessPropertyValues方法，这一步可以在应用属性值到Bean之前改变属性，比如可以替换我们的@Value中的占位符为真正的值 AutowiredAnnotationBeanPostProcessor实现了InstantiationAwareBeanPostProcessor接口，用来处理@Autowired、@Value、@Inject注解，这里的postProcessPropertyValues方法就用来处理我们@Value注解 获取到注解元数据@Value(&quot;${placeholder.user.prefix}&quot;)以及要注入的属性private String userPrefix;，并且使用上面获得的PlaceholderResolvingStringValueResolver来替换占位符。 替换占位符的过程就是将前缀${和后缀}截取掉，获得真正的placeholder.user.prefix，这样就可以根据这个key在上面解析的属性中找到对应的值了。 解析出来key：placeholder.user.prefix之后，会调用PropertyPlaceholderConfigurer的resolvePlaceholder方法从上面解析的属性中根据key获取真正的值，这里会返回UserPrefix_ 接下来还有对表达式的解析，我们没使用，直接跳过。 拿到真正的值UserPrefix_后，使用反射将值赋值给private String userPrefix，这时候就完成了。 总结 在解析xml成BeanDefinition的时候拿到application.properties文件的位置 在调用BeanFactoryPostProcessor实现类的postProcessBeanFactory方法的时候会把application.properties文件中的内容解析key和value对应关系 在实例化Bean的时候会调用AutowiredAnnotationBeanPostProcessor来处理@Value注解，将占位符替换为上面解析到的key对应的value，使用反射设置值。]]></content>
