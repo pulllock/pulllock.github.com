@@ -3,27 +3,6 @@
   
     
     <entry>
-      <title><![CDATA[LogCollector中ScheduledExecutorService的应用]]></title>
-      <url>%2F2020%2F05%2F21%2FLogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8%2F</url>
-      <content type="text"><![CDATA[LogCollector中ScheduledExecutorService的使用学习。 在定时发送心跳包的场景下可以使用，比如scheduleWithFixedDelay，每隔一定时间就发送一次心跳。 使用方法示例： 1234567891011public class ScheduleWithFixedDelayExample &#123; private static ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool( 1, new NoneDaemonThreadFactory("testFixedDelay") ); public static void main(String[] args) &#123; scheduledExecutorService.scheduleWithFixedDelay(new TestTask1(), 0L, 3, TimeUnit.SECONDS); &#125;&#125; 12345678910111213141516public class TestTask1 implements Runnable &#123; @Override public void run() &#123; System.out.println("任务开始执行时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())); long start = System.currentTimeMillis(); int random = new Random().nextInt(10); try &#123; Thread.sleep(random * 1000); &#125; catch (InterruptedException e) &#123; e.printStackTrace(); &#125; System.out.println("任务执行花费时间：" + (System.currentTimeMillis() - start)); System.out.println("任务结束执行时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())); &#125;&#125; 123456789101112131415161718192021222324252627282930313233public class NoneDaemonThreadFactory implements ThreadFactory &#123; private final static AtomicInteger poolNumber = new AtomicInteger(1); private final AtomicInteger threadNumber = new AtomicInteger(1); private final ThreadGroup group; private final String threadNamePrefix; public NoneDaemonThreadFactory(String prefix) &#123; SecurityManager securityManager = System.getSecurityManager(); group = securityManager == null ? Thread.currentThread().getThreadGroup() : securityManager.getThreadGroup(); threadNamePrefix = String.format("%s-%d-", prefix, poolNumber.getAndIncrement()); &#125; @Override public Thread newThread(Runnable r) &#123; Thread thread = new Thread( group, r, threadNamePrefix + threadNumber.getAndIncrement(), 0 ); if (thread.getPriority() != Thread.NORM_PRIORITY) &#123; thread.setPriority(Thread.NORM_PRIORITY); &#125; return thread; &#125;&#125; scheduleWithFixedDelay，在一次任务结束后，间隔指定的时间，再继续执行下一次任务，不管一次任务执行多长时间，在这次任务结束后都会暂停指定的时间，接下来再执行下面的任务。就是说我不管，我每次任务完成都必须要休息一定时间。 scheduleAtFixedRate，每个任务都在指定的时间间隔内执行，如果一个任务瞬间执行完，指定的时间间隔还有很多剩余的，下一个任务也不会执行；如果一个任务在指定的时间间隔没有执行完，占用了下个任务的时间，那这个任务执行完后下个任务立马就开始。]]></content>
-    </entry>
-
-    
-    <entry>
-      <title><![CDATA[LogCollector设计文档]]></title>
-      <url>%2F2020%2F05%2F20%2FLogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%2F</url>
-      <content type="text"><![CDATA[LogCollector的模块和整体架构。 LogCollector-client，需要应用依赖此库，用来收集JVM等日志信息转发到localAgent上 LogCollector-localAgent，作为Kafka的消息发送端，将接收到的日志发送到server上、监听日志文件收集日志文件发送到Kafka LogCollector-server，处理收到的消息，可进行业务处理和分析，存储到Elasticsearch中 整体架构使用drawio画图，这是源文件：LogCollector整体架构 参考 https://www.jianshu.com/p/8b45af25cbe9 https://www.jianshu.com/p/63d7d4d0e598 https://www.cnblogs.com/wzj4858/p/8252730.html]]></content>
-    </entry>
-
-    
-    <entry>
-      <title><![CDATA[LogCollector的设计思路]]></title>
-      <url>%2F2020%2F05%2F20%2FLogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%2F</url>
-      <content type="text"><![CDATA[大概列一下日志收集系统需要实现的功能。 日志收集方案有很多种解决方案，日志收集工具也比较多，比如Logstash、Filebeat、Flume、Scribe等等。具体的可查看参考文档和网上一系列的文章。 要自己实现一套日志收集的系统，现有的工具可以作为参考，根据实际情况进行开发，下面大概列一下日志收集系统实现需要的东西，做一个简单的日志收集系统。 系统日志收集，应用心跳收集、可实现为一个库，应用程序需要依赖此库 日志收集的代理，需要部署在和应用相同的服务器上，应用日志收集、接收和转发应用发来的心跳和日志 依赖Kafka，日志收集代理会把消息发送到Kafka上 日志收集服务器，作为Kafka的消费者，消费日志消息，并可进行加工处理、转发消息 依赖Elasticsearch，日志收集服务器可将日志存储到Elasticsearch 参考 https://www.jianshu.com/p/8b45af25cbe9 https://www.jianshu.com/p/63d7d4d0e598 https://www.cnblogs.com/wzj4858/p/8252730.html]]></content>
-    </entry>
-
-    
-    <entry>
       <title><![CDATA[Spring中Placeholder的解析过程]]></title>
       <url>%2F2020%2F05%2F05%2FSpring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%2F</url>
       <content type="text"><![CDATA[Spring中Placeholder的解析过程简单梳理。 Spring版本是3.2.18.RELEASE 使用定义application.properties文件： 1placeholder.user.prefix=UserPrefix_ 在applicationContext.xml中引入application.properties文件： 1&lt;context:property-placeholder location="application.properties"/&gt; 在实际使用的地方注入，这里使用@Value注解： 12@Value("$&#123;placeholder.user.prefix&#125;")private String userPrefix; 解析 容器启动，读取xml配置文件，开始加载并解析成BeanDefinition 在解析成BeanDefinition的时候读取到&lt;context:property-placeholder，发现是自定义标签，使用ContextNamespaceHandler来处理，注册一个针对property-placeholder的处理器：PropertyPlaceholderBeanDefinitionParser PropertyPlaceholderBeanDefinitionParser解析&lt;context:property-placeholder location=&quot;application.properties&quot;/&gt;，转换为BeanDefinition，这个BeanDefinition里面持有了location，并且这个BeanDefinition对应的BeanClass是PropertyPlaceholderConfigurer PropertyPlaceholderConfigurer查看继承关系，会发现它实现了BeanFactoryPostProcessor接口，在容器启动的invokeBeanFactoryPostProcessors这一步，会调用BeanFactoryPostProcessor的postProcessBeanFactory方法，该方法PropertyResourceConfigurer中有个实现 PropertyResourceConfigurer的postProcessBeanFactory方法中会把application.properties文件中的属性解析出来：key=placeholder.user.prefix, value=UserPrefix_ 接下来会继续调用PropertyPlaceholderConfigurer的processProperties方法，会遍历BeanFactory中的每个BeanDefinition，尝试使用从properties中解析到的key和value来替换BeanDefinition中对应的属性的${}占位符。这一步不是处理我们声明的@Value注解位置的占位符。 在processProperties解析的最后会添加一个EmbeddedValueResolver到BeanFactory中，具体类型是：PlaceholderResolvingStringValueResolver，这个在Spring3.0新增的功能，用来解析embedded values的占位符，比如：注解的属性。 接下来在容器启动的finishBeanFactoryInitialization这一步，会初始化所有的非懒加载的单例Bean，在populateBean这一步填充属性，在应用属性值之前，会调用实现了InstantiationAwareBeanPostProcessor接口的实现类的postProcessPropertyValues方法，这一步可以在应用属性值到Bean之前改变属性，比如可以替换我们的@Value中的占位符为真正的值 AutowiredAnnotationBeanPostProcessor实现了InstantiationAwareBeanPostProcessor接口，用来处理@Autowired、@Value、@Inject注解，这里的postProcessPropertyValues方法就用来处理我们@Value注解 获取到注解元数据@Value(&quot;${placeholder.user.prefix}&quot;)以及要注入的属性private String userPrefix;，并且使用上面获得的PlaceholderResolvingStringValueResolver来替换占位符。 替换占位符的过程就是将前缀${和后缀}截取掉，获得真正的placeholder.user.prefix，这样就可以根据这个key在上面解析的属性中找到对应的值了。 解析出来key：placeholder.user.prefix之后，会调用PropertyPlaceholderConfigurer的resolvePlaceholder方法从上面解析的属性中根据key获取真正的值，这里会返回UserPrefix_ 接下来还有对表达式的解析，我们没使用，直接跳过。 拿到真正的值UserPrefix_后，使用反射将值赋值给private String userPrefix，这时候就完成了。 总结 在解析xml成BeanDefinition的时候拿到application.properties文件的位置 在调用BeanFactoryPostProcessor实现类的postProcessBeanFactory方法的时候会把application.properties文件中的内容解析key和value对应关系 在实例化Bean的时候会调用AutowiredAnnotationBeanPostProcessor来处理@Value注解，将占位符替换为上面解析到的key对应的value，使用反射设置值。]]></content>
@@ -591,6 +570,13 @@
 
     
     <entry>
+      <title><![CDATA[MySQL索引及实现原理]]></title>
+      <url>%2F2018%2F04%2F15%2FMySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%2F</url>
+      <content type="text"><![CDATA[InnoDB存储引擎支持以下几种常见的索引：B+树索引、全文索引、哈希索引。 MySQL索引、数据结构、算法等学习。 只看MyISAM和InnoDB两个存储引擎。 MySQL索引MyISAM引擎MyISAM使用B+树作为索引结构，叶节点存放的是数据记录地址。MyISAM的索引文件仅存放数据记录的地址，主索引和辅助索引在结构上没有任何区别，主索引要求key是唯一的，辅助索引key可以重复。 MyISAM的索引方式被称为：非聚集索引。 MyISAM中索引检索算法为：首先按照B+树算法搜索索引，如果指定的key存在，取出其data中的值，然后以data中的值为地址读取对应地址存放的数据记录。 InnoDB引擎InnoDB使用B+树作为索引结构，叶节点保存了完整的数据记录，InnoDB表数据文件本身就是主索引。 InnoDB的索引方式被称为：聚集索引。 InnoDB数据文件本身按主键聚集，所以InnoDB要求表必须具有主键，如果没有显式指定，则MySQL会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，字段长度6字节，长整型。 InnoDB的辅助索引叶节点上记录的是主键。InnoDB使用主键搜索很高效，但是使用辅助索引搜索会先检索获得主键，再根据主键到主索引中检索才能获得数据记录。 B-树B+树参考 https://blog.codinglabs.org/articles/theory-of-mysql-index.html]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[MySQL中InnoDB存储引擎索引简介]]></title>
       <url>%2F2018%2F04%2F14%2FMySQL%E4%B8%ADInnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B%2F</url>
       <content type="text"><![CDATA[InnoDB存储引擎支持以下几种常见的索引：B+树索引、全文索引、哈希索引。 哈希索引，InnoDB支持自适应哈希索引，会根据表的使用情况自动为表生成哈希索引。 B+树索引，不能找到一个给定键值的具体行，只能找到被查找数据行所在的页，然后数据库把页读入内存，再在内存中进行查找，最后找到要查找的数据。 B+树索引B+树索引分为聚集索引和辅助索引，聚集索引的叶子节点存放的是一整行数据，辅助索引叶子节点存放的是主键数据。 聚集索引InnoDB存储引擎是索引组织表，表中数据按照主键顺序存放，聚集索引就是按照每张表的主键构造一颗B+树，叶子节点存放的是行记录数据。索引聚集索引的数据也是索引的一部分，每个数据页通过一个双向链表来连接。 每张表只能有一个聚集索引。 聚集索引对于主键的排序查找和范围查找速度很快。 辅助索引辅助索引也称非聚集索引，叶子节点不包含行记录数据，而是包含聚集索引键，也就是主键数据。 每张表可以有多个辅助索引。 联合索引联合索引使用最左匹配。 覆盖索引覆盖索引就是从辅助索引中就可以查到记录，而不需要从聚集索引中查询。 优化器选择不使用索引的情况有些情况优化器不选择索引查找数据，而是扫描聚集索引，直接进行全表扫描来得到数据，一般发生在范围查找、JOIN链接操作等。 全文索引全文索引通常使用倒排索引，在辅助表中存储了单词与单词自身在一个或者多个文档所在位置之间的映射。]]></content>
@@ -626,16 +612,16 @@
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的主从复制]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
-      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
+      <title><![CDATA[RocketMQ中的顺序消息]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
+      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
     </entry>
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的顺序消息]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
-      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
+      <title><![CDATA[RocketMQ中的主从复制]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
+      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
     </entry>
 
     
@@ -1371,6 +1357,34 @@
       <title><![CDATA[Hello World]]></title>
       <url>%2F2014%2F05%2F02%2Fhello-world%2F</url>
       <content type="text"><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[LogCollector中JMX的应用]]></title>
+      <url>%2F2010%2F05%2F24%2FLogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8%2F</url>
+      <content type="text"><![CDATA[LogCollector中JMX的使用学习。 // TODO]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[LogCollector中ScheduledExecutorService的应用]]></title>
+      <url>%2F2010%2F05%2F21%2FLogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8%2F</url>
+      <content type="text"><![CDATA[LogCollector中ScheduledExecutorService的使用学习。 在定时发送心跳包的场景下可以使用，比如scheduleWithFixedDelay，每隔一定时间就发送一次心跳。 使用方法示例： 1234567891011public class ScheduleWithFixedDelayExample &#123; private static ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool( 1, new NoneDaemonThreadFactory("testFixedDelay") ); public static void main(String[] args) &#123; scheduledExecutorService.scheduleWithFixedDelay(new TestTask1(), 0L, 3, TimeUnit.SECONDS); &#125;&#125; 12345678910111213141516public class TestTask1 implements Runnable &#123; @Override public void run() &#123; System.out.println("任务开始执行时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())); long start = System.currentTimeMillis(); int random = new Random().nextInt(10); try &#123; Thread.sleep(random * 1000); &#125; catch (InterruptedException e) &#123; e.printStackTrace(); &#125; System.out.println("任务执行花费时间：" + (System.currentTimeMillis() - start)); System.out.println("任务结束执行时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())); &#125;&#125; 123456789101112131415161718192021222324252627282930313233public class NoneDaemonThreadFactory implements ThreadFactory &#123; private final static AtomicInteger poolNumber = new AtomicInteger(1); private final AtomicInteger threadNumber = new AtomicInteger(1); private final ThreadGroup group; private final String threadNamePrefix; public NoneDaemonThreadFactory(String prefix) &#123; SecurityManager securityManager = System.getSecurityManager(); group = securityManager == null ? Thread.currentThread().getThreadGroup() : securityManager.getThreadGroup(); threadNamePrefix = String.format("%s-%d-", prefix, poolNumber.getAndIncrement()); &#125; @Override public Thread newThread(Runnable r) &#123; Thread thread = new Thread( group, r, threadNamePrefix + threadNumber.getAndIncrement(), 0 ); if (thread.getPriority() != Thread.NORM_PRIORITY) &#123; thread.setPriority(Thread.NORM_PRIORITY); &#125; return thread; &#125;&#125; scheduleWithFixedDelay，在一次任务结束后，间隔指定的时间，再继续执行下一次任务，不管一次任务执行多长时间，在这次任务结束后都会暂停指定的时间，接下来再执行下面的任务。就是说我不管，我每次任务完成都必须要休息一定时间。 scheduleAtFixedRate，每个任务都在指定的时间间隔内执行，如果一个任务瞬间执行完，指定的时间间隔还有很多剩余的，下一个任务也不会执行；如果一个任务在指定的时间间隔没有执行完，占用了下个任务的时间，那这个任务执行完后下个任务立马就开始。]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[LogCollector设计文档]]></title>
+      <url>%2F2010%2F05%2F20%2FLogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%2F</url>
+      <content type="text"><![CDATA[LogCollector的模块和整体架构。 LogCollector-client，需要应用依赖此库，用来收集JVM等日志信息转发到localAgent上 LogCollector-localAgent，作为Kafka的消息发送端，将接收到的日志发送到server上、监听日志文件收集日志文件发送到Kafka LogCollector-server，处理收到的消息，可进行业务处理和分析，存储到Elasticsearch中 整体架构使用drawio画图，这是源文件：LogCollector整体架构 参考 https://www.jianshu.com/p/8b45af25cbe9 https://www.jianshu.com/p/63d7d4d0e598 https://www.cnblogs.com/wzj4858/p/8252730.html]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[LogCollector的设计思路]]></title>
+      <url>%2F2010%2F05%2F20%2FLogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%2F</url>
+      <content type="text"><![CDATA[大概列一下日志收集系统需要实现的功能。 日志收集方案有很多种解决方案，日志收集工具也比较多，比如Logstash、Filebeat、Flume、Scribe等等。具体的可查看参考文档和网上一系列的文章。 要自己实现一套日志收集的系统，现有的工具可以作为参考，根据实际情况进行开发，下面大概列一下日志收集系统实现需要的东西，做一个简单的日志收集系统。 系统日志收集，应用心跳收集、可实现为一个库，应用程序需要依赖此库 日志收集的代理，需要部署在和应用相同的服务器上，应用日志收集、接收和转发应用发来的心跳和日志 依赖Kafka，日志收集代理会把消息发送到Kafka上 日志收集服务器，作为Kafka的消费者，消费日志消息，并可进行加工处理、转发消息 依赖Elasticsearch，日志收集服务器可将日志存储到Elasticsearch 参考 https://www.jianshu.com/p/8b45af25cbe9 https://www.jianshu.com/p/63d7d4d0e598 https://www.cnblogs.com/wzj4858/p/8252730.html]]></content>
     </entry>
 
     
