@@ -570,9 +570,30 @@
 
     
     <entry>
+      <title><![CDATA[MySQL中InnoDB的MVCC]]></title>
+      <url>%2F2018%2F04%2F16%2FMySQL%E4%B8%ADInnoDB%E7%9A%84MVCC%2F</url>
+      <content type="text"><![CDATA[MySQL的InnoDB引擎的MVCC学习。 当前读当前读就是加锁读，读取的是记录的最新版本，MySQL会加锁保证其他并发事务不能修改当前记录，直到当前事务释放锁。 当前读的操作主要包括： 显式加锁的读操作：select ... lock in share mode;和select ... for update 写操作insert、update、delete update语句执行时，MySQL server会根据where条件读取第一条满足的记录，然后InnoDB会将第一条记录返回并加锁，MySQL server收到这条加锁记录后，会再发起一个update请求更新这条记录，这条记录操作完成后会继续读取下一条记录直到完成所有记录。update操作内部包含了当前读。 delete操作和update操作一样。 insert操作可能会触发Unique Key的冲突检查，也会有当前读操作。 快照读快照读是不加锁读，读取记录的快照版本，而不是记录的最新版本，使用MVCC实现。 InnoDB默认的事务隔离级别Repeatable Read，读操作是快照读，如果显式加了锁的读操作不是快照读，是当前读。保证了事务执行过程中只有第一次读之前提交的修改和自己的修改可见，其他事务的修改当前事务均不可见。 MVCCMVCC：多版本并发控制，读不加任何锁，读写不冲突，多操作多于写操作的应用可极大增加系统并发性能。 InnoDB默认隔离级别Repeatable Read的不加锁的读操作是快照读，使用MVCC实现。 参考 https://segmentfault.com/a/1190000014133576]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[MySQL中InnoDB的意向锁]]></title>
+      <url>%2F2018%2F04%2F16%2FMySQL%E4%B8%ADInnoDB%E7%9A%84%E6%84%8F%E5%90%91%E9%94%81%2F</url>
+      <content type="text"><![CDATA[MySQL的InnoDB引擎的意向锁学习。 InnoDB支持多粒度锁，允许行级锁和表级锁共存。意向锁是一种不与行级锁冲突的表级锁。 意向共享锁（IS），事务在获取行的共享锁之前，需要先获得表的意向共享锁 意向排它锁（IX），事务在获取行的排它锁之前，需要先获得表的意向排它锁 互斥性意向锁是表级锁，只会和表级锁冲突，不会和行级锁冲突。 意向共享锁和意向排它锁两者之间是兼容的，不互斥的 意向共享锁和表共享锁兼容，意向共享锁和表的排它锁是互斥的 意向排它锁和表共享锁以及表排它锁都互斥 意向锁和行级锁是兼容的 如果事务A获取了一行的排它锁，此时事务A会有两个锁：表意向排它锁和行的排它锁。如果事务B此时要获取表的共享锁，那么事务B就会先检测发现事务A持有表的意向排它锁，则事务B的加锁就会被阻塞，事务B无需检测表中的每一行数据是否有排它锁，只需检测事务A持有意向排它锁。 参考 https://zhuanlan.zhihu.com/p/29150809 https://juejin.im/post/5b85124f5188253010326360]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[MySQL中的锁]]></title>
+      <url>%2F2018%2F04%2F16%2FMySQL%E4%B8%AD%E7%9A%84%E9%94%81%2F</url>
+      <content type="text"><![CDATA[MySQL锁学习。 共享锁和排它锁 共享锁（读锁），读取数据时的锁，其他事务可以并发读数据，但不能写 排它锁（写锁），写数据时的锁，其他事务既不能读，也不能写 MyISAM和InnoDB的锁粒度锁粒度 表级锁，table-level locking 页面锁，page-level locking 行级锁，row-level locking MyISAM的锁粒度：表级锁MyISAM引擎使用的是表级锁，可以设置读锁和写锁的优先级来避免线程一直得不到执行。 MyISAM会自动给select操作和update、delete、insert操作涉及的表添加读锁和写锁。 InnoDB的锁粒度：表级锁和行级锁InnoDB引擎支持行级锁和表级锁，默认是用的是行级锁。 InnoDB行级锁 共享锁（S），允许当前事务和其他事务读取同一行数据，但其他事务不能修改数据 排它锁（X），允许获得排它锁的事务更新数据，其他事务不能读和写该数据 InnoDB行锁是针对索引加的锁，不是针对记录加锁，只有在通过索引检索数据的时候才使用行级锁，如果不通过索引检索数据则使用表级锁。 InnoDB意向锁意向锁是一种不与行级锁冲突的表级锁。InnoDB支持多粒度锁，允许行级锁和表级锁共存。 意向共享锁（IS），事务给数据行加行共享锁前，必须先取得该表的意向共享锁 意向排它锁（IX），事务给数据行加行排它锁前，必须先取得该表的意向排它锁 InnoDB意向锁是InnoDB引擎自动加的，不需要用户显式指定。update、delete、insert操作InnoDB会自动添加排它锁。select操作InnoDB不会加锁，需要用户显式加锁： 给select添加共享锁：select * from table_name where ... lock in share mode; 给select添加排它锁：select * frome table_name where ... for update; 表级锁、页面锁、行级锁 表级锁，开销小、加锁快、锁粒度大，不会出现死锁，并发度比较低 行级锁，开销大、加锁慢、锁粒度小，会出现死锁，并发度高 页面锁，开销和加锁时间界于表锁和行锁之间，会出现死锁，并发度一般 InnoDB间隙锁使用范围条件检索数据，而不是使用相等条件检索数据，如果要请求共享锁或排它锁时，InnoDB会给符合条件的并且是已存在的数据记录索引项加锁。而键值在条件范围内但不存在的记录叫做间隙GAP，InnoDB会对这个间隙加锁，这种就是间隙锁（Next-Key锁） 使用间隙锁目的： 防止幻读 满足恢复和复制需要 MySQL通过binlog记录更新的sql语句，slave机器基于binlog进行同步，重新执行binlog中的sql语句，binlog中的sql语句是按照事务提交的先后顺序记录，恢复的时候也是按照这个顺序进行，在一个事务未提交之前，其他并发事务不能插入满足其锁定条件的任何记录，不允许出现幻读 参考 https://zhuanlan.zhihu.com/p/29150809 https://juejin.im/post/5b85124f5188253010326360]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[MySQL索引及实现原理]]></title>
       <url>%2F2018%2F04%2F15%2FMySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%2F</url>
-      <content type="text"><![CDATA[InnoDB存储引擎支持以下几种常见的索引：B+树索引、全文索引、哈希索引。 MySQL索引、数据结构、算法等学习。 只看MyISAM和InnoDB两个存储引擎。 MySQL索引MyISAM引擎MyISAM使用B+树作为索引结构，叶节点存放的是数据记录地址。MyISAM的索引文件仅存放数据记录的地址，主索引和辅助索引在结构上没有任何区别，主索引要求key是唯一的，辅助索引key可以重复。 MyISAM的索引方式被称为：非聚集索引。 MyISAM中索引检索算法为：首先按照B+树算法搜索索引，如果指定的key存在，取出其data中的值，然后以data中的值为地址读取对应地址存放的数据记录。 InnoDB引擎InnoDB使用B+树作为索引结构，叶节点保存了完整的数据记录，InnoDB表数据文件本身就是主索引。 InnoDB的索引方式被称为：聚集索引。 InnoDB数据文件本身按主键聚集，所以InnoDB要求表必须具有主键，如果没有显式指定，则MySQL会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，字段长度6字节，长整型。 InnoDB的辅助索引叶节点上记录的是主键。InnoDB使用主键搜索很高效，但是使用辅助索引搜索会先检索获得主键，再根据主键到主索引中检索才能获得数据记录。 B-树B+树参考 https://blog.codinglabs.org/articles/theory-of-mysql-index.html]]></content>
+      <content type="text"><![CDATA[MySQL索引、数据结构、算法等学习。 只看MyISAM和InnoDB两个存储引擎。 MySQL索引MyISAM引擎MyISAM使用B+树作为索引结构，叶节点存放的是数据记录地址。MyISAM的索引文件仅存放数据记录的地址，主索引和辅助索引在结构上没有任何区别，主索引要求key是唯一的，辅助索引key可以重复。 MyISAM的索引方式被称为：非聚集索引。 MyISAM中索引检索算法为：首先按照B+树算法搜索索引，如果指定的key存在，取出其data中的值，然后以data中的值为地址读取对应地址存放的数据记录。 InnoDB引擎InnoDB使用B+树作为索引结构，叶节点保存了完整的数据记录，InnoDB表数据文件本身就是主索引。 InnoDB的索引方式被称为：聚集索引。 InnoDB数据文件本身按主键聚集，所以InnoDB要求表必须具有主键，如果没有显式指定，则MySQL会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则MySQL自动为InnoDB表生成一个隐含字段作为主键，字段长度6字节，长整型。 InnoDB的辅助索引叶节点上记录的是主键。InnoDB使用主键搜索很高效，但是使用辅助索引搜索会先检索获得主键，再根据主键到主索引中检索才能获得数据记录。 为什么使用B+树B-树的内结点存储data，而B+树的内结点不存储data只存储key。B+树更适合实现外存储索引结构。 一般数据库系统或文件系统中使用的B+树都进行了优化，增加了顺序访问指针，提高区间访问性能。 索引文件一般以文件的形式存储在外部磁盘上，使用索引的时候需要磁盘IO，磁盘操作需要寻道和旋转，速度很慢，相当耗时。 局部性原理：当一个数据被使用到时，附近的数据也通常会马上被使用到。 磁盘预读：当从磁盘读取数据时，除了读取需要的数据，还会向后预读一定长度的数据放入内存。 索引查询效率高的指标就是IO次数少，采用B+树，可以使用很低的高度来存储很多的数据，相比红黑树这类适合内存的树，B+树更适合做磁盘索引数据结构。 参考 https://blog.codinglabs.org/articles/theory-of-mysql-index.html https://tech.meituan.com/2014/06/30/mysql-index.html]]></content>
     </entry>
 
     
@@ -612,16 +633,16 @@
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的顺序消息]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
-      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
+      <title><![CDATA[RocketMQ中的主从复制]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
+      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
     </entry>
 
     
     <entry>
-      <title><![CDATA[RocketMQ中的主从复制]]></title>
-      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%2F</url>
-      <content type="text"><![CDATA[RocketMQ的主从复制学习。 为提高消息消费的高可用，避免Broker单点故障引起消息无法及时消费，RocketMQ采用Broker主备机制，消息到到主服务器后需要将消息同步到从服务器。 HA实现原理： 主服务器启动，在特定端口上监听从服务器连接 从服务器主动连接主服务器，主服务器接收客户端的连接，建立TCP连接 从服务器主动向主服务器发送待拉取消息偏移量，主服务器解析请求并返回消息给从服务器 从服务器保存消息并继续发送信息的消息同步请求]]></content>
+      <title><![CDATA[RocketMQ中的顺序消息]]></title>
+      <url>%2F2018%2F01%2F20%2FRocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF%2F</url>
+      <content type="text"><![CDATA[RocketMQ的顺序消息学习。 rocketmq有两种顺序级别： 普通顺序消息，producer将相关联的消息发送到相同的消息队列。 完全严格顺序，在普通顺序消费的基础上，consumer严格顺序消费。 普通顺序消费，需要我们自己提供MessageQueueSelector来选择具体的消息队列，要自己保证能选择到同一个队列的算法。 严格顺序消费，需要有三把锁来保证严格顺序消费： Broker消息队列锁，分布式锁。在集群模式下Consumer从Broker获得该锁后，才能进行消息拉取、消费。广播模式下，Consumer无需该锁。 Consumer消息队列锁，本地锁。Consumer获得该锁才能操作消息队列。 Consumer消息处理队列消费锁，本地锁。Consumer获得该锁才能消费消息队列。]]></content>
     </entry>
 
     
