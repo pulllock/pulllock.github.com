@@ -28,7 +28,7 @@
 <meta property="og:description" content="MySQL的InnoDB引擎的MVCC学习。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-04-16T14:59:10.000Z">
-<meta property="article:modified_time" content="2020-05-28T14:05:39.927Z">
+<meta property="article:modified_time" content="2020-05-29T07:50:33.275Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -280,8 +280,16 @@
 <p>insert操作可能会触发Unique Key的冲突检查，也会有当前读操作。</p>
 <h1 id="快照读"><a href="#快照读" class="headerlink" title="快照读"></a>快照读</h1><p>快照读是不加锁读，读取记录的快照版本，而不是记录的最新版本，使用MVCC实现。</p>
 <p>InnoDB默认的事务隔离级别Repeatable Read，读操作是快照读，如果显式加了锁的读操作不是快照读，是当前读。保证了事务执行过程中只有第一次读之前提交的修改和自己的修改可见，其他事务的修改当前事务均不可见。</p>
-<h1 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h1><p>MVCC：多版本并发控制，读不加任何锁，读写不冲突，多操作多于写操作的应用可极大增加系统并发性能。</p>
+<h1 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h1><p>MVCC：多版本并发控制，读不加任何锁，读写不冲突，多操作多于写操作的应用可极大增加系统并发性能。只在Repeatable Read和Read Committed两个隔离级别下工作。</p>
 <p>InnoDB默认隔离级别Repeatable Read的不加锁的读操作是快照读，使用MVCC实现。</p>
+<p>InnoDB的MVCC是在每行记录后面添加两个隐藏列来实现：一个保存行的创建版本号；一个保存行的删除版本号。事务开始时候的系统版本号会作为事务的版本号，用来和查询到的每行记录的版本号比较。没开始一个新的事务，系统版本号会递增。</p>
+<p>Repeatable Read隔离级别下的MVCC操作：</p>
+<ul>
+<li>select操作：InnoDB只查找版本早于当前事务版本的数据行，可以确保事务读取的行要么是在事务开始前已存在的，要么是事务自身插入或修改过的；行的删除版本要么没有定义，要么大于当前事务版本号，可以确保事务读取到的行在事务开始之前未被删除</li>
+<li>insert操作，InnoDB为新插入的每一行保存当前系统版本号作为行版本号</li>
+<li>delete操作，InnoDB为删除的每一行保存当前系统版本号为行删除标识</li>
+<li>update操作，InnoDB会插入一行新纪录，保存当前系统版本号为新行版本号，同时将当前系统版本号作为原来行的行删除标识</li>
+</ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://segmentfault.com/a/1190000014133576" target="_blank" rel="noopener">https://segmentfault.com/a/1190000014133576</a></li>
 </ul>
