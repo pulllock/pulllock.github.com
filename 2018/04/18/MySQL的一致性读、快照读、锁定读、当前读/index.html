@@ -28,7 +28,7 @@
 <meta property="og:description" content="MySQL的一致性读、快照读、锁定读、当前读学习。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-04-18T15:34:32.000Z">
-<meta property="article:modified_time" content="2020-06-01T15:34:48.970Z">
+<meta property="article:modified_time" content="2020-06-03T12:32:23.343Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -269,9 +269,19 @@
         <p>MySQL的一致性读、快照读、锁定读、当前读学习。</p>
 <a id="more"></a>
 
+<h1 id="一致性读（快照读）"><a href="#一致性读（快照读）" class="headerlink" title="一致性读（快照读）"></a>一致性读（快照读）</h1><p>一致性读，也称为快照读，读取的是快照版本。普通的select是快照读。在事务中select的时候会生成一个快照，不同隔离级别生成快照的时机不一样：</p>
+<ul>
+<li>Read Committed隔离级别，在一个事务中每次读取都会重新生成一个快照，每次快照都是最新的，所以当前事务中每次select操作都可以看到其他已提交事务所做更改</li>
+<li>Repeatable Read隔离级别，在一个事务中的第一次select执行的时候生成快照，只有在当前事务中对数据的修改才会更新快照。只有第一次select之前其他已提交事务所做更改可以看到，第一次select之后其他事务提交的更改当前事务是看不到的</li>
+</ul>
+<p>一致性读，主要基于MVCC实现，多版本控制核心是数据快照，InnoDB通过undo log存储数据快照。</p>
+<p>使用MVCC优势是不加锁，并发度高，但是读取的数据不是实时数据。</p>
+<h1 id="锁定读（当前读）"><a href="#锁定读（当前读）" class="headerlink" title="锁定读（当前读）"></a>锁定读（当前读）</h1><p>锁定读，也叫当前读，读取的是最新版本，update、delete、insert、select…lock in share mode、select…for update都是锁定读。</p>
+<p>通过加record lock和gap lock间隙锁来实现，也就是next-key lock。使用next-key lock优势是获取实时数据，但是需要加锁。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://blog.csdn.net/z69183787/article/details/81709743" target="_blank" rel="noopener">https://blog.csdn.net/z69183787/article/details/81709743</a></li>
+</ul>
 
-
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1>
     </div>
 
     
@@ -382,7 +392,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一致性读（快照读）"><span class="nav-number">1.</span> <span class="nav-text">一致性读（快照读）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#锁定读（当前读）"><span class="nav-number">2.</span> <span class="nav-text">锁定读（当前读）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -398,7 +408,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">204</span>
+          <span class="site-state-item-count">205</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

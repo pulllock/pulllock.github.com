@@ -572,14 +572,21 @@
     <entry>
       <title><![CDATA[MySQL的一致性读、快照读、锁定读、当前读]]></title>
       <url>%2F2018%2F04%2F18%2FMySQL%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%E3%80%81%E5%BF%AB%E7%85%A7%E8%AF%BB%E3%80%81%E9%94%81%E5%AE%9A%E8%AF%BB%E3%80%81%E5%BD%93%E5%89%8D%E8%AF%BB%2F</url>
-      <content type="text"><![CDATA[MySQL的一致性读、快照读、锁定读、当前读学习。 参考]]></content>
+      <content type="text"><![CDATA[MySQL的一致性读、快照读、锁定读、当前读学习。 一致性读（快照读）一致性读，也称为快照读，读取的是快照版本。普通的select是快照读。在事务中select的时候会生成一个快照，不同隔离级别生成快照的时机不一样： Read Committed隔离级别，在一个事务中每次读取都会重新生成一个快照，每次快照都是最新的，所以当前事务中每次select操作都可以看到其他已提交事务所做更改 Repeatable Read隔离级别，在一个事务中的第一次select执行的时候生成快照，只有在当前事务中对数据的修改才会更新快照。只有第一次select之前其他已提交事务所做更改可以看到，第一次select之后其他事务提交的更改当前事务是看不到的 一致性读，主要基于MVCC实现，多版本控制核心是数据快照，InnoDB通过undo log存储数据快照。 使用MVCC优势是不加锁，并发度高，但是读取的数据不是实时数据。 锁定读（当前读）锁定读，也叫当前读，读取的是最新版本，update、delete、insert、select…lock in share mode、select…for update都是锁定读。 通过加record lock和gap lock间隙锁来实现，也就是next-key lock。使用next-key lock优势是获取实时数据，但是需要加锁。 参考 https://blog.csdn.net/z69183787/article/details/81709743]]></content>
     </entry>
 
     
     <entry>
       <title><![CDATA[MySQL的undo log和redo log]]></title>
       <url>%2F2018%2F04%2F18%2FMySQL%E7%9A%84undo%20log%E5%92%8Credo%20log%2F</url>
-      <content type="text"><![CDATA[MySQL的undo log和redo log学习。 参考]]></content>
+      <content type="text"><![CDATA[MySQL的undo log和redo log学习。 undo log回滚日志保存了事务发生之前的数据的一个版本，可以用于回滚。undo log还可以提供一致性读（MVCC）。 在事务开始之前，当前版本行数据生成undo log，undo log也会产生redo log来保证undo log的可靠性；事务提交之后undo log不会立马删除，会放入待清理的链表，由purge线程判断是否有其他事务在使用undo段中表的上一个事务之前的版本信息，决定是否可以清理undo log。 undo log是逻辑格式的日志，执行undo仅仅是将数据从逻辑上恢复至事务之前的状态，而不是从物理页面上操作。 undo log是为了实现事务的原子性，undo log还可以用来实现MVCC。操作任何数据前线将数据备份到undo log，然后进行数据修改，如果出现错误或者执行了rollback，系统可以利用undo log中备份将数据恢复到事务开始之前的状态。 redo log重做日志可以确保事务的持久性，防止在发生故障的时候，脏页没有刷盘。重启MySQL服务的时候可以根据redo log进行重做，从而达到事务持久性这一特性。 事务开始之后就会产生redo log，事务执行过程中就会逐步将redo log落盘。当事务对应的脏页写到磁盘后，redo log就没用了。 redo log是物理格式的日志，记录的是物理数据页的修改信息，redo log是顺序写入redo log file的物理文件中去的。 redo log会先写到Innodb_log_buffer缓冲区，然后通过以下方式再将缓冲区日志刷新到磁盘上： Master Thread每秒执行刷新Innodb_log_buffer到redo log 文件中 每个事务提交时会将redo log刷新到redo log文件中 当重做日志缓存可用空间少于一半时，重做日志缓存被刷新到redo log文件中 redo log记录的是新数据的备份，事务提交之前只要将redo log持久化即可，不需要持久化数据。系统崩溃时虽然数据没有持久化，但是redo log已经持久化，可以根据redo log内容将所有数据恢复到最新状态。 参考 https://www.cnblogs.com/wy123/p/8365234.html https://yq.aliyun.com/articles/592937]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[MySQL的行锁、间隙锁和next-key lock]]></title>
+      <url>%2F2018%2F04%2F18%2FMySQL%E7%9A%84%E8%A1%8C%E9%94%81%E3%80%81%E9%97%B4%E9%9A%99%E9%94%81%E5%92%8Cnext-key%20lock%2F</url>
+      <content type="text"><![CDATA[MySQL的行锁、间隙锁和next-key lock学习。 行锁Record Lock，行锁，InnoDB行锁是针对索引进行加锁，不是对记录加锁，如果索引失效就会从行锁升级为表锁。 使用行锁开销大，加锁慢，会出现死锁，但是行锁的锁粒度小，并发度高。 加锁的方式： 自动加锁，update、delete、insert操作，InnoDB引擎都会自动给涉及到的数据加排它锁，select语句不会加锁。 显示加锁，使用select…lock in share mode或select…for update 间隙锁间隙锁，锁定索引记录间隙，确保索引记录间隙不变。间隙锁在Repeatable Read以上的隔离级别才可用。间隙锁为了解决同一事务中出现幻读的问题。 自动使用间隙锁的条件： 必须在Repeatable Read级别下 检索条件必须有索引，如果没有索引会变成表锁锁定整张表。 Next-Key Lock行锁和间隙锁组合起来叫做Next-Key Lock。 InnoDB引擎中Repeatable Read隔离级别下也不会出现幻读，是用的就是Next-Key Lock（行锁加间隙锁）来解决的。当InnoDB扫描索引记录的时候，先对索引记录加上行锁，再对索引记录两边的间隙加上间隙锁，之后其他事务就不能在这个间隙修改或者插入记录。 Next-Key Lock是行锁和间隙锁组合，对数据进行条件检索、范围检索时，对其范围内间隙进行加锁。InnoDB对行的查询都采用Next-Key Lock的算法，但当查询的索引含有唯一属性（唯一索引、主键索引）时，InnoDB会给Next-Key Lock进行优化，降为行锁，仅锁住索引本身，而不是范围。如果是普通辅助索引，会使用Next-Key Lock进行范围锁定。 幻读解决 快照读，使用MVCC解决幻读 当前读，依赖间隙锁解决幻读 参考 https://www.cnblogs.com/itdragon/p/8194622.html https://www.cnblogs.com/zhoujinyi/p/3435982.html https://blog.csdn.net/liqfyiyi/article/details/72771845 https://www.cnblogs.com/aspirant/p/9177978.html]]></content>
     </entry>
 
     
