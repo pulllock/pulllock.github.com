@@ -570,6 +570,13 @@
 
     
     <entry>
+      <title><![CDATA[MySQL的事务和实现]]></title>
+      <url>%2F2018%2F04%2F19%2FMySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0%2F</url>
+      <content type="text"><![CDATA[MySQL的事务和实现学习。 事务四个特性ACID： Atomicity原子性 Consistency一致性 Isolation隔离性 Durability持久性 原子性在一个事务中的一系列操作要么全部都执行，要么都不执行。 事务的原子性需要保证在发生异常或者用户执行rollback操作时，对已经执行的操作进行回滚，MySQL中是使用undo log来实现，所有事务的修改操作都会先记录到undo log中，然后再对数据库的数据进行操作。undo log会先于数据持久化到硬盘上。 持久性一旦数据库事务被提交，数据一定会被写入到数据库中并持久化存储。也就是如果数据被写入到数据库中，那么数据也一定能够被安全的存储到磁盘上。 事务的持久性是通过redo log来实现，redo log由两部分组成： 内存中的redo log缓冲区 磁盘中的redo log文件 在一个事务中更新数据时，会先更新内存缓存中的数据，然后生成一条redo log并写入到redo log缓冲区中，当事务提交的时候会先把redo log缓冲区中的内容刷新到redo log文件中，再将内存中的数据更新到磁盘上。 InnoDB中redo log都是以512字节的块形式进行存储，块大小和磁盘扇区大小一样，redo log日志的写入可以保证原子性。 数据库的修改会产生redo log，undo log也需要持久化，所以undo log也会创建对应的redo log。 undo log和redo log能保证： 发生错误或者需要回滚的事务能够成功回滚（ 原子性） 在事务提交后，数据没来得及写盘就宕机时，在下次重新启动后能够成功恢复数据（持久性） 隔离性四个隔离级别： Read Uncommited，使用查询语句不会加锁，会读到其他事务未提交的行，脏读Dirty Read Read Commited，只对记录加记录锁，不会在记录之间加间隙锁，多次查询会得到不同结果，不可重复读 Repeatable Read，多次读取同一范围的数据会返回第一次查询的快照，不会返回不同的数据行，但可能发生幻读 Serializable，InnoDB会隐式的将全部查询语句加上共享锁，可以解决幻读问题 数据库对隔离级别的实现是使用并发控制机制对在同一时间执行的事务进行控制。 并发控制机制： 锁，在事务中对需要访问的数据加锁，读锁可保证读操作的并发执行，写锁保证更新数据库时不会有其他事务访问 时间戳，乐观锁 MVCC、快照隔离，通过多版本并发控制维护多个版本数据 一致性一个事务原子的在一个一致的数据库中独立运行，执行事务之后，数据库的状态一定是一致的。 参考 https://draveness.me/mysql-transaction/]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[MySQL的一致性读、快照读、锁定读、当前读]]></title>
       <url>%2F2018%2F04%2F18%2FMySQL%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%E3%80%81%E5%BF%AB%E7%85%A7%E8%AF%BB%E3%80%81%E9%94%81%E5%AE%9A%E8%AF%BB%E3%80%81%E5%BD%93%E5%89%8D%E8%AF%BB%2F</url>
       <content type="text"><![CDATA[MySQL的一致性读、快照读、锁定读、当前读学习。 一致性读（快照读）一致性读，也称为快照读，读取的是快照版本。普通的select是快照读。在事务中select的时候会生成一个快照，不同隔离级别生成快照的时机不一样： Read Committed隔离级别，在一个事务中每次读取都会重新生成一个快照，每次快照都是最新的，所以当前事务中每次select操作都可以看到其他已提交事务所做更改 Repeatable Read隔离级别，在一个事务中的第一次select执行的时候生成快照，只有在当前事务中对数据的修改才会更新快照。只有第一次select之前其他已提交事务所做更改可以看到，第一次select之后其他事务提交的更改当前事务是看不到的 一致性读，主要基于MVCC实现，多版本控制核心是数据快照，InnoDB通过undo log存储数据快照。 使用MVCC优势是不加锁，并发度高，但是读取的数据不是实时数据。 锁定读（当前读）锁定读，也叫当前读，读取的是最新版本，update、delete、insert、select…lock in share mode、select…for update都是锁定读。 通过加record lock和gap lock间隙锁来实现，也就是next-key lock。使用next-key lock优势是获取实时数据，但是需要加锁。 参考 https://blog.csdn.net/z69183787/article/details/81709743]]></content>

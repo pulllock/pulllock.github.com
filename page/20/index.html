@@ -203,6 +203,101 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Time Stream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">ConcurrentHashMap简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-05-26 11:00:23 11:00:23" itemprop="dateCreated datePublished" datetime="2016-05-26T11:00:23+08:00">2016-05-26 11:00:23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">并发集合</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/26/ConcurrentHashMap简介/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程环境下，能保证程序执行的正确性，每次同步执行的时候都要锁住整个结构。HashMap不是同步的，在单线程情况下效率高。</p>
+<p>ConcurrentHashMap锁方式是稍微细粒度的，内部采用分离锁的设计。它默认将Hash表分为16个分段，get，put，remove等常用操作只锁当前需要用到的分段。对于每个Segment，采用final和volatile关键字。</p>
+<p>concurrenthashmap采用了二次hash的方式，第一次hash将key映射到对应的segment，而第二次hash则是映射到segment的不同桶中。</p>
+<p>原来只能一个线程进入，现在却能同时16个写线程进入，写线程需要锁定，读线程几乎不受限制，并发性是显而易见的。只有size等操作才需要锁定整个表。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1038,91 +1133,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">分库分表简介</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2015-06-03 15:27:15 15:27:15" itemprop="dateCreated datePublished" datetime="2015-06-03T15:27:15+08:00">2015-06-03 15:27:15</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/06/03/分库分表简介/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="分库分表简介"><a href="#分库分表简介" class="headerlink" title="分库分表简介"></a>分库分表简介</h1><blockquote>
-<p>此部分简介都是参考别人已经有的文章,目前还没在实际中使用分库分表,对此部分知识的理解还不够透彻.以后会添加自己的经验.</p>
-</blockquote>
-<ul>
-<li>基于业务垂直划分</li>
-<li>基于数据水平拆分</li>
-<li>两者结合
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1195,7 +1205,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">205</span>
+          <span class="site-state-item-count">206</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

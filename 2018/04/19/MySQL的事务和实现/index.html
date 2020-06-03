@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="MySQL的事务和实现学习。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL的事务和实现">
+<meta property="og:url" content="http://dachengxi.github.com/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Time Stream">
+<meta property="og:description" content="MySQL的事务和实现学习。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-19T13:50:28.000Z">
+<meta property="article:modified_time" content="2020-06-03T15:43:36.484Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://dachengxi.github.com/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySQL的事务和实现 | Time Stream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Time Stream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">多读书</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-book">
+
+    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Time Stream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL的事务和实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-04-19 21:50:28 21:50:28" itemprop="dateCreated datePublished" datetime="2018-04-19T21:50:28+08:00">2018-04-19 21:50:28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/04/19/MySQL的事务和实现/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>MySQL的事务和实现学习。</p>
+<a id="more"></a>
+
+<p>事务四个特性ACID：</p>
+<ul>
+<li>Atomicity原子性</li>
+<li>Consistency一致性</li>
+<li>Isolation隔离性</li>
+<li>Durability持久性</li>
+</ul>
+<h1 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h1><p>在一个事务中的一系列操作要么全部都执行，要么都不执行。</p>
+<p>事务的原子性需要保证在发生异常或者用户执行rollback操作时，对已经执行的操作进行回滚，MySQL中是使用undo log来实现，所有事务的修改操作都会先记录到undo log中，然后再对数据库的数据进行操作。undo log会先于数据持久化到硬盘上。</p>
+<h1 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h1><p>一旦数据库事务被提交，数据一定会被写入到数据库中并持久化存储。也就是如果数据被写入到数据库中，那么数据也一定能够被安全的存储到磁盘上。</p>
+<p>事务的持久性是通过redo log来实现，redo log由两部分组成：</p>
+<ul>
+<li>内存中的redo log缓冲区</li>
+<li>磁盘中的redo log文件</li>
+</ul>
+<p>在一个事务中更新数据时，会先更新内存缓存中的数据，然后生成一条redo log并写入到redo log缓冲区中，当事务提交的时候会先把redo log缓冲区中的内容刷新到redo log文件中，再将内存中的数据更新到磁盘上。</p>
+<p>InnoDB中redo log都是以512字节的块形式进行存储，块大小和磁盘扇区大小一样，redo log日志的写入可以保证原子性。</p>
+<p>数据库的修改会产生redo log，undo log也需要持久化，所以undo log也会创建对应的redo log。</p>
+<p>undo log和redo log能保证：</p>
+<ul>
+<li>发生错误或者需要回滚的事务能够成功回滚（ 原子性）</li>
+<li>在事务提交后，数据没来得及写盘就宕机时，在下次重新启动后能够成功恢复数据（持久性）</li>
+</ul>
+<h1 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h1><p>四个隔离级别：</p>
+<ul>
+<li>Read Uncommited，使用查询语句不会加锁，会读到其他事务未提交的行，脏读Dirty Read</li>
+<li>Read Commited，只对记录加记录锁，不会在记录之间加间隙锁，多次查询会得到不同结果，不可重复读</li>
+<li>Repeatable Read，多次读取同一范围的数据会返回第一次查询的快照，不会返回不同的数据行，但可能发生幻读</li>
+<li>Serializable，InnoDB会隐式的将全部查询语句加上共享锁，可以解决幻读问题</li>
+</ul>
+<p>数据库对隔离级别的实现是使用并发控制机制对在同一时间执行的事务进行控制。</p>
+<p>并发控制机制：</p>
+<ul>
+<li>锁，在事务中对需要访问的数据加锁，读锁可保证读操作的并发执行，写锁保证更新数据库时不会有其他事务访问</li>
+<li>时间戳，乐观锁</li>
+<li>MVCC、快照隔离，通过多版本并发控制维护多个版本数据</li>
+</ul>
+<h1 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h1><p>一个事务原子的在一个一致的数据库中独立运行，执行事务之后，数据库的状态一定是一致的。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://draveness.me/mysql-transaction/" target="_blank" rel="noopener">https://draveness.me/mysql-transaction/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/04/18/MySQL%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%E3%80%81%E5%BF%AB%E7%85%A7%E8%AF%BB%E3%80%81%E9%94%81%E5%AE%9A%E8%AF%BB%E3%80%81%E5%BD%93%E5%89%8D%E8%AF%BB/" rel="prev" title="MySQL的一致性读、快照读、锁定读、当前读">
+      <i class="fa fa-chevron-left"></i> MySQL的一致性读、快照读、锁定读、当前读
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/01/Kafka%E6%A6%82%E8%A6%81/" rel="next" title="Kafka概要">
+      Kafka概要 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原子性"><span class="nav-number">1.</span> <span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#持久性"><span class="nav-number">2.</span> <span class="nav-text">持久性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隔离性"><span class="nav-number">3.</span> <span class="nav-text">隔离性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一致性"><span class="nav-number">4.</span> <span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="dachengxi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">dachengxi</p>
+  <div class="site-description" itemprop="description">一个小学生</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">206</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">101</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://cxis.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://dachengxi.github.com/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/";
+    this.page.identifier = "2018/04/19/MySQL的事务和实现/";
+    this.page.title = "MySQL的事务和实现";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://cxis.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>
