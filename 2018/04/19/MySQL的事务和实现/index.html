@@ -28,7 +28,7 @@
 <meta property="og:description" content="MySQL的事务和实现学习。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-04-19T13:50:28.000Z">
-<meta property="article:modified_time" content="2020-06-03T15:43:36.484Z">
+<meta property="article:modified_time" content="2020-06-08T12:56:44.642Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -276,15 +276,18 @@
 <li>Isolation隔离性</li>
 <li>Durability持久性</li>
 </ul>
-<h1 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h1><p>在一个事务中的一系列操作要么全部都执行，要么都不执行。</p>
-<p>事务的原子性需要保证在发生异常或者用户执行rollback操作时，对已经执行的操作进行回滚，MySQL中是使用undo log来实现，所有事务的修改操作都会先记录到undo log中，然后再对数据库的数据进行操作。undo log会先于数据持久化到硬盘上。</p>
+<h1 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h1><p>在一个事务中的一系列操作要么全部都执行，要么都不执行。事务的原子性需要保证在发生异常或者用户执行rollback操作时，对已经执行的操作进行回滚。</p>
+<p>InnoDB原子性是使用undo log来实现的，undo log是实现事务原子性和隔离性的基础。</p>
+<p>事务对数据库的修改操作都会先记录到undo log中，然后再对数据库的数据进行操作，如果事务执行失败或者用户执行rollback导致事务需要回滚，就可以利用undolog中的信息将数据回滚到之前的样子。</p>
+<p>undo log会先于数据持久化到硬盘上。undo log属于逻辑日志，记录的是sql执行的相关信息。发生回滚操作时，InnoDB会根据undo log的内容做与之前相反的工作。</p>
 <h1 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h1><p>一旦数据库事务被提交，数据一定会被写入到数据库中并持久化存储。也就是如果数据被写入到数据库中，那么数据也一定能够被安全的存储到磁盘上。</p>
 <p>事务的持久性是通过redo log来实现，redo log由两部分组成：</p>
 <ul>
 <li>内存中的redo log缓冲区</li>
 <li>磁盘中的redo log文件</li>
 </ul>
-<p>在一个事务中更新数据时，会先更新内存缓存中的数据，然后生成一条redo log并写入到redo log缓冲区中，当事务提交的时候会先把redo log缓冲区中的内容刷新到redo log文件中，再将内存中的数据更新到磁盘上。</p>
+<p>MySQL数据存储是在磁盘上的，如果每次读写数据都需要磁盘IO，效率会很低，因此InnoDB提供了缓存，缓存中包含了磁盘中部分数据页的映射，当更新数据时，会先写缓存，缓存中的数据会定期刷新到磁盘中，如果发生宕机，没有写到磁盘中的数据就可能会丢失，这样就没办法保证事务的持久性。InnoDB使用redo log来保证事务的持久性。</p>
+<p>在一个事务中更新数据时，会先更新内存缓存中的数据，然后生成一条redo log并写入到redo log缓冲区中，当事务提交的时候会调用fsync先把redo log缓冲区中的内容刷新到redo log文件中，再将内存中的数据更新到磁盘上。</p>
 <p>InnoDB中redo log都是以512字节的块形式进行存储，块大小和磁盘扇区大小一样，redo log日志的写入可以保证原子性。</p>
 <p>数据库的修改会产生redo log，undo log也需要持久化，所以undo log也会创建对应的redo log。</p>
 <p>undo log和redo log能保证：</p>
@@ -292,23 +295,37 @@
 <li>发生错误或者需要回滚的事务能够成功回滚（ 原子性）</li>
 <li>在事务提交后，数据没来得及写盘就宕机时，在下次重新启动后能够成功恢复数据（持久性）</li>
 </ul>
-<h1 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h1><p>四个隔离级别：</p>
+<p>事务提交的时候需要将redo log写入磁盘，但为什么比把缓存中数据修改写入磁盘要快呢？主要原因：</p>
 <ul>
+<li>脏数据的刷盘操作是随机IO，redo log是顺序IO，顺序IO比随机IO效率要高很多</li>
+<li>脏数据是以数据页Page为单位，MySQL默认页是16KB，一个Page上的一个小修改都需要将整个页写入，redo log是512字节的块，大小和扇区大小一样，并且只包含真正需要写入的部分，无效IO会大大减少</li>
+</ul>
+<h1 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h1><p>原子性和持久性侧重于事物本身，隔离性则是不同事物之间的相互影响。隔离性是指事物内部操作与其他事务是隔离的，并发执行的各个事务之间不能相互干扰。严格的隔离性对应事务隔离级别中的Serializable，但实际应用中出于性能考虑很少使用Serializable，大多数数据库默认隔离级别Read Committed，InnoDB则默认使用Repeatable Read。</p>
+<h2 id="四个隔离级别"><a href="#四个隔离级别" class="headerlink" title="四个隔离级别"></a>四个隔离级别</h2><ul>
 <li>Read Uncommited，使用查询语句不会加锁，会读到其他事务未提交的行，脏读Dirty Read</li>
 <li>Read Commited，只对记录加记录锁，不会在记录之间加间隙锁，多次查询会得到不同结果，不可重复读</li>
 <li>Repeatable Read，多次读取同一范围的数据会返回第一次查询的快照，不会返回不同的数据行，但可能发生幻读</li>
 <li>Serializable，InnoDB会隐式的将全部查询语句加上共享锁，可以解决幻读问题</li>
 </ul>
 <p>数据库对隔离级别的实现是使用并发控制机制对在同一时间执行的事务进行控制。</p>
-<p>并发控制机制：</p>
-<ul>
+<h2 id="并发控制机制"><a href="#并发控制机制" class="headerlink" title="并发控制机制"></a>并发控制机制</h2><ul>
 <li>锁，在事务中对需要访问的数据加锁，读锁可保证读操作的并发执行，写锁保证更新数据库时不会有其他事务访问</li>
 <li>时间戳，乐观锁</li>
 <li>MVCC、快照隔离，通过多版本并发控制维护多个版本数据</li>
 </ul>
+<h2 id="InnoDB中使用的机制是锁和MVCC"><a href="#InnoDB中使用的机制是锁和MVCC" class="headerlink" title="InnoDB中使用的机制是锁和MVCC"></a>InnoDB中使用的机制是锁和MVCC</h2><ul>
+<li>一个事务写操作对另一个事务写操作的隔离使用锁机制保证</li>
+<li>一个事务写操作对另一个事务读操作的隔离使用MVCC保证</li>
+</ul>
+<h2 id="锁机制"><a href="#锁机制" class="headerlink" title="锁机制"></a>锁机制</h2><p>隔离性要求同一时刻只能有一个事务对数据进行写操作，锁机制是在事务开始修改数据前需要先获取锁（行锁或表锁），获取锁后事务就可以修改数据，在本事务操作期间，数据是锁定的，其他的事务要想修改这些数据，需要阻塞等待本事务提交事务或者回滚事务。</p>
+<h2 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h2><p>InnoDB中Repeatable Read解决了脏读、不可重复读、幻读等问题，是使用MVCC来解决的，在同一时刻不同事务读取到的数据可能是不同版本。</p>
+<p>MVCC读不加锁，读写不冲突，并发性能好。InnoDB的MVCC实现主要通过数据的隐藏列和undo log来实现，隐藏列包含该行数据版本号、删除版本号、执行undo log的指针等。</p>
+<p>InnoDB通过Next-Key Lock解决幻读问题，Next-Key Lock是行锁和间隙锁结合，会锁定记录本身也会锁定一个范围。</p>
 <h1 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h1><p>一个事务原子的在一个一致的数据库中独立运行，执行事务之后，数据库的状态一定是一致的。</p>
+<p>一致性是事务追求的最终目标，原子性、持久性、隔离性都是为了保证数据状态的一致性。应用实现方面也需要保证一致性。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://draveness.me/mysql-transaction/" target="_blank" rel="noopener">https://draveness.me/mysql-transaction/</a></li>
+<li><a href="https://www.cnblogs.com/kismetv/p/10331633.html" target="_blank" rel="noopener">https://www.cnblogs.com/kismetv/p/10331633.html</a></li>
 </ul>
 
     </div>
@@ -352,8 +369,8 @@
       <i class="fa fa-chevron-left"></i> MySQL的一致性读、快照读、锁定读、当前读
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/05/01/Kafka%E6%A6%82%E8%A6%81/" rel="next" title="Kafka概要">
-      Kafka概要 <i class="fa fa-chevron-right"></i>
+    <a href="/2018/04/20/MySQL%E7%9A%84%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95/" rel="next" title="MySQL的覆盖索引">
+      MySQL的覆盖索引 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -421,7 +438,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原子性"><span class="nav-number">1.</span> <span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#持久性"><span class="nav-number">2.</span> <span class="nav-text">持久性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隔离性"><span class="nav-number">3.</span> <span class="nav-text">隔离性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一致性"><span class="nav-number">4.</span> <span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原子性"><span class="nav-number">1.</span> <span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#持久性"><span class="nav-number">2.</span> <span class="nav-text">持久性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#隔离性"><span class="nav-number">3.</span> <span class="nav-text">隔离性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#四个隔离级别"><span class="nav-number">3.1.</span> <span class="nav-text">四个隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并发控制机制"><span class="nav-number">3.2.</span> <span class="nav-text">并发控制机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB中使用的机制是锁和MVCC"><span class="nav-number">3.3.</span> <span class="nav-text">InnoDB中使用的机制是锁和MVCC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#锁机制"><span class="nav-number">3.4.</span> <span class="nav-text">锁机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MVCC"><span class="nav-number">3.5.</span> <span class="nav-text">MVCC</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一致性"><span class="nav-number">4.</span> <span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -437,7 +454,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">206</span>
+          <span class="site-state-item-count">209</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
