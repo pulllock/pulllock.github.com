@@ -430,16 +430,16 @@
 
     
     <entry>
-      <title><![CDATA[Lucene中的索引缓冲、刷新和提交]]></title>
-      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E3%80%81%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4%2F</url>
-      <content type="text"><![CDATA[Lucene中的索引缓冲、刷新和提交学习。 缓冲和刷新创建和删除文档操作时，会先被缓存之内存，而不是立即写盘，这些操作会以 衅端的形式周期性的写入索引的Directory，IndexWriter刷盘操作时机如下： 当缓存占用空间超过设置的阈值，setRAMBufferSizeMB来设置 在指定文档号对应的文档被添加进索引之后，通过调用setMaxBufferedDocs来完成刷新操作 在删除和查询语句等操作占用内存总量超过预设值时，可通过调用setMaxBufferedDeleteTerm方法来触发刷新操作 默认情况下IndexWriter在RAM用量为16M的时候启动刷新操作。 发生刷新操作时，Writer会在Directory目录创建新的段和被删除文件，这些文件对于新打开的IndexReader不可见也不可用，直到Writer提交更改以及重新打开Reader后。 刷新操作是用来释放缓存的更改 提交操作是用来让所有更改在索引中保持可见。 IndexReader所看到的一直是索引的起始状态，也就是IndexWriter被打开时的状态，直到IndexWriter提交更改为止。 索引提交IndexWriter的commit方法调用，都会创建一个新的索引提交，新打开或重启的IndexReader和IndexSearcher只能看到上次提交后的索引状态，IndexWriter在两次提交之间完成的更改对Reader来说不可见。而近实时搜索功能能够在不用首次向磁盘提交更改的情况下对IndexWriter所做的更改进行搜索。 如果需要取消所有更改，可在上一次索引提交更改后，调用rollback方法删除当前IndexWriter包含的所有更改。 IndexWriter的提交步骤： 刷新所有缓存的文档和文档删除操作 对所有新创建的文件进行同步，包括刷新的文件，还包括上一次调用commit方法或从打开IndexWriter后已完成的段合并操作所生成的所有文件。IndexWriter调用Directory.sync方法实现，该方法会在所有挂起的写操作都写到磁盘后才返回 写入和同步下一个segment_X文件，一旦完成，IndexReader会立即看到上一次提交后发生的所有变化。 通过调用IndexDeletionPolicy删除旧的提交。 两阶段提交对于需要提交包括Lucene索引和其他外部资源等事务的应用程序，Lucene提供了prepareCommit方法，该方法完成了上面步骤的前两步或前三部，但不能使新的segment_X文件对Reader可见，调用prepareCommit后还需要调用rollback或commit方法。 索引删除策略IndexDeletionPolicy负责通知IndexWriter何时能够安全删除旧的提交，默认策略KeepOnlyLastCommitDeletionPolicy，会在每次创建完新的提交后删除先前的提交。 参考 Lucene实战]]></content>
+      <title><![CDATA[Lucene中的文档删除]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4%2F</url>
+      <content type="text"><![CDATA[Lucene中文档删除的更深入学习。 IndexReader删除文档IndexReader和IndexWriter都可以删除文档： IndexReader能够根据文档号删除文档 IndexReader可通过Term对象删除文档，IndexReader会返回被删除的文档号，IndexReader可以立即决定删除哪个文档；IndexWriter不会返回删除的文档号，因为它仅仅是将被删除的Term进行缓存，后续在进行实际的删除操作 IndexReader删除操作会立即生效，IndexWriter的删除操作必须等到程序打开一个新的Reader时才能被感知 IndexWriter可通过Query删除，IndexReader不行 IndexReader的undeleteAll方法可以反向操作索引中所有被挂起的删除。只能对未进行段合并的文档进行反删除操作。之所以能这样，是因为IndexWriter只是将被删除文档标记为已删除状态，但并未真正移除这些文档，最终的删除操作是在该文档所对应段进行合并时才执行 回收被删除文档所使用的磁盘空间Lucene使用bit数组的形式来标识文档被删除，操作很快，但是对应的磁盘空间仍占用。对于一个倒排索引，给定的文档项可能是分散在各处的，在删除文档时试图回收占用磁盘空间是不实际的，只有在发生段合并操作时，这些磁盘才能被回收。 也可以显式调用expungeDeletes方法来回收被删除文档占用的磁盘空间，该调用会对被挂起的删除操作相关的所有段进行合并 参考 Lucene实战]]></content>
     </entry>
 
     
     <entry>
-      <title><![CDATA[Lucene中的文档删除]]></title>
-      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4%2F</url>
-      <content type="text"><![CDATA[Lucene中文档删除的更深入学习。 IndexReader删除文档IndexReader和IndexWriter都可以删除文档： IndexReader能够根据文档号删除文档 IndexReader可通过Term对象删除文档，IndexReader会返回被删除的文档号，IndexReader可以立即决定删除哪个文档；IndexWriter不会返回删除的文档号，因为它仅仅是将被删除的Term进行缓存，后续在进行实际的删除操作 IndexReader删除操作会立即生效，IndexWriter的删除操作必须等到程序打开一个新的Reader时才能被感知 IndexWriter可通过Query删除，IndexReader不行 IndexReader的undeleteAll方法可以反向操作索引中所有被挂起的删除。只能对未进行段合并的文档进行反删除操作。之所以能这样，是因为IndexWriter只是将被删除文档标记为已删除状态，但并未真正移除这些文档，最终的删除操作是在该文档所对应段进行合并时才执行 回收被删除文档所使用的磁盘空间Lucene使用bit数组的形式来标识文档被删除，操作很快，但是对应的磁盘空间仍占用。对于一个倒排索引，给定的文档项可能是分散在各处的，在删除文档时试图回收占用磁盘空间是不实际的，只有在发生段合并操作时，这些磁盘才能被回收。 也可以显式调用expungeDeletes方法来回收被删除文档占用的磁盘空间，该调用会对被挂起的删除操作相关的所有段进行合并 参考 Lucene实战]]></content>
+      <title><![CDATA[Lucene中的索引缓冲、刷新和提交]]></title>
+      <url>%2F2018%2F06%2F17%2FLucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E3%80%81%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4%2F</url>
+      <content type="text"><![CDATA[Lucene中的索引缓冲、刷新和提交学习。 缓冲和刷新创建和删除文档操作时，会先被缓存之内存，而不是立即写盘，这些操作会以 衅端的形式周期性的写入索引的Directory，IndexWriter刷盘操作时机如下： 当缓存占用空间超过设置的阈值，setRAMBufferSizeMB来设置 在指定文档号对应的文档被添加进索引之后，通过调用setMaxBufferedDocs来完成刷新操作 在删除和查询语句等操作占用内存总量超过预设值时，可通过调用setMaxBufferedDeleteTerm方法来触发刷新操作 默认情况下IndexWriter在RAM用量为16M的时候启动刷新操作。 发生刷新操作时，Writer会在Directory目录创建新的段和被删除文件，这些文件对于新打开的IndexReader不可见也不可用，直到Writer提交更改以及重新打开Reader后。 刷新操作是用来释放缓存的更改 提交操作是用来让所有更改在索引中保持可见。 IndexReader所看到的一直是索引的起始状态，也就是IndexWriter被打开时的状态，直到IndexWriter提交更改为止。 索引提交IndexWriter的commit方法调用，都会创建一个新的索引提交，新打开或重启的IndexReader和IndexSearcher只能看到上次提交后的索引状态，IndexWriter在两次提交之间完成的更改对Reader来说不可见。而近实时搜索功能能够在不用首次向磁盘提交更改的情况下对IndexWriter所做的更改进行搜索。 如果需要取消所有更改，可在上一次索引提交更改后，调用rollback方法删除当前IndexWriter包含的所有更改。 IndexWriter的提交步骤： 刷新所有缓存的文档和文档删除操作 对所有新创建的文件进行同步，包括刷新的文件，还包括上一次调用commit方法或从打开IndexWriter后已完成的段合并操作所生成的所有文件。IndexWriter调用Directory.sync方法实现，该方法会在所有挂起的写操作都写到磁盘后才返回 写入和同步下一个segment_X文件，一旦完成，IndexReader会立即看到上一次提交后发生的所有变化。 通过调用IndexDeletionPolicy删除旧的提交。 两阶段提交对于需要提交包括Lucene索引和其他外部资源等事务的应用程序，Lucene提供了prepareCommit方法，该方法完成了上面步骤的前两步或前三部，但不能使新的segment_X文件对Reader可见，调用prepareCommit后还需要调用rollback或commit方法。 索引删除策略IndexDeletionPolicy负责通知IndexWriter何时能够安全删除旧的提交，默认策略KeepOnlyLastCommitDeletionPolicy，会在每次创建完新的提交后删除先前的提交。 参考 Lucene实战]]></content>
     </entry>
 
     
@@ -668,9 +668,23 @@
 
     
     <entry>
+      <title><![CDATA[RocketMQ中Consumer的rebalance]]></title>
+      <url>%2F2018%2F01%2F23%2FRocketMQ%E4%B8%ADConsumer%E7%9A%84rebalance%2F</url>
+      <content type="text"><![CDATA[RocketMQ的rebalance学习。 rebalance场景： 消费者发送心跳到Broker，Broker端发现有新的消费者进来或者新增了topic订阅信息或者删除了topic订阅信息，Broker会通知所有消费者NOTIFY_CONSUMER_IDS_CHANGED，消费者收到请求后会立刻进行rebalance：MQClientInstance#rebalanceImmediately DefaultMQPushConsumerImpl#start最后会调用MQClientInstance#rebalanceImmediately开始rebaplace RebalanceService每隔20秒会执行一次rebalance draw io源文件RocketMQ中Consumer的rebalance.drawio 参考]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[RocketMQ中Consumer的心跳发送]]></title>
+      <url>%2F2018%2F01%2F23%2FRocketMQ%E4%B8%ADConsumer%E7%9A%84%E5%BF%83%E8%B7%B3%E5%8F%91%E9%80%81%2F</url>
+      <content type="text"><![CDATA[RocketMQ Consumer的心跳发送学习。 Consumer和Broker保持长连接，Consumer会向Broker发送心跳信息，心跳信息中包含了当前消费者的订阅信息。 发送心跳的场景 在DefaultMQPushConsumerImpl#start启动后会发送心跳 在DefaultMQPushConsumerImpl#subscribe订阅topic和tag的时候会发送心跳 在RebalancePushImpl#messageQueueChanged消息队列有变化后会发送心跳 在MQClientInstance#startScheduledTask启动定时任务时会启动一个定时任务发送心跳 在DefaultMQProducerImpl#start启动后会发送心跳 发送和处理过程 Consumer向每个Broker发送心跳，包含消费者订阅信息 Broker处理心跳请求 获取消费组订阅配置信息，不存在就新建，并持久化 注册重试队列，新注册后会向Nameserver广播请求更新路由信息 注册消费者到消费者表中，没有则新增消费者，新增完消费者后需要通知所有消费者进行rebalance 注册生产者 订阅关系一致性一个消费组中的所有消费者订阅的信息必须完全一致，如果不一致的话回产生消费混乱，丢失消息。因为在Broker中消费者订阅信息是以消费组为维度存放的，如果一个消费组中的的消费者订阅不一样，后面的消费者会覆盖前面消费者在消费组中的订阅信息。 draw io源文件和图片draw io源文件：RocketMQ中Consumer的心跳发送.drawio 参考]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[RocketMQ中的订阅关系一致]]></title>
       <url>%2F2018%2F01%2F22%2FRocketMQ%E4%B8%AD%E7%9A%84%E8%AE%A2%E9%98%85%E5%85%B3%E7%B3%BB%E4%B8%80%E8%87%B4%2F</url>
-      <content type="text"><![CDATA[RocketMQ的订阅关系一致学习。 订阅关系一致是指同一个消费者组下所有的消费者实例处理逻辑必须完全一致，所有消费者订阅的Topic以及Topic中的Tag必须一致。如果订阅关系不一致，消费逻辑就会混乱，导致消息丢失。 参考 https://www.alibabacloud.com/help/zh/doc-detail/43523.htm]]></content>
+      <content type="text"><![CDATA[RocketMQ的订阅关系一致学习。 订阅关系一致是指同一个消费者组下所有的消费者实例处理逻辑必须完全一致，所有消费者订阅的Topic以及Topic中的Tag必须一致。如果订阅关系不一致，消费逻辑就会混乱，导致消息丢失。 因为在Broker中消费者订阅信息是以消费组为维度存放的，如果一个消费组中的的消费者订阅不一样，后面的消费者会覆盖前面消费者在消费组中的订阅信息。 可参考：[RocketMQ中Consumer的心跳发送][https://www.cxis.me/2018/01/23/RocketMQ中Consumer的心跳发送/]这篇文章中Consumer心跳发送和Broker中处理心跳的流程 参考 https://www.alibabacloud.com/help/zh/doc-detail/43523.htm]]></content>
     </entry>
 
     

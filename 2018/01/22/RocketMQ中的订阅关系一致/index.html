@@ -28,7 +28,7 @@
 <meta property="og:description" content="RocketMQ的订阅关系一致学习。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-01-22T12:58:04.000Z">
-<meta property="article:modified_time" content="2020-06-08T13:40:17.300Z">
+<meta property="article:modified_time" content="2020-06-09T14:35:45.698Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="RocketMQ">
 <meta name="twitter:card" content="summary">
@@ -270,6 +270,8 @@
 <a id="more"></a>
 
 <p>订阅关系一致是指同一个消费者组下所有的消费者实例处理逻辑必须完全一致，所有消费者订阅的Topic以及Topic中的Tag必须一致。如果订阅关系不一致，消费逻辑就会混乱，导致消息丢失。</p>
+<p>因为在Broker中消费者订阅信息是以消费组为维度存放的，如果一个消费组中的的消费者订阅不一样，后面的消费者会覆盖前面消费者在消费组中的订阅信息。</p>
+<p>可参考：[RocketMQ中Consumer的心跳发送][<a href="https://www.cxis.me/2018/01/23/RocketMQ中Consumer的心跳发送/]这篇文章中Consumer心跳发送和Broker中处理心跳的流程" target="_blank" rel="noopener">https://www.cxis.me/2018/01/23/RocketMQ中Consumer的心跳发送/]这篇文章中Consumer心跳发送和Broker中处理心跳的流程</a></p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li><a href="https://www.alibabacloud.com/help/zh/doc-detail/43523.htm" target="_blank" rel="noopener">https://www.alibabacloud.com/help/zh/doc-detail/43523.htm</a></li>
 </ul>
@@ -315,8 +317,8 @@
       <i class="fa fa-chevron-left"></i> RocketMQ中Consumer启动流程
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/" rel="next" title="上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题">
-      上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题 <i class="fa fa-chevron-right"></i>
+    <a href="/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84%E5%BF%83%E8%B7%B3%E5%8F%91%E9%80%81/" rel="next" title="RocketMQ中Consumer的心跳发送">
+      RocketMQ中Consumer的心跳发送 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -400,7 +402,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">209</span>
+          <span class="site-state-item-count">211</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
