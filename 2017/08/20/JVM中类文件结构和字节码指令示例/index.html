@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JVM中类文件结构和字节码指令示例。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM中类文件结构和字节码指令示例">
+<meta property="og:url" content="http://dachengxi.github.com/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/index.html">
+<meta property="og:site_name" content="Time Stream">
+<meta property="og:description" content="JVM中类文件结构和字节码指令示例。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-08-20T12:31:37.000Z">
+<meta property="article:modified_time" content="2020-06-14T06:36:33.709Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://dachengxi.github.com/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JVM中类文件结构和字节码指令示例 | Time Stream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Time Stream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">多读书</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-book">
+
+    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Time Stream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM中类文件结构和字节码指令示例
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-08-20 20:31:37 20:31:37" itemprop="dateCreated datePublished" datetime="2017-08-20T20:31:37+08:00">2017-08-20 20:31:37</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/20/JVM中类文件结构和字节码指令示例/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>JVM中类文件结构和字节码指令示例。</p>
+<a id="more"></a>
+
+<h1 id="class文件"><a href="#class文件" class="headerlink" title="class文件"></a>class文件</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br><span class="line">535</span><br><span class="line">536</span><br><span class="line">537</span><br><span class="line">538</span><br><span class="line">539</span><br><span class="line">540</span><br><span class="line">541</span><br><span class="line">542</span><br><span class="line">543</span><br><span class="line">544</span><br><span class="line">545</span><br><span class="line">546</span><br><span class="line">547</span><br><span class="line">548</span><br><span class="line">549</span><br><span class="line">550</span><br><span class="line">551</span><br><span class="line">552</span><br><span class="line">553</span><br><span class="line">554</span><br><span class="line">555</span><br><span class="line">556</span><br><span class="line">557</span><br><span class="line">558</span><br><span class="line">559</span><br><span class="line">560</span><br><span class="line">561</span><br><span class="line">562</span><br><span class="line">563</span><br><span class="line">564</span><br><span class="line">565</span><br><span class="line">566</span><br><span class="line">567</span><br><span class="line">568</span><br><span class="line">569</span><br><span class="line">570</span><br><span class="line">571</span><br><span class="line">572</span><br><span class="line">573</span><br><span class="line">574</span><br><span class="line">575</span><br><span class="line">576</span><br><span class="line">577</span><br><span class="line">578</span><br><span class="line">579</span><br><span class="line">580</span><br><span class="line">581</span><br><span class="line">582</span><br><span class="line">583</span><br><span class="line">584</span><br><span class="line">585</span><br><span class="line">586</span><br></pre></td><td class="code"><pre><span class="line">Classfile /xxxxx/me/cxis/dcc/loader/ConfigLoaderDelegate<span class="class">.<span class="keyword">class</span></span></span><br><span class="line"><span class="class">  <span class="title">Last</span> <span class="title">modified</span> <span class="title">xxxx</span>-<span class="title">x</span>-<span class="title">x</span></span>; size <span class="number">1668</span> bytes</span><br><span class="line">  MD5 checksum <span class="number">26f</span>b18f78a9fff6fccbe73d445ee8c58</span><br><span class="line">  Compiled from <span class="string">"ConfigLoaderDelegate.java"</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">me</span>.<span class="title">cxis</span>.<span class="title">dcc</span>.<span class="title">loader</span>.<span class="title">ConfigLoaderDelegate</span></span></span><br><span class="line"><span class="class">  // 次版本号</span></span><br><span class="line">  minor version: 0</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 主版本号</span></span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 类的访问标志</span></span><br><span class="line">  <span class="comment">// ACC_PUBLIC：是否public类型</span></span><br><span class="line">  <span class="comment">// ACC_SUPER：是否允许使用invokespecial字节码指令的新语意，JDK1.0.2之后编译出来的类的这个标志都必须为真</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line"></span><br><span class="line"><span class="comment">// 常量池，存放字面量和符号引用</span></span><br><span class="line"><span class="comment">// 字面量类似Java中的常量，如文本字符串、final常量等</span></span><br><span class="line"><span class="comment">// 符号引用包括：类和接口的全限定名、字段的名称和描述符、方法的名称和描述符</span></span><br><span class="line">Constant pool:</span><br><span class="line">   <span class="comment">// 方法的符号引用，指向第12和第42个常量</span></span><br><span class="line">   <span class="comment">// 最后结果是：java/lang/Object."&lt;init&gt;":()V</span></span><br><span class="line">   <span class="comment">// 调用父类Object的构造方法，该方法返回值是V表示void</span></span><br><span class="line">   #1 = Methodref          #12.#42        // java/lang/Object."&lt;init&gt;":()V</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 字段的符号引用，指向第7和第43常量</span></span><br><span class="line">   <span class="comment">// 最后结果是：me/cxis/dcc/loader/ConfigLoaderDelegate.configLoader:Lme/cxis/dcc/loader/ConfigLoader;</span></span><br><span class="line">   <span class="comment">// 对应源码的：private ConfigLoader configLoader;</span></span><br><span class="line">   #2 = Fieldref           #7.#43         // me/cxis/dcc/loader/ConfigLoaderDelegate.configLoader:Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 类或接口的符号引用，指向第44个常量：me/cxis/dcc/loader/ZookeeperConfigLoader</span></span><br><span class="line">   #3 = Class              #44            // me/cxis/dcc/loader/ZookeeperConfigLoader</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 方法的符号引用，指向第3和第42个常量</span></span><br><span class="line">   <span class="comment">// 最后结果是：me/cxis/dcc/loader/ZookeeperConfigLoader."&lt;init&gt;":()V</span></span><br><span class="line">   <span class="comment">// 对应源码中无参构造方法</span></span><br><span class="line">   #4 = Methodref          #3.#42         // me/cxis/dcc/loader/ZookeeperConfigLoader."&lt;init&gt;":()V</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 方法的符号引用，指向第7和第45个常量</span></span><br><span class="line">   <span class="comment">// 最后结果是：me/cxis/dcc/loader/ConfigLoaderDelegate.getInstance:(Lme/cxis/dcc/loader/ConfigLoader;)Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span></span><br><span class="line">   <span class="comment">// 对应源码中的带参数的静态方法：public static ConfigLoaderDelegate getInstance(ConfigLoader configLoader)</span></span><br><span class="line">   <span class="comment">// 方法参数：Lme/cxis/dcc/loader/ConfigLoader; L表示是对象类型</span></span><br><span class="line">   <span class="comment">// 方法返回值：Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span></span><br><span class="line">   #5 = Methodref          #7.#45         // me/cxis/dcc/loader/ConfigLoaderDelegate.getInstance:(Lme/cxis/dcc/loader/ConfigLoader;)Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 字段的符号引用，指向第7和第46常量</span></span><br><span class="line">   <span class="comment">// 最后结果是：me/cxis/dcc/loader/ConfigLoaderDelegate.configLoaderDelegate:Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span></span><br><span class="line">   <span class="comment">// 对应源码的：private static volatile ConfigLoaderDelegate configLoaderDelegate;</span></span><br><span class="line">   #6 = Fieldref           #7.#46         // me/cxis/dcc/loader/ConfigLoaderDelegate.configLoaderDelegate:Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 类或接口的符号引用，指向第47个常量：me/cxis/dcc/loader/ConfigLoaderDelegate</span></span><br><span class="line">   #7 = Class              #47            // me/cxis/dcc/loader/ConfigLoaderDelegate</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 方法的符号引用，指向第7和第48个常量</span></span><br><span class="line">   <span class="comment">// 最后结果是：me/cxis/dcc/loader/ConfigLoaderDelegate."&lt;init&gt;":(Lme/cxis/dcc/loader/ConfigLoader;)V</span></span><br><span class="line">   <span class="comment">// 对应源码中的有参构造方法：private ConfigLoaderDelegate(ConfigLoader configLoader)</span></span><br><span class="line">   <span class="comment">// 参数是：Lme/cxis/dcc/loader/ConfigLoader; 返回值是：V</span></span><br><span class="line">   #8 = Methodref          #7.#48         // me/cxis/dcc/loader/ConfigLoaderDelegate."&lt;init&gt;":(Lme/cxis/dcc/loader/ConfigLoader;)V</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 接口中方法的符号引用，指向第49和50个常量</span></span><br><span class="line">   <span class="comment">// 最后结果是：me/cxis/dcc/loader/ConfigLoader.get:(Ljava/lang/String;)Ljava/lang/String;</span></span><br><span class="line">   <span class="comment">// 表示的是ConfigLoader.get方法，参数是String类型，返回值是String类型</span></span><br><span class="line">   #9 = InterfaceMethodref #49.#50        // me/cxis/dcc/loader/ConfigLoader.get:(Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 接口中方法的符号引用，指向第49和51个常量</span></span><br><span class="line">  <span class="comment">// 最后结果是：me/cxis/dcc/loader/ConfigLoader.addConfigListener:(Lme/cxis/dcc/listener/ConfigListener;)V</span></span><br><span class="line">  <span class="comment">// 表示的是ConfigLoader.addConfigListener方法，参数是ConfigListener类型，返回值是V</span></span><br><span class="line">  #10 = InterfaceMethodref #49.#51        // me/cxis/dcc/loader/ConfigLoader.addConfigListener:(Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 接口中方法的符号引用，指向第49和52个常量</span></span><br><span class="line">  <span class="comment">// 最后结果是：me/cxis/dcc/loader/ConfigLoader.addConfigListener:(Ljava/lang/String;Lme/cxis/dcc/listener/ConfigListener;)V</span></span><br><span class="line">  <span class="comment">// 表示的是ConfigLoader.addConfigListener方法，参数是String类型和ConfigListener类型，返回值是V</span></span><br><span class="line">  #11 = InterfaceMethodref #49.#52        // me/cxis/dcc/loader/ConfigLoader.addConfigListener:(Ljava/lang/String;Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 类或接口的符号引用，指向第53个常量：java/lang/Object</span></span><br><span class="line">  #12 = Class              #53            // java/lang/Object</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，表示configLoader变量的名字</span></span><br><span class="line">  #13 = Utf8               configLoader</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，ConfigLoader的描述符</span></span><br><span class="line">  #14 = Utf8               Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，configLoaderDelegate变量的名字</span></span><br><span class="line">  #15 = Utf8               configLoaderDelegate</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，ConfigLoaderDelegate类描述符</span></span><br><span class="line">  #16 = Utf8               Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，系统生成实例的初始化方法名字</span></span><br><span class="line">  #17 = Utf8               &lt;init&gt;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法的描述符常量，无参空返回</span></span><br><span class="line">  #18 = Utf8               ()V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，Code属性，用在方法表中，Java代码编译成的字节码指令</span></span><br><span class="line">  #19 = Utf8               Code</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，LineNumberTable属性，用在Code属性中，Java源码的行号与字节码指令的对应关系</span></span><br><span class="line">  #20 = Utf8               LineNumberTable</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，LocalVariableTable属性，用在Code属性中，方法的局部变量描述</span></span><br><span class="line">  #21 = Utf8               LocalVariableTable</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，当前实例this</span></span><br><span class="line">  #22 = Utf8               this</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法的描述符常量，参数为ConfigLoader返回值为V</span></span><br><span class="line">  #23 = Utf8               (Lme/cxis/dcc/loader/ConfigLoader;)V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法表，JDK8新增属性，用于支持将方法名编译进Class文件并可运行时获取</span></span><br><span class="line">  #24 = Utf8               MethodParameters</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法名称常量</span></span><br><span class="line">  #25 = Utf8               getInstance</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法的描述符常量，参数为空，返回值为ConfigLoaderDelegate</span></span><br><span class="line">  #26 = Utf8               ()Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法的描述符常量，参数为ConfigLoader，返回值为ConfigLoaderDelegate</span></span><br><span class="line">  #27 = Utf8               (Lme/cxis/dcc/loader/ConfigLoader;)Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，StackMapTable属性，用在Code属性中，JDK6新增属性，</span></span><br><span class="line">  <span class="comment">// 供新的类型检查验证器检查和处理目标方法的局部变量和操作数栈所需要的类型是否匹配</span></span><br><span class="line">  #28 = Utf8               StackMapTable</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 类或接口的符号引用，指向第53个常量：java/lang/Object</span></span><br><span class="line">  #29 = Class              #53            // java/lang/Object</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 类或接口的符号引用，指向第54个常量：java/lang/Throwable</span></span><br><span class="line">  #30 = Class              #54            // java/lang/Throwable</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法名称常量</span></span><br><span class="line">  #31 = Utf8               get</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法的描述符常量，参数为String返回值为String</span></span><br><span class="line">  #32 = Utf8               (Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，// TODO</span></span><br><span class="line">  #33 = Utf8               key</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，String类描述符</span></span><br><span class="line">  #34 = Utf8               Ljava/lang/String;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法名称常量</span></span><br><span class="line">  #35 = Utf8               addConfigListener</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法的描述符常量</span></span><br><span class="line">  #36 = Utf8               (Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，// TODO</span></span><br><span class="line">  #37 = Utf8               configListener</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，ConfigListener接口描述符</span></span><br><span class="line">  #38 = Utf8               Lme/cxis/dcc/listener/ConfigListener;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，方法的描述符常量</span></span><br><span class="line">  #39 = Utf8               (Ljava/lang/String;Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，SourceFile属性，用在类文件，记录源文件名称</span></span><br><span class="line">  #40 = Utf8               SourceFile</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，源文件名称</span></span><br><span class="line">  #41 = Utf8               ConfigLoaderDelegate.java</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 字段或方法的部分符号引用，指向第17和第18个常量</span></span><br><span class="line">  <span class="comment">// "&lt;init&gt;" 方法名 ()参数为空 V返回值为void</span></span><br><span class="line">  #42 = NameAndType        #17:#18        // "&lt;init&gt;":()V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 字段或方法的部分符号引用，指向第13和第14个常量</span></span><br><span class="line">  <span class="comment">// configLoader变量名，Lme/cxis/dcc/loader/ConfigLoader;变量类型</span></span><br><span class="line">  #43 = NameAndType        #13:#14        // configLoader:Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，ZookeeperConfigLoader类描述符</span></span><br><span class="line">  #44 = Utf8               me/cxis/dcc/loader/ZookeeperConfigLoader</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 字段或方法的部分符号引用，指向第25和第27个常量</span></span><br><span class="line">  <span class="comment">// getInstance方法名，(Lme/cxis/dcc/loader/ConfigLoader;) 参数，Lme/cxis/dcc/loader/ConfigLoaderDelegate;返回值</span></span><br><span class="line">  #45 = NameAndType        #25:#27        // getInstance:(Lme/cxis/dcc/loader/ConfigLoader;)Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 字段或方法的部分符号引用，configLoaderDelegate常量</span></span><br><span class="line">  #46 = NameAndType        #15:#16        // configLoaderDelegate:Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，类描述符</span></span><br><span class="line">  #47 = Utf8               me/cxis/dcc/loader/ConfigLoaderDelegate</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 字段或方法的部分符号引用，有参构造方方法</span></span><br><span class="line">  #48 = NameAndType        #17:#23        // "&lt;init&gt;":(Lme/cxis/dcc/loader/ConfigLoader;)V</span><br><span class="line"></span><br><span class="line">  <span class="comment">//  类或接口的符号引用，指向第55个常量：me/cxis/dcc/loader/ConfigLoader</span></span><br><span class="line">  #49 = Class              #55            // me/cxis/dcc/loader/ConfigLoader</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 字段或方法的部分符号引用，get方法</span></span><br><span class="line">  #50 = NameAndType        #31:#32        // get:(Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 字段或方法的部分符号引用，addConfigListener方法</span></span><br><span class="line">  #51 = NameAndType        #35:#36        // addConfigListener:(Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 字段或方法的部分符号引用，addConfigListener方法</span></span><br><span class="line">  #52 = NameAndType        #35:#39        // addConfigListener:(Ljava/lang/String;Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，Object类描述符</span></span><br><span class="line">  #53 = Utf8               java/lang/Object</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，Throwable描述符</span></span><br><span class="line">  #54 = Utf8               java/lang/Throwable</span><br><span class="line"></span><br><span class="line">  <span class="comment">// UTF-8编码的字符串，ConfigLoader类描述符</span></span><br><span class="line">  #55 = Utf8               me/cxis/dcc/loader/ConfigLoader</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// configLoader变量，类型ConfigLoader，访问标示符private，</span></span><br><span class="line">  <span class="keyword">private</span> me.cxis.dcc.loader.ConfigLoader configLoader;</span><br><span class="line">    descriptor: Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line">    flags: ACC_PRIVATE</span><br><span class="line"></span><br><span class="line">  <span class="comment">// configLoaderDelegate变量，类型ConfigLoaderDelegate，访问标示符private，static，volatile</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> me.cxis.dcc.loader.ConfigLoaderDelegate configLoaderDelegate;</span><br><span class="line">    descriptor: Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">    flags: ACC_PRIVATE, ACC_STATIC, ACC_VOLATILE</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 无参构造方法</span></span><br><span class="line">  <span class="keyword">private</span> me.cxis.dcc.loader.ConfigLoaderDelegate();</span><br><span class="line">    <span class="comment">// 无参数，返回值void</span></span><br><span class="line">    descriptor: ()V</span><br><span class="line">    <span class="comment">// 方法访问标志private</span></span><br><span class="line">    flags: ACC_PRIVATE</span><br><span class="line">    <span class="comment">// Code属性</span></span><br><span class="line">    Code:</span><br><span class="line">      <span class="comment">// stack：最大操作数栈，JVM运行时会根据这个值来分配栈帧中的操作栈深度，此处为1</span></span><br><span class="line">    </span><br><span class="line">      <span class="comment">// locals：局部变量所需的存储空间，单位是Slot变量槽，</span></span><br><span class="line">      <span class="comment">// byte、char、float、int、short、boolean和returnAddress等长度不超过32位的数据类型，每个局部变量占用一个变量槽，</span></span><br><span class="line">      <span class="comment">// 而double和long这两种64位的数据类型则需要两个变量槽来存放</span></span><br><span class="line">      <span class="comment">// 方法参数（包括实例方法中的隐藏参数“this”）、显式异常处理程序的参数（Exception HandlerParameter，就是try-catch语句中catch块中所定义的异常）、</span></span><br><span class="line">      <span class="comment">// 方法体中定义的局部变量都需要依赖局部变量表来存放</span></span><br><span class="line"></span><br><span class="line">      <span class="comment">// args_size：方法参数个数，此处的1是指实例方法的隐式参数this</span></span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="comment">// 将第1个局部变量槽中引用类型的本地变量推送到操作数栈顶</span></span><br><span class="line">         <span class="comment">// 从下面的局部变量表LocalVariableTable中可以看到只有一个this</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line"></span><br><span class="line">         <span class="comment">// invokespecial：调用父类构造方法、实例初始化方法、私有方法</span></span><br><span class="line">         <span class="comment">// #1在常量池中是一个方法引用，指向：java/lang/Object."&lt;init&gt;":()V</span></span><br><span class="line">         <span class="comment">// 这里就是调用父类Object的构造方法，方法的接收者是上一步aload_0推送到栈顶的对象，就是this当前对象</span></span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;":()V</span><br><span class="line"></span><br><span class="line">         <span class="comment">// return：从方法返回，返回值是void</span></span><br><span class="line">         <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">      <span class="comment">// 源码行号和字节码行号对应关系</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">12</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">14</span>: <span class="number">4</span></span><br><span class="line">      <span class="comment">// 栈帧中局部变量与源码中定义的变量之间的关系</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        <span class="comment">// Start： 局部变量的生命周期开始的字节码偏移量，也就是该局部变量在哪一行开始可见</span></span><br><span class="line">        <span class="comment">// Length：作用范围覆盖的长度，也就是可见行数</span></span><br><span class="line">        <span class="comment">// Slot：代表这个局部变量所在栈帧的局部变量表槽的位置</span></span><br><span class="line">        <span class="comment">// Name：局部变量名称，这里是隐式参数this</span></span><br><span class="line">        <span class="comment">// Signature：局部变量描述符，这里是当前ConfigLoaderDelegate类</span></span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 带参数的构造方法</span></span><br><span class="line">  <span class="keyword">private</span> me.cxis.dcc.loader.ConfigLoaderDelegate(me.cxis.dcc.loader.ConfigLoader);</span><br><span class="line">    <span class="comment">// 参数ConfigLoader，返回值void</span></span><br><span class="line">    descriptor: (Lme/cxis/dcc/loader/ConfigLoader;)V</span><br><span class="line">    <span class="comment">// 访问标示符：private</span></span><br><span class="line">    flags: ACC_PRIVATE</span><br><span class="line">    <span class="comment">// Code属性</span></span><br><span class="line">    Code:</span><br><span class="line">      <span class="comment">// 最大操作数栈，2</span></span><br><span class="line">      <span class="comment">// 两个本地变量槽</span></span><br><span class="line">      <span class="comment">// 两个参数</span></span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="comment">// 将第1个局部变量槽中引用类型本地变量推送到栈顶</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         </span><br><span class="line">         <span class="comment">// 调用父类的构造方法</span></span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object."&lt;init&gt;":()V</span><br><span class="line">         </span><br><span class="line">         <span class="comment">// 将第1个局部变量槽中引用类型本地变量推送到栈顶，this</span></span><br><span class="line">         <span class="number">4</span>: aload_0</span><br><span class="line">         <span class="comment">// 将第2个局部变量槽中引用类型本地变量推送到栈顶，参数configLoader</span></span><br><span class="line">         <span class="number">5</span>: aload_1</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 为指定类的实例域赋值，#2是字段引用</span></span><br><span class="line">         6: putfield      #2                  // Field configLoader:Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 返回 void</span></span><br><span class="line">         <span class="number">9</span>: <span class="keyword">return</span></span><br><span class="line">      <span class="comment">// 行号表</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">16</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">17</span>: <span class="number">4</span></span><br><span class="line">        line <span class="number">18</span>: <span class="number">9</span></span><br><span class="line">      <span class="comment">// 本地变量表</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        <span class="comment">// this和configLoader两个局部变量</span></span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">10</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">            <span class="number">0</span>      <span class="number">10</span>     <span class="number">1</span> configLoader   Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line">    <span class="comment">// JDK8新增，用在方法表中的变长属性，作用是记录方法的各个形参名称和信息</span></span><br><span class="line">    <span class="comment">// 这里形参是configLoader</span></span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      configLoader</span><br><span class="line"></span><br><span class="line">  <span class="comment">// getInstance方法</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> me.cxis.dcc.loader.<span class="function">ConfigLoaderDelegate <span class="title">getInstance</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 无参，返回值：ConfigLoaderDelegate</span></span><br><span class="line">    descriptor: ()Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">    <span class="comment">// 访问标示符 public static</span></span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    <span class="comment">// Code属性</span></span><br><span class="line">    Code:</span><br><span class="line">      <span class="comment">// 最大操作数栈深度2</span></span><br><span class="line">      <span class="comment">// 本地变量0</span></span><br><span class="line">      <span class="comment">// 参数0</span></span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">0</span>, args_size=<span class="number">0</span></span><br><span class="line">         <span class="comment">// 创建一个对象并将其引用压入栈顶，创建ZookeeperConfigLoader对象</span></span><br><span class="line">         0: new           #3                  // class me/cxis/dcc/loader/ZookeeperConfigLoader</span><br><span class="line">         <span class="comment">// 复制栈顶数值，并将复制值压入栈顶</span></span><br><span class="line">         <span class="number">3</span>: dup</span><br><span class="line">         <span class="comment">// 调用ZookeeperConfigLoader的构造方法</span></span><br><span class="line">         4: invokespecial #4                  // Method me/cxis/dcc/loader/ZookeeperConfigLoader."&lt;init&gt;":()V</span><br><span class="line">         <span class="comment">// 调用静态方法getInstance</span></span><br><span class="line">         7: invokestatic  #5                  // Method getInstance:(Lme/cxis/dcc/loader/ConfigLoader;)Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">        <span class="comment">// 返回对象引用</span></span><br><span class="line">        <span class="number">10</span>: areturn</span><br><span class="line">      <span class="comment">// 行号表</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">21</span>: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// getInstance方法</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> me.cxis.dcc.loader.<span class="function">ConfigLoaderDelegate <span class="title">getInstance</span><span class="params">(me.cxis.dcc.loader.ConfigLoader)</span></span>;</span><br><span class="line">    <span class="comment">// 参数ConfigLoader，返回值ConfigLoaderDelegate</span></span><br><span class="line">    descriptor: (Lme/cxis/dcc/loader/ConfigLoader;)Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">    <span class="comment">// 访问标示符public static</span></span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    <span class="comment">// Code属性</span></span><br><span class="line">    Code:</span><br><span class="line">      <span class="comment">// 最大操作数栈深度3</span></span><br><span class="line">      <span class="comment">// 本地变量表3</span></span><br><span class="line">      <span class="comment">// 参数1个</span></span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">3</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="comment">// 获取#6指向的静态域configLoaderDelegate，并将其压入栈顶</span></span><br><span class="line">         0: getstatic     #6                  // Field configLoaderDelegate:Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 栈顶数据出栈，判断栈顶引用是否为null，不为null时跳转到38，38是获取#6指向的静态域configLoaderDelegate，并将其压入栈顶</span></span><br><span class="line">         <span class="number">3</span>: ifnonnull     <span class="number">38</span></span><br><span class="line"></span><br><span class="line">         <span class="comment">// 将#7从常量池中推送到栈顶，这个是锁对象</span></span><br><span class="line">         6: ldc           #7                  // class me/cxis/dcc/loader/ConfigLoaderDelegate</span><br><span class="line">        </span><br><span class="line">         <span class="comment">// 复制栈顶数值，并将复制值压入栈顶，这个是备份锁对象</span></span><br><span class="line">         <span class="number">8</span>: dup</span><br><span class="line">        </span><br><span class="line">         <span class="comment">// 将栈顶的引用推送到第二个本地变量槽，将备份的锁对象放到本地变量表中</span></span><br><span class="line">         <span class="number">9</span>: astore_1</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 获得对象的锁, 用于同步方法或同步块，此时栈中的锁对象会出栈</span></span><br><span class="line">        <span class="number">10</span>: monitorenter</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 获取#6指向的静态域configLoaderDelegate，并将其压入栈顶</span></span><br><span class="line">        11: getstatic     #6                  // Field configLoaderDelegate:Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 不为null时跳转到28</span></span><br><span class="line">        <span class="number">14</span>: ifnonnull     <span class="number">28</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建一个对象并将其引用压入栈顶，创建ConfigLoaderDelegate对象</span></span><br><span class="line">        17: new           #7                  // class me/cxis/dcc/loader/ConfigLoaderDelegate</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 复制栈顶数值，并将复制值压入栈顶</span></span><br><span class="line">        <span class="number">20</span>: dup</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将第一个本地变量槽中的引用推送到栈顶，configLoader</span></span><br><span class="line">        <span class="number">21</span>: aload_0</span><br><span class="line"></span><br><span class="line">        <span class="comment">// invokespecial：调用父类构造方法、实例初始化方法、私有方法，也就是调用ConfigLoaderDelegate带参的构造方法</span></span><br><span class="line">        22: invokespecial #8                  // Method "&lt;init&gt;":(Lme/cxis/dcc/loader/ConfigLoader;)V</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 为指定类的静态域赋值，configLoaderDelegate域赋值刚才new的ConfigLoaderDelegate对象</span></span><br><span class="line">        25: putstatic     #6                  // Field configLoaderDelegate:Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将第二个本地变量槽中的引用推送到栈顶，引用是ConfigLoaderDelegate，就是锁对象的备份</span></span><br><span class="line">        <span class="number">28</span>: aload_1</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 释放对象的锁, 用于同步方法或同步块，将锁对象出栈</span></span><br><span class="line">        <span class="number">29</span>: monitorexit</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 无条件跳转到38</span></span><br><span class="line">        <span class="number">30</span>: goto          <span class="number">38</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将栈顶的引用推送到第三个本地变量槽</span></span><br><span class="line">        <span class="number">33</span>: astore_2</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将第二个本地变量槽中的引用推送到栈顶，锁对象的备份</span></span><br><span class="line">        <span class="number">34</span>: aload_1</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 释放对象的锁, 用于同步方法或同步块，将锁对象出栈</span></span><br><span class="line">        <span class="number">35</span>: monitorexit</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将第三个本地变量槽中的引用推送到栈顶</span></span><br><span class="line">        <span class="number">36</span>: aload_2</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将栈顶的异常抛出</span></span><br><span class="line">        <span class="number">37</span>: athrow</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取#6指向的静态域configLoaderDelegate，并将其压入栈顶</span></span><br><span class="line">        38: getstatic     #6                  // Field configLoaderDelegate:Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回对象引用</span></span><br><span class="line">        <span class="number">41</span>: areturn</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 异常表</span></span><br><span class="line">      Exception table:</span><br><span class="line">         <span class="comment">// from：起始行</span></span><br><span class="line">         <span class="comment">// to：结束行，但不包括结束行</span></span><br><span class="line">         <span class="comment">// target：跳转到继续处理的行</span></span><br><span class="line">         <span class="comment">// 要处理的异常情况，any表示任意异常</span></span><br><span class="line">         from    to  target type</span><br><span class="line">            <span class="number">11</span>    <span class="number">30</span>    <span class="number">33</span>   any</span><br><span class="line">            <span class="number">33</span>    <span class="number">36</span>    <span class="number">33</span>   any</span><br><span class="line">      </span><br><span class="line">      <span class="comment">// 行号表</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">25</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">26</span>: <span class="number">6</span></span><br><span class="line">        line <span class="number">27</span>: <span class="number">11</span></span><br><span class="line">        line <span class="number">28</span>: <span class="number">17</span></span><br><span class="line">        line <span class="number">30</span>: <span class="number">28</span></span><br><span class="line">        line <span class="number">32</span>: <span class="number">38</span></span><br><span class="line">      <span class="comment">// 本地变量表</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">42</span>     <span class="number">0</span> configLoader   Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// JDK6新增，是一个变长属性，位于Code属性中，这个属性会在虚拟机类加载的字节码验证阶段被新类型检查验证器（Type Checker）使用</span></span><br><span class="line">      <span class="comment">// 目的在于代替以前比较消耗性能的基于数据流分析的类型推导验证器。</span></span><br><span class="line">      <span class="comment">// 包含零至多个栈映射帧（Stack Map Frame），每个栈映射帧都显式或隐式地代表了一个字节码偏移量，用于表示执行到该字节码时局部变量表和操作数栈的验证类型</span></span><br><span class="line">      <span class="comment">// TODO</span></span><br><span class="line">      StackMapTable: number_of_entries = <span class="number">3</span></span><br><span class="line">        frame_type = <span class="number">252</span> <span class="comment">/* append */</span></span><br><span class="line">          offset_delta = <span class="number">28</span></span><br><span class="line">          locals = [ class java/lang/Object ]</span><br><span class="line">        frame_type = <span class="number">68</span> <span class="comment">/* same_locals_1_stack_item */</span></span><br><span class="line">          stack = [ class java/lang/Throwable ]</span><br><span class="line">        frame_type = <span class="number">250</span> <span class="comment">/* chop */</span></span><br><span class="line">          offset_delta = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// JDK8新增，用在方法表中的变长属性，作用是记录方法的各个形参名称和信息</span></span><br><span class="line">    <span class="comment">// 这里形参是configLoader</span></span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      configLoader</span><br><span class="line"></span><br><span class="line">  <span class="comment">// get方法</span></span><br><span class="line">  <span class="keyword">public</span> java.lang.<span class="function">String <span class="title">get</span><span class="params">(java.lang.String)</span></span>;</span><br><span class="line">    <span class="comment">// 参数String，返回值String</span></span><br><span class="line">    descriptor: (Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line">    <span class="comment">// 访问标识public</span></span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    <span class="comment">// Code属性</span></span><br><span class="line">    Code:</span><br><span class="line">      <span class="comment">// 最大操作数栈深度2</span></span><br><span class="line">      <span class="comment">// 本地变量2</span></span><br><span class="line">      <span class="comment">// 参数2</span></span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="comment">// 将第一个本地变量槽中的引用推送到栈顶，本地变量槽中第一个是ConfigLoaderDelegate引用</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 获取指定类的实例域, 并将其压入栈顶， 也就是获取实例域configLoader</span></span><br><span class="line">         1: getfield      #2                  // Field configLoader:Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 将第二个本地变量槽中的引用推送到栈顶，本地变量槽中第二个是形参String</span></span><br><span class="line">         <span class="number">4</span>: aload_1</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 调用接口方法，ConfigLoader的get方法</span></span><br><span class="line">         5: invokeinterface #9,  2            // InterfaceMethod me/cxis/dcc/loader/ConfigLoader.get:(Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回对象引用</span></span><br><span class="line">        <span class="number">10</span>: areturn</span><br><span class="line">      <span class="comment">// 行号表</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">41</span>: <span class="number">0</span></span><br><span class="line">      <span class="comment">// 本地变量表</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">1</span>   key   Ljava/lang/String;</span><br><span class="line">    <span class="comment">// JDK8新增，用在方法表中的变长属性，作用是记录方法的各个形参名称和信息</span></span><br><span class="line">    <span class="comment">// 这里形参是key</span></span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      key</span><br><span class="line"></span><br><span class="line">  <span class="comment">// addConfigListener方法</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addConfigListener</span><span class="params">(me.cxis.dcc.listener.ConfigListener)</span></span>;</span><br><span class="line">    <span class="comment">// 参数ConfigListener，返回值void</span></span><br><span class="line">    descriptor: (Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line">    <span class="comment">// 访问标示符public</span></span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    <span class="comment">// Code属性</span></span><br><span class="line">    Code:</span><br><span class="line">      <span class="comment">// 操作数栈最大深度2</span></span><br><span class="line">      <span class="comment">// 本地变量表2</span></span><br><span class="line">      <span class="comment">// 参数两个</span></span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">2</span>, args_size=<span class="number">2</span></span><br><span class="line">         <span class="comment">// 将第一个本地变量槽中的引用推送到栈顶，本地变量槽中第一个是ConfigLoaderDelegate引用</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 获取指定类的实例域, 并将其压入栈顶， 也就是获取实例域configLoader</span></span><br><span class="line">         1: getfield      #2                  // Field configLoader:Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 将第二个本地变量槽中的引用推送到栈顶，本地变量槽中第二个是形参ConfigListener</span></span><br><span class="line">         <span class="number">4</span>: aload_1</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 调用接口方法，ConfigLoader的addConfigListener方法</span></span><br><span class="line">         5: invokeinterface #10,  2           // InterfaceMethod me/cxis/dcc/loader/ConfigLoader.addConfigListener:(Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回void</span></span><br><span class="line">        <span class="number">10</span>: <span class="keyword">return</span></span><br><span class="line">      <span class="comment">// 行号表</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">45</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">46</span>: <span class="number">10</span></span><br><span class="line">      <span class="comment">// 本地变量表</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">            <span class="number">0</span>      <span class="number">11</span>     <span class="number">1</span> configListener   Lme/cxis/dcc/listener/ConfigListener;</span><br><span class="line">    <span class="comment">// JDK8新增，用在方法表中的变长属性，作用是记录方法的各个形参名称和信息</span></span><br><span class="line">    <span class="comment">// 这里形参是configListener</span></span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      configListener</span><br><span class="line"></span><br><span class="line">  <span class="comment">// addConfigListener方法</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addConfigListener</span><span class="params">(java.lang.String, me.cxis.dcc.listener.ConfigListener)</span></span>;</span><br><span class="line">    <span class="comment">// 参数ConfigListener，返回值void</span></span><br><span class="line">    descriptor: (Ljava/lang/String;Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line">    <span class="comment">// 访问标示符public</span></span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    <span class="comment">// Code属性</span></span><br><span class="line">    Code:</span><br><span class="line">      <span class="comment">// 操作数栈最大深度3</span></span><br><span class="line">      <span class="comment">// 本地变量表3</span></span><br><span class="line">      <span class="comment">// 参数三个</span></span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">3</span>, args_size=<span class="number">3</span></span><br><span class="line">         <span class="comment">// 将第一个本地变量槽中的引用推送到栈顶，本地变量槽中第一个是ConfigLoaderDelegate引用</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         </span><br><span class="line">         <span class="comment">// 获取指定类的实例域, 并将其压入栈顶， 也就是获取实例域configLoader</span></span><br><span class="line">         1: getfield      #2                  // Field configLoader:Lme/cxis/dcc/loader/ConfigLoader;</span><br><span class="line">         </span><br><span class="line">         <span class="comment">// 将第二个本地变量槽中的引用推送到栈顶，本地变量槽中第二个是形参String</span></span><br><span class="line">         <span class="number">4</span>: aload_1</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 将第三个本地变量槽中的引用推送到栈顶，本地变量槽中第三个是形参ConfigListener</span></span><br><span class="line">         <span class="number">5</span>: aload_2</span><br><span class="line"></span><br><span class="line">         <span class="comment">// 调用接口方法，ConfigLoader的addConfigListener方法</span></span><br><span class="line">         6: invokeinterface #11,  3           // InterfaceMethod me/cxis/dcc/loader/ConfigLoader.addConfigListener:(Ljava/lang/String;Lme/cxis/dcc/listener/ConfigListener;)V</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回void</span></span><br><span class="line">        <span class="number">11</span>: <span class="keyword">return</span></span><br><span class="line">      <span class="comment">// 行号表</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">49</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">50</span>: <span class="number">11</span></span><br><span class="line">      <span class="comment">// 本地变量表</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">12</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lme/cxis/dcc/loader/ConfigLoaderDelegate;</span><br><span class="line">            <span class="number">0</span>      <span class="number">12</span>     <span class="number">1</span>   key   Ljava/lang/String;</span><br><span class="line">            <span class="number">0</span>      <span class="number">12</span>     <span class="number">2</span> configListener   Lme/cxis/dcc/listener/ConfigListener;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// JDK8新增，用在方法表中的变长属性，作用是记录方法的各个形参名称和信息</span></span><br><span class="line">    <span class="comment">// 这里形参是key和configListener</span></span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      key</span><br><span class="line">      configListener</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">"ConfigLoaderDelegate.java"</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="ConfigLoaderDelegate源文件"><a href="#ConfigLoaderDelegate源文件" class="headerlink" title="ConfigLoaderDelegate源文件"></a>ConfigLoaderDelegate源文件</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfigLoaderDelegate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ConfigLoader configLoader;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> ConfigLoaderDelegate configLoaderDelegate;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">ConfigLoaderDelegate</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">ConfigLoaderDelegate</span><span class="params">(ConfigLoader configLoader)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.configLoader = configLoader;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ConfigLoaderDelegate <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getInstance(<span class="keyword">new</span> ZookeeperConfigLoader());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ConfigLoaderDelegate <span class="title">getInstance</span><span class="params">(ConfigLoader configLoader)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (configLoaderDelegate == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (ConfigLoaderDelegate<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (configLoaderDelegate == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    configLoaderDelegate = <span class="keyword">new</span> ConfigLoaderDelegate(configLoader);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> configLoaderDelegate;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据key获取value</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> key $&#123;projectName&#125;.key</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> configLoader.get(key);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addConfigListener</span><span class="params">(ConfigListener configListener)</span> </span>&#123;</span><br><span class="line">        configLoader.addConfigListener(configListener);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addConfigListener</span><span class="params">(String key, ConfigListener configListener)</span> </span>&#123;</span><br><span class="line">        configLoader.addConfigListener(key, configListener);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="ConfigLoader源文件"><a href="#ConfigLoader源文件" class="headerlink" title="ConfigLoader源文件"></a>ConfigLoader源文件</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConfigLoader</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">get</span><span class="params">(String key)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">parseKey</span><span class="params">(String key)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addConfigListener</span><span class="params">(ConfigListener configListener)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addConfigListener</span><span class="params">(String key, ConfigListener configListener)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/08/19/JVM%E4%B8%AD%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/" rel="prev" title="JVM中的字节码指令">
+      <i class="fa fa-chevron-left"></i> JVM中的字节码指令
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/01/01/RocketMQ%E6%9E%B6%E6%9E%84/" rel="next" title="RocketMQ架构">
+      RocketMQ架构 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#class文件"><span class="nav-number">1.</span> <span class="nav-text">class文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ConfigLoaderDelegate源文件"><span class="nav-number">2.</span> <span class="nav-text">ConfigLoaderDelegate源文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ConfigLoader源文件"><span class="nav-number">3.</span> <span class="nav-text">ConfigLoader源文件</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="dachengxi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">dachengxi</p>
+  <div class="site-description" itemprop="description">一个小学生</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">212</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">101</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://cxis.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://dachengxi.github.com/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/";
+    this.page.identifier = "2017/08/20/JVM中类文件结构和字节码指令示例/";
+    this.page.title = "JVM中类文件结构和字节码指令示例";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://cxis.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>
