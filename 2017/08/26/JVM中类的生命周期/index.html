@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JVM中类的生命周期学习。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM中类的生命周期">
+<meta property="og:url" content="http://dachengxi.github.com/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/index.html">
+<meta property="og:site_name" content="Time Stream">
+<meta property="og:description" content="JVM中类的生命周期学习。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-08-26T11:53:29.000Z">
+<meta property="article:modified_time" content="2020-07-20T14:51:22.124Z">
+<meta property="article:author" content="dachengxi">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://dachengxi.github.com/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JVM中类的生命周期 | Time Stream</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Time Stream</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">多读书</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-book">
+
+    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Time Stream">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM中类的生命周期
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-08-26 19:53:29 19:53:29" itemprop="dateCreated datePublished" datetime="2017-08-26T19:53:29+08:00">2017-08-26 19:53:29</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/08/26/JVM中类的生命周期/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>JVM中类的生命周期学习。</p>
+<a id="more"></a>
+
+<p>加载、连接、初始化，对象实例化，垃圾收集，对象终结，类的卸载。</p>
+<h1 id="加载、连接、初始化"><a href="#加载、连接、初始化" class="headerlink" title="加载、连接、初始化"></a>加载、连接、初始化</h1><ul>
+<li>加载，就是把二进制形式的字节流读入JVM中</li>
+<li>连接，就是把已经读入的二进制形式的类数据合并到JVM的运行时状态中去，连接又可分为验证、准备、解析三步：<ul>
+<li>验证，确保二进制字节流数据格式正确并且适合于JVM使用</li>
+<li>准备，为类分配所需内存，为类变量分配内存</li>
+<li>解析，把常量池中的符号引用转换为直接引用，虚拟机的实现可以推迟解析这一步，等到运行中的程序真正使用某个符号的时候再去解析</li>
+</ul>
+</li>
+<li>初始化，就是给类变量赋合适的初值</li>
+</ul>
+<p>虚拟机严格的规定了初始化的时机，所有JVM实现必须在每个类或者接口首次主动使用时初始化：</p>
+<ul>
+<li>创建一个类的实例时（通过new指令创建、反射、克隆、反序列化）</li>
+<li>调用一个类的静态方法时（invokespecial指令）</li>
+<li>调用一个类或接口的静态字段，或者对该字段赋值时（getstatic指令或者putstatic指令），final修饰的静态字段除外</li>
+<li>通过反射创建类的实例</li>
+<li>初始化某个类的子类时，当前这个类需要先被初始化</li>
+<li>虚拟机启动时被标明为启动类的类（还有main方法的那个启动类）</li>
+</ul>
+<h2 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h2><p>加载分为三个步骤：</p>
+<ul>
+<li>通过类的全限定名，产生一个代表类的二进制字节流</li>
+<li>解析二进制字节流为方法区内部数据结构</li>
+<li>创建一个表示该类的java.lang.Class类的实例对象</li>
+</ul>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>确认类符合Java语言的语义，并且不会危及虚拟机的完整性。</p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>JVM为类变量分配内存，设置默认初始值。还可能为一些数据结构分配内存，用来提高程序运行性能，比如方法表，方法表包含指向每一个方法（包括从超类继承的方法）的指针。</p>
+<h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><p>解析就是在常量池中寻找类、接口、方法的符号引用，将符号引用替换为直接引用。</p>
+<p>class文件把所有的符号引用保存在常量池中。每个被JVM加载的类或接口都有一份内部版本的常量池，称为运行时常量池。当一个类被首次加载时，所有来自类的符号引用都加载到了类的运行时常量池。</p>
+<p>程序运行时，如果某个符号引用将被使用，首先需要解析，解析过程就是根据符号引用查找到实体，再把符号引用替换成一个直接引用。这个过程也被称为常量池解析。</p>
+<p>连接不仅仅包括把符号引用转换为直接引用，还包括检查正确性和权限。符号引用的存在性和访问权限是在解析的时候完成的。不管何时解析，错误只会在第一次实际使用符号引用的时候才会抛出来。</p>
+<h3 id="解析和动态扩展"><a href="#解析和动态扩展" class="headerlink" title="解析和动态扩展"></a>解析和动态扩展</h3><p>可使用java.lang.Class的forName方法或者自定义类加载器的loadClass方法来动态扩展Java程序。</p>
+<ul>
+<li>forName方法有个initialize参数，如果为true，表示会进行连接并初始化；如果为false，表示类会被加载，可能会被连接，但是不会被明确的初始化。如果类已经被初始化，再使用forName方法并且initialize为false，返回的类也已经被初始化了。</li>
+<li>loadClass方法的resolve参数表示是否在加载类的时候执行连接，resolve为true时会保证方法返回Class实例之前就已经装载并连接。Java1.1后resolve就没有作用了。resolve为false时，返回的Class实例可能已经被连接也可能没有被连接，只是试图加载类并返回，而把连接和初始化类的时机留给虚拟机去决定。</li>
+</ul>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>初始化，就是为类变量赋予正确的初始值，也就是代码中指定的值，是通过类变量初始化语句或者静态初始化语句给出的。</p>
+<p>所有类变量初始化语句和静态初始化语句都被Java编译器收集在一起，放到一个特殊的方法<code>&lt;clinit&gt;</code>，该方法只能被JVM调用。</p>
+<p>初始化一个类包含两个步骤：</p>
+<ul>
+<li>如果类存在直接父类，且父类还没有被初始化，就先初始化父类</li>
+<li>如果类存在一个类初始化方法，先执行此方法</li>
+</ul>
+<p>JVM需要确保初始化过程被正确的同步，多个线程同时初始化一个类，仅仅允许一个线程来执行初始化，其他线程需要等待。</p>
+<p>一个类被加载、连接、初始化后，就可以被使用了，程序可以访问他的静态字段，调用静态方法或者创建他的实例。</p>
+<h1 id="对象的生命周期"><a href="#对象的生命周期" class="headerlink" title="对象的生命周期"></a>对象的生命周期</h1><h2 id="类实例化"><a href="#类实例化" class="headerlink" title="类实例化"></a>类实例化</h2><p>类可以明确或隐含的实例化，实例化类有四个途径：</p>
+<ul>
+<li>使用new操作符实例化一个对象</li>
+<li>使用Class或者<code>java.lang.reflect.Constructor</code>的newInstance方法</li>
+<li>调用现有对象的clone方法</li>
+<li>通过<code>java.io.ObjectInputStream</code>的getObject方法发序列化</li>
+</ul>
+<p>还有几种情况下对象会被隐含的实例化：</p>
+<ul>
+<li>保存命令行参数的String对象</li>
+<li>JVM加载的类，会实例化一个Class对象来表示这个类。</li>
+<li>JVM加载了在常量池中包含CONSTANT_String_info入口类的时候，会创建新的String对象的实例来表示这些常量字符串。</li>
+<li>执行包含字符串连接操作的表达式会产生对象。</li>
+</ul>
+<p>JVM创建类的实例时，会先在堆中为保存对象的实例变量分配内存，所有在对象的类中和父类中声明的变量，都要分配内存。准备好了堆内存后，就会把实例变量初始化为默认的初始值。随后会为实例变量赋正确的初始值。</p>
+<ul>
+<li>如果是通过clone来创建对象，JVM把原来的实例变量中的值拷贝到新对象中</li>
+<li>如果是反序列化，通过输入流中读取的值来初始化实例变量</li>
+<li>虚拟机调用对象的实例初始化方法来初始化变量</li>
+</ul>
+<p>编译器会为每个类至少生成一个实例初始化方法<code>&lt;init&gt;</code>，针对源码中每个类的构造方法，编译器都产生一个<code>&lt;init&gt;</code>方法，如果类没有明确的声明任何构造方法，编译器会产生一个无参构造方法，它仅仅调用父类的无参构造方法。</p>
+<h2 id="垃圾收集和对象的终结"><a href="#垃圾收集和对象的终结" class="headerlink" title="垃圾收集和对象的终结"></a>垃圾收集和对象的终结</h2><p>对象不被使用了之后，垃圾收集器会回收垃圾对象。</p>
+<h2 id="类卸载"><a href="#类卸载" class="headerlink" title="类卸载"></a>类卸载</h2><p>启动类加载器加载的类永远是可触达的，永远不会被卸载。使用用户自定义的类加载器加载的类才可能变成不可触达。</p>
+<ul>
+<li>该类所有的实例都被回收，堆中不存在该类以及任何派生子类的实例</li>
+<li>加载该类的类加载器已经被回收</li>
+<li>对应的<code>java.lang.Class</code>对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li>《深入Java虚拟机》</li>
+<li>《实战Java虚拟机 JVM故障诊断与性能优化》</li>
+<li>《HotSpot实战》</li>
+<li>《深入理解Java虚拟机：JVM高级特性与最佳实践》</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/08/21/JVM%E4%B8%AD%E7%9A%84TLAB/" rel="prev" title="JVM中的TLAB">
+      <i class="fa fa-chevron-left"></i> JVM中的TLAB
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/" rel="next" title="JVM中方法的分派">
+      JVM中方法的分派 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#加载、连接、初始化"><span class="nav-number">1.</span> <span class="nav-text">加载、连接、初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#加载"><span class="nav-number">1.1.</span> <span class="nav-text">加载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#验证"><span class="nav-number">1.2.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#准备"><span class="nav-number">1.3.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解析"><span class="nav-number">1.4.</span> <span class="nav-text">解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解析和动态扩展"><span class="nav-number">1.4.1.</span> <span class="nav-text">解析和动态扩展</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化"><span class="nav-number">1.5.</span> <span class="nav-text">初始化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对象的生命周期"><span class="nav-number">2.</span> <span class="nav-text">对象的生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#类实例化"><span class="nav-number">2.1.</span> <span class="nav-text">类实例化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垃圾收集和对象的终结"><span class="nav-number">2.2.</span> <span class="nav-text">垃圾收集和对象的终结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类卸载"><span class="nav-number">2.3.</span> <span class="nav-text">类卸载</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="dachengxi"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">dachengxi</p>
+  <div class="site-description" itemprop="description">一个小学生</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">101</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2014 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">dachengxi</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://cxis.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://dachengxi.github.com/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/";
+    this.page.identifier = "2017/08/26/JVM中类的生命周期/";
+    this.page.title = "JVM中类的生命周期";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://cxis.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+</body>
+</html>
