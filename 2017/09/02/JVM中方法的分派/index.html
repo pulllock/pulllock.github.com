@@ -28,7 +28,7 @@
 <meta property="og:description" content="JVM中方法分派和方法调用学习。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2017-09-02T08:17:40.000Z">
-<meta property="article:modified_time" content="2020-07-20T14:51:22.123Z">
+<meta property="article:modified_time" content="2020-07-24T13:19:56.137Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -311,7 +311,26 @@
 <li>private方法只能被类内其他方法调用，不会参与到动态绑定</li>
 <li>final方法无法被重写，也不会发生运行期动态绑定</li>
 </ul>
-<h1 id="itable"><a href="#itable" class="headerlink" title="itable"></a>itable</h1><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<p>类初始化的时候，复制父类的虚方法表，然后根据自己的顺序替换或者增加虚方法表的内容：</p>
+<ul>
+<li>如果是重写覆盖了父类的方法，就替换掉虚方法表里对应的方法</li>
+<li>如果是重载了父类的方法或者是自己的新的方法，则顺序添加到虚方法表尾部</li>
+<li>特殊的mirandas方法，顺序添加到虚方法表最后</li>
+</ul>
+<p>vtable由一组变长连续的vtableEntry元素构成的数组，每个vtableEntry用methodOop表示，指向一个方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">------------------------------------------</span><br><span class="line">| vtableEntry 1 | ...... | vtableEntry n |</span><br><span class="line">------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<h1 id="itable"><a href="#itable" class="headerlink" title="itable"></a>itable</h1><p>itable由偏移表和方法表两个表组成，都是变长的。offset table entry保存的是类实现的一个接口KlassOop和该接口方法表所在的偏移位置。method table entry保存的是实现的接口方法。</p>
+<p>初始化itable的时候：</p>
+<ul>
+<li>将类实现的接口以及实现的方法填写在上面两个表中</li>
+<li>接口中非public、abstract方法不放入itable中</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">| offset table entry of interface 1 | ... | offset table entry of interface n |</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">| method table entry of interface 1 | ... | method table entry of interface n |</span><br><span class="line">-------------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
 <li>《深入Java虚拟机》</li>
 <li>《实战Java虚拟机 JVM故障诊断与性能优化》</li>
 <li>《HotSpot实战》</li>
@@ -360,8 +379,8 @@
       <i class="fa fa-chevron-left"></i> JVM中类的生命周期
     </a></div>
       <div class="post-nav-item">
-    <a href="/2018/01/01/RocketMQ%E6%9E%B6%E6%9E%84/" rel="next" title="RocketMQ架构">
-      RocketMQ架构 <i class="fa fa-chevron-right"></i>
+    <a href="/2017/09/09/JVM%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91/" rel="next" title="JVM中的即时编译">
+      JVM中的即时编译 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -445,7 +464,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">217</span>
+          <span class="site-state-item-count">219</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
