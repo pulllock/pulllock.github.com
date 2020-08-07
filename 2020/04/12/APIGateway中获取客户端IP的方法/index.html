@@ -28,7 +28,7 @@
 <meta property="og:description" content="在使用ServletRequest获取客户端ip的时候，不仅仅只使用getRemoteHost来获取，还要使用XFF（X-Forwarded-For）。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-04-12T13:35:24.000Z">
-<meta property="article:modified_time" content="2020-04-13T13:40:36.400Z">
+<meta property="article:modified_time" content="2020-08-07T14:01:56.774Z">
 <meta property="article:author" content="dachengxi">
 <meta property="article:tag" content="APIGateway">
 <meta name="twitter:card" content="summary">
@@ -277,6 +277,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line">String xff = request.getHeader(X_FORWARDED_FOR);</span><br><span class="line"><span class="keyword">if</span> (StringUtils.isNotEmpty(xff)) &#123;</span><br><span class="line">  clientIp = xff.split(<span class="string">","</span>)[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
 
 <p>但是如果伪造请求链路，客户端请求的时候手动添加X-Forwarded-For的值，就可能不能获取到正确的IP。</p>
+<p>源码：<a href="https://github.com/dachengxi/APIGateway" target="_blank" rel="noopener">https://github.com/dachengxi/APIGateway</a></p>
 
     </div>
 
