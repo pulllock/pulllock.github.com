@@ -203,6 +203,182 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Time Stream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">Dubbo中SPI源码解析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-02-20 20:15:34 20:15:34" itemprop="dateCreated datePublished" datetime="2019-02-20T20:15:34+08:00">2019-02-20 20:15:34</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/dubbo/" itemprop="url" rel="index"><span itemprop="name">dubbo</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/02/20/Dubbo中SPI源码解析/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>从两个示例代码，介绍dubbo的SPI的使用以及相关源码分析，分析了获取扩展实现和获取自适应扩展点实现的源码，最后简单说了下ExtensionFactory的流程，看完就可以理解为什么dubbo是自包含的了。从上往下看，再回头看，应该能看明白，文章比较长，希望能耐心读下去。如果有错误的地方希望能指出来，我也理解不是太完整或者表述不是太明白。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%EF%BC%8C%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dachengxi">
+      <meta itemprop="description" content="一个小学生">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Time Stream">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%EF%BC%8C%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/" class="post-title-link" itemprop="url">ArrayList的初始容量现在为0，不再是10了</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-19 21:19:37 21:19:37" itemprop="dateCreated datePublished" datetime="2018-10-19T21:19:37+08:00">2018-10-19 21:19:37</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%EF%BC%8C%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/19/ArrayList的初始容量现在为0，不再是10了/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>一直记得ArrayList的初始容量大小是10，今天再次看ArrayList的源码（版本：Jdk 7u80）时发现在构造函数的注释上写着初始化容量是10，但是构造函数中却没有指定初始容量，仅仅初始化了一个空的数组。应该是不知道在哪个版本中已经修改了，我却还记着之前从别人口里得来的一句话：初始容量是10。实际上初始容量已经是0了，写出来分享下，有错的地方烦请指出来，说的不一定对。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%EF%BC%8C%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/06/18/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -903,182 +1079,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/" class="post-title-link" itemprop="url">Lucene中的索引过程和基本操作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-06-17 13:25:05 13:25:05" itemprop="dateCreated datePublished" datetime="2018-06-17T13:25:05+08:00">2018-06-17 13:25:05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Lucene/" itemprop="url" rel="index"><span itemprop="name">Lucene</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/06/17/Lucene中的索引过程和基本操作/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Lucene索引过程学习。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/" class="post-title-link" itemprop="url">Lucene中的基础核心类</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-06-17 11:33:26 11:33:26" itemprop="dateCreated datePublished" datetime="2018-06-17T11:33:26+08:00">2018-06-17 11:33:26</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Lucene/" itemprop="url" rel="index"><span itemprop="name">Lucene</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/06/17/Lucene中的基础核心类/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Lucene索引创建和搜索索引的核心类学习。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1151,7 +1151,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">221</span>
+          <span class="site-state-item-count">223</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
