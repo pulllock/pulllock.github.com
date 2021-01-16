@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Spring的@ComponentScan注解实现机制</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Spring的@ComponentScan注解实现机制</h1>
+			<b><time>2019-08-03 22:34:33</time></b>
+		       
+		           <a href="/tags/spring">Spring</a>
+        	       
+
+			<div>
+				<p>记录下Spring中@ComponentScan注解的实现原理。</p>
+<p>@ComponentScan和@Configuration注解配合使用，来扫描指定位置下的组件到容器中。使用xml配置的时候，会使用<code>&lt;context:component-scan&gt;</code>来启用对组件的扫描功能。</p>
+<p>使用xml配置方式的时候，容器发现了<code>&lt;context:component-scan&gt;</code>标签后，会使用ContextNamespaceHandler中注册的ComponentScanBeanDefinitionParser来对指定位置进行组件扫描，将扫描到的组件注册到容器中。扫描的组件包括@Component、@Controller、@Service、@Repository等。</p>
+<p>使用@ComponentScan的时候，需要和@Configuration配合使用，在解析@Configuration注解的时候会使用ConfigurationClassParser来解析，在解析的时候就会有一步是解析@ComponentScan注解的，发现了@ComponentScan注解的时候，会使用ComponentScanAnnotationParser进行解析，这里就和ComponentScanBeanDefinitionParser一样了，都是使用ClassPathBeanDefinitionScanner来进行组件的扫描，将组件都扫描进容器中。</p>
+<p>ClassPathBeanDefinitionScanner用来在classpath上扫描组件并解析成BeanDefinition注册到容器中，扫描的注解包括：@Component、@Repository、@Controller、@ManagedBean、@Named，或者使用自定义的type filters。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

@@ -1,285 +1,122 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="tomcat7启动流程源码分析">
-<meta property="og:url" content="http://dachengxi.github.com/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2017-05-10T09:58:39.000Z">
-<meta property="article:modified_time" content="2017-05-14T14:49:03.000Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="tomcat7启动流程">
-<meta property="article:tag" content="tomcat7源码">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>tomcat7启动流程源码分析 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>tomcat7启动流程源码分析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>tomcat7启动流程源码分析</h1>
+			<b><time>2017-05-10 17:58:39</time></b>
+		       
+		           <a href="/tags/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B">tomcat7启动流程</a>
+        	       
+		           <a href="/tags/tomcat7%E6%BA%90%E7%A0%81">tomcat7源码</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
+			<div>
+				<p>主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。</p>
+<p>在正式进入源码分析之前，首先需要了解下tomcat的类加载器的东西。请参考<a href="http://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/">tomcat7类加载器解析</a></p>
+<h1 id="启动脚本">启动脚本</h1>
+<h2 id="startupsh">startup.sh</h2>
+<p>平时启动tomcat都是从这里开始，先看下这里都做了什么，下面是startup.sh源码：</p>
+<pre><code># CATALINA服务启动脚本
+。。。
+# 执行的脚本是catalina.sh
+EXECUTABLE=catalina.sh
 
-  <div class="site-meta">
+。。。
+# 执行catalina.sh脚本，参数是start
+exec &quot;$PRGDIR&quot;/&quot;$EXECUTABLE&quot; start &quot;$@&quot;
+</code></pre><h2 id="catalinash">catalina.sh</h2>
+<p>这里脚本有点长，我们只看有关start的部分，其他的都暂先省略掉。</p>
+<pre><code>算了，这里不装逼了，脚本基本上内容都不太了解。不解析了，直接看最主要的一句
+org.apache.catalina.startup.Bootstrap &quot;$@&quot; start \
+</code></pre><p>上面这句就是要调用<code>org.apache.catalina.startup.Bootstrap</code>的main方法，参数是start，这里就进入了我们的源码。</p>
+<h1 id="bootstrap类">Bootstrap类</h1>
+<p><code>org.apache.catalina.startup.BootStrap</code>，BootStrap类中的main方法是我们要分析的入口，是通过脚本启动tomcat的主方法和入口。</p>
+<pre><code>public static void main(String args[]) {
 
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
+    if (daemon == null) {
+        // Don't set daemon until init() has completed
+        Bootstrap bootstrap = new Bootstrap();
+        try {
+            //初始化
+            bootstrap.init();
+        } catch (Throwable t) {。。。}
+        daemon = bootstrap;
+    } else {
+        Thread.currentThread().setContextClassLoader(daemon.catalinaLoader);
+    }
 
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
+    try {
+        String command = &quot;start&quot;;
+        if (args.length &gt; 0) {
+            command = args[args.length - 1];
+        }
+        //暂不知是啥意思
+        if (command.equals(&quot;startd&quot;)) {
+            args[args.length - 1] = &quot;start&quot;;
+            daemon.load(args);
+            daemon.start();
+        } else if (command.equals(&quot;stopd&quot;)) {
+            args[args.length - 1] = &quot;stop&quot;;
+            daemon.stop();
+        } else if (command.equals(&quot;start&quot;)) {
+            //start命令
+            daemon.setAwait(true);
+            daemon.load(args);
+            daemon.start();
+        } else if (command.equals(&quot;stop&quot;)) {
+            //stop命令
+            daemon.stopServer(args);
+        } else if (command.equals(&quot;configtest&quot;)) {
+            daemon.load(args);
+            if (null==daemon.getServer()) {
+                System.exit(1);
+            }
+            System.exit(0);
+        } else {。。。}
+    } catch (Throwable t) {
+        。。。
+        System.exit(1);
+    }
 
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          tomcat7启动流程源码分析
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-05-10 17:58:39 17:58:39" itemprop="dateCreated datePublished" datetime="2017-05-10T17:58:39+08:00">2017-05-10 17:58:39</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tomcat7/" itemprop="url" rel="index"><span itemprop="name">tomcat7</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/10/tomcat7启动流程源码分析/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。</p>
-<a id="more"></a>
-<p>在正式进入源码分析之前，首先需要了解下tomcat的类加载器的东西。请参考<a href="http://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/" target="_blank" rel="noopener">tomcat7类加载器解析</a></p>
-<h1 id="启动脚本"><a href="#启动脚本" class="headerlink" title="启动脚本"></a>启动脚本</h1><h2 id="startup-sh"><a href="#startup-sh" class="headerlink" title="startup.sh"></a>startup.sh</h2><p>平时启动tomcat都是从这里开始，先看下这里都做了什么，下面是startup.sh源码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># CATALINA服务启动脚本</span><br><span class="line">。。。</span><br><span class="line"># 执行的脚本是catalina.sh</span><br><span class="line">EXECUTABLE&#x3D;catalina.sh</span><br><span class="line"></span><br><span class="line">。。。</span><br><span class="line"># 执行catalina.sh脚本，参数是start</span><br><span class="line">exec &quot;$PRGDIR&quot;&#x2F;&quot;$EXECUTABLE&quot; start &quot;$@&quot;</span><br></pre></td></tr></table></figure>
-
-<h2 id="catalina-sh"><a href="#catalina-sh" class="headerlink" title="catalina.sh"></a>catalina.sh</h2><p>这里脚本有点长，我们只看有关start的部分，其他的都暂先省略掉。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">算了，这里不装逼了，脚本基本上内容都不太了解。不解析了，直接看最主要的一句</span><br><span class="line">org.apache.catalina.startup.Bootstrap &quot;$@&quot; start \</span><br></pre></td></tr></table></figure>
-<p>上面这句就是要调用<code>org.apache.catalina.startup.Bootstrap</code>的main方法，参数是start，这里就进入了我们的源码。</p>
-<h1 id="Bootstrap类"><a href="#Bootstrap类" class="headerlink" title="Bootstrap类"></a>Bootstrap类</h1><p><code>org.apache.catalina.startup.BootStrap</code>，BootStrap类中的main方法是我们要分析的入口，是通过脚本启动tomcat的主方法和入口。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String args[]) &#123;</span><br><span class="line"></span><br><span class="line">    if (daemon &#x3D;&#x3D; null) &#123;</span><br><span class="line">        &#x2F;&#x2F; Don&#39;t set daemon until init() has completed</span><br><span class="line">        Bootstrap bootstrap &#x3D; new Bootstrap();</span><br><span class="line">        try &#123;</span><br><span class="line">            &#x2F;&#x2F;初始化</span><br><span class="line">            bootstrap.init();</span><br><span class="line">        &#125; catch (Throwable t) &#123;。。。&#125;</span><br><span class="line">        daemon &#x3D; bootstrap;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        Thread.currentThread().setContextClassLoader(daemon.catalinaLoader);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        String command &#x3D; &quot;start&quot;;</span><br><span class="line">        if (args.length &gt; 0) &#123;</span><br><span class="line">            command &#x3D; args[args.length - 1];</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;暂不知是啥意思</span><br><span class="line">        if (command.equals(&quot;startd&quot;)) &#123;</span><br><span class="line">            args[args.length - 1] &#x3D; &quot;start&quot;;</span><br><span class="line">            daemon.load(args);</span><br><span class="line">            daemon.start();</span><br><span class="line">        &#125; else if (command.equals(&quot;stopd&quot;)) &#123;</span><br><span class="line">            args[args.length - 1] &#x3D; &quot;stop&quot;;</span><br><span class="line">            daemon.stop();</span><br><span class="line">        &#125; else if (command.equals(&quot;start&quot;)) &#123;</span><br><span class="line">            &#x2F;&#x2F;start命令</span><br><span class="line">            daemon.setAwait(true);</span><br><span class="line">            daemon.load(args);</span><br><span class="line">            daemon.start();</span><br><span class="line">        &#125; else if (command.equals(&quot;stop&quot;)) &#123;</span><br><span class="line">            &#x2F;&#x2F;stop命令</span><br><span class="line">            daemon.stopServer(args);</span><br><span class="line">        &#125; else if (command.equals(&quot;configtest&quot;)) &#123;</span><br><span class="line">            daemon.load(args);</span><br><span class="line">            if (null&#x3D;&#x3D;daemon.getServer()) &#123;</span><br><span class="line">                System.exit(1);</span><br><span class="line">            &#125;</span><br><span class="line">            System.exit(0);</span><br><span class="line">        &#125; else &#123;。。。&#125;</span><br><span class="line">    &#125; catch (Throwable t) &#123;</span><br><span class="line">        。。。</span><br><span class="line">        System.exit(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>main方法做的事情也不复杂，当我们第一次启动的时候，首先初始化，然后调用start方法。</p>
-<h1 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h1><p>初始化的时候做的工作也不复杂，大概如下：</p>
+}
+</code></pre><p>main方法做的事情也不复杂，当我们第一次启动的时候，首先初始化，然后调用start方法。</p>
+<h1 id="初始化">初始化</h1>
+<p>初始化的时候做的工作也不复杂，大概如下：</p>
 <ul>
 <li>首先设置catalina home和catalina base目录。</li>
 <li>初始化类加载器，这是很重要的步骤</li>
@@ -288,33 +125,302 @@
 <li>设置启动类实例的parentClassLoader为sharedLoader</li>
 </ul>
 <p>初始化BootStrap方法代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public void init() throws Exception &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;设置catalina.home属性，如果不存在就使用当前工作目录</span><br><span class="line">    setCatalinaHome();</span><br><span class="line">    &#x2F;&#x2F; 设置catalina.base属性，如果不存在就使用当前工作目录</span><br><span class="line">    setCatalinaBase();</span><br><span class="line">    &#x2F;&#x2F;初始化类加载器</span><br><span class="line">    initClassLoaders();</span><br><span class="line">    &#x2F;&#x2F;设置当前线程的类加载器</span><br><span class="line">    Thread.currentThread().setContextClassLoader(catalinaLoader);</span><br><span class="line"></span><br><span class="line">    SecurityClassLoad.securityClassLoad(catalinaLoader);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 使用catalinaLoader类加载器加载Catalina类</span><br><span class="line">    Class&lt;?&gt; startupClass &#x3D; catalinaLoader.loadClass(&quot;org.apache.catalina.startup.Catalina&quot;);</span><br><span class="line">    &#x2F;&#x2F;创建启动类的实例</span><br><span class="line">    Object startupInstance &#x3D; startupClass.newInstance();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;以下设置启动类实例的parentClassLoader为sharedLoader</span><br><span class="line">    String methodName &#x3D; &quot;setParentClassLoader&quot;;</span><br><span class="line">    Class&lt;?&gt; paramTypes[] &#x3D; new Class[1];</span><br><span class="line">    paramTypes[0] &#x3D; Class.forName(&quot;java.lang.ClassLoader&quot;);</span><br><span class="line">    Object paramValues[] &#x3D; new Object[1];</span><br><span class="line">    paramValues[0] &#x3D; sharedLoader;</span><br><span class="line">    Method method &#x3D;</span><br><span class="line">        startupInstance.getClass().getMethod(methodName, paramTypes);</span><br><span class="line">    method.invoke(startupInstance, paramValues);</span><br><span class="line">    &#x2F;&#x2F;启动实例</span><br><span class="line">    catalinaDaemon &#x3D; startupInstance;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>public void init() throws Exception {
 
-<h2 id="初始化类加载器"><a href="#初始化类加载器" class="headerlink" title="初始化类加载器"></a>初始化类加载器</h2><p>重点看下有关类加载器的初始化，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private void initClassLoaders() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;创建CommonClassLoader，common对应的是配置文件中的common.loader</span><br><span class="line">        &#x2F;&#x2F;这里和下面的配置文件指的是conf&#x2F;catalina.properties文件</span><br><span class="line">        commonLoader &#x3D; createClassLoader(&quot;common&quot;, null);</span><br><span class="line">        if( commonLoader &#x3D;&#x3D; null ) &#123;</span><br><span class="line">            &#x2F;&#x2F;配置文件中没有配置common，就使用当前类的ClassLoader</span><br><span class="line">            commonLoader&#x3D;this.getClass().getClassLoader();</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;创建ServerClassLoader，对应配置文件中的server.loader</span><br><span class="line">        catalinaLoader &#x3D; createClassLoader(&quot;server&quot;, commonLoader);</span><br><span class="line">        &#x2F;&#x2F;创建SharedClassLoader，对应配置文件中的shared.loader</span><br><span class="line">        sharedLoader &#x3D; createClassLoader(&quot;shared&quot;, commonLoader);</span><br><span class="line">    &#125; catch (Throwable t) &#123;。。。&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里会创建三个ClassLoader，commonLoader，catalinaLoader，sharedLoader，配置文件<code>conf/catalina.properties</code>中<code>server.loader</code>和<code>shared.loader</code>是空的，所以在运行时这两个Loader和commonLoader是一样的，这一点可以在下面的源码中看到。目前只有commonLoader具备实际的意义。</p>
+    //设置catalina.home属性，如果不存在就使用当前工作目录
+    setCatalinaHome();
+    // 设置catalina.base属性，如果不存在就使用当前工作目录
+    setCatalinaBase();
+    //初始化类加载器
+    initClassLoaders();
+    //设置当前线程的类加载器
+    Thread.currentThread().setContextClassLoader(catalinaLoader);
+
+    SecurityClassLoad.securityClassLoad(catalinaLoader);
+
+    // 使用catalinaLoader类加载器加载Catalina类
+    Class&lt;?&gt; startupClass = catalinaLoader.loadClass(&quot;org.apache.catalina.startup.Catalina&quot;);
+    //创建启动类的实例
+    Object startupInstance = startupClass.newInstance();
+
+    //以下设置启动类实例的parentClassLoader为sharedLoader
+    String methodName = &quot;setParentClassLoader&quot;;
+    Class&lt;?&gt; paramTypes[] = new Class[1];
+    paramTypes[0] = Class.forName(&quot;java.lang.ClassLoader&quot;);
+    Object paramValues[] = new Object[1];
+    paramValues[0] = sharedLoader;
+    Method method =
+        startupInstance.getClass().getMethod(methodName, paramTypes);
+    method.invoke(startupInstance, paramValues);
+    //启动实例
+    catalinaDaemon = startupInstance;
+
+}
+</code></pre><h2 id="初始化类加载器">初始化类加载器</h2>
+<p>重点看下有关类加载器的初始化，代码如下：</p>
+<pre><code>private void initClassLoaders() {
+    try {
+        //创建CommonClassLoader，common对应的是配置文件中的common.loader
+        //这里和下面的配置文件指的是conf/catalina.properties文件
+        commonLoader = createClassLoader(&quot;common&quot;, null);
+        if( commonLoader == null ) {
+            //配置文件中没有配置common，就使用当前类的ClassLoader
+            commonLoader=this.getClass().getClassLoader();
+        }
+        //创建ServerClassLoader，对应配置文件中的server.loader
+        catalinaLoader = createClassLoader(&quot;server&quot;, commonLoader);
+        //创建SharedClassLoader，对应配置文件中的shared.loader
+        sharedLoader = createClassLoader(&quot;shared&quot;, commonLoader);
+    } catch (Throwable t) {。。。}
+}
+</code></pre><p>这里会创建三个ClassLoader，commonLoader，catalinaLoader，sharedLoader，配置文件<code>conf/catalina.properties</code>中<code>server.loader</code>和<code>shared.loader</code>是空的，所以在运行时这两个Loader和commonLoader是一样的，这一点可以在下面的源码中看到。目前只有commonLoader具备实际的意义。</p>
 <p>看下createClassLoader方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">private ClassLoader createClassLoader(String name, ClassLoader parent)</span><br><span class="line">    throws Exception &#123;</span><br><span class="line">    &#x2F;&#x2F;CatalinaProperties对应着conf&#x2F;catalina.properties文件</span><br><span class="line">    &#x2F;&#x2F;配置文件中配置：common.loader&#x3D;$&#123;catalina.base&#125;&#x2F;lib,$&#123;catalina.base&#125;&#x2F;lib&#x2F;*.jar,$&#123;catalina.home&#125;&#x2F;lib,$&#123;catalina.home&#125;&#x2F;lib&#x2F;*.jar</span><br><span class="line">    &#x2F;&#x2F;先从配置文件中获取name对应的name.loader</span><br><span class="line">    &#x2F;&#x2F;分别是common.loader、server.loader、shared.loader</span><br><span class="line">    String value &#x3D; CatalinaProperties.getProperty(name + &quot;.loader&quot;);</span><br><span class="line">    &#x2F;&#x2F;如果value为空，就直接返回parent</span><br><span class="line">    &#x2F;&#x2F;这里也验证了上面说到的，运行时由于server.loader、shared.loader是空的，所以之前说的三个Loader其实是同一个CommonLoader</span><br><span class="line">    if ((value &#x3D;&#x3D; null) || (value.equals(&quot;&quot;)))</span><br><span class="line">        return parent;</span><br><span class="line">    &#x2F;&#x2F;将value中$&#123;catalina.base&#125;和$&#123;catalina.home&#125;替换成实际的目录</span><br><span class="line">    value &#x3D; replace(value);</span><br><span class="line">    &#x2F;&#x2F;仓库列表，仓库指的是指定的目录，比如lib；或者是*.jar等</span><br><span class="line">    List&lt;Repository&gt; repositories &#x3D; new ArrayList&lt;Repository&gt;();</span><br><span class="line">    &#x2F;&#x2F;逗号分割</span><br><span class="line">    StringTokenizer tokenizer &#x3D; new StringTokenizer(value, &quot;,&quot;);</span><br><span class="line">    while (tokenizer.hasMoreElements()) &#123;</span><br><span class="line">        String repository &#x3D; tokenizer.nextToken().trim();</span><br><span class="line">        if (repository.length() &#x3D;&#x3D; 0) &#123;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;仓库封装着对应的位置和类型，添加进list中保存</span><br><span class="line">        &#x2F;&#x2F;这里是URL类型的</span><br><span class="line">        try &#123;</span><br><span class="line">            URL url &#x3D; new URL(repository);</span><br><span class="line">            repositories.add(</span><br><span class="line">                    new Repository(repository, RepositoryType.URL));</span><br><span class="line">            continue;</span><br><span class="line">        &#125; catch (MalformedURLException e) &#123;</span><br><span class="line">            &#x2F;&#x2F; Ignore</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;本地仓库</span><br><span class="line">        if (repository.endsWith(&quot;*.jar&quot;)) &#123;&#x2F;&#x2F;多个jar</span><br><span class="line">            repository &#x3D; repository.substring</span><br><span class="line">                (0, repository.length() - &quot;*.jar&quot;.length());</span><br><span class="line">            repositories.add(</span><br><span class="line">                    new Repository(repository, RepositoryType.GLOB));</span><br><span class="line">        &#125; else if (repository.endsWith(&quot;.jar&quot;)) &#123;&#x2F;&#x2F;单个jar</span><br><span class="line">            repositories.add(</span><br><span class="line">                    new Repository(repository, RepositoryType.JAR));</span><br><span class="line">        &#125; else &#123;&#x2F;&#x2F;目录类型的</span><br><span class="line">            repositories.add(</span><br><span class="line">                    new Repository(repository, RepositoryType.DIR));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;使用ClassLoaderFactory的createClassLoader方法来创建ClassLoader</span><br><span class="line">    &#x2F;&#x2F;仓库是上面解析过的仓库</span><br><span class="line">    return ClassLoaderFactory.createClassLoader(repositories, parent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>继续往下看createClassLoader方法，创建新的类加载器：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">public static ClassLoader createClassLoader(List&lt;Repository&gt; repositories,</span><br><span class="line">                                                final ClassLoader parent)</span><br><span class="line">    throws Exception &#123;</span><br><span class="line"></span><br><span class="line">    Set&lt;URL&gt; set &#x3D; new LinkedHashSet&lt;URL&gt;();</span><br><span class="line">    &#x2F;&#x2F;将各种类型的repository解析成url，保存进set中</span><br><span class="line">    if (repositories !&#x3D; null) &#123;</span><br><span class="line">        for (Repository repository : repositories)  &#123;</span><br><span class="line">            if (repository.getType() &#x3D;&#x3D; RepositoryType.URL) &#123;</span><br><span class="line">                URL url &#x3D; buildClassLoaderUrl(repository.getLocation());</span><br><span class="line">                set.add(url);</span><br><span class="line">            &#125; else if (repository.getType() &#x3D;&#x3D; RepositoryType.DIR) &#123;</span><br><span class="line">                File directory &#x3D; new File(repository.getLocation());</span><br><span class="line">                directory &#x3D; directory.getCanonicalFile();</span><br><span class="line">                if (!validateFile(directory, RepositoryType.DIR)) &#123;</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                URL url &#x3D; buildClassLoaderUrl(directory);</span><br><span class="line">                set.add(url);</span><br><span class="line">            &#125; else if (repository.getType() &#x3D;&#x3D; RepositoryType.JAR) &#123;</span><br><span class="line">                File file&#x3D;new File(repository.getLocation());</span><br><span class="line">                file &#x3D; file.getCanonicalFile();</span><br><span class="line">                if (!validateFile(file, RepositoryType.JAR)) &#123;</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                URL url &#x3D; buildClassLoaderUrl(file);</span><br><span class="line">                set.add(url);</span><br><span class="line">            &#125; else if (repository.getType() &#x3D;&#x3D; RepositoryType.GLOB) &#123;</span><br><span class="line">                File directory&#x3D;new File(repository.getLocation());</span><br><span class="line">                directory &#x3D; directory.getCanonicalFile();</span><br><span class="line">                if (!validateFile(directory, RepositoryType.GLOB)) &#123;</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                String filenames[] &#x3D; directory.list();</span><br><span class="line">                if (filenames &#x3D;&#x3D; null) &#123;</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line">                for (int j &#x3D; 0; j &lt; filenames.length; j++) &#123;</span><br><span class="line">                    String filename &#x3D; filenames[j].toLowerCase(Locale.ENGLISH);</span><br><span class="line">                    if (!filename.endsWith(&quot;.jar&quot;))</span><br><span class="line">                        continue;</span><br><span class="line">                    File file &#x3D; new File(directory, filenames[j]);</span><br><span class="line">                    file &#x3D; file.getCanonicalFile();</span><br><span class="line">                    if (!validateFile(file, RepositoryType.JAR)) &#123;</span><br><span class="line">                        continue;</span><br><span class="line">                    &#125;;</span><br><span class="line">                    URL url &#x3D; buildClassLoaderUrl(file);</span><br><span class="line">                    set.add(url);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Construct the class loader itself</span><br><span class="line">    final URL[] array &#x3D; set.toArray(new URL[set.size()]);</span><br><span class="line">    &#x2F;&#x2F;使用上面解析到的url来新建URLClassLoader实例</span><br><span class="line">    return AccessController.doPrivileged(</span><br><span class="line">            new PrivilegedAction&lt;URLClassLoader&gt;() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public URLClassLoader run() &#123;</span><br><span class="line">                    if (parent &#x3D;&#x3D; null)</span><br><span class="line">                        return new URLClassLoader(array);</span><br><span class="line">                    else</span><br><span class="line">                        return new URLClassLoader(array, parent);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里进行新的类加载器创建，过程并不复杂，首先根据不同类型解析仓库，然后根据解析到的url新建URLClassLoader的实例。URLClassLoader是ClassLoader的子类，用于从目录的url或者jar文件来加载类和资源。</p>
-<h2 id="创建启动类并创建新实例"><a href="#创建启动类并创建新实例" class="headerlink" title="创建启动类并创建新实例"></a>创建启动类并创建新实例</h2><p>上面创建完成三个ClassLoader之后，然后设置当前上下文的ClassLoader和安全ClassLoader为catalinaLoader，接下来一步就是使用catalinaLoader加载<code>org.apache.catalina.startup.Catalina</code>启动类。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; startupClass &#x3D;</span><br><span class="line">    catalinaLoader.loadClass</span><br><span class="line">    (&quot;org.apache.catalina.startup.Catalina&quot;);</span><br><span class="line">Object startupInstance &#x3D; startupClass.newInstance();</span><br></pre></td></tr></table></figure>
+<pre><code>private ClassLoader createClassLoader(String name, ClassLoader parent)
+    throws Exception {
+    //CatalinaProperties对应着conf/catalina.properties文件
+    //配置文件中配置：common.loader=${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar
+    //先从配置文件中获取name对应的name.loader
+    //分别是common.loader、server.loader、shared.loader
+    String value = CatalinaProperties.getProperty(name + &quot;.loader&quot;);
+    //如果value为空，就直接返回parent
+    //这里也验证了上面说到的，运行时由于server.loader、shared.loader是空的，所以之前说的三个Loader其实是同一个CommonLoader
+    if ((value == null) || (value.equals(&quot;&quot;)))
+        return parent;
+    //将value中${catalina.base}和${catalina.home}替换成实际的目录
+    value = replace(value);
+    //仓库列表，仓库指的是指定的目录，比如lib；或者是*.jar等
+    List&lt;Repository&gt; repositories = new ArrayList&lt;Repository&gt;();
+    //逗号分割
+    StringTokenizer tokenizer = new StringTokenizer(value, &quot;,&quot;);
+    while (tokenizer.hasMoreElements()) {
+        String repository = tokenizer.nextToken().trim();
+        if (repository.length() == 0) {
+            continue;
+        }
 
-<h1 id="调用start方法启动Catalina"><a href="#调用start方法启动Catalina" class="headerlink" title="调用start方法启动Catalina"></a>调用start方法启动Catalina</h1><p>上面init方法完成之后，ClassLoader已经被创建，catalinaDaemon为启动的新实例。然后就该调用start方法了，调用的位置如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">else if (command.equals(&quot;start&quot;)) &#123;</span><br><span class="line">    &#x2F;&#x2F;这个是让服务器启动之后，保持运行状态，监听后面发来的命令。</span><br><span class="line">   daemon.setAwait(true);</span><br><span class="line">   &#x2F;&#x2F;对tomcat的相关的配置文件进行加载解析</span><br><span class="line">   &#x2F;&#x2F;对tomcat各个组件进行初始化配置操作</span><br><span class="line">   daemon.load(args);</span><br><span class="line">   &#x2F;&#x2F;启动Catalina</span><br><span class="line">   daemon.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        //仓库封装着对应的位置和类型，添加进list中保存
+        //这里是URL类型的
+        try {
+            URL url = new URL(repository);
+            repositories.add(
+                    new Repository(repository, RepositoryType.URL));
+            continue;
+        } catch (MalformedURLException e) {
+            // Ignore
+        }
 
-<p>启动前的三个步骤如下：</p>
+        //本地仓库
+        if (repository.endsWith(&quot;*.jar&quot;)) {//多个jar
+            repository = repository.substring
+                (0, repository.length() - &quot;*.jar&quot;.length());
+            repositories.add(
+                    new Repository(repository, RepositoryType.GLOB));
+        } else if (repository.endsWith(&quot;.jar&quot;)) {//单个jar
+            repositories.add(
+                    new Repository(repository, RepositoryType.JAR));
+        } else {//目录类型的
+            repositories.add(
+                    new Repository(repository, RepositoryType.DIR));
+        }
+    }
+    //使用ClassLoaderFactory的createClassLoader方法来创建ClassLoader
+    //仓库是上面解析过的仓库
+    return ClassLoaderFactory.createClassLoader(repositories, parent);
+}
+</code></pre><p>继续往下看createClassLoader方法，创建新的类加载器：</p>
+<pre><code>public static ClassLoader createClassLoader(List&lt;Repository&gt; repositories,
+                                                final ClassLoader parent)
+    throws Exception {
+
+    Set&lt;URL&gt; set = new LinkedHashSet&lt;URL&gt;();
+    //将各种类型的repository解析成url，保存进set中
+    if (repositories != null) {
+        for (Repository repository : repositories)  {
+            if (repository.getType() == RepositoryType.URL) {
+                URL url = buildClassLoaderUrl(repository.getLocation());
+                set.add(url);
+            } else if (repository.getType() == RepositoryType.DIR) {
+                File directory = new File(repository.getLocation());
+                directory = directory.getCanonicalFile();
+                if (!validateFile(directory, RepositoryType.DIR)) {
+                    continue;
+                }
+                URL url = buildClassLoaderUrl(directory);
+                set.add(url);
+            } else if (repository.getType() == RepositoryType.JAR) {
+                File file=new File(repository.getLocation());
+                file = file.getCanonicalFile();
+                if (!validateFile(file, RepositoryType.JAR)) {
+                    continue;
+                }
+                URL url = buildClassLoaderUrl(file);
+                set.add(url);
+            } else if (repository.getType() == RepositoryType.GLOB) {
+                File directory=new File(repository.getLocation());
+                directory = directory.getCanonicalFile();
+                if (!validateFile(directory, RepositoryType.GLOB)) {
+                    continue;
+                }
+                String filenames[] = directory.list();
+                if (filenames == null) {
+                    continue;
+                }
+                for (int j = 0; j &lt; filenames.length; j++) {
+                    String filename = filenames[j].toLowerCase(Locale.ENGLISH);
+                    if (!filename.endsWith(&quot;.jar&quot;))
+                        continue;
+                    File file = new File(directory, filenames[j]);
+                    file = file.getCanonicalFile();
+                    if (!validateFile(file, RepositoryType.JAR)) {
+                        continue;
+                    };
+                    URL url = buildClassLoaderUrl(file);
+                    set.add(url);
+                }
+            }
+        }
+    }
+
+    // Construct the class loader itself
+    final URL[] array = set.toArray(new URL[set.size()]);
+    //使用上面解析到的url来新建URLClassLoader实例
+    return AccessController.doPrivileged(
+            new PrivilegedAction&lt;URLClassLoader&gt;() {
+                @Override
+                public URLClassLoader run() {
+                    if (parent == null)
+                        return new URLClassLoader(array);
+                    else
+                        return new URLClassLoader(array, parent);
+                }
+            });
+}
+</code></pre><p>这里进行新的类加载器创建，过程并不复杂，首先根据不同类型解析仓库，然后根据解析到的url新建URLClassLoader的实例。URLClassLoader是ClassLoader的子类，用于从目录的url或者jar文件来加载类和资源。</p>
+<h2 id="创建启动类并创建新实例">创建启动类并创建新实例</h2>
+<p>上面创建完成三个ClassLoader之后，然后设置当前上下文的ClassLoader和安全ClassLoader为catalinaLoader，接下来一步就是使用catalinaLoader加载<code>org.apache.catalina.startup.Catalina</code>启动类。</p>
+<pre><code>Class&lt;?&gt; startupClass =
+    catalinaLoader.loadClass
+    (&quot;org.apache.catalina.startup.Catalina&quot;);
+Object startupInstance = startupClass.newInstance();
+</code></pre><h1 id="调用start方法启动catalina">调用start方法启动Catalina</h1>
+<p>上面init方法完成之后，ClassLoader已经被创建，catalinaDaemon为启动的新实例。然后就该调用start方法了，调用的位置如下：</p>
+<pre><code>else if (command.equals(&quot;start&quot;)) {
+    //这个是让服务器启动之后，保持运行状态，监听后面发来的命令。
+   daemon.setAwait(true);
+   //对tomcat的相关的配置文件进行加载解析
+   //对tomcat各个组件进行初始化配置操作
+   daemon.load(args);
+   //启动Catalina
+   daemon.start();
+}
+</code></pre><p>启动前的三个步骤如下：</p>
 <ul>
 <li>设置await状态，让服务器启动之后，保持运行状态，监听后面发来的命令。</li>
 <li>load方法，对tomcat的相关的配置文件进行加载解析，并对各个组件进行初始化配置操作。</li>
 <li>start方法，真正启动Catalina</li>
 </ul>
-<h2 id="load方法加载和初始化"><a href="#load方法加载和初始化" class="headerlink" title="load方法加载和初始化"></a>load方法加载和初始化</h2><p>load方法主要对tomcat的相关配置文件进行加载解析，对各个组件进行初始化配置操作，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">private void load(String[] arguments)</span><br><span class="line">    throws Exception &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;要调用的load()方法</span><br><span class="line">    String methodName &#x3D; &quot;load&quot;;</span><br><span class="line">    &#x2F;&#x2F;启动时候参数的处理</span><br><span class="line">    Object param[];</span><br><span class="line">    Class&lt;?&gt; paramTypes[];</span><br><span class="line">    if (arguments&#x3D;&#x3D;null || arguments.length&#x3D;&#x3D;0) &#123;</span><br><span class="line">        paramTypes &#x3D; null;</span><br><span class="line">        param &#x3D; null;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        paramTypes &#x3D; new Class[1];</span><br><span class="line">        paramTypes[0] &#x3D; arguments.getClass();</span><br><span class="line">        param &#x3D; new Object[1];</span><br><span class="line">        param[0] &#x3D; arguments;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;下面调用Catalina的load方法</span><br><span class="line">    Method method &#x3D;</span><br><span class="line">        catalinaDaemon.getClass().getMethod(methodName, paramTypes);</span><br><span class="line">    method.invoke(catalinaDaemon, param);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里没有做详细处理，只是使用反射调用Catalina实例的load方法，Catalina实例是我们上面使用反射新建的实例。接续往下看Catalina的load方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">public void load() &#123;</span><br><span class="line">    &#x2F;&#x2F;记录初始化开始的时间</span><br><span class="line">    long t1 &#x3D; System.nanoTime();</span><br><span class="line">    &#x2F;&#x2F;初始化目录，还有embedded的目录处理</span><br><span class="line">    initDirs();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;初始化命名空间？这里不太理解还，应该是跟JNDI有关系</span><br><span class="line">    initNaming();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;创建并配置一个Digester实例，并设置相关规则属性，Digester用来解析xml，采用的是SAX方式。</span><br><span class="line">    Digester digester &#x3D; createStartDigester();</span><br><span class="line"></span><br><span class="line">    InputSource inputSource &#x3D; null;</span><br><span class="line">    InputStream inputStream &#x3D; null;</span><br><span class="line">    File file &#x3D; null;</span><br><span class="line">    try &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            &#x2F;&#x2F;配置文件，默认是conf&#x2F;server.xml</span><br><span class="line">            file &#x3D; configFile();</span><br><span class="line">            inputStream &#x3D; new FileInputStream(file);</span><br><span class="line">            inputSource &#x3D; new InputSource(file.toURI().toURL().toString());</span><br><span class="line">        &#125; catch (Exception e) &#123;。。。&#125;</span><br><span class="line">        if (inputStream &#x3D;&#x3D; null) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                inputStream &#x3D; getClass().getClassLoader()</span><br><span class="line">                    .getResourceAsStream(getConfigFile());</span><br><span class="line">                inputSource &#x3D; new InputSource</span><br><span class="line">                    (getClass().getClassLoader()</span><br><span class="line">                     .getResource(getConfigFile()).toString());</span><br><span class="line">            &#125; catch (Exception e) &#123;。。。&#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;上面没有找到配置文件，就找server-embed.xml</span><br><span class="line">        if( inputStream&#x3D;&#x3D;null ) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                inputStream &#x3D; getClass().getClassLoader()</span><br><span class="line">                        .getResourceAsStream(&quot;server-embed.xml&quot;);</span><br><span class="line">                inputSource &#x3D; new InputSource</span><br><span class="line">                (getClass().getClassLoader()</span><br><span class="line">                        .getResource(&quot;server-embed.xml&quot;).toString());</span><br><span class="line">            &#125; catch (Exception e) &#123;。。。&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (inputStream &#x3D;&#x3D; null || inputSource &#x3D;&#x3D; null) &#123;</span><br><span class="line">            。。。</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;解析配置文件</span><br><span class="line">        try &#123;</span><br><span class="line">            inputSource.setByteStream(inputStream);</span><br><span class="line">            digester.push(this);</span><br><span class="line">            digester.parse(inputSource);</span><br><span class="line">        &#125; catch (SAXParseException spe) &#123;。。。&#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        if (inputStream !&#x3D; null) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                inputStream.close();</span><br><span class="line">            &#125; catch (IOException e) &#123;。。。&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;解析配置文件中会实例化server，是一个StandardServer</span><br><span class="line">    &#x2F;&#x2F;设置server的catalina</span><br><span class="line">    getServer().setCatalina(this);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;重定向流</span><br><span class="line">    &#x2F;&#x2F;使用自定义的PrintStream代替System.out和System.err</span><br><span class="line">    initStreams();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;初始化新的server</span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;对Server进行初始化</span><br><span class="line">        getServer().init();</span><br><span class="line">    &#125; catch (LifecycleException e) &#123;。。。&#125;</span><br><span class="line">    &#x2F;&#x2F;启动结束时间</span><br><span class="line">    long t2 &#x3D; System.nanoTime();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>load方法做的事情如下：</p>
+<h2 id="load方法加载和初始化">load方法加载和初始化</h2>
+<p>load方法主要对tomcat的相关配置文件进行加载解析，对各个组件进行初始化配置操作，代码如下：</p>
+<pre><code>private void load(String[] arguments)
+    throws Exception {
+
+    //要调用的load()方法
+    String methodName = &quot;load&quot;;
+    //启动时候参数的处理
+    Object param[];
+    Class&lt;?&gt; paramTypes[];
+    if (arguments==null || arguments.length==0) {
+        paramTypes = null;
+        param = null;
+    } else {
+        paramTypes = new Class[1];
+        paramTypes[0] = arguments.getClass();
+        param = new Object[1];
+        param[0] = arguments;
+    }
+    //下面调用Catalina的load方法
+    Method method =
+        catalinaDaemon.getClass().getMethod(methodName, paramTypes);
+    method.invoke(catalinaDaemon, param);
+
+}
+</code></pre><p>这里没有做详细处理，只是使用反射调用Catalina实例的load方法，Catalina实例是我们上面使用反射新建的实例。接续往下看Catalina的load方法：</p>
+<pre><code>public void load() {
+    //记录初始化开始的时间
+    long t1 = System.nanoTime();
+    //初始化目录，还有embedded的目录处理
+    initDirs();
+
+    //初始化命名空间？这里不太理解还，应该是跟JNDI有关系
+    initNaming();
+
+    //创建并配置一个Digester实例，并设置相关规则属性，Digester用来解析xml，采用的是SAX方式。
+    Digester digester = createStartDigester();
+
+    InputSource inputSource = null;
+    InputStream inputStream = null;
+    File file = null;
+    try {
+        try {
+            //配置文件，默认是conf/server.xml
+            file = configFile();
+            inputStream = new FileInputStream(file);
+            inputSource = new InputSource(file.toURI().toURL().toString());
+        } catch (Exception e) {。。。}
+        if (inputStream == null) {
+            try {
+                inputStream = getClass().getClassLoader()
+                    .getResourceAsStream(getConfigFile());
+                inputSource = new InputSource
+                    (getClass().getClassLoader()
+                     .getResource(getConfigFile()).toString());
+            } catch (Exception e) {。。。}
+        }
+
+        //上面没有找到配置文件，就找server-embed.xml
+        if( inputStream==null ) {
+            try {
+                inputStream = getClass().getClassLoader()
+                        .getResourceAsStream(&quot;server-embed.xml&quot;);
+                inputSource = new InputSource
+                (getClass().getClassLoader()
+                        .getResource(&quot;server-embed.xml&quot;).toString());
+            } catch (Exception e) {。。。}
+        }
+        if (inputStream == null || inputSource == null) {
+            。。。
+            return;
+        }
+        //解析配置文件
+        try {
+            inputSource.setByteStream(inputStream);
+            digester.push(this);
+            digester.parse(inputSource);
+        } catch (SAXParseException spe) {。。。}
+    } finally {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {。。。}
+        }
+    }
+    //解析配置文件中会实例化server，是一个StandardServer
+    //设置server的catalina
+    getServer().setCatalina(this);
+
+    //重定向流
+    //使用自定义的PrintStream代替System.out和System.err
+    initStreams();
+
+    //初始化新的server
+    try {
+        //对Server进行初始化
+        getServer().init();
+    } catch (LifecycleException e) {。。。}
+    //启动结束时间
+    long t2 = System.nanoTime();
+}
+</code></pre><p>load方法做的事情如下：</p>
 <ul>
 <li>初始化目录，还有embedded的目录处理。</li>
 <li>初始化命名空间。</li>
@@ -323,38 +429,236 @@
 <li>调用解析配置文件时候已经初始化过的StandardServer的init方法，对Server进行初始化。</li>
 </ul>
 <p>前面的步骤先不解析，直接看Server的init方法，刚方法实现在LifecycleBase类中。</p>
-<h3 id="初始化Server"><a href="#初始化Server" class="headerlink" title="初始化Server"></a>初始化Server</h3><p>LifecycleBase中的init方法如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public final synchronized void init() throws LifecycleException &#123;</span><br><span class="line">    &#x2F;&#x2F;状态不为new，抛异常</span><br><span class="line">    if (!state.equals(LifecycleState.NEW)) &#123;</span><br><span class="line">        invalidTransition(Lifecycle.BEFORE_INIT_EVENT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;设置状态为INITIALIZING</span><br><span class="line">        setStateInternal(LifecycleState.INITIALIZING, null, false);</span><br><span class="line">        &#x2F;&#x2F;初始化</span><br><span class="line">        initInternal();</span><br><span class="line">        &#x2F;&#x2F;设置状态为INITIALIZED</span><br><span class="line">        setStateInternal(LifecycleState.INITIALIZED, null, false);</span><br><span class="line">    &#125; catch (Throwable t) &#123;。。。&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>继续往下看initInternal方法，在子类中实现，这里是在StandardServer中，对于下面的Engine，Host，Context的初始化也是这种步骤：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">protected void initInternal() throws LifecycleException &#123;</span><br><span class="line">    &#x2F;&#x2F;调用父类方法，设置oname</span><br><span class="line">    super.initInternal();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;？？？</span><br><span class="line">    onameStringCache &#x3D; register(new StringCache(), &quot;type&#x3D;StringCache&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 注册MBeanFactory</span><br><span class="line">    MBeanFactory factory &#x3D; new MBeanFactory();</span><br><span class="line">    factory.setContainer(this);</span><br><span class="line">    onameMBeanFactory &#x3D; register(factory, &quot;type&#x3D;MBeanFactory&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;注册naming资源</span><br><span class="line">    globalNamingResources.init();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Populate the extension validator with JARs from common and shared</span><br><span class="line">    &#x2F;&#x2F; class loaders</span><br><span class="line">    &#x2F;&#x2F;使用从common和shared类加载器加载的类来填充扩展验证器</span><br><span class="line">    if (getCatalina() !&#x3D; null) &#123;</span><br><span class="line">        ClassLoader cl &#x3D; getCatalina().getParentClassLoader();</span><br><span class="line">        &#x2F;&#x2F;遍历类加载器，对于SystemClassLoader不处理</span><br><span class="line">        while (cl !&#x3D; null &amp;&amp; cl !&#x3D; ClassLoader.getSystemClassLoader()) &#123;</span><br><span class="line">            &#x2F;&#x2F;URLClassLoader</span><br><span class="line">            if (cl instanceof URLClassLoader) &#123;</span><br><span class="line">                URL[] urls &#x3D; ((URLClassLoader) cl).getURLs();</span><br><span class="line">                for (URL url : urls) &#123;</span><br><span class="line">                    if (url.getProtocol().equals(&quot;file&quot;)) &#123;</span><br><span class="line">                        try &#123;</span><br><span class="line">                            File f &#x3D; new File (url.toURI());</span><br><span class="line">                            if (f.isFile() &amp;&amp;</span><br><span class="line">                                    f.getName().endsWith(&quot;.jar&quot;)) &#123;</span><br><span class="line">                                ExtensionValidator.addSystemResource(f);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; catch (URISyntaxException e) &#123;</span><br><span class="line">                            &#x2F;&#x2F; Ignore</span><br><span class="line">                        &#125; catch (IOException e) &#123;</span><br><span class="line">                            &#x2F;&#x2F; Ignore</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            cl &#x3D; cl.getParent();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;调用各个service的init方法，一个Server下面可能有多个Service</span><br><span class="line">    for (int i &#x3D; 0; i &lt; services.length; i++) &#123;</span><br><span class="line">        services[i].init();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="初始化server">初始化Server</h3>
+<p>LifecycleBase中的init方法如下：</p>
+<pre><code>public final synchronized void init() throws LifecycleException {
+    //状态不为new，抛异常
+    if (!state.equals(LifecycleState.NEW)) {
+        invalidTransition(Lifecycle.BEFORE_INIT_EVENT);
+    }
 
-<h3 id="初始化Service"><a href="#初始化Service" class="headerlink" title="初始化Service"></a>初始化Service</h3><p>也是先调用LifecycleBase中的init方法，然后initInternal方法由子类实现，这里是StandardService：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">protected void initInternal() throws LifecycleException &#123;</span><br><span class="line"></span><br><span class="line">    super.initInternal();</span><br><span class="line">    &#x2F;&#x2F;调用Container的init方法，这里是StandardEngine</span><br><span class="line">    if (container !&#x3D; null) &#123;</span><br><span class="line">        container.init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;实例化线程池</span><br><span class="line">    for (Executor executor : findExecutors()) &#123;</span><br><span class="line">        if (executor instanceof LifecycleMBeanBase) &#123;</span><br><span class="line">            ((LifecycleMBeanBase) executor).setDomain(getDomain());</span><br><span class="line">        &#125;</span><br><span class="line">        executor.init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;实例化Connector，可能有多个Connector</span><br><span class="line">    synchronized (connectorsLock) &#123;</span><br><span class="line">        for (Connector connector : connectors) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                &#x2F;&#x2F;调用Connector的init方法</span><br><span class="line">                connector.init();</span><br><span class="line">            &#125; catch (Exception e) &#123;...&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>首先实例化Container，然后实例化Connector。</p>
-<h3 id="初始化Container"><a href="#初始化Container" class="headerlink" title="初始化Container"></a>初始化Container</h3><p>这里的Container是StandardEngine，看下init方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">protected void initInternal() throws LifecycleException &#123;</span><br><span class="line">    &#x2F;&#x2F;启动之前确保Realm存在</span><br><span class="line">    getRealm();</span><br><span class="line">    super.initInternal();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="初始化Connector"><a href="#初始化Connector" class="headerlink" title="初始化Connector"></a>初始化Connector</h3><p>Connector用来处理和客户端的通信相关内容。</p>
+    try {
+        //设置状态为INITIALIZING
+        setStateInternal(LifecycleState.INITIALIZING, null, false);
+        //初始化
+        initInternal();
+        //设置状态为INITIALIZED
+        setStateInternal(LifecycleState.INITIALIZED, null, false);
+    } catch (Throwable t) {。。。}
+}
+</code></pre><p>继续往下看initInternal方法，在子类中实现，这里是在StandardServer中，对于下面的Engine，Host，Context的初始化也是这种步骤：</p>
+<pre><code>protected void initInternal() throws LifecycleException {
+    //调用父类方法，设置oname
+    super.initInternal();
+
+    //？？？
+    onameStringCache = register(new StringCache(), &quot;type=StringCache&quot;);
+
+    // 注册MBeanFactory
+    MBeanFactory factory = new MBeanFactory();
+    factory.setContainer(this);
+    onameMBeanFactory = register(factory, &quot;type=MBeanFactory&quot;);
+
+    //注册naming资源
+    globalNamingResources.init();
+
+    // Populate the extension validator with JARs from common and shared
+    // class loaders
+    //使用从common和shared类加载器加载的类来填充扩展验证器
+    if (getCatalina() != null) {
+        ClassLoader cl = getCatalina().getParentClassLoader();
+        //遍历类加载器，对于SystemClassLoader不处理
+        while (cl != null &amp;&amp; cl != ClassLoader.getSystemClassLoader()) {
+            //URLClassLoader
+            if (cl instanceof URLClassLoader) {
+                URL[] urls = ((URLClassLoader) cl).getURLs();
+                for (URL url : urls) {
+                    if (url.getProtocol().equals(&quot;file&quot;)) {
+                        try {
+                            File f = new File (url.toURI());
+                            if (f.isFile() &amp;&amp;
+                                    f.getName().endsWith(&quot;.jar&quot;)) {
+                                ExtensionValidator.addSystemResource(f);
+                            }
+                        } catch (URISyntaxException e) {
+                            // Ignore
+                        } catch (IOException e) {
+                            // Ignore
+                        }
+                    }
+                }
+            }
+            cl = cl.getParent();
+        }
+    }
+    //调用各个service的init方法，一个Server下面可能有多个Service
+    for (int i = 0; i &lt; services.length; i++) {
+        services[i].init();
+    }
+}
+</code></pre><h3 id="初始化service">初始化Service</h3>
+<p>也是先调用LifecycleBase中的init方法，然后initInternal方法由子类实现，这里是StandardService：</p>
+<pre><code>protected void initInternal() throws LifecycleException {
+
+    super.initInternal();
+    //调用Container的init方法，这里是StandardEngine
+    if (container != null) {
+        container.init();
+    }
+
+    //实例化线程池
+    for (Executor executor : findExecutors()) {
+        if (executor instanceof LifecycleMBeanBase) {
+            ((LifecycleMBeanBase) executor).setDomain(getDomain());
+        }
+        executor.init();
+    }
+
+    //实例化Connector，可能有多个Connector
+    synchronized (connectorsLock) {
+        for (Connector connector : connectors) {
+            try {
+                //调用Connector的init方法
+                connector.init();
+            } catch (Exception e) {...}
+        }
+    }
+}
+</code></pre><p>首先实例化Container，然后实例化Connector。</p>
+<h3 id="初始化container">初始化Container</h3>
+<p>这里的Container是StandardEngine，看下init方法：</p>
+<pre><code>protected void initInternal() throws LifecycleException {
+    //启动之前确保Realm存在
+    getRealm();
+    super.initInternal();
+}
+</code></pre><h3 id="初始化connector">初始化Connector</h3>
+<p>Connector用来处理和客户端的通信相关内容。</p>
 <p>Connector初始化，也是调用Connector的initInternal方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">protected void initInternal() throws LifecycleException &#123;</span><br><span class="line"></span><br><span class="line">    super.initInternal();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; CoyoteAdapter，用来处理请求</span><br><span class="line">    adapter &#x3D; new CoyoteAdapter(this);</span><br><span class="line">    &#x2F;&#x2F;protocolHandler对于不同请求会有不同的Handler</span><br><span class="line">    &#x2F;&#x2F;我们这里重点看http请求的处理，即是Http11Protocol</span><br><span class="line">    protocolHandler.setAdapter(adapter);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Make sure parseBodyMethodsSet has a default</span><br><span class="line">    if( null &#x3D;&#x3D; parseBodyMethodsSet ) &#123;</span><br><span class="line">        setParseBodyMethods(getParseBodyMethods());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;处理器初始化</span><br><span class="line">        protocolHandler.init();</span><br><span class="line">    &#125; catch (Exception e) &#123;。。。&#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 初始化 mapper listener</span><br><span class="line">    mapperListener.init();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code>protected void initInternal() throws LifecycleException {
 
-<p>初始化的时候先初始化Service，然后是Container，然后是Connector。往下还有对protocolHandler的初始化和mapperListener的初始化。</p>
-<h3 id="初始化protocolHandler"><a href="#初始化protocolHandler" class="headerlink" title="初始化protocolHandler"></a>初始化protocolHandler</h3><p>这里主要看下对于http请求的处理，对应的Handler为Http11Protocol。初始化方法为init，实现在Http11Protocol的父类AbstractHttp11JsseProtocol中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public void init() throws Exception &#123;</span><br><span class="line">    &#x2F;&#x2F; SSL implementation needs to be in place before end point is</span><br><span class="line">    &#x2F;&#x2F; initialized</span><br><span class="line">    sslImplementation &#x3D; SSLImplementation.getInstance(sslImplementationName);</span><br><span class="line">    super.init();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用父类的init方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public void init() throws Exception &#123;</span><br><span class="line">    if (oname &#x3D;&#x3D; null) &#123;</span><br><span class="line">        &#x2F;&#x2F; Component not pre-registered so register it</span><br><span class="line">        oname &#x3D; createObjectName();</span><br><span class="line">        if (oname !&#x3D; null) &#123;</span><br><span class="line">            Registry.getRegistry(null, null).registerComponent(this, oname,</span><br><span class="line">                null);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (this.domain !&#x3D; null) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            tpOname &#x3D; new ObjectName(domain + &quot;:&quot; +</span><br><span class="line">                    &quot;type&#x3D;ThreadPool,name&#x3D;&quot; + getName());</span><br><span class="line">            Registry.getRegistry(null, null).registerComponent(endpoint,</span><br><span class="line">                    tpOname, null);</span><br><span class="line">        &#125; catch (Exception e) &#123;。。。&#125;</span><br><span class="line">        rgOname&#x3D;new ObjectName(domain +</span><br><span class="line">                &quot;:type&#x3D;GlobalRequestProcessor,name&#x3D;&quot; + getName());</span><br><span class="line">        Registry.getRegistry(null, null).registerComponent(</span><br><span class="line">                getHandler().getGlobal(), rgOname, null );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String endpointName &#x3D; getName();</span><br><span class="line">    endpoint.setName(endpointName.substring(1, endpointName.length()-1));</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;endpoint的初始化</span><br><span class="line">        endpoint.init();</span><br><span class="line">    &#125; catch (Exception ex) &#123;。。。&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    super.initInternal();
 
-<p>关于oname和domain先不讲解，主要看初始化endpoint。</p>
-<h4 id="初始化endpoint"><a href="#初始化endpoint" class="headerlink" title="初始化endpoint"></a>初始化endpoint</h4><p>endpoint提供底层的网络io实现。init方法实现在AbstractEndpoint中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public final void init() throws Exception &#123;</span><br><span class="line">    testServerCipherSuitesOrderSupport();</span><br><span class="line">    if (bindOnInit) &#123;</span><br><span class="line">        &#x2F;&#x2F;绑定方法，该对底层的Socket之类的进行处理了。</span><br><span class="line">        bind();</span><br><span class="line">        bindState &#x3D; BindState.BOUND_ON_INIT;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>bind方法的实现在子类中，这里使用的是JioEndpoint：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public void bind() throws Exception &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;初始化acceptor的默认线程总数</span><br><span class="line">    if (acceptorThreadCount &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        acceptorThreadCount &#x3D; 1;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;初始化最大连接数</span><br><span class="line">    if (getMaxConnections() &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        setMaxConnections(getMaxThreadsInternal());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (serverSocketFactory &#x3D;&#x3D; null) &#123;</span><br><span class="line">        &#x2F;&#x2F;https的处理</span><br><span class="line">        if (isSSLEnabled()) &#123;</span><br><span class="line">            serverSocketFactory &#x3D;</span><br><span class="line">                handler.getSslImplementation().getServerSocketFactory(this);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            &#x2F;&#x2F;处理http请求的serversocket工厂</span><br><span class="line">            serverSocketFactory &#x3D; new DefaultServerSocketFactory(this);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (serverSocket &#x3D;&#x3D; null) &#123;</span><br><span class="line">        &#x2F;&#x2F;创建serverSocket</span><br><span class="line">        try &#123;</span><br><span class="line">            if (getAddress() &#x3D;&#x3D; null) &#123;</span><br><span class="line">                serverSocket &#x3D; serverSocketFactory.createSocket(getPort(),</span><br><span class="line">                        getBacklog());</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                serverSocket &#x3D; serverSocketFactory.createSocket(getPort(),</span><br><span class="line">                        getBacklog(), getAddress());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (BindException orig) &#123;。。。&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>创建ServerSocket代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public ServerSocket createSocket (int port, int backlog,</span><br><span class="line">        InetAddress ifAddress) throws IOException &#123;</span><br><span class="line">    return new ServerSocket (port, backlog, ifAddress);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>创建ServerSocket，根据端口号和地址直接返回一个ServerSocket实例。到这里对于Handler的处理已经完成。接下来初始化mapperListener。</p>
-<h3 id="初始化mapperListener"><a href="#初始化mapperListener" class="headerlink" title="初始化mapperListener"></a>初始化mapperListener</h3><p>MapperListener用来建立配置的URL映射的管理，即Host，Context，Wrapper（Servlet）和URL的映射关系。</p>
+    // CoyoteAdapter，用来处理请求
+    adapter = new CoyoteAdapter(this);
+    //protocolHandler对于不同请求会有不同的Handler
+    //我们这里重点看http请求的处理，即是Http11Protocol
+    protocolHandler.setAdapter(adapter);
+
+    // Make sure parseBodyMethodsSet has a default
+    if( null == parseBodyMethodsSet ) {
+        setParseBodyMethods(getParseBodyMethods());
+    }
+
+    try {
+        //处理器初始化
+        protocolHandler.init();
+    } catch (Exception e) {。。。}
+
+    // 初始化 mapper listener
+    mapperListener.init();
+}
+</code></pre><p>初始化的时候先初始化Service，然后是Container，然后是Connector。往下还有对protocolHandler的初始化和mapperListener的初始化。</p>
+<h3 id="初始化protocolhandler">初始化protocolHandler</h3>
+<p>这里主要看下对于http请求的处理，对应的Handler为Http11Protocol。初始化方法为init，实现在Http11Protocol的父类AbstractHttp11JsseProtocol中：</p>
+<pre><code>public void init() throws Exception {
+    // SSL implementation needs to be in place before end point is
+    // initialized
+    sslImplementation = SSLImplementation.getInstance(sslImplementationName);
+    super.init();
+}
+</code></pre><p>调用父类的init方法：</p>
+<pre><code>public void init() throws Exception {
+    if (oname == null) {
+        // Component not pre-registered so register it
+        oname = createObjectName();
+        if (oname != null) {
+            Registry.getRegistry(null, null).registerComponent(this, oname,
+                null);
+        }
+    }
+
+    if (this.domain != null) {
+        try {
+            tpOname = new ObjectName(domain + &quot;:&quot; +
+                    &quot;type=ThreadPool,name=&quot; + getName());
+            Registry.getRegistry(null, null).registerComponent(endpoint,
+                    tpOname, null);
+        } catch (Exception e) {。。。}
+        rgOname=new ObjectName(domain +
+                &quot;:type=GlobalRequestProcessor,name=&quot; + getName());
+        Registry.getRegistry(null, null).registerComponent(
+                getHandler().getGlobal(), rgOname, null );
+    }
+
+    String endpointName = getName();
+    endpoint.setName(endpointName.substring(1, endpointName.length()-1));
+
+    try {
+        //endpoint的初始化
+        endpoint.init();
+    } catch (Exception ex) {。。。}
+}
+</code></pre><p>关于oname和domain先不讲解，主要看初始化endpoint。</p>
+<h4 id="初始化endpoint">初始化endpoint</h4>
+<p>endpoint提供底层的网络io实现。init方法实现在AbstractEndpoint中：</p>
+<pre><code>public final void init() throws Exception {
+    testServerCipherSuitesOrderSupport();
+    if (bindOnInit) {
+        //绑定方法，该对底层的Socket之类的进行处理了。
+        bind();
+        bindState = BindState.BOUND_ON_INIT;
+    }
+}
+</code></pre><p>bind方法的实现在子类中，这里使用的是JioEndpoint：</p>
+<pre><code>public void bind() throws Exception {
+
+    //初始化acceptor的默认线程总数
+    if (acceptorThreadCount == 0) {
+        acceptorThreadCount = 1;
+    }
+    //初始化最大连接数
+    if (getMaxConnections() == 0) {
+        setMaxConnections(getMaxThreadsInternal());
+    }
+
+    if (serverSocketFactory == null) {
+        //https的处理
+        if (isSSLEnabled()) {
+            serverSocketFactory =
+                handler.getSslImplementation().getServerSocketFactory(this);
+        } else {
+            //处理http请求的serversocket工厂
+            serverSocketFactory = new DefaultServerSocketFactory(this);
+        }
+    }
+
+    if (serverSocket == null) {
+        //创建serverSocket
+        try {
+            if (getAddress() == null) {
+                serverSocket = serverSocketFactory.createSocket(getPort(),
+                        getBacklog());
+            } else {
+                serverSocket = serverSocketFactory.createSocket(getPort(),
+                        getBacklog(), getAddress());
+            }
+        } catch (BindException orig) {。。。}
+    }
+
+}
+</code></pre><p>创建ServerSocket代码如下：</p>
+<pre><code>public ServerSocket createSocket (int port, int backlog,
+        InetAddress ifAddress) throws IOException {
+    return new ServerSocket (port, backlog, ifAddress);
+}
+</code></pre><p>创建ServerSocket，根据端口号和地址直接返回一个ServerSocket实例。到这里对于Handler的处理已经完成。接下来初始化mapperListener。</p>
+<h3 id="初始化mapperlistener">初始化mapperListener</h3>
+<p>MapperListener用来建立配置的URL映射的管理，即Host，Context，Wrapper（Servlet）和URL的映射关系。</p>
 <p>init方法在LifecycleMBeanBase的initInternal方法中实现，没有做啥事。</p>
 <p>初始化完成之后，就开始调用Catalina的start方法进行启动了。</p>
-<h2 id="初始化过程总结"><a href="#初始化过程总结" class="headerlink" title="初始化过程总结"></a>初始化过程总结</h2><p>整个初始化过程层次还是很清晰的：</p>
+<h2 id="初始化过程总结">初始化过程总结</h2>
+<p>整个初始化过程层次还是很清晰的：</p>
 <ul>
 <li>首先初始化Server</li>
 <li>然后初始化Service</li>
@@ -362,320 +666,297 @@
 <li>初始化Connector的时候，需要初始化protocolHandler和mapperListener</li>
 <li>初始化protocolHandler，这里需要初始化endpoint，初始化endpoint就是返回一个ServerSocket实例</li>
 </ul>
-<h2 id="start方法启动Catalina"><a href="#start方法启动Catalina" class="headerlink" title="start方法启动Catalina"></a>start方法启动Catalina</h2><p>Catalina的start方法代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">public void start() &#123;</span><br><span class="line">    &#x2F;&#x2F;没有Server实例，就走一遍load</span><br><span class="line">    if (getServer() &#x3D;&#x3D; null) &#123;</span><br><span class="line">        load();</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;还是没有Server实例，有错误！</span><br><span class="line">    if (getServer() &#x3D;&#x3D; null) &#123;</span><br><span class="line">        log.fatal(&quot;Cannot start server. Server instance is not configured.&quot;);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    long t1 &#x3D; System.nanoTime();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;启动新的Server</span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;这里Server是StandardServer</span><br><span class="line">        getServer().start();</span><br><span class="line">    &#125; catch (LifecycleException e) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            &#x2F;&#x2F;异常，需要销毁</span><br><span class="line">            getServer().destroy();</span><br><span class="line">        &#125; catch (LifecycleException e1) &#123;。。。&#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    long t2 &#x3D; System.nanoTime();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 注册关闭钩子</span><br><span class="line">    if (useShutdownHook) &#123;</span><br><span class="line">        if (shutdownHook &#x3D;&#x3D; null) &#123;</span><br><span class="line">            shutdownHook &#x3D; new CatalinaShutdownHook();</span><br><span class="line">        &#125;</span><br><span class="line">        Runtime.getRuntime().addShutdownHook(shutdownHook);</span><br><span class="line">        LogManager logManager &#x3D; LogManager.getLogManager();</span><br><span class="line">        if (logManager instanceof ClassLoaderLogManager) &#123;</span><br><span class="line">            ((ClassLoaderLogManager) logManager).setUseShutdownHook(</span><br><span class="line">                    false);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;如果是await状态</span><br><span class="line">    if (await) &#123;</span><br><span class="line">        await();</span><br><span class="line">        stop();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里主要的步骤是调用Server的start方法，启动服务。这里Server是StandardServer。</p>
-<h3 id="启动Server"><a href="#启动Server" class="headerlink" title="启动Server"></a>启动Server</h3><p>StandardServer的start方法，start方法在LifecycleBase中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public final synchronized void start() throws LifecycleException &#123;</span><br><span class="line"></span><br><span class="line">    if (LifecycleState.STARTING_PREP.equals(state) || LifecycleState.STARTING.equals(state) ||</span><br><span class="line">            LifecycleState.STARTED.equals(state)) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;init</span><br><span class="line">    if (state.equals(LifecycleState.NEW)) &#123;</span><br><span class="line">        init();</span><br><span class="line">    &#125; else if (state.equals(LifecycleState.FAILED)) &#123;</span><br><span class="line">        &#x2F;&#x2F;stop</span><br><span class="line">        stop();</span><br><span class="line">    &#125; else if (!state.equals(LifecycleState.INITIALIZED) &amp;&amp;</span><br><span class="line">            !state.equals(LifecycleState.STOPPED)) &#123;</span><br><span class="line">        invalidTransition(Lifecycle.BEFORE_START_EVENT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        setStateInternal(LifecycleState.STARTING_PREP, null, false);</span><br><span class="line">        startInternal();</span><br><span class="line">        if (state.equals(LifecycleState.FAILED)) &#123;</span><br><span class="line">            stop();</span><br><span class="line">        &#125; else if (!state.equals(LifecycleState.STARTING)) &#123;</span><br><span class="line">            invalidTransition(Lifecycle.AFTER_START_EVENT);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            setStateInternal(LifecycleState.STARTED, null, false);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (Throwable t) &#123;。。。&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面也是调用startInternal()方法进行启动，在子类中实现，这里是在StandardServer中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">protected void startInternal() throws LifecycleException &#123;</span><br><span class="line">    &#x2F;&#x2F;暂先不解释</span><br><span class="line">    fireLifecycleEvent(CONFIGURE_START_EVENT, null);</span><br><span class="line">    setState(LifecycleState.STARTING);</span><br><span class="line">    &#x2F;&#x2F;暂先不解释</span><br><span class="line">    globalNamingResources.start();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;启动Service</span><br><span class="line">    synchronized (servicesLock) &#123;</span><br><span class="line">        for (int i &#x3D; 0; i &lt; services.length; i++) &#123;</span><br><span class="line">            services[i].start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里调用Service方法的start启动Service。</p>
-<h3 id="启动Service"><a href="#启动Service" class="headerlink" title="启动Service"></a>启动Service</h3><p>StandardService的start方法，具体的实现是在StandardService的startInternal方法中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">protected void startInternal() throws LifecycleException &#123;</span><br><span class="line"></span><br><span class="line">    setState(LifecycleState.STARTING);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;启动Container</span><br><span class="line">    if (container !&#x3D; null) &#123;</span><br><span class="line">        synchronized (container) &#123;</span><br><span class="line">            container.start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;启动线程池</span><br><span class="line">    synchronized (executors) &#123;</span><br><span class="line">        for (Executor executor: executors) &#123;</span><br><span class="line">            executor.start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;启动Connector</span><br><span class="line">    synchronized (connectorsLock) &#123;</span><br><span class="line">        for (Connector connector: connectors) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                if (connector.getState() !&#x3D; LifecycleState.FAILED) &#123;</span><br><span class="line">                    connector.start();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (Exception e) &#123;。。。&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="启动Container"><a href="#启动Container" class="headerlink" title="启动Container"></a>启动Container</h3><p>StandardEngine的start方法，也是调用startInternal方法，实现在StandardEngine中：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protected synchronized void startInternal() throws LifecycleException &#123;</span><br><span class="line">    &#x2F;&#x2F;标准容器启动，在父类中实现</span><br><span class="line">    super.startInternal();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  继续看ContainerBase的startInternal方法：</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;暂未解析</span><br><span class="line">protected synchronized void startInternal() throws LifecycleException &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Start our subordinate components, if any</span><br><span class="line">    if ((loader !&#x3D; null) &amp;&amp; (loader instanceof Lifecycle))</span><br><span class="line">        ((Lifecycle) loader).start();</span><br><span class="line">    logger &#x3D; null;</span><br><span class="line">    getLogger();</span><br><span class="line">    if ((manager !&#x3D; null) &amp;&amp; (manager instanceof Lifecycle))</span><br><span class="line">        ((Lifecycle) manager).start();</span><br><span class="line">    if ((cluster !&#x3D; null) &amp;&amp; (cluster instanceof Lifecycle))</span><br><span class="line">        ((Lifecycle) cluster).start();</span><br><span class="line">    Realm realm &#x3D; getRealmInternal();</span><br><span class="line">    if ((realm !&#x3D; null) &amp;&amp; (realm instanceof Lifecycle))</span><br><span class="line">        ((Lifecycle) realm).start();</span><br><span class="line">    if ((resources !&#x3D; null) &amp;&amp; (resources instanceof Lifecycle))</span><br><span class="line">        ((Lifecycle) resources).start();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;启动子容器</span><br><span class="line">    Container children[] &#x3D; findChildren();</span><br><span class="line">    List&lt;Future&lt;Void&gt;&gt; results &#x3D; new ArrayList&lt;Future&lt;Void&gt;&gt;();</span><br><span class="line">    for (int i &#x3D; 0; i &lt; children.length; i++) &#123;</span><br><span class="line">        results.add(startStopExecutor.submit(new StartChild(children[i])));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    boolean fail &#x3D; false;</span><br><span class="line">    for (Future&lt;Void&gt; result : results) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            result.get();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            log.error(sm.getString(&quot;containerBase.threadedStartFailed&quot;), e);</span><br><span class="line">            fail &#x3D; true;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    if (fail) &#123;</span><br><span class="line">        throw new LifecycleException(</span><br><span class="line">                sm.getString(&quot;containerBase.threadedStartFailed&quot;));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Start the Valves in our pipeline (including the basic), if any</span><br><span class="line">    if (pipeline instanceof Lifecycle)</span><br><span class="line">        ((Lifecycle) pipeline).start();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    setState(LifecycleState.STARTING);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Start our thread</span><br><span class="line">    threadStart();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="启动Connector"><a href="#启动Connector" class="headerlink" title="启动Connector"></a>启动Connector</h3><p>Connector的start方法，Connector的startInternal方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">protected void startInternal() throws LifecycleException &#123;</span><br><span class="line">    setState(LifecycleState.STARTING);</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        protocolHandler.start();</span><br><span class="line">    &#125; catch (Exception e) &#123;。。。&#125;</span><br><span class="line"></span><br><span class="line">    mapperListener.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Connector的启动跟初始化差不多，也是先启动protocolHandler，然后启动mapperListener。</p>
-<h3 id="启动protocolHandler"><a href="#启动protocolHandler" class="headerlink" title="启动protocolHandler"></a>启动protocolHandler</h3><p>代码实现在AbstractProtocol中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public void start() throws Exception &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        endpoint.start();</span><br><span class="line">    &#125; catch (Exception ex) &#123;。。。&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里启动endpoint，代码实现在AbstractEndpoint中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public final void start() throws Exception &#123;</span><br><span class="line">    &#x2F;&#x2F;没有绑定，先绑定</span><br><span class="line">    if (bindState &#x3D;&#x3D; BindState.UNBOUND) &#123;</span><br><span class="line">        bind();</span><br><span class="line">        bindState &#x3D; BindState.BOUND_ON_START;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;启动</span><br><span class="line">    startInternal();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>startInternal方法用来启动endpoint，我们这里还是以JIoEndpoint来分析，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public void startInternal() throws Exception &#123;</span><br><span class="line"></span><br><span class="line">    if (!running) &#123;</span><br><span class="line">        running &#x3D; true;</span><br><span class="line">        paused &#x3D; false;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;创建工作者线程</span><br><span class="line">        if (getExecutor() &#x3D;&#x3D; null) &#123;</span><br><span class="line">            createExecutor();</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;实例化连接数栅栏</span><br><span class="line">        initializeConnectionLatch();</span><br><span class="line">        &#x2F;&#x2F;启动Acceptor线程</span><br><span class="line">        startAcceptorThreads();</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;启动异步超时线程</span><br><span class="line">        Thread timeoutThread &#x3D; new Thread(new AsyncTimeout(),</span><br><span class="line">                getName() + &quot;-AsyncTimeout&quot;);</span><br><span class="line">        timeoutThread.setPriority(threadPriority);</span><br><span class="line">        timeoutThread.setDaemon(true);</span><br><span class="line">        timeoutThread.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="启动mapperListener"><a href="#启动mapperListener" class="headerlink" title="启动mapperListener"></a>启动mapperListener</h3><p>MapperListener的startInternal方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public void startInternal() throws LifecycleException &#123;</span><br><span class="line"></span><br><span class="line">    setState(LifecycleState.STARTING);</span><br><span class="line"></span><br><span class="line">    findDefaultHost();</span><br><span class="line"></span><br><span class="line">    Engine engine &#x3D; (Engine) connector.getService().getContainer();</span><br><span class="line">    addListeners(engine);</span><br><span class="line"></span><br><span class="line">    Container[] conHosts &#x3D; engine.findChildren();</span><br><span class="line">    for (Container conHost : conHosts) &#123;</span><br><span class="line">        Host host &#x3D; (Host) conHost;</span><br><span class="line">        if (!LifecycleState.NEW.equals(host.getState())) &#123;</span><br><span class="line">            &#x2F;&#x2F; Registering the host will register the context and wrappers</span><br><span class="line">            registerHost(host);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>到这里就启动完成，tomcat启动完毕，有关启动的还没有详细解释，待续～～～</p>
-
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="tag"># tomcat7启动流程</a>
-              <a href="/tags/tomcat7%E6%BA%90%E7%A0%81/" rel="tag"># tomcat7源码</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/" rel="prev" title="tomcat7类加载器解析">
-      <i class="fa fa-chevron-left"></i> tomcat7类加载器解析
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/" rel="next" title="tomcat7的server.xml解析">
-      tomcat7的server.xml解析 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
+<h2 id="start方法启动catalina">start方法启动Catalina</h2>
+<p>Catalina的start方法代码如下：</p>
+<pre><code>public void start() {
+    //没有Server实例，就走一遍load
+    if (getServer() == null) {
+        load();
     }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
+    //还是没有Server实例，有错误！
+    if (getServer() == null) {
+        log.fatal(&quot;Cannot start server. Server instance is not configured.&quot;);
+        return;
     }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    long t1 = System.nanoTime();
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#启动脚本"><span class="nav-number">1.</span> <span class="nav-text">启动脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#startup-sh"><span class="nav-number">1.1.</span> <span class="nav-text">startup.sh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#catalina-sh"><span class="nav-number">1.2.</span> <span class="nav-text">catalina.sh</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Bootstrap类"><span class="nav-number">2.</span> <span class="nav-text">Bootstrap类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#初始化"><span class="nav-number">3.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化类加载器"><span class="nav-number">3.1.</span> <span class="nav-text">初始化类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建启动类并创建新实例"><span class="nav-number">3.2.</span> <span class="nav-text">创建启动类并创建新实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调用start方法启动Catalina"><span class="nav-number">4.</span> <span class="nav-text">调用start方法启动Catalina</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#load方法加载和初始化"><span class="nav-number">4.1.</span> <span class="nav-text">load方法加载和初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化Server"><span class="nav-number">4.1.1.</span> <span class="nav-text">初始化Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化Service"><span class="nav-number">4.1.2.</span> <span class="nav-text">初始化Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化Container"><span class="nav-number">4.1.3.</span> <span class="nav-text">初始化Container</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化Connector"><span class="nav-number">4.1.4.</span> <span class="nav-text">初始化Connector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化protocolHandler"><span class="nav-number">4.1.5.</span> <span class="nav-text">初始化protocolHandler</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化endpoint"><span class="nav-number">4.1.5.1.</span> <span class="nav-text">初始化endpoint</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化mapperListener"><span class="nav-number">4.1.6.</span> <span class="nav-text">初始化mapperListener</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化过程总结"><span class="nav-number">4.2.</span> <span class="nav-text">初始化过程总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#start方法启动Catalina"><span class="nav-number">4.3.</span> <span class="nav-text">start方法启动Catalina</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#启动Server"><span class="nav-number">4.3.1.</span> <span class="nav-text">启动Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动Service"><span class="nav-number">4.3.2.</span> <span class="nav-text">启动Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动Container"><span class="nav-number">4.3.3.</span> <span class="nav-text">启动Container</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动Connector"><span class="nav-number">4.3.4.</span> <span class="nav-text">启动Connector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动protocolHandler"><span class="nav-number">4.3.5.</span> <span class="nav-text">启动protocolHandler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动mapperListener"><span class="nav-number">4.3.6.</span> <span class="nav-text">启动mapperListener</span></a></li></ol></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/";
-    this.page.identifier = "2017/05/10/tomcat7启动流程源码分析/";
-    this.page.title = "tomcat7启动流程源码分析";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
+    //启动新的Server
+    try {
+        //这里Server是StandardServer
+        getServer().start();
+    } catch (LifecycleException e) {
+        try {
+            //异常，需要销毁
+            getServer().destroy();
+        } catch (LifecycleException e1) {。。。}
+        return;
     }
-  });
-</script>
 
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+    long t2 = System.nanoTime();
+
+    // 注册关闭钩子
+    if (useShutdownHook) {
+        if (shutdownHook == null) {
+            shutdownHook = new CatalinaShutdownHook();
+        }
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+        LogManager logManager = LogManager.getLogManager();
+        if (logManager instanceof ClassLoaderLogManager) {
+            ((ClassLoaderLogManager) logManager).setUseShutdownHook(
+                    false);
+        }
+    }
+    //如果是await状态
+    if (await) {
+        await();
+        stop();
+    }
+}
+</code></pre><p>这里主要的步骤是调用Server的start方法，启动服务。这里Server是StandardServer。</p>
+<h3 id="启动server">启动Server</h3>
+<p>StandardServer的start方法，start方法在LifecycleBase中：</p>
+<pre><code>public final synchronized void start() throws LifecycleException {
+
+    if (LifecycleState.STARTING_PREP.equals(state) || LifecycleState.STARTING.equals(state) ||
+            LifecycleState.STARTED.equals(state)) {
+        return;
+    }
+    //init
+    if (state.equals(LifecycleState.NEW)) {
+        init();
+    } else if (state.equals(LifecycleState.FAILED)) {
+        //stop
+        stop();
+    } else if (!state.equals(LifecycleState.INITIALIZED) &amp;&amp;
+            !state.equals(LifecycleState.STOPPED)) {
+        invalidTransition(Lifecycle.BEFORE_START_EVENT);
+    }
+
+    try {
+        setStateInternal(LifecycleState.STARTING_PREP, null, false);
+        startInternal();
+        if (state.equals(LifecycleState.FAILED)) {
+            stop();
+        } else if (!state.equals(LifecycleState.STARTING)) {
+            invalidTransition(Lifecycle.AFTER_START_EVENT);
+        } else {
+            setStateInternal(LifecycleState.STARTED, null, false);
+        }
+    } catch (Throwable t) {。。。}
+}
+</code></pre><p>上面也是调用startInternal()方法进行启动，在子类中实现，这里是在StandardServer中：</p>
+<pre><code>protected void startInternal() throws LifecycleException {
+    //暂先不解释
+    fireLifecycleEvent(CONFIGURE_START_EVENT, null);
+    setState(LifecycleState.STARTING);
+    //暂先不解释
+    globalNamingResources.start();
+
+    //启动Service
+    synchronized (servicesLock) {
+        for (int i = 0; i &lt; services.length; i++) {
+            services[i].start();
+        }
+    }
+}
+</code></pre><p>这里调用Service方法的start启动Service。</p>
+<h3 id="启动service">启动Service</h3>
+<p>StandardService的start方法，具体的实现是在StandardService的startInternal方法中：</p>
+<pre><code>protected void startInternal() throws LifecycleException {
+
+    setState(LifecycleState.STARTING);
+
+    //启动Container
+    if (container != null) {
+        synchronized (container) {
+            container.start();
+        }
+    }
+    //启动线程池
+    synchronized (executors) {
+        for (Executor executor: executors) {
+            executor.start();
+        }
+    }
+
+    //启动Connector
+    synchronized (connectorsLock) {
+        for (Connector connector: connectors) {
+            try {
+                if (connector.getState() != LifecycleState.FAILED) {
+                    connector.start();
+                }
+            } catch (Exception e) {。。。}
+        }
+    }
+}
+</code></pre><h3 id="启动container">启动Container</h3>
+<p>StandardEngine的start方法，也是调用startInternal方法，实现在StandardEngine中：</p>
+<pre><code>protected synchronized void startInternal() throws LifecycleException {
+    //标准容器启动，在父类中实现
+    super.startInternal();
+}
+</code></pre><p>继续看ContainerBase的startInternal方法：</p>
+<pre><code>//暂未解析
+protected synchronized void startInternal() throws LifecycleException {
+
+    // Start our subordinate components, if any
+    if ((loader != null) &amp;&amp; (loader instanceof Lifecycle))
+        ((Lifecycle) loader).start();
+    logger = null;
+    getLogger();
+    if ((manager != null) &amp;&amp; (manager instanceof Lifecycle))
+        ((Lifecycle) manager).start();
+    if ((cluster != null) &amp;&amp; (cluster instanceof Lifecycle))
+        ((Lifecycle) cluster).start();
+    Realm realm = getRealmInternal();
+    if ((realm != null) &amp;&amp; (realm instanceof Lifecycle))
+        ((Lifecycle) realm).start();
+    if ((resources != null) &amp;&amp; (resources instanceof Lifecycle))
+        ((Lifecycle) resources).start();
+
+    //启动子容器
+    Container children[] = findChildren();
+    List&lt;Future&lt;Void&gt;&gt; results = new ArrayList&lt;Future&lt;Void&gt;&gt;();
+    for (int i = 0; i &lt; children.length; i++) {
+        results.add(startStopExecutor.submit(new StartChild(children[i])));
+    }
+
+    boolean fail = false;
+    for (Future&lt;Void&gt; result : results) {
+        try {
+            result.get();
+        } catch (Exception e) {
+            log.error(sm.getString(&quot;containerBase.threadedStartFailed&quot;), e);
+            fail = true;
+        }
+
+    }
+    if (fail) {
+        throw new LifecycleException(
+                sm.getString(&quot;containerBase.threadedStartFailed&quot;));
+    }
+
+    // Start the Valves in our pipeline (including the basic), if any
+    if (pipeline instanceof Lifecycle)
+        ((Lifecycle) pipeline).start();
+
+
+    setState(LifecycleState.STARTING);
+
+    // Start our thread
+    threadStart();
+
+}
+</code></pre><h3 id="启动connector">启动Connector</h3>
+<p>Connector的start方法，Connector的startInternal方法：</p>
+<pre><code>protected void startInternal() throws LifecycleException {
+    setState(LifecycleState.STARTING);
+
+    try {
+        protocolHandler.start();
+    } catch (Exception e) {。。。}
+
+    mapperListener.start();
+}
+</code></pre><p>Connector的启动跟初始化差不多，也是先启动protocolHandler，然后启动mapperListener。</p>
+<h3 id="启动protocolhandler">启动protocolHandler</h3>
+<p>代码实现在AbstractProtocol中：</p>
+<pre><code>public void start() throws Exception {
+    try {
+        endpoint.start();
+    } catch (Exception ex) {。。。}
+}
+</code></pre><p>这里启动endpoint，代码实现在AbstractEndpoint中：</p>
+<pre><code>public final void start() throws Exception {
+    //没有绑定，先绑定
+    if (bindState == BindState.UNBOUND) {
+        bind();
+        bindState = BindState.BOUND_ON_START;
+    }
+    //启动
+    startInternal();
+}
+</code></pre><p>startInternal方法用来启动endpoint，我们这里还是以JIoEndpoint来分析，代码如下：</p>
+<pre><code>public void startInternal() throws Exception {
+
+    if (!running) {
+        running = true;
+        paused = false;
+
+        //创建工作者线程
+        if (getExecutor() == null) {
+            createExecutor();
+        }
+        //实例化连接数栅栏
+        initializeConnectionLatch();
+        //启动Acceptor线程
+        startAcceptorThreads();
+
+        //启动异步超时线程
+        Thread timeoutThread = new Thread(new AsyncTimeout(),
+                getName() + &quot;-AsyncTimeout&quot;);
+        timeoutThread.setPriority(threadPriority);
+        timeoutThread.setDaemon(true);
+        timeoutThread.start();
+    }
+}
+</code></pre><h3 id="启动mapperlistener">启动mapperListener</h3>
+<p>MapperListener的startInternal方法：</p>
+<pre><code>public void startInternal() throws LifecycleException {
+
+    setState(LifecycleState.STARTING);
+
+    findDefaultHost();
+
+    Engine engine = (Engine) connector.getService().getContainer();
+    addListeners(engine);
+
+    Container[] conHosts = engine.findChildren();
+    for (Container conHost : conHosts) {
+        Host host = (Host) conHost;
+        if (!LifecycleState.NEW.equals(host.getState())) {
+            // Registering the host will register the context and wrappers
+            registerHost(host);
+        }
+    }
+}
+</code></pre><p>到这里就启动完成，tomcat启动完毕，有关启动的还没有详细解释，待续～～～</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
 </body>
 </html>

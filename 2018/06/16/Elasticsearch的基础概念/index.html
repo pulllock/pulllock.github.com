@@ -1,275 +1,52 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="Elasticsearch基础概念学习。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Elasticsearch的基础概念">
-<meta property="og:url" content="http://dachengxi.github.com/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="Elasticsearch基础概念学习。">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2018-06-16T15:34:40.000Z">
-<meta property="article:modified_time" content="2020-05-18T14:24:34.847Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="Elasticsearch">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>Elasticsearch的基础概念 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Elasticsearch的基础概念</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>Elasticsearch的基础概念</h1>
+			<b><time>2018-06-16 23:34:40</time></b>
+		       
+		           <a href="/tags/elasticsearch">Elasticsearch</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Elasticsearch的基础概念
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-06-16 23:34:40 23:34:40" itemprop="dateCreated datePublished" datetime="2018-06-16T23:34:40+08:00">2018-06-16 23:34:40</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Elasticsearch/" itemprop="url" rel="index"><span itemprop="name">Elasticsearch</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/06/16/Elasticsearch的基础概念/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>Elasticsearch基础概念学习。</p>
-<a id="more"></a>
-
-<h1 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h1><ul>
+			<div>
+				<p>Elasticsearch基础概念学习。</p>
+<h1 id="核心概念">核心概念</h1>
+<ul>
 <li>集群，一个或多个ES服务器节点组成集群，一个集群由一个唯一的名字标识，成为cluster name，默认名elasticsearch。具有相同集群名称的节点才会组成一个集群</li>
 <li>节点，是一个集群中的一个服务器，可以通过配置集群名称的方式来加入一个指定的集群，有三类：数据data节点，持有数据，提供对数据的搜索功能；主节点master，负责控制其他结点工作，一个集群只有一个主节点；部落结点tribe，可以像桥梁一样连接起多个集群，允许在多个集群上执行类似在单个集群上的功能</li>
 <li>索引，文档集合，数据结构是倒排索引。一个索引由一个名字来标识，必须全部小写字母，集群中可定义任意多的索引，ES内部使用Lucene写入或搜索数据</li>
@@ -279,14 +56,16 @@
 <li>副本，分片的一份或多份拷贝，副本不和主分片在同一个节点，保证高可用。</li>
 <li>映射，mapping，存储分析链所需要的信息，写入索引的时候可按照映射来存储。</li>
 </ul>
-<h1 id="对比RDMS"><a href="#对比RDMS" class="headerlink" title="对比RDMS"></a>对比RDMS</h1><table>
+<h1 id="对比rdms">对比RDMS</h1>
+<table>
 <thead>
 <tr>
 <th>RDMS</th>
 <th>Elasticsearch</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>数据库database</td>
 <td>索引index</td>
 </tr>
@@ -316,25 +95,29 @@
 </tr>
 <tr>
 <td>select * from table</td>
-<td>GET http://…</td>
+<td>GET http://&hellip;</td>
 </tr>
 <tr>
 <td>update table set</td>
-<td>PUT http://…</td>
+<td>PUT http://&hellip;</td>
 </tr>
 <tr>
 <td>delete</td>
-<td>DELETE http://…</td>
+<td>DELETE http://&hellip;</td>
 </tr>
-</tbody></table>
-<h1 id="字段类型"><a href="#字段类型" class="headerlink" title="字段类型"></a>字段类型</h1><h2 id="核心类型"><a href="#核心类型" class="headerlink" title="核心类型"></a>核心类型</h2><table>
+</tbody>
+</table>
+<h1 id="字段类型">字段类型</h1>
+<h2 id="核心类型">核心类型</h2>
+<table>
 <thead>
 <tr>
 <th>类型</th>
 <th>具体类型</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>字符串类型</td>
 <td>string、text、keyword</td>
 </tr>
@@ -358,7 +141,8 @@
 <td>范围类型</td>
 <td>range</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <ul>
 <li>string，es5.x之后不再支持string，由text或keyword取代</li>
 <li>text，要被全文搜索，字段内容会被分析，被分词器分成词项，生成倒排索引；text类型字段不用于排序，很少用于聚合</li>
@@ -368,14 +152,16 @@
 <li>boolean，true、false</li>
 <li>binary，接受base64编码的字符串</li>
 </ul>
-<h2 id="复合类型"><a href="#复合类型" class="headerlink" title="复合类型"></a>复合类型</h2><table>
+<h2 id="复合类型">复合类型</h2>
+<table>
 <thead>
 <tr>
 <th>类型</th>
 <th>具体类型</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>数组类型</td>
 <td>array</td>
 </tr>
@@ -387,20 +173,23 @@
 <td>嵌套类型</td>
 <td>nested</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <ul>
 <li>array，es没有专用数组类型，一个数组中值必须是同一种类型</li>
 <li>object，JSON具有层级关系，文档内部包含对象，内部对象还包含内部对象，但是写入到es后文档就会被索引成简单的扁平key-value对</li>
 <li>nested，是object类型的一个特例，当对象数组独立索引和查询，Lucene没有内部对象概念，es将对象层次扁平化，转化成字段名字和值构成的简单列表</li>
 </ul>
-<h2 id="地理类型"><a href="#地理类型" class="headerlink" title="地理类型"></a>地理类型</h2><table>
+<h2 id="地理类型">地理类型</h2>
+<table>
 <thead>
 <tr>
 <th>类型</th>
 <th>具体类型</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>地理坐标</td>
 <td>geo_point</td>
 </tr>
@@ -408,19 +197,22 @@
 <td>地理图形</td>
 <td>geo_shape</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <ul>
 <li>geo_point，存储地理位置信息的经纬度，可查找一定范围内的地理位置；通过地理位置或相对中心点距离来聚合文档；把距离因素整合到文档评分中；通过距离对文档排序</li>
 <li>geo_shape，可以存储一块区域，比如矩形、三角形等，GeoJSON是一种对各种地理数据结构进行编码的格式</li>
 </ul>
-<h2 id="特殊类型"><a href="#特殊类型" class="headerlink" title="特殊类型"></a>特殊类型</h2><table>
+<h2 id="特殊类型">特殊类型</h2>
+<table>
 <thead>
 <tr>
 <th>类型</th>
 <th>具体类型</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>IP类型</td>
 <td>ip</td>
 </tr>
@@ -440,21 +232,25 @@
 <td>抽取类型</td>
 <td>precolator</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <ul>
 <li>ip，存储IPv4或IPv6的地址</li>
 <li>range，range类型使用场景包括时间选择表单、年龄范围选择表单等</li>
 <li>token_count，用于统计字符串分词后的词项个数，本质上是一个整形字段</li>
 </ul>
-<h1 id="元字段"><a href="#元字段" class="headerlink" title="元字段"></a>元字段</h1><p>元字段是映射中描述文档本身的字段。</p>
-<h2 id="文档属性的元字段"><a href="#文档属性的元字段" class="headerlink" title="文档属性的元字段"></a>文档属性的元字段</h2><table>
+<h1 id="元字段">元字段</h1>
+<p>元字段是映射中描述文档本身的字段。</p>
+<h2 id="文档属性的元字段">文档属性的元字段</h2>
+<table>
 <thead>
 <tr>
 <th>具体属性</th>
 <th>作用</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>_index</td>
 <td>文档所属索引</td>
 </tr>
@@ -470,21 +266,24 @@
 <td>_id</td>
 <td>文档id</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <ul>
 <li>_index，多索引查询时，支持对索引名进行term、terms查询、聚合分析、使用脚本和排序。是一个虚拟字段</li>
 <li>_type，可根据该元字段进行查询、聚合、脚本和排序</li>
 <li>_id，可用于term查询、terms查询、match查询、query_string查询、simple_query_string查询，但不能用于聚合、脚本、排序</li>
 <li><code>_uid</code>，是<code>_type</code>和<code>_id</code>的组合，取值为<code>{type}#{id}</code></li>
 </ul>
-<h2 id="源文档的元字段"><a href="#源文档的元字段" class="headerlink" title="源文档的元字段"></a>源文档的元字段</h2><table>
+<h2 id="源文档的元字段">源文档的元字段</h2>
+<table>
 <thead>
 <tr>
 <th>具体属性</th>
 <th>作用</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>_source</td>
 <td>文档的原始JSON字符串</td>
 </tr>
@@ -492,15 +291,18 @@
 <td>_size</td>
 <td>_source字段的大小</td>
 </tr>
-</tbody></table>
-<h2 id="索引的元字段"><a href="#索引的元字段" class="headerlink" title="索引的元字段"></a>索引的元字段</h2><table>
+</tbody>
+</table>
+<h2 id="索引的元字段">索引的元字段</h2>
+<table>
 <thead>
 <tr>
 <th>具体属性</th>
 <th>作用</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>_all</td>
 <td>包含索引全部字段的超级字段</td>
 </tr>
@@ -508,15 +310,18 @@
 <td>_field_names</td>
 <td>文档中包含非空值的所有字段</td>
 </tr>
-</tbody></table>
-<h2 id="路由的元字段"><a href="#路由的元字段" class="headerlink" title="路由的元字段"></a>路由的元字段</h2><table>
+</tbody>
+</table>
+<h2 id="路由的元字段">路由的元字段</h2>
+<table>
 <thead>
 <tr>
 <th>具体属性</th>
 <th>作用</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>_parent</td>
 <td>指定文档间的父子关系</td>
 </tr>
@@ -524,20 +329,25 @@
 <td>_routing</td>
 <td>将文档路由到特定分片的自定义路由值</td>
 </tr>
-</tbody></table>
-<h2 id="自定义元字段"><a href="#自定义元字段" class="headerlink" title="自定义元字段"></a>自定义元字段</h2><table>
+</tbody>
+</table>
+<h2 id="自定义元字段">自定义元字段</h2>
+<table>
 <thead>
 <tr>
 <th>具体属性</th>
 <th>作用</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>_meta</td>
 <td>用于自定义元数据</td>
 </tr>
-</tbody></table>
-<h1 id="映射参数"><a href="#映射参数" class="headerlink" title="映射参数"></a>映射参数</h1><ul>
+</tbody>
+</table>
+<h1 id="映射参数">映射参数</h1>
+<ul>
 <li>analyzer，用于指定文本段的分词器，对索引和查询都有效</li>
 <li>search_analyzer</li>
 <li>normalizer，用于解析前标准化配置，比如把所有字符转化为小写</li>
@@ -563,295 +373,45 @@
 <li>store，可设置不存储</li>
 <li>term_vector，词向量</li>
 </ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<h1 id="参考">参考</h1>
+<ul>
 <li>从Lucene到Elasticsearch全文检索实战</li>
 <li>深入理解ElasticSearch</li>
 </ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Elasticsearch/" rel="tag"># Elasticsearch</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2018/06/16/Lucene%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/" rel="prev" title="Lucene总体架构">
-      <i class="fa fa-chevron-left"></i> Lucene总体架构
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/" rel="next" title="Lucene中的基础核心类">
-      Lucene中的基础核心类 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#核心概念"><span class="nav-number">1.</span> <span class="nav-text">核心概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#对比RDMS"><span class="nav-number">2.</span> <span class="nav-text">对比RDMS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字段类型"><span class="nav-number">3.</span> <span class="nav-text">字段类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#核心类型"><span class="nav-number">3.1.</span> <span class="nav-text">核心类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复合类型"><span class="nav-number">3.2.</span> <span class="nav-text">复合类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#地理类型"><span class="nav-number">3.3.</span> <span class="nav-text">地理类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特殊类型"><span class="nav-number">3.4.</span> <span class="nav-text">特殊类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#元字段"><span class="nav-number">4.</span> <span class="nav-text">元字段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文档属性的元字段"><span class="nav-number">4.1.</span> <span class="nav-text">文档属性的元字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源文档的元字段"><span class="nav-number">4.2.</span> <span class="nav-text">源文档的元字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#索引的元字段"><span class="nav-number">4.3.</span> <span class="nav-text">索引的元字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#路由的元字段"><span class="nav-number">4.4.</span> <span class="nav-text">路由的元字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义元字段"><span class="nav-number">4.5.</span> <span class="nav-text">自定义元字段</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#映射参数"><span class="nav-number">5.</span> <span class="nav-text">映射参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/";
-    this.page.identifier = "2018/06/16/Elasticsearch的基础概念/";
-    this.page.title = "Elasticsearch的基础概念";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>UTF-8 BOM on Time Stream</title>
+    <link>http://cxis.me/tags/utf-8-bom/</link>
+    <description>Recent content in UTF-8 BOM on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Tue, 09 May 2017 21:33:28 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/utf-8-bom/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>关于UTF-8的BOM标识以及非法字符65279错误的一些记录</title>
+      <link>http://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8Eutf-8%E7%9A%84bom%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Tue, 09 May 2017 21:33:28 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8Eutf-8%E7%9A%84bom%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</guid>
+      <description>&lt;p&gt;关于UTF-8的BOM标识和非法字符&lt;code&gt;\65279&lt;/code&gt;的错误，已经遇到过好几次了，在这里记录一下。关于UTF-8带BOM和UTF-8不带BOM的区别，网上有很多解释。我遇到的最多的就是文件在Windows上被别人修改后，在我的电脑上会出错（我一直使用linux和macos），一般都是导入项目的时候，进行编译就会有问题。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

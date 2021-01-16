@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>APIGateway中使用Dubbo泛化调用</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>APIGateway中使用Dubbo泛化调用</h1>
+			<b><time>2020-04-09 22:52:28</time></b>
+		       
+		           <a href="/tags/apigateway">APIGateway</a>
+        	       
+
+			<div>
+				<p>APIGateway需要调用各个业务系统的接口，但是不可能作为消费者依赖所有系统的接口jar包，可以使用Dubbo的泛化调用功能来实现。APIGateway作为消费者，连接到注册中心，拿到相应接口后可以使用泛化调用。</p>
+<p>泛化调用比较简单，可以直接参考dubbo官方文档：<a href="http://dubbo.apache.org/zh-cn/blog/dubbo-generic-invoke.html">Dubbo的泛化调用</a></p>
+<p>示例代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GenericInvokeDubbo</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String PROTOCOL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zookeeper&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String REGISTRY_ADDRESS <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;127.0.0.1:2181&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String APP_NAME <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;app-name&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> ReferenceConfig<span style="color:#f92672">&gt;</span> referenceConfigMap <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> ReferenceConfig<span style="color:#f92672">&gt;();</span>
+
+    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">invokeService</span><span style="color:#f92672">(</span>String interfaceClass<span style="color:#f92672">,</span> String method<span style="color:#f92672">,</span> String<span style="color:#f92672">[]</span> paramTypes<span style="color:#f92672">,</span> Object<span style="color:#f92672">[]</span> params<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        ReferenceConfigCache cache <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        ReferenceConfig<span style="color:#f92672">&lt;</span>GenericService<span style="color:#f92672">&gt;</span> referenceConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            referenceConfig <span style="color:#f92672">=</span> referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>referenceConfig <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                referenceConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ReferenceConfig<span style="color:#f92672">&lt;&gt;();</span>
+
+                ApplicationConfig application <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ApplicationConfig<span style="color:#f92672">();</span>
+                application<span style="color:#f92672">.</span><span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span>APP_NAME<span style="color:#f92672">);</span>
+                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setApplication</span><span style="color:#f92672">(</span>application<span style="color:#f92672">);</span>
+
+                RegistryConfig registry <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RegistryConfig<span style="color:#f92672">();</span>
+                registry<span style="color:#f92672">.</span><span style="color:#a6e22e">setProtocol</span><span style="color:#f92672">(</span>PROTOCOL<span style="color:#f92672">);</span>
+                registry<span style="color:#f92672">.</span><span style="color:#a6e22e">setAddress</span><span style="color:#f92672">(</span>REGISTRY_ADDRESS<span style="color:#f92672">);</span>
+                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setRegistry</span><span style="color:#f92672">(</span>registry<span style="color:#f92672">);</span>
+
+                ConsumerConfig consumerConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConsumerConfig<span style="color:#f92672">();</span>
+                consumerConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setTimeout</span><span style="color:#f92672">(</span>5000<span style="color:#f92672">);</span>
+                consumerConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setRetries</span><span style="color:#f92672">(</span>0<span style="color:#f92672">);</span>
+                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setConsumer</span><span style="color:#f92672">(</span>consumerConfig<span style="color:#f92672">);</span>
+
+                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setGeneric</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+                <span style="color:#75715e">// referenceConfig.setVersion();
+</span><span style="color:#75715e"></span>                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setInterface</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
+                referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">,</span> referenceConfig<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+            cache <span style="color:#f92672">=</span> ReferenceConfigCache<span style="color:#f92672">.</span><span style="color:#a6e22e">getCache</span><span style="color:#f92672">();</span>
+            GenericService genericService <span style="color:#f92672">=</span> cache<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>referenceConfig<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">return</span> genericService<span style="color:#f92672">.</span><span style="color:#a6e22e">$invoke</span><span style="color:#f92672">(</span>method<span style="color:#f92672">,</span> paramTypes<span style="color:#f92672">,</span> params<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IllegalStateException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">remove</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>cache <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                cache<span style="color:#f92672">.</span><span style="color:#a6e22e">destroy</span><span style="color:#f92672">(</span>referenceConfig<span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>源码：<a href="https://github.com/dachengxi/APIGateway">https://github.com/dachengxi/APIGateway</a></p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

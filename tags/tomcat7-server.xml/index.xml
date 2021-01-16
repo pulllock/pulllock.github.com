@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tomcat7 server.xml on Time Stream</title>
+    <link>http://cxis.me/tags/tomcat7-server.xml/</link>
+    <description>Recent content in tomcat7 server.xml on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Tue, 16 May 2017 00:04:07 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/tomcat7-server.xml/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>tomcat7的server.xml解析</title>
+      <link>http://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Tue, 16 May 2017 00:04:07 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;这里对tomcat7的server.xml文件进行解释一下，方便在分析启动源码的时候理解Digester做的事情。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

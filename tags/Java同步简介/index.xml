@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java同步简介 on Time Stream</title>
+    <link>http://cxis.me/tags/java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</link>
+    <description>Recent content in Java同步简介 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Wed, 30 Nov 2016 20:17:41 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java同步简介</title>
+      <link>http://cxis.me/2016/11/30/java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 30 Nov 2016 20:17:41 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/11/30/java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;h1 id=&#34;java同步&#34;&gt;Java同步&lt;/h1&gt;
+&lt;p&gt;Java中同步一直都是很重要的问题，对于初学者来说也是不太容易能理解的问题。特在此记录一下有关Java中同步和锁的知识。主要涉及到同步的概念以及Java中解决的办法和简单的例子。有关锁Lock中的内容不在此做说明。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,276 +1,53 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="JVM中的锁优化学习。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="JVM中的锁以及锁优化">
-<meta property="og:url" content="http://dachengxi.github.com/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="JVM中的锁优化学习。">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2017-07-30T15:50:58.000Z">
-<meta property="article:modified_time" content="2020-07-07T13:10:56.944Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="JVM">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>JVM中的锁以及锁优化 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM中的锁以及锁优化</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>JVM中的锁以及锁优化</h1>
+			<b><time>2017-07-30 23:50:58</time></b>
+		       
+		           <a href="/tags/jvm">JVM</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          JVM中的锁以及锁优化
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-07-30 23:50:58 23:50:58" itemprop="dateCreated datePublished" datetime="2017-07-30T23:50:58+08:00">2017-07-30 23:50:58</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/07/30/JVM中的锁以及锁优化/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>JVM中的锁优化学习。</p>
-<a id="more"></a>
-
+			<div>
+				<p>JVM中的锁优化学习。</p>
 <p>锁优化包括：自适应自旋、锁消除、锁膨胀、轻量级锁、偏向锁等。</p>
-<h1 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h1><p>偏向锁是在无竞争的情况下，取消之前已经取得锁的线程同步操作。当一个锁对象被一个线程获取后，就进入了偏向模式，当同一个线程再次请求这个锁，无需再进行同步操作。</p>
+<h1 id="偏向锁">偏向锁</h1>
+<p>偏向锁是在无竞争的情况下，取消之前已经取得锁的线程同步操作。当一个锁对象被一个线程获取后，就进入了偏向模式，当同一个线程再次请求这个锁，无需再进行同步操作。</p>
 <p>偏向锁工作过程：</p>
 <ul>
 <li>当一个锁对象第一次被线程获取的时候，JVM会把锁对象头中的锁标志位设置为01，偏向模式设置为1，表示偏向锁模式。同时使用CAS操作把获取到这个锁的线程ID记录到对象头的Mark Word中，如果CAS操作成功，持有偏向锁的线程以后每次进入到这个锁相关的同步块时，JVM不再进行任何同步操作。</li>
@@ -278,33 +55,39 @@
 </ul>
 <p>当一个对象已经计算过一致性哈希码后，它就再也无法进入偏向锁状态了；而当一个对象当前正处于偏向锁状态，又收到需要计算其一致性哈希码请求时，它的偏向状态会被立即撤销，并且锁会膨胀为重量级锁。在重量级锁的实现中，对象头指向了重量级锁的位置，代表重量级锁的ObjectMonitor类里有字段可以记录非加锁状态（标志位为“01”）下的Mark Word，其中自然可以存储原来的哈希码。</p>
 <p>如果程序中大多数的锁都总是被多个不同的线程访问，那偏向模式就是多余的。</p>
-<h1 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h1><p>轻量级锁在无竞争情况下使用CAS去消除同步使用的互斥量。是JDK6加入的新型锁机制。在没有多线程竞争的前提下，减少传统的重量级锁使用操作系统互斥量产生的性能消耗。绝大部分的锁，在整个同步周期都是不存在竞争的，轻量级锁通过CAS操作避免了使用互斥量的开销。如果有竞争的话，除了互斥量的开销还有CAS操作开销，轻量级锁就比重量级锁要慢。</p>
+<h1 id="轻量级锁">轻量级锁</h1>
+<p>轻量级锁在无竞争情况下使用CAS去消除同步使用的互斥量。是JDK6加入的新型锁机制。在没有多线程竞争的前提下，减少传统的重量级锁使用操作系统互斥量产生的性能消耗。绝大部分的锁，在整个同步周期都是不存在竞争的，轻量级锁通过CAS操作避免了使用互斥量的开销。如果有竞争的话，除了互斥量的开销还有CAS操作开销，轻量级锁就比重量级锁要慢。</p>
 <p>轻量级锁工作过程：</p>
 <ul>
 <li>代码即将进入同步块的时候，如果此同步对象没有被锁定，锁标志位01状态，JVM会首先在当前线程的栈帧中建立一个锁记录空间，用于存储锁对象目前的Mark Word拷贝。</li>
 <li>然后JVM使用CAS尝试把对象的Mark Word更新为指向锁记录的指针，如果成功，表示该线程拥有了这个对象的锁，并且对象的Mark Word锁标志位变成00表示轻量级锁。如果操作失败，表示有其他线程竞争这个对象的锁，JVM会先检查对象的Mark Word是否指向当前线程的栈帧，如果是的话，就说明当前已经拥有了这个对象的锁，直接继续同步；否则说明这个锁对象已经被其他线程抢占了。如果出现竞争锁的情况，轻量级锁需要膨胀为重量级锁，锁标志变为10，Mark Word中存储的是指向重量级锁的指针，后面等待锁的线程必须进入阻塞状态。</li>
 <li>轻量级锁解锁也是使用CAS，如果对象的Mark Word仍然指向线程的锁记录，就使用CAS把对象的Mark Word和线程锁记录中的Mark Word替换回来，如果能够成功，就完成了；如果替换失败，说明有其他线程尝试获取过该锁，在释放锁的同时，唤醒被挂起的线程。</li>
 </ul>
-<h1 id="锁膨胀"><a href="#锁膨胀" class="headerlink" title="锁膨胀"></a>锁膨胀</h1><p>轻量级锁获取锁失败后，JVM会使用重量级锁。锁标志位变成10状态，Mark Word指向monitor对象指针。</p>
+<h1 id="锁膨胀">锁膨胀</h1>
+<p>轻量级锁获取锁失败后，JVM会使用重量级锁。锁标志位变成10状态，Mark Word指向monitor对象指针。</p>
 <p>重量级锁工作过程：</p>
 <ul>
 <li>废弃获取轻量级锁的线程栈中备份的对象头信息。</li>
 <li>进行锁膨胀获取对象的ObjectMonitor，然后使用enter方法尝试进入该锁。</li>
 <li>获取不到锁的线程就会在操作系统层面被挂起。</li>
 </ul>
-<h1 id="自旋锁与自适应自旋"><a href="#自旋锁与自适应自旋" class="headerlink" title="自旋锁与自适应自旋"></a>自旋锁与自适应自旋</h1><p>轻量级锁膨胀为重量级锁后，线程可能会在操作系统层面被挂起，线程切换的性能损失很大。JVM会在锁膨胀后会做最后争取，希望线程可以尽快进入临界区而避免被操作系统挂起。一般线程加锁时间都很短，其他线程争取不到锁也不必立刻就进入挂起状态，可以选择忙循环（自旋）来等待锁释放。这种就是自旋锁。</p>
+<h1 id="自旋锁与自适应自旋">自旋锁与自适应自旋</h1>
+<p>轻量级锁膨胀为重量级锁后，线程可能会在操作系统层面被挂起，线程切换的性能损失很大。JVM会在锁膨胀后会做最后争取，希望线程可以尽快进入临界区而避免被操作系统挂起。一般线程加锁时间都很短，其他线程争取不到锁也不必立刻就进入挂起状态，可以选择忙循环（自旋）来等待锁释放。这种就是自旋锁。</p>
 <p>自旋锁在锁的占用时间很短的情况下，自旋等待效果很好，但是如果锁被长时间占有，自旋就只会消耗处理器资源了。所以自旋等待必须有限度，超过了限定的次数还没有获取到锁，就使用传统的方式挂起线程。</p>
 <p>如果固定了自旋次数，JVM中所有的锁都会使用这个次数，对不同的锁有可能不太适用。JDK6引入了自适应自旋，也就是自旋的次数不是固定的，而是由前一次在同一个锁上的自选时间以及锁的拥有者的状态来决定。</p>
 <ul>
 <li>如果在同一个锁对象上，自选等待刚刚成功获取锁，并且持有锁的线程正在运行中，JVM就会认为这次自旋也很有可能再次成功，就允许自选等待持续更长时间。</li>
 <li>如果对于某个锁，自旋很少能成功获取锁，以后要获取这个锁时可能会直接忽略自旋，避免浪费处理器资源。</li>
 </ul>
-<h1 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h1><p>JVM在即时编译器运行时，会对运行上下文扫描，对一些使用到了锁的代码，但是实际运行时根本不需要加锁的代码，可以把锁消除。</p>
+<h1 id="锁消除">锁消除</h1>
+<p>JVM在即时编译器运行时，会对运行上下文扫描，对一些使用到了锁的代码，但是实际运行时根本不需要加锁的代码，可以把锁消除。</p>
 <p>比如使用StringBuffer这个类，相关方法都使用synchronized修饰，在实际使用的过程中很可能不会出现竞争，如果还继续加锁的话就会浪费性能，这时候虚拟机可能会将锁进行消除。</p>
 <p>锁消除依赖逃逸分析技术。</p>
-<h1 id="锁粗化"><a href="#锁粗化" class="headerlink" title="锁粗化"></a>锁粗化</h1><p>JVM检测到有一连串零碎的操作都对同一个对象加锁，就会把锁同步范围粗化到整个操作序列的外部。可以理解为多次连续对同一个对象加锁，但是其实只需要一次加锁就能解决的问题，就可以直接将锁粗化。</p>
+<h1 id="锁粗化">锁粗化</h1>
+<p>JVM检测到有一连串零碎的操作都对同一个对象加锁，就会把锁同步范围粗化到整个操作序列的外部。可以理解为多次连续对同一个对象加锁，但是其实只需要一次加锁就能解决的问题，就可以直接将锁粗化。</p>
 <p>比如循环里面出现加锁，如果只在循环体外加一次锁就可以解决，就会进行锁粗化。</p>
-<h1 id="JVM中使用锁的过程"><a href="#JVM中使用锁的过程" class="headerlink" title="JVM中使用锁的过程"></a>JVM中使用锁的过程</h1><ul>
+<h1 id="jvm中使用锁的过程">JVM中使用锁的过程</h1>
+<ul>
 <li>一个普通对象，Mark Word中记录对象的哈希码、GC分代年龄，锁标志位为01，偏向锁模式位为0.</li>
 <li>当对象被当做同步锁，并且有一个线程抢到了锁，锁标志位还是01，偏向锁模式位为1，前23位记录抢到锁的线程的id，接着是偏向锁时间戳、GC分代年龄，目前是偏向锁模式。</li>
 <li>当同一个线程再来获取锁，JVM发现锁对象的处于偏向锁模式，Mark Word中线程id是当前线程，说明当前线程持有锁，可以继续执行同步代码。</li>
@@ -313,302 +96,53 @@
 <li>轻量级锁抢锁失败后，JVM会使用自旋锁，当前线程自旋，如果规定的自旋时间内获取到锁，就说明成功获取锁，执行同步代码块，如果自旋不能成功获取，就会升级为重量级锁。</li>
 <li>自旋不能成功获取锁，锁会升级为重量级锁，锁标志位10，锁对象的MarkWord存储指向重量级锁的指针。后面获取锁的线程都会阻塞。</li>
 </ul>
-<h1 id="锁在应用层的优化"><a href="#锁在应用层的优化" class="headerlink" title="锁在应用层的优化"></a>锁在应用层的优化</h1><ul>
+<h1 id="锁在应用层的优化">锁在应用层的优化</h1>
+<ul>
 <li>减少锁持有时间，只在必要时进行同步操作，可以减少线程持有锁的时间，提高系统吞吐量</li>
 <li>减小锁粒度，比如ConcurrentHashMap实现，分为多个锁，不同段的数据可以同时操作。但是当系统需要获取全局锁的时候，消耗资源会比较多，比如ConcurrentHashMap要获取size时，需要将所有子段都加锁。</li>
 <li>锁分离，比如LinkedBlockingQueue的实现，分成了两个锁takeLock和putLock，实现读写数据的分离。</li>
 <li>无锁CAS。</li>
 </ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<h1 id="参考">参考</h1>
+<ul>
 <li>《实战Java虚拟机 JVM故障诊断与性能优化》</li>
 <li>《HotSpot实战》</li>
 <li>《深入理解Java虚拟机：JVM高级特性与最佳实践》</li>
 </ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/JVM/" rel="tag"># JVM</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%A4%B4/" rel="prev" title="JVM中的对象头">
-      <i class="fa fa-chevron-left"></i> JVM中的对象头
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/07/31/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B/" rel="next" title="JVM中的锁使用过程">
-      JVM中的锁使用过程 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#偏向锁"><span class="nav-number">1.</span> <span class="nav-text">偏向锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#轻量级锁"><span class="nav-number">2.</span> <span class="nav-text">轻量级锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#锁膨胀"><span class="nav-number">3.</span> <span class="nav-text">锁膨胀</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#自旋锁与自适应自旋"><span class="nav-number">4.</span> <span class="nav-text">自旋锁与自适应自旋</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#锁消除"><span class="nav-number">5.</span> <span class="nav-text">锁消除</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#锁粗化"><span class="nav-number">6.</span> <span class="nav-text">锁粗化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM中使用锁的过程"><span class="nav-number">7.</span> <span class="nav-text">JVM中使用锁的过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#锁在应用层的优化"><span class="nav-number">8.</span> <span class="nav-text">锁在应用层的优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/";
-    this.page.identifier = "2017/07/30/JVM中的锁以及锁优化/";
-    this.page.title = "JVM中的锁以及锁优化";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

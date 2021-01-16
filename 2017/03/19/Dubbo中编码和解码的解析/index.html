@@ -1,687 +1,518 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2相关的内容是在服务端暴露服务的时候，根据具体的协议去暴露服务的步骤中，在DubboProtocol的createServer方法中：">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Dubbo中编码和解码的解析">
-<meta property="og:url" content="http://dachengxi.github.com/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2相关的内容是在服务端暴露服务的时候，根据具体的协议去暴露服务的步骤中，在DubboProtocol的createServer方法中：">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://dachengxi.github.com/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/dubbo_protocol_header.jpg">
-<meta property="article:published_time" content="2017-03-19T15:25:51.000Z">
-<meta property="article:modified_time" content="2017-03-20T12:29:49.000Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="dubbo源码">
-<meta property="article:tag" content="dubbo编解码">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://dachengxi.github.com/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/dubbo_protocol_header.jpg">
-
-<link rel="canonical" href="http://dachengxi.github.com/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>Dubbo中编码和解码的解析 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Dubbo中编码和解码的解析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
-
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
-
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Dubbo中编码和解码的解析
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-03-19 23:25:51 23:25:51" itemprop="dateCreated datePublished" datetime="2017-03-19T23:25:51+08:00">2017-03-19 23:25:51</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dubbo/" itemprop="url" rel="index"><span itemprop="name">dubbo</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/03/19/Dubbo中编码和解码的解析/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2相关的内容是在服务端暴露服务的时候，根据具体的协议去暴露服务的步骤中，在DubboProtocol的createServer方法中：</p>
-<a id="more"></a>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private ExchangeServer createServer(URL url) &#123;</span><br><span class="line">	。。。</span><br><span class="line">    &#x2F;&#x2F;这里url会添加codec&#x3D;dubbo</span><br><span class="line">    url &#x3D; url.addParameter(Constants.CODEC_KEY, Version.isCompatibleVersion() ? COMPATIBLE_CODEC_NAME : DubboCodec.NAME);</span><br><span class="line">    ExchangeServer server;</span><br><span class="line">    try &#123;</span><br><span class="line">        server &#x3D; Exchangers.bind(url, requestHandler);</span><br><span class="line">    &#125;</span><br><span class="line">    。。。</span><br><span class="line">    return server;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>紧接着进入<code>Exchangers.bind(url, requestHandler);</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public static ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException &#123;</span><br><span class="line">	&#x2F;&#x2F;如果url中没有codec属性，就会添加codec&#x3D;exchange</span><br><span class="line">    url &#x3D; url.addParameterIfAbsent(Constants.CODEC_KEY, &quot;exchange&quot;);</span><br><span class="line">    return getExchanger(url).bind(url, handler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后会继续进入HeaderExchanger的bind方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException &#123;</span><br><span class="line">    return new HeaderExchangeServer(Transporters.bind(url, new DecodeHandler(new HeaderExchangeHandler(handler))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在这里会创建一个DecodeHandler实例。继续跟踪Transporters的bind方法，会发现直接返回一个NettyServer实例，在NettyServer的父类AbstractEndpoint构造方法初始的时候，会根据url获取一个ChannelCodec，并将其赋值给codec存放到NettyServer的实例中。</p>
-<p>我们先看下<code>getChannelCodec(url);</code>方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">protected static Codec2 getChannelCodec(URL url) &#123;</span><br><span class="line">	&#x2F;&#x2F;获取codecName，不存在的话，默认为telnet</span><br><span class="line">    String codecName &#x3D; url.getParameter(Constants.CODEC_KEY, &quot;telnet&quot;);</span><br><span class="line">    &#x2F;&#x2F;先看下是不是Codec2的实现，是的话就根据SPI扩展机制获得Codec2扩展的实现</span><br><span class="line">    &#x2F;&#x2F;我们这里默认使用的是DubboCountCodec</span><br><span class="line">    if (ExtensionLoader.getExtensionLoader(Codec2.class).hasExtension(codecName)) &#123;</span><br><span class="line">        return ExtensionLoader.getExtensionLoader(Codec2.class).getExtension(codecName);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">    	&#x2F;&#x2F;如果不是Codec2的实现，就去查找Codec的实现</span><br><span class="line">        &#x2F;&#x2F;然后使用CodecAdapter适配器类来转换成Codec2</span><br><span class="line">        return new CodecAdapter(ExtensionLoader.getExtensionLoader(Codec.class)</span><br><span class="line">                                           .getExtension(codecName));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里返回的是Codec2，而Codec这个接口已经被标记为过时。到这里的话，在NettyServer中就会存在一个Codec2的实例了。</p>
-<p>在继续往下看到NettyServer中的doOpen()方法，这里是使用Netty的逻辑打开服务并绑定监听服务的地方：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">protected void doOpen() throws Throwable &#123;</span><br><span class="line">    NettyHelper.setNettyLoggerFactory();</span><br><span class="line">    ExecutorService boss &#x3D; Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerBoss&quot;, true));</span><br><span class="line">    ExecutorService worker &#x3D; Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerWorker&quot;, true));</span><br><span class="line">    ChannelFactory channelFactory &#x3D; new NioServerSocketChannelFactory(boss, worker, getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS));</span><br><span class="line">    bootstrap &#x3D; new ServerBootstrap(channelFactory);</span><br><span class="line"></span><br><span class="line">    final NettyHandler nettyHandler &#x3D; new NettyHandler(getUrl(), this);</span><br><span class="line">    channels &#x3D; nettyHandler.getChannels();</span><br><span class="line">    bootstrap.setPipelineFactory(new ChannelPipelineFactory() &#123;</span><br><span class="line">        public ChannelPipeline getPipeline() &#123;</span><br><span class="line">        	&#x2F;&#x2F;这里的getCodec方法获取到的codec就是在AbstractEndpoint中我们获取到的codec</span><br><span class="line">            &#x2F;&#x2F;NettyCodecAdapter，适配器类</span><br><span class="line">            NettyCodecAdapter adapter &#x3D; new NettyCodecAdapter(getCodec() ,getUrl(), NettyServer.this);</span><br><span class="line">            ChannelPipeline pipeline &#x3D; Channels.pipeline();</span><br><span class="line">            pipeline.addLast(&quot;decoder&quot;, adapter.getDecoder());&#x2F;&#x2F;SimpleChannelUpstreamHandler</span><br><span class="line">            pipeline.addLast(&quot;encoder&quot;, adapter.getEncoder());&#x2F;&#x2F;OneToOneEncoder</span><br><span class="line">            pipeline.addLast(&quot;handler&quot;, nettyHandler);</span><br><span class="line">            return pipeline;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    &#x2F;&#x2F; bind</span><br><span class="line">    channel &#x3D; bootstrap.bind(getBindAddress());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里就在Netty的pipeline中添加了编解码器。这里涉及到Netty的相关流程，可以先了解下<a href="http://cxis.me/2017/03/20/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/" target="_blank" rel="noopener">Netty3服务端流程简介</a>。</p>
-<p>decoder为解码器，是一个SimpleChannelUpstreamHandler，从Socket到Netty中的时候，需要解码，也就是服务提供端接收到消费者的请求的时候，需要解码。</p>
-<p>encoder是编码器，是OneToOneEncoder，这个类实现了ChannelDownstreamHandler，从服务提供端发送给服务消费者的时候，需要编码。</p>
-<p>nettyHandler实现了ChannelUpstreamHandler, ChannelDownstreamHandler两个，上下的时候都需要处理。</p>
-<p>接收到服务消费者的请求的时候，会先执行decoder，然后执行nettyHandler。</p>
-<p>发送给消费者的时候，会先执行nettyHandler，然后执行encoder。</p>
-<h2 id="dubbo协议头"><a href="#dubbo协议头" class="headerlink" title="dubbo协议头"></a>dubbo协议头</h2><p>（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2相关的内容是在服务端暴露服务的时候，根据具体的协议去暴露服务的步骤中，在DubboProtocol的createServer方法中：</p>
-<!-- more -->
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private ExchangeServer createServer(URL url) &#123;</span><br><span class="line">	。。。</span><br><span class="line">    &#x2F;&#x2F;这里url会添加codec&#x3D;dubbo</span><br><span class="line">    url &#x3D; url.addParameter(Constants.CODEC_KEY, Version.isCompatibleVersion() ? COMPATIBLE_CODEC_NAME : DubboCodec.NAME);</span><br><span class="line">    ExchangeServer server;</span><br><span class="line">    try &#123;</span><br><span class="line">        server &#x3D; Exchangers.bind(url, requestHandler);</span><br><span class="line">    &#125;</span><br><span class="line">    。。。</span><br><span class="line">    return server;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>紧接着进入<code>Exchangers.bind(url, requestHandler);</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public static ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException &#123;</span><br><span class="line">	&#x2F;&#x2F;如果url中没有codec属性，就会添加codec&#x3D;exchange</span><br><span class="line">    url &#x3D; url.addParameterIfAbsent(Constants.CODEC_KEY, &quot;exchange&quot;);</span><br><span class="line">    return getExchanger(url).bind(url, handler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后会继续进入HeaderExchanger的bind方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException &#123;</span><br><span class="line">    return new HeaderExchangeServer(Transporters.bind(url, new DecodeHandler(new HeaderExchangeHandler(handler))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在这里会创建一个DecodeHandler实例。继续跟踪Transporters的bind方法，会发现直接返回一个NettyServer实例，在NettyServer的父类AbstractEndpoint构造方法初始的时候，会根据url获取一个ChannelCodec，并将其赋值给codec存放到NettyServer的实例中。</p>
-<p>我们先看下<code>getChannelCodec(url);</code>方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">protected static Codec2 getChannelCodec(URL url) &#123;</span><br><span class="line">	&#x2F;&#x2F;获取codecName，不存在的话，默认为telnet</span><br><span class="line">    String codecName &#x3D; url.getParameter(Constants.CODEC_KEY, &quot;telnet&quot;);</span><br><span class="line">    &#x2F;&#x2F;先看下是不是Codec2的实现，是的话就根据SPI扩展机制获得Codec2扩展的实现</span><br><span class="line">    &#x2F;&#x2F;我们这里默认使用的是DubboCountCodec</span><br><span class="line">    if (ExtensionLoader.getExtensionLoader(Codec2.class).hasExtension(codecName)) &#123;</span><br><span class="line">        return ExtensionLoader.getExtensionLoader(Codec2.class).getExtension(codecName);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">    	&#x2F;&#x2F;如果不是Codec2的实现，就去查找Codec的实现</span><br><span class="line">        &#x2F;&#x2F;然后使用CodecAdapter适配器类来转换成Codec2</span><br><span class="line">        return new CodecAdapter(ExtensionLoader.getExtensionLoader(Codec.class)</span><br><span class="line">                                           .getExtension(codecName));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里返回的是Codec2，而Codec这个接口已经被标记为过时。到这里的话，在NettyServer中就会存在一个Codec2的实例了。</p>
-<p>在继续往下看到NettyServer中的doOpen()方法，这里是使用Netty的逻辑打开服务并绑定监听服务的地方：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">protected void doOpen() throws Throwable &#123;</span><br><span class="line">    NettyHelper.setNettyLoggerFactory();</span><br><span class="line">    ExecutorService boss &#x3D; Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerBoss&quot;, true));</span><br><span class="line">    ExecutorService worker &#x3D; Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerWorker&quot;, true));</span><br><span class="line">    ChannelFactory channelFactory &#x3D; new NioServerSocketChannelFactory(boss, worker, getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS));</span><br><span class="line">    bootstrap &#x3D; new ServerBootstrap(channelFactory);</span><br><span class="line"></span><br><span class="line">    final NettyHandler nettyHandler &#x3D; new NettyHandler(getUrl(), this);</span><br><span class="line">    channels &#x3D; nettyHandler.getChannels();</span><br><span class="line">    bootstrap.setPipelineFactory(new ChannelPipelineFactory() &#123;</span><br><span class="line">        public ChannelPipeline getPipeline() &#123;</span><br><span class="line">        	&#x2F;&#x2F;这里的getCodec方法获取到的codec就是在AbstractEndpoint中我们获取到的codec</span><br><span class="line">            &#x2F;&#x2F;NettyCodecAdapter，适配器类</span><br><span class="line">            NettyCodecAdapter adapter &#x3D; new NettyCodecAdapter(getCodec() ,getUrl(), NettyServer.this);</span><br><span class="line">            ChannelPipeline pipeline &#x3D; Channels.pipeline();</span><br><span class="line">            pipeline.addLast(&quot;decoder&quot;, adapter.getDecoder());&#x2F;&#x2F;SimpleChannelUpstreamHandler</span><br><span class="line">            pipeline.addLast(&quot;encoder&quot;, adapter.getEncoder());&#x2F;&#x2F;OneToOneEncoder</span><br><span class="line">            pipeline.addLast(&quot;handler&quot;, nettyHandler);</span><br><span class="line">            return pipeline;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    &#x2F;&#x2F; bind</span><br><span class="line">    channel &#x3D; bootstrap.bind(getBindAddress());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里就在Netty的pipeline中添加了编解码器。这里涉及到Netty的相关流程，可以先了解下<a href="http://cxis.me/2017/03/20/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/" target="_blank" rel="noopener">Netty3服务端流程简介</a>。</p>
-<p>decoder为解码器，是一个SimpleChannelUpstreamHandler，从Socket到Netty中的时候，需要解码，也就是服务提供端接收到消费者的请求的时候，需要解码。</p>
-<p>encoder是编码器，是OneToOneEncoder，这个类实现了ChannelDownstreamHandler，从服务提供端发送给服务消费者的时候，需要编码。</p>
-<p>nettyHandler实现了ChannelUpstreamHandler, ChannelDownstreamHandler两个，上下的时候都需要处理。</p>
-<p>接收到服务消费者的请求的时候，会先执行decoder，然后执行nettyHandler。</p>
-<p>发送给消费者的时候，会先执行nettyHandler，然后执行encoder。</p>
-<h2 id="dubbo协议头-1"><a href="#dubbo协议头-1" class="headerlink" title="dubbo协议头"></a>dubbo协议头</h2><p><img src="dubbo_protocol_header.jpg" alt="dubbo协议头示意图"></p>
-<p>协议头是16字节的定长数据：</p>
-<ul>
-<li><p>2字节short类型的Magic</p>
-</li>
-<li><p>1字节的消息标志位</p>
-<ul>
-<li>5位序列化id</li>
-<li>1位心跳还是正常请求</li>
-<li>1位双向还是单向</li>
-<li>1位请求还是响应</li>
-</ul>
-</li>
-<li><p>1字节的状态位</p>
-</li>
-<li><p>8字节的消息id</p>
-</li>
-<li><p>4字节数据长度</p>
-</li>
-</ul>
-<h2 id="编码的过程"><a href="#编码的过程" class="headerlink" title="编码的过程"></a>编码的过程</h2><p>首先会判断是请求还是响应，代码在ExchangeCodec的encode方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public void encode(Channel channel, ChannelBuffer buffer, Object msg) throws IOException &#123;</span><br><span class="line">    if (msg instanceof Request) &#123;&#x2F;&#x2F;Request类型</span><br><span class="line">        encodeRequest(channel, buffer, (Request) msg);</span><br><span class="line">    &#125; else if (msg instanceof Response) &#123;&#x2F;&#x2F;Response类型</span><br><span class="line">        encodeResponse(channel, buffer, (Response) msg);</span><br><span class="line">    &#125; else &#123;&#x2F;&#x2F;telenet类型的</span><br><span class="line">        super.encode(channel, buffer, msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="服务提供者对响应信息编码"><a href="#服务提供者对响应信息编码" class="headerlink" title="服务提供者对响应信息编码"></a>服务提供者对响应信息编码</h3><p>在服务提供者端一般是对响应来做编码，所以这里重点看下encodeResponse。</p>
-<p>encodeResponse：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">    	&#x2F;&#x2F;序列化方式</span><br><span class="line">        &#x2F;&#x2F;也是根据SPI扩展来获取，url中没指定的话默认使用hessian2</span><br><span class="line">        Serialization serialization &#x3D; getSerialization(channel);</span><br><span class="line">        &#x2F;&#x2F;长度为16字节的数组，协议头</span><br><span class="line">        byte[] header &#x3D; new byte[HEADER_LENGTH];</span><br><span class="line">        &#x2F;&#x2F;魔数0xdabb</span><br><span class="line">        Bytes.short2bytes(MAGIC, header);</span><br><span class="line">        &#x2F;&#x2F;序列化方式</span><br><span class="line">        header[2] &#x3D; serialization.getContentTypeId();</span><br><span class="line">        &#x2F;&#x2F;心跳消息还是正常消息</span><br><span class="line">        if (res.isHeartbeat()) header[2] |&#x3D; FLAG_EVENT;</span><br><span class="line">        &#x2F;&#x2F;响应状态</span><br><span class="line">        byte status &#x3D; res.getStatus();</span><br><span class="line">        header[3] &#x3D; status;</span><br><span class="line">        &#x2F;&#x2F;设置请求id</span><br><span class="line">        Bytes.long2bytes(res.getId(), header, 4);</span><br><span class="line">		&#x2F;&#x2F;buffer为1024字节的ChannelBuffer</span><br><span class="line">        &#x2F;&#x2F;获取buffer的写入位置</span><br><span class="line">        int savedWriteIndex &#x3D; buffer.writerIndex();</span><br><span class="line">        &#x2F;&#x2F;需要再加上协议头的长度之后，才是正确的写入位置</span><br><span class="line">        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH);</span><br><span class="line">        ChannelBufferOutputStream bos &#x3D; new ChannelBufferOutputStream(buffer);</span><br><span class="line">        ObjectOutput out &#x3D; serialization.serialize(channel.getUrl(), bos);</span><br><span class="line">        &#x2F;&#x2F; 对响应信息或者错误消息进行编码</span><br><span class="line">        if (status &#x3D;&#x3D; Response.OK) &#123;</span><br><span class="line">            if (res.isHeartbeat()) &#123;</span><br><span class="line">            	&#x2F;&#x2F;心跳</span><br><span class="line">                encodeHeartbeatData(channel, out, res.getResult());</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">            	&#x2F;&#x2F;正常响应</span><br><span class="line">                encodeResponseData(channel, out, res.getResult());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;错误消息</span><br><span class="line">        else out.writeUTF(res.getErrorMessage());</span><br><span class="line">        out.flushBuffer();</span><br><span class="line">        bos.flush();</span><br><span class="line">        bos.close();</span><br><span class="line">		&#x2F;&#x2F;写出去的消息的长度</span><br><span class="line">        int len &#x3D; bos.writtenBytes();</span><br><span class="line">        &#x2F;&#x2F;查看消息长度是否过长</span><br><span class="line">        checkPayload(channel, len);</span><br><span class="line">        Bytes.int2bytes(len, header, 12);</span><br><span class="line">        &#x2F;&#x2F;重置写入的位置</span><br><span class="line">        buffer.writerIndex(savedWriteIndex);</span><br><span class="line">        &#x2F;&#x2F;向buffer中写入消息头</span><br><span class="line">        buffer.writeBytes(header); &#x2F;&#x2F; write header.</span><br><span class="line">        &#x2F;&#x2F;buffer写出去的位置从writerIndex开始，加上header长度，加上数据长度</span><br><span class="line">        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);</span><br><span class="line">    &#125; catch (Throwable t) &#123;</span><br><span class="line">        &#x2F;&#x2F; 发送失败信息给Consumer，否则Consumer只能等超时了</span><br><span class="line">        if (! res.isEvent() &amp;&amp; res.getStatus() !&#x3D; Response.BAD_RESPONSE) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                &#x2F;&#x2F; FIXME 在Codec中打印出错日志？在IoHanndler的caught中统一处理？</span><br><span class="line">                logger.warn(&quot;Fail to encode response: &quot; + res + &quot;, send bad_response info instead, cause: &quot; + t.getMessage(), t);</span><br><span class="line"></span><br><span class="line">                Response r &#x3D; new Response(res.getId(), res.getVersion());</span><br><span class="line">                r.setStatus(Response.BAD_RESPONSE);</span><br><span class="line">                r.setErrorMessage(&quot;Failed to send response: &quot; + res + &quot;, cause: &quot; + StringUtils.toString(t));</span><br><span class="line">                channel.send(r);</span><br><span class="line"></span><br><span class="line">                return;</span><br><span class="line">            &#125; catch (RemotingException e) &#123;</span><br><span class="line">                logger.warn(&quot;Failed to send bad_response info back: &quot; + res + &quot;, cause: &quot; + e.getMessage(), e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 重新抛出收到的异常</span><br><span class="line">        if (t instanceof IOException) &#123;</span><br><span class="line">            throw (IOException) t;</span><br><span class="line">        &#125; else if (t instanceof RuntimeException) &#123;</span><br><span class="line">            throw (RuntimeException) t;</span><br><span class="line">        &#125; else if (t instanceof Error) &#123;</span><br><span class="line">            throw (Error) t;</span><br><span class="line">        &#125; else  &#123;</span><br><span class="line">            throw new RuntimeException(t.getMessage(), t);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="服务消费者对请求信息编码"><a href="#服务消费者对请求信息编码" class="headerlink" title="服务消费者对请求信息编码"></a>服务消费者对请求信息编码</h3><p>消费者端暂先不做解析</p>
-<h2 id="解码的过程"><a href="#解码的过程" class="headerlink" title="解码的过程"></a>解码的过程</h2><h3 id="服务提供者对请求消息的解码"><a href="#服务提供者对请求消息的解码" class="headerlink" title="服务提供者对请求消息的解码"></a>服务提供者对请求消息的解码</h3><p>decode方法一次只会解析一个完整的dubbo协议包，但是每次收到的协议包不一定是完整的，或者有可能是多个协议包。看下代码解析，首先看NettyCodecAdapter的内部类InternalDecoder的messageReceived方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">public void messageReceived(ChannelHandlerContext ctx, MessageEvent event) throws Exception &#123;</span><br><span class="line">    Object o &#x3D; event.getMessage();</span><br><span class="line">    if (! (o instanceof ChannelBuffer)) &#123;</span><br><span class="line">        ctx.sendUpstream(event);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ChannelBuffer input &#x3D; (ChannelBuffer) o;</span><br><span class="line">    int readable &#x3D; input.readableBytes();</span><br><span class="line">    if (readable &lt;&#x3D; 0) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    com.alibaba.dubbo.remoting.buffer.ChannelBuffer message;</span><br><span class="line">    if (buffer.readable()) &#123;</span><br><span class="line">        if (buffer instanceof DynamicChannelBuffer) &#123;</span><br><span class="line">            buffer.writeBytes(input.toByteBuffer());</span><br><span class="line">            message &#x3D; buffer;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            int size &#x3D; buffer.readableBytes() + input.readableBytes();</span><br><span class="line">            message &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.dynamicBuffer(</span><br><span class="line">                size &gt; bufferSize ? size : bufferSize);</span><br><span class="line">            message.writeBytes(buffer, buffer.readableBytes());</span><br><span class="line">            message.writeBytes(input.toByteBuffer());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        message &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.wrappedBuffer(</span><br><span class="line">            input.toByteBuffer());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    NettyChannel channel &#x3D; NettyChannel.getOrAddChannel(ctx.getChannel(), url, handler);</span><br><span class="line">    Object msg;</span><br><span class="line">    &#x2F;&#x2F;读索引</span><br><span class="line">    int saveReaderIndex;</span><br><span class="line">    try &#123;</span><br><span class="line">        do &#123;</span><br><span class="line">            saveReaderIndex &#x3D; message.readerIndex();</span><br><span class="line">            try &#123;</span><br><span class="line">            &#x2F;&#x2F;解码</span><br><span class="line">                msg &#x3D; codec.decode(channel, message);</span><br><span class="line">            &#125; catch (IOException e) &#123;</span><br><span class="line">                buffer &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;</span><br><span class="line">                throw e;</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F;不完整的协议包</span><br><span class="line">            if (msg &#x3D;&#x3D; Codec2.DecodeResult.NEED_MORE_INPUT) &#123;</span><br><span class="line">            	&#x2F;&#x2F;重置读索引</span><br><span class="line">                message.readerIndex(saveReaderIndex);</span><br><span class="line">                &#x2F;&#x2F;跳出循环，之后在finally中把message赋值给buffer保存起来，等到下次接收到数据包的时候会追加到buffer的后面</span><br><span class="line">                break;</span><br><span class="line">            &#125; else &#123;&#x2F;&#x2F;有多个协议包，触发messageReceived事件</span><br><span class="line">                if (saveReaderIndex &#x3D;&#x3D; message.readerIndex()) &#123;</span><br><span class="line">                    buffer &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;</span><br><span class="line">                    throw new IOException(&quot;Decode without read data.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                if (msg !&#x3D; null) &#123;</span><br><span class="line">                    Channels.fireMessageReceived(ctx, msg, event.getRemoteAddress());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; while (message.readable());</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        if (message.readable()) &#123;</span><br><span class="line">            message.discardReadBytes();</span><br><span class="line">            buffer &#x3D; message;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            buffer &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;</span><br><span class="line">        &#125;</span><br><span class="line">        NettyChannel.removeChannelIfDisconnected(ctx.getChannel());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>继续看<code>codec.decode(channel, message);</code>这里是DubboCountCodec的decode方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public Object decode(Channel channel, ChannelBuffer buffer) throws IOException &#123;</span><br><span class="line">	&#x2F;&#x2F;当前的读索引记录下来</span><br><span class="line">    int save &#x3D; buffer.readerIndex();</span><br><span class="line">    &#x2F;&#x2F;多消息</span><br><span class="line">    MultiMessage result &#x3D; MultiMessage.create();</span><br><span class="line">    do &#123;</span><br><span class="line">    	&#x2F;&#x2F;解码消息</span><br><span class="line">        Object obj &#x3D; codec.decode(channel, buffer);</span><br><span class="line">        &#x2F;&#x2F;不是完整的协议包</span><br><span class="line">        if (Codec2.DecodeResult.NEED_MORE_INPUT &#x3D;&#x3D; obj) &#123;</span><br><span class="line">            buffer.readerIndex(save);</span><br><span class="line">            break;</span><br><span class="line">        &#125; else &#123;&#x2F;&#x2F;多个协议包</span><br><span class="line">            result.addMessage(obj);</span><br><span class="line">            logMessageLength(obj, buffer.readerIndex() - save);</span><br><span class="line">            save &#x3D; buffer.readerIndex();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; while (true);</span><br><span class="line">    if (result.isEmpty()) &#123;</span><br><span class="line">        return Codec2.DecodeResult.NEED_MORE_INPUT;</span><br><span class="line">    &#125;</span><br><span class="line">    if (result.size() &#x3D;&#x3D; 1) &#123;</span><br><span class="line">        return result.get(0);</span><br><span class="line">    &#125;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>继续看ExchangeCodec的decode方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public Object decode(Channel channel, ChannelBuffer buffer) throws IOException &#123;</span><br><span class="line">	&#x2F;&#x2F;可读字节数</span><br><span class="line">    int readable &#x3D; buffer.readableBytes();</span><br><span class="line">    byte[] header &#x3D; new byte[Math.min(readable, HEADER_LENGTH)];</span><br><span class="line">    &#x2F;&#x2F;协议头</span><br><span class="line">    buffer.readBytes(header);</span><br><span class="line">    &#x2F;&#x2F;解码</span><br><span class="line">    return decode(channel, buffer, readable, header);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>解码decode：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException &#123;</span><br><span class="line">    &#x2F;&#x2F;检查魔数.</span><br><span class="line">    if (readable &gt; 0 &amp;&amp; header[0] !&#x3D; MAGIC_HIGH </span><br><span class="line">            || readable &gt; 1 &amp;&amp; header[1] !&#x3D; MAGIC_LOW) &#123;</span><br><span class="line">        int length &#x3D; header.length;</span><br><span class="line">        if (header.length &lt; readable) &#123;</span><br><span class="line">            header &#x3D; Bytes.copyOf(header, readable);</span><br><span class="line">            buffer.readBytes(header, length, readable - length);</span><br><span class="line">        &#125;</span><br><span class="line">        for (int i &#x3D; 1; i &lt; header.length - 1; i ++) &#123;</span><br><span class="line">            if (header[i] &#x3D;&#x3D; MAGIC_HIGH &amp;&amp; header[i + 1] &#x3D;&#x3D; MAGIC_LOW) &#123;</span><br><span class="line">                buffer.readerIndex(buffer.readerIndex() - header.length + i);</span><br><span class="line">                header &#x3D; Bytes.copyOf(header, i);</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;telenet</span><br><span class="line">        return super.decode(channel, buffer, readable, header);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;不完整的包</span><br><span class="line">    if (readable &lt; HEADER_LENGTH) &#123;</span><br><span class="line">        return DecodeResult.NEED_MORE_INPUT;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;数据长度</span><br><span class="line">    int len &#x3D; Bytes.bytes2int(header, 12);</span><br><span class="line">    checkPayload(channel, len);</span><br><span class="line"></span><br><span class="line">    int tt &#x3D; len + HEADER_LENGTH;</span><br><span class="line">    if( readable &lt; tt ) &#123;</span><br><span class="line">        return DecodeResult.NEED_MORE_INPUT;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; limit input stream.</span><br><span class="line">    ChannelBufferInputStream is &#x3D; new ChannelBufferInputStream(buffer, len);</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">    	&#x2F;&#x2F;解码数据</span><br><span class="line">        return decodeBody(channel, is, header);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        if (is.available() &gt; 0) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                StreamUtils.skipUnusedStream(is);</span><br><span class="line">            &#125; catch (IOException e) &#123; &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>decodeBody解析数据部分：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException &#123;</span><br><span class="line">    byte flag &#x3D; header[2], proto &#x3D; (byte) (flag &amp; SERIALIZATION_MASK);</span><br><span class="line">    &#x2F;&#x2F;获取序列化方式</span><br><span class="line">    Serialization s &#x3D; CodecSupport.getSerialization(channel.getUrl(), proto);</span><br><span class="line">    &#x2F;&#x2F;反序列化</span><br><span class="line">    ObjectInput in &#x3D; s.deserialize(channel.getUrl(), is);</span><br><span class="line">    &#x2F;&#x2F;获取请求id</span><br><span class="line">    long id &#x3D; Bytes.bytes2long(header, 4);</span><br><span class="line">    &#x2F;&#x2F;这里是解码响应数据</span><br><span class="line">    if ((flag &amp; FLAG_REQUEST) &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        &#x2F;&#x2F;response的id设为来时候的Request的id，这样才能对上暗号</span><br><span class="line">        Response res &#x3D; new Response(id);</span><br><span class="line">        &#x2F;&#x2F;判断是什么类型请求</span><br><span class="line">        if ((flag &amp; FLAG_EVENT) !&#x3D; 0) &#123;</span><br><span class="line">            res.setEvent(Response.HEARTBEAT_EVENT);</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;获取状态</span><br><span class="line">        byte status &#x3D; header[3];</span><br><span class="line">        res.setStatus(status);</span><br><span class="line">        if (status &#x3D;&#x3D; Response.OK) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                Object data;</span><br><span class="line">                if (res.isHeartbeat()) &#123;</span><br><span class="line">                	&#x2F;&#x2F;解码心跳数据</span><br><span class="line">                    data &#x3D; decodeHeartbeatData(channel, in);</span><br><span class="line">                &#125; else if (res.isEvent()) &#123;</span><br><span class="line">                	&#x2F;&#x2F;事件</span><br><span class="line">                    data &#x3D; decodeEventData(channel, in);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                	&#x2F;&#x2F;响应</span><br><span class="line">                    data &#x3D; decodeResponseData(channel, in, getRequestData(id));</span><br><span class="line">                &#125;</span><br><span class="line">                res.setResult(data);</span><br><span class="line">            &#125; catch (Throwable t) &#123;</span><br><span class="line">                res.setStatus(Response.CLIENT_ERROR);</span><br><span class="line">                res.setErrorMessage(StringUtils.toString(t));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            res.setErrorMessage(in.readUTF());</span><br><span class="line">        &#125;</span><br><span class="line">        return res;</span><br><span class="line">    &#125; else &#123;&#x2F;&#x2F;这是解码请求数据</span><br><span class="line">        &#x2F;&#x2F; request的id</span><br><span class="line">        Request req &#x3D; new Request(id);</span><br><span class="line">        req.setVersion(&quot;2.0.0&quot;);</span><br><span class="line">        req.setTwoWay((flag &amp; FLAG_TWOWAY) !&#x3D; 0);</span><br><span class="line">        if ((flag &amp; FLAG_EVENT) !&#x3D; 0) &#123;</span><br><span class="line">            req.setEvent(Request.HEARTBEAT_EVENT);</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            Object data;</span><br><span class="line">            if (req.isHeartbeat()) &#123;</span><br><span class="line">            	&#x2F;&#x2F;心跳</span><br><span class="line">                data &#x3D; decodeHeartbeatData(channel, in);</span><br><span class="line">            &#125; else if (req.isEvent()) &#123;</span><br><span class="line">            	&#x2F;&#x2F;事件</span><br><span class="line">                data &#x3D; decodeEventData(channel, in);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">            	&#x2F;&#x2F;请求</span><br><span class="line">                data &#x3D; decodeRequestData(channel, in);</span><br><span class="line">            &#125;</span><br><span class="line">            req.setData(data);</span><br><span class="line">        &#125; catch (Throwable t) &#123;</span><br><span class="line">            &#x2F;&#x2F; bad request</span><br><span class="line">            req.setBroken(true);</span><br><span class="line">            req.setData(t);</span><br><span class="line">        &#125;</span><br><span class="line">        return req;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>具体的解码细节交给底层解码器，这里是使用的hessian2。</p>
-<h3 id="服务消费者对响应消息的解码"><a href="#服务消费者对响应消息的解码" class="headerlink" title="服务消费者对响应消息的解码"></a>服务消费者对响应消息的解码</h3><p>暂先不做解释。</p>
-<p>协议头是16字节的定长数据：</p>
-<ul>
-<li><p>2字节short类型的Magic</p>
-</li>
-<li><p>1字节的消息标志位</p>
-<ul>
-<li>5位序列化id</li>
-<li>1位心跳还是正常请求</li>
-<li>1位双向还是单向</li>
-<li>1位请求还是响应</li>
-</ul>
-</li>
-<li><p>1字节的状态位</p>
-</li>
-<li><p>8字节的消息id</p>
-</li>
-<li><p>4字节数据长度</p>
-</li>
-</ul>
-<h2 id="编码的过程-1"><a href="#编码的过程-1" class="headerlink" title="编码的过程"></a>编码的过程</h2><p>首先会判断是请求还是响应，代码在ExchangeCodec的encode方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public void encode(Channel channel, ChannelBuffer buffer, Object msg) throws IOException &#123;</span><br><span class="line">    if (msg instanceof Request) &#123;&#x2F;&#x2F;Request类型</span><br><span class="line">        encodeRequest(channel, buffer, (Request) msg);</span><br><span class="line">    &#125; else if (msg instanceof Response) &#123;&#x2F;&#x2F;Response类型</span><br><span class="line">        encodeResponse(channel, buffer, (Response) msg);</span><br><span class="line">    &#125; else &#123;&#x2F;&#x2F;telenet类型的</span><br><span class="line">        super.encode(channel, buffer, msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="服务提供者对响应信息编码-1"><a href="#服务提供者对响应信息编码-1" class="headerlink" title="服务提供者对响应信息编码"></a>服务提供者对响应信息编码</h3><p>在服务提供者端一般是对响应来做编码，所以这里重点看下encodeResponse。</p>
-<p>encodeResponse：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">    	&#x2F;&#x2F;序列化方式</span><br><span class="line">        &#x2F;&#x2F;也是根据SPI扩展来获取，url中没指定的话默认使用hessian2</span><br><span class="line">        Serialization serialization &#x3D; getSerialization(channel);</span><br><span class="line">        &#x2F;&#x2F;长度为16字节的数组，协议头</span><br><span class="line">        byte[] header &#x3D; new byte[HEADER_LENGTH];</span><br><span class="line">        &#x2F;&#x2F;魔数0xdabb</span><br><span class="line">        Bytes.short2bytes(MAGIC, header);</span><br><span class="line">        &#x2F;&#x2F;序列化方式</span><br><span class="line">        header[2] &#x3D; serialization.getContentTypeId();</span><br><span class="line">        &#x2F;&#x2F;心跳消息还是正常消息</span><br><span class="line">        if (res.isHeartbeat()) header[2] |&#x3D; FLAG_EVENT;</span><br><span class="line">        &#x2F;&#x2F;响应状态</span><br><span class="line">        byte status &#x3D; res.getStatus();</span><br><span class="line">        header[3] &#x3D; status;</span><br><span class="line">        &#x2F;&#x2F;设置请求id</span><br><span class="line">        Bytes.long2bytes(res.getId(), header, 4);</span><br><span class="line">		&#x2F;&#x2F;buffer为1024字节的ChannelBuffer</span><br><span class="line">        &#x2F;&#x2F;获取buffer的写入位置</span><br><span class="line">        int savedWriteIndex &#x3D; buffer.writerIndex();</span><br><span class="line">        &#x2F;&#x2F;需要再加上协议头的长度之后，才是正确的写入位置</span><br><span class="line">        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH);</span><br><span class="line">        ChannelBufferOutputStream bos &#x3D; new ChannelBufferOutputStream(buffer);</span><br><span class="line">        ObjectOutput out &#x3D; serialization.serialize(channel.getUrl(), bos);</span><br><span class="line">        &#x2F;&#x2F; 对响应信息或者错误消息进行编码</span><br><span class="line">        if (status &#x3D;&#x3D; Response.OK) &#123;</span><br><span class="line">            if (res.isHeartbeat()) &#123;</span><br><span class="line">            	&#x2F;&#x2F;心跳</span><br><span class="line">                encodeHeartbeatData(channel, out, res.getResult());</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">            	&#x2F;&#x2F;正常响应</span><br><span class="line">                encodeResponseData(channel, out, res.getResult());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;错误消息</span><br><span class="line">        else out.writeUTF(res.getErrorMessage());</span><br><span class="line">        out.flushBuffer();</span><br><span class="line">        bos.flush();</span><br><span class="line">        bos.close();</span><br><span class="line">		&#x2F;&#x2F;写出去的消息的长度</span><br><span class="line">        int len &#x3D; bos.writtenBytes();</span><br><span class="line">        &#x2F;&#x2F;查看消息长度是否过长</span><br><span class="line">        checkPayload(channel, len);</span><br><span class="line">        Bytes.int2bytes(len, header, 12);</span><br><span class="line">        &#x2F;&#x2F;重置写入的位置</span><br><span class="line">        buffer.writerIndex(savedWriteIndex);</span><br><span class="line">        &#x2F;&#x2F;向buffer中写入消息头</span><br><span class="line">        buffer.writeBytes(header); &#x2F;&#x2F; write header.</span><br><span class="line">        &#x2F;&#x2F;buffer写出去的位置从writerIndex开始，加上header长度，加上数据长度</span><br><span class="line">        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);</span><br><span class="line">    &#125; catch (Throwable t) &#123;</span><br><span class="line">        &#x2F;&#x2F; 发送失败信息给Consumer，否则Consumer只能等超时了</span><br><span class="line">        if (! res.isEvent() &amp;&amp; res.getStatus() !&#x3D; Response.BAD_RESPONSE) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                &#x2F;&#x2F; FIXME 在Codec中打印出错日志？在IoHanndler的caught中统一处理？</span><br><span class="line">                logger.warn(&quot;Fail to encode response: &quot; + res + &quot;, send bad_response info instead, cause: &quot; + t.getMessage(), t);</span><br><span class="line"></span><br><span class="line">                Response r &#x3D; new Response(res.getId(), res.getVersion());</span><br><span class="line">                r.setStatus(Response.BAD_RESPONSE);</span><br><span class="line">                r.setErrorMessage(&quot;Failed to send response: &quot; + res + &quot;, cause: &quot; + StringUtils.toString(t));</span><br><span class="line">                channel.send(r);</span><br><span class="line"></span><br><span class="line">                return;</span><br><span class="line">            &#125; catch (RemotingException e) &#123;</span><br><span class="line">                logger.warn(&quot;Failed to send bad_response info back: &quot; + res + &quot;, cause: &quot; + e.getMessage(), e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F; 重新抛出收到的异常</span><br><span class="line">        if (t instanceof IOException) &#123;</span><br><span class="line">            throw (IOException) t;</span><br><span class="line">        &#125; else if (t instanceof RuntimeException) &#123;</span><br><span class="line">            throw (RuntimeException) t;</span><br><span class="line">        &#125; else if (t instanceof Error) &#123;</span><br><span class="line">            throw (Error) t;</span><br><span class="line">        &#125; else  &#123;</span><br><span class="line">            throw new RuntimeException(t.getMessage(), t);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="服务消费者对请求信息编码-1"><a href="#服务消费者对请求信息编码-1" class="headerlink" title="服务消费者对请求信息编码"></a>服务消费者对请求信息编码</h3><p>消费者端暂先不做解析</p>
-<h2 id="解码的过程-1"><a href="#解码的过程-1" class="headerlink" title="解码的过程"></a>解码的过程</h2><h3 id="服务提供者对请求消息的解码-1"><a href="#服务提供者对请求消息的解码-1" class="headerlink" title="服务提供者对请求消息的解码"></a>服务提供者对请求消息的解码</h3><p>decode方法一次只会解析一个完整的dubbo协议包，但是每次收到的协议包不一定是完整的，或者有可能是多个协议包。看下代码解析，首先看NettyCodecAdapter的内部类InternalDecoder的messageReceived方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">public void messageReceived(ChannelHandlerContext ctx, MessageEvent event) throws Exception &#123;</span><br><span class="line">    Object o &#x3D; event.getMessage();</span><br><span class="line">    if (! (o instanceof ChannelBuffer)) &#123;</span><br><span class="line">        ctx.sendUpstream(event);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ChannelBuffer input &#x3D; (ChannelBuffer) o;</span><br><span class="line">    int readable &#x3D; input.readableBytes();</span><br><span class="line">    if (readable &lt;&#x3D; 0) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    com.alibaba.dubbo.remoting.buffer.ChannelBuffer message;</span><br><span class="line">    if (buffer.readable()) &#123;</span><br><span class="line">        if (buffer instanceof DynamicChannelBuffer) &#123;</span><br><span class="line">            buffer.writeBytes(input.toByteBuffer());</span><br><span class="line">            message &#x3D; buffer;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            int size &#x3D; buffer.readableBytes() + input.readableBytes();</span><br><span class="line">            message &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.dynamicBuffer(</span><br><span class="line">                size &gt; bufferSize ? size : bufferSize);</span><br><span class="line">            message.writeBytes(buffer, buffer.readableBytes());</span><br><span class="line">            message.writeBytes(input.toByteBuffer());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        message &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.wrappedBuffer(</span><br><span class="line">            input.toByteBuffer());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    NettyChannel channel &#x3D; NettyChannel.getOrAddChannel(ctx.getChannel(), url, handler);</span><br><span class="line">    Object msg;</span><br><span class="line">    &#x2F;&#x2F;读索引</span><br><span class="line">    int saveReaderIndex;</span><br><span class="line">    try &#123;</span><br><span class="line">        do &#123;</span><br><span class="line">            saveReaderIndex &#x3D; message.readerIndex();</span><br><span class="line">            try &#123;</span><br><span class="line">            &#x2F;&#x2F;解码</span><br><span class="line">                msg &#x3D; codec.decode(channel, message);</span><br><span class="line">            &#125; catch (IOException e) &#123;</span><br><span class="line">                buffer &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;</span><br><span class="line">                throw e;</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F;不完整的协议包</span><br><span class="line">            if (msg &#x3D;&#x3D; Codec2.DecodeResult.NEED_MORE_INPUT) &#123;</span><br><span class="line">            	&#x2F;&#x2F;重置读索引</span><br><span class="line">                message.readerIndex(saveReaderIndex);</span><br><span class="line">                &#x2F;&#x2F;跳出循环，之后在finally中把message赋值给buffer保存起来，等到下次接收到数据包的时候会追加到buffer的后面</span><br><span class="line">                break;</span><br><span class="line">            &#125; else &#123;&#x2F;&#x2F;有多个协议包，触发messageReceived事件</span><br><span class="line">                if (saveReaderIndex &#x3D;&#x3D; message.readerIndex()) &#123;</span><br><span class="line">                    buffer &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;</span><br><span class="line">                    throw new IOException(&quot;Decode without read data.&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                if (msg !&#x3D; null) &#123;</span><br><span class="line">                    Channels.fireMessageReceived(ctx, msg, event.getRemoteAddress());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; while (message.readable());</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        if (message.readable()) &#123;</span><br><span class="line">            message.discardReadBytes();</span><br><span class="line">            buffer &#x3D; message;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            buffer &#x3D; com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;</span><br><span class="line">        &#125;</span><br><span class="line">        NettyChannel.removeChannelIfDisconnected(ctx.getChannel());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>继续看<code>codec.decode(channel, message);</code>这里是DubboCountCodec的decode方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public Object decode(Channel channel, ChannelBuffer buffer) throws IOException &#123;</span><br><span class="line">	&#x2F;&#x2F;当前的读索引记录下来</span><br><span class="line">    int save &#x3D; buffer.readerIndex();</span><br><span class="line">    &#x2F;&#x2F;多消息</span><br><span class="line">    MultiMessage result &#x3D; MultiMessage.create();</span><br><span class="line">    do &#123;</span><br><span class="line">    	&#x2F;&#x2F;解码消息</span><br><span class="line">        Object obj &#x3D; codec.decode(channel, buffer);</span><br><span class="line">        &#x2F;&#x2F;不是完整的协议包</span><br><span class="line">        if (Codec2.DecodeResult.NEED_MORE_INPUT &#x3D;&#x3D; obj) &#123;</span><br><span class="line">            buffer.readerIndex(save);</span><br><span class="line">            break;</span><br><span class="line">        &#125; else &#123;&#x2F;&#x2F;多个协议包</span><br><span class="line">            result.addMessage(obj);</span><br><span class="line">            logMessageLength(obj, buffer.readerIndex() - save);</span><br><span class="line">            save &#x3D; buffer.readerIndex();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; while (true);</span><br><span class="line">    if (result.isEmpty()) &#123;</span><br><span class="line">        return Codec2.DecodeResult.NEED_MORE_INPUT;</span><br><span class="line">    &#125;</span><br><span class="line">    if (result.size() &#x3D;&#x3D; 1) &#123;</span><br><span class="line">        return result.get(0);</span><br><span class="line">    &#125;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>继续看ExchangeCodec的decode方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public Object decode(Channel channel, ChannelBuffer buffer) throws IOException &#123;</span><br><span class="line">	&#x2F;&#x2F;可读字节数</span><br><span class="line">    int readable &#x3D; buffer.readableBytes();</span><br><span class="line">    byte[] header &#x3D; new byte[Math.min(readable, HEADER_LENGTH)];</span><br><span class="line">    &#x2F;&#x2F;协议头</span><br><span class="line">    buffer.readBytes(header);</span><br><span class="line">    &#x2F;&#x2F;解码</span><br><span class="line">    return decode(channel, buffer, readable, header);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>解码decode：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException &#123;</span><br><span class="line">    &#x2F;&#x2F;检查魔数.</span><br><span class="line">    if (readable &gt; 0 &amp;&amp; header[0] !&#x3D; MAGIC_HIGH </span><br><span class="line">            || readable &gt; 1 &amp;&amp; header[1] !&#x3D; MAGIC_LOW) &#123;</span><br><span class="line">        int length &#x3D; header.length;</span><br><span class="line">        if (header.length &lt; readable) &#123;</span><br><span class="line">            header &#x3D; Bytes.copyOf(header, readable);</span><br><span class="line">            buffer.readBytes(header, length, readable - length);</span><br><span class="line">        &#125;</span><br><span class="line">        for (int i &#x3D; 1; i &lt; header.length - 1; i ++) &#123;</span><br><span class="line">            if (header[i] &#x3D;&#x3D; MAGIC_HIGH &amp;&amp; header[i + 1] &#x3D;&#x3D; MAGIC_LOW) &#123;</span><br><span class="line">                buffer.readerIndex(buffer.readerIndex() - header.length + i);</span><br><span class="line">                header &#x3D; Bytes.copyOf(header, i);</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;telenet</span><br><span class="line">        return super.decode(channel, buffer, readable, header);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;不完整的包</span><br><span class="line">    if (readable &lt; HEADER_LENGTH) &#123;</span><br><span class="line">        return DecodeResult.NEED_MORE_INPUT;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;数据长度</span><br><span class="line">    int len &#x3D; Bytes.bytes2int(header, 12);</span><br><span class="line">    checkPayload(channel, len);</span><br><span class="line"></span><br><span class="line">    int tt &#x3D; len + HEADER_LENGTH;</span><br><span class="line">    if( readable &lt; tt ) &#123;</span><br><span class="line">        return DecodeResult.NEED_MORE_INPUT;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; limit input stream.</span><br><span class="line">    ChannelBufferInputStream is &#x3D; new ChannelBufferInputStream(buffer, len);</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">    	&#x2F;&#x2F;解码数据</span><br><span class="line">        return decodeBody(channel, is, header);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        if (is.available() &gt; 0) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                StreamUtils.skipUnusedStream(is);</span><br><span class="line">            &#125; catch (IOException e) &#123; &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>decodeBody解析数据部分：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException &#123;</span><br><span class="line">    byte flag &#x3D; header[2], proto &#x3D; (byte) (flag &amp; SERIALIZATION_MASK);</span><br><span class="line">    &#x2F;&#x2F;获取序列化方式</span><br><span class="line">    Serialization s &#x3D; CodecSupport.getSerialization(channel.getUrl(), proto);</span><br><span class="line">    &#x2F;&#x2F;反序列化</span><br><span class="line">    ObjectInput in &#x3D; s.deserialize(channel.getUrl(), is);</span><br><span class="line">    &#x2F;&#x2F;获取请求id</span><br><span class="line">    long id &#x3D; Bytes.bytes2long(header, 4);</span><br><span class="line">    &#x2F;&#x2F;这里是解码响应数据</span><br><span class="line">    if ((flag &amp; FLAG_REQUEST) &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        &#x2F;&#x2F;response的id设为来时候的Request的id，这样才能对上暗号</span><br><span class="line">        Response res &#x3D; new Response(id);</span><br><span class="line">        &#x2F;&#x2F;判断是什么类型请求</span><br><span class="line">        if ((flag &amp; FLAG_EVENT) !&#x3D; 0) &#123;</span><br><span class="line">            res.setEvent(Response.HEARTBEAT_EVENT);</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;获取状态</span><br><span class="line">        byte status &#x3D; header[3];</span><br><span class="line">        res.setStatus(status);</span><br><span class="line">        if (status &#x3D;&#x3D; Response.OK) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                Object data;</span><br><span class="line">                if (res.isHeartbeat()) &#123;</span><br><span class="line">                	&#x2F;&#x2F;解码心跳数据</span><br><span class="line">                    data &#x3D; decodeHeartbeatData(channel, in);</span><br><span class="line">                &#125; else if (res.isEvent()) &#123;</span><br><span class="line">                	&#x2F;&#x2F;事件</span><br><span class="line">                    data &#x3D; decodeEventData(channel, in);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                	&#x2F;&#x2F;响应</span><br><span class="line">                    data &#x3D; decodeResponseData(channel, in, getRequestData(id));</span><br><span class="line">                &#125;</span><br><span class="line">                res.setResult(data);</span><br><span class="line">            &#125; catch (Throwable t) &#123;</span><br><span class="line">                res.setStatus(Response.CLIENT_ERROR);</span><br><span class="line">                res.setErrorMessage(StringUtils.toString(t));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            res.setErrorMessage(in.readUTF());</span><br><span class="line">        &#125;</span><br><span class="line">        return res;</span><br><span class="line">    &#125; else &#123;&#x2F;&#x2F;这是解码请求数据</span><br><span class="line">        &#x2F;&#x2F; request的id</span><br><span class="line">        Request req &#x3D; new Request(id);</span><br><span class="line">        req.setVersion(&quot;2.0.0&quot;);</span><br><span class="line">        req.setTwoWay((flag &amp; FLAG_TWOWAY) !&#x3D; 0);</span><br><span class="line">        if ((flag &amp; FLAG_EVENT) !&#x3D; 0) &#123;</span><br><span class="line">            req.setEvent(Request.HEARTBEAT_EVENT);</span><br><span class="line">        &#125;</span><br><span class="line">        try &#123;</span><br><span class="line">            Object data;</span><br><span class="line">            if (req.isHeartbeat()) &#123;</span><br><span class="line">            	&#x2F;&#x2F;心跳</span><br><span class="line">                data &#x3D; decodeHeartbeatData(channel, in);</span><br><span class="line">            &#125; else if (req.isEvent()) &#123;</span><br><span class="line">            	&#x2F;&#x2F;事件</span><br><span class="line">                data &#x3D; decodeEventData(channel, in);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">            	&#x2F;&#x2F;请求</span><br><span class="line">                data &#x3D; decodeRequestData(channel, in);</span><br><span class="line">            &#125;</span><br><span class="line">            req.setData(data);</span><br><span class="line">        &#125; catch (Throwable t) &#123;</span><br><span class="line">            &#x2F;&#x2F; bad request</span><br><span class="line">            req.setBroken(true);</span><br><span class="line">            req.setData(t);</span><br><span class="line">        &#125;</span><br><span class="line">        return req;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>具体的解码细节交给底层解码器，这里是使用的hessian2。</p>
-<h3 id="服务消费者对响应消息的解码-1"><a href="#服务消费者对响应消息的解码-1" class="headerlink" title="服务消费者对响应消息的解码"></a>服务消费者对响应消息的解码</h3><p>暂先不做解释。</p>
-
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/dubbo%E6%BA%90%E7%A0%81/" rel="tag"># dubbo源码</a>
-              <a href="/tags/dubbo%E7%BC%96%E8%A7%A3%E7%A0%81/" rel="tag"># dubbo编解码</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/" rel="prev" title="Netty3服务端流程简介">
-      <i class="fa fa-chevron-left"></i> Netty3服务端流程简介
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" rel="next" title="Dubbo中消费者初始化的过程解析">
-      Dubbo中消费者初始化的过程解析 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Dubbo中编码和解码的解析</h1>
+			<b><time>2017-03-19 23:25:51</time></b>
+		       
+		           <a href="/tags/dubbo%E7%BC%96%E8%A7%A3%E7%A0%81">dubbo编解码</a>
+        	       
+		           <a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
+        	       
+
+			<div>
+				<p>（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2相关的内容是在服务端暴露服务的时候，根据具体的协议去暴露服务的步骤中，在DubboProtocol的createServer方法中：</p>
+<!-- raw HTML omitted -->
+<pre><code>private ExchangeServer createServer(URL url) {
+	。。。
+    //这里url会添加codec=dubbo
+    url = url.addParameter(Constants.CODEC_KEY, Version.isCompatibleVersion() ? COMPATIBLE_CODEC_NAME : DubboCodec.NAME);
+    ExchangeServer server;
+    try {
+        server = Exchangers.bind(url, requestHandler);
     }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#dubbo协议头"><span class="nav-number">1.</span> <span class="nav-text">dubbo协议头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dubbo协议头-1"><span class="nav-number">2.</span> <span class="nav-text">dubbo协议头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编码的过程"><span class="nav-number">3.</span> <span class="nav-text">编码的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#服务提供者对响应信息编码"><span class="nav-number">3.1.</span> <span class="nav-text">服务提供者对响应信息编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务消费者对请求信息编码"><span class="nav-number">3.2.</span> <span class="nav-text">服务消费者对请求信息编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解码的过程"><span class="nav-number">4.</span> <span class="nav-text">解码的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#服务提供者对请求消息的解码"><span class="nav-number">4.1.</span> <span class="nav-text">服务提供者对请求消息的解码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务消费者对响应消息的解码"><span class="nav-number">4.2.</span> <span class="nav-text">服务消费者对响应消息的解码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编码的过程-1"><span class="nav-number">5.</span> <span class="nav-text">编码的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#服务提供者对响应信息编码-1"><span class="nav-number">5.1.</span> <span class="nav-text">服务提供者对响应信息编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务消费者对请求信息编码-1"><span class="nav-number">5.2.</span> <span class="nav-text">服务消费者对请求信息编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解码的过程-1"><span class="nav-number">6.</span> <span class="nav-text">解码的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#服务提供者对请求消息的解码-1"><span class="nav-number">6.1.</span> <span class="nav-text">服务提供者对请求消息的解码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务消费者对响应消息的解码-1"><span class="nav-number">6.2.</span> <span class="nav-text">服务消费者对响应消息的解码</span></a></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/";
-    this.page.identifier = "2017/03/19/Dubbo中编码和解码的解析/";
-    this.page.title = "Dubbo中编码和解码的解析";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
+    。。。
+    return server;
+}
+</code></pre><p>紧接着进入<code>Exchangers.bind(url, requestHandler);</code>：</p>
+<pre><code>public static ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
+	//如果url中没有codec属性，就会添加codec=exchange
+    url = url.addParameterIfAbsent(Constants.CODEC_KEY, &quot;exchange&quot;);
+    return getExchanger(url).bind(url, handler);
+}
+</code></pre><p>然后会继续进入HeaderExchanger的bind方法：</p>
+<pre><code>public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
+    return new HeaderExchangeServer(Transporters.bind(url, new DecodeHandler(new HeaderExchangeHandler(handler))));
+}
+</code></pre><p>在这里会创建一个DecodeHandler实例。继续跟踪Transporters的bind方法，会发现直接返回一个NettyServer实例，在NettyServer的父类AbstractEndpoint构造方法初始的时候，会根据url获取一个ChannelCodec，并将其赋值给codec存放到NettyServer的实例中。</p>
+<p>我们先看下<code>getChannelCodec(url);</code>方法：</p>
+<pre><code>protected static Codec2 getChannelCodec(URL url) {
+	//获取codecName，不存在的话，默认为telnet
+    String codecName = url.getParameter(Constants.CODEC_KEY, &quot;telnet&quot;);
+    //先看下是不是Codec2的实现，是的话就根据SPI扩展机制获得Codec2扩展的实现
+    //我们这里默认使用的是DubboCountCodec
+    if (ExtensionLoader.getExtensionLoader(Codec2.class).hasExtension(codecName)) {
+        return ExtensionLoader.getExtensionLoader(Codec2.class).getExtension(codecName);
     } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
+    	//如果不是Codec2的实现，就去查找Codec的实现
+        //然后使用CodecAdapter适配器类来转换成Codec2
+        return new CodecAdapter(ExtensionLoader.getExtensionLoader(Codec.class)
+                                           .getExtension(codecName));
     }
-  });
-</script>
+}
+</code></pre><p>这里返回的是Codec2，而Codec这个接口已经被标记为过时。到这里的话，在NettyServer中就会存在一个Codec2的实例了。</p>
+<p>在继续往下看到NettyServer中的doOpen()方法，这里是使用Netty的逻辑打开服务并绑定监听服务的地方：</p>
+<pre><code>protected void doOpen() throws Throwable {
+    NettyHelper.setNettyLoggerFactory();
+    ExecutorService boss = Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerBoss&quot;, true));
+    ExecutorService worker = Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerWorker&quot;, true));
+    ChannelFactory channelFactory = new NioServerSocketChannelFactory(boss, worker, getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS));
+    bootstrap = new ServerBootstrap(channelFactory);
 
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+    final NettyHandler nettyHandler = new NettyHandler(getUrl(), this);
+    channels = nettyHandler.getChannels();
+    bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
+        public ChannelPipeline getPipeline() {
+        	//这里的getCodec方法获取到的codec就是在AbstractEndpoint中我们获取到的codec
+            //NettyCodecAdapter，适配器类
+            NettyCodecAdapter adapter = new NettyCodecAdapter(getCodec() ,getUrl(), NettyServer.this);
+            ChannelPipeline pipeline = Channels.pipeline();
+            pipeline.addLast(&quot;decoder&quot;, adapter.getDecoder());//SimpleChannelUpstreamHandler
+            pipeline.addLast(&quot;encoder&quot;, adapter.getEncoder());//OneToOneEncoder
+            pipeline.addLast(&quot;handler&quot;, nettyHandler);
+            return pipeline;
+        }
+    });
+    // bind
+    channel = bootstrap.bind(getBindAddress());
+}
+</code></pre><p>这里就在Netty的pipeline中添加了编解码器。这里涉及到Netty的相关流程，可以先了解下<a href="http://cxis.me/2017/03/20/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/">Netty3服务端流程简介</a>。</p>
+<p>decoder为解码器，是一个SimpleChannelUpstreamHandler，从Socket到Netty中的时候，需要解码，也就是服务提供端接收到消费者的请求的时候，需要解码。</p>
+<p>encoder是编码器，是OneToOneEncoder，这个类实现了ChannelDownstreamHandler，从服务提供端发送给服务消费者的时候，需要编码。</p>
+<p>nettyHandler实现了ChannelUpstreamHandler, ChannelDownstreamHandler两个，上下的时候都需要处理。</p>
+<p>接收到服务消费者的请求的时候，会先执行decoder，然后执行nettyHandler。</p>
+<p>发送给消费者的时候，会先执行nettyHandler，然后执行encoder。</p>
+<h2 id="dubbo协议头">dubbo协议头</h2>
+<p>
+<figure>
+  <img src="dubbo_protocol_header.jpg" alt="dubbo协议头示意图" />
+</figure>
+
+
+</p>
+<p>协议头是16字节的定长数据：</p>
+<ul>
+<li>
+<p>2字节short类型的Magic</p>
+</li>
+<li>
+<p>1字节的消息标志位</p>
+<ul>
+<li>5位序列化id</li>
+<li>1位心跳还是正常请求</li>
+<li>1位双向还是单向</li>
+<li>1位请求还是响应</li>
+</ul>
+</li>
+<li>
+<p>1字节的状态位</p>
+</li>
+<li>
+<p>8字节的消息id</p>
+</li>
+<li>
+<p>4字节数据长度</p>
+</li>
+</ul>
+<h2 id="编码的过程">编码的过程</h2>
+<p>首先会判断是请求还是响应，代码在ExchangeCodec的encode方法：</p>
+<pre><code>public void encode(Channel channel, ChannelBuffer buffer, Object msg) throws IOException {
+    if (msg instanceof Request) {//Request类型
+        encodeRequest(channel, buffer, (Request) msg);
+    } else if (msg instanceof Response) {//Response类型
+        encodeResponse(channel, buffer, (Response) msg);
+    } else {//telenet类型的
+        super.encode(channel, buffer, msg);
+    }
+}
+</code></pre><h3 id="服务提供者对响应信息编码">服务提供者对响应信息编码</h3>
+<p>在服务提供者端一般是对响应来做编码，所以这里重点看下encodeResponse。</p>
+<p>encodeResponse：</p>
+<pre><code>protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException {
+    try {
+    	//序列化方式
+        //也是根据SPI扩展来获取，url中没指定的话默认使用hessian2
+        Serialization serialization = getSerialization(channel);
+        //长度为16字节的数组，协议头
+        byte[] header = new byte[HEADER_LENGTH];
+        //魔数0xdabb
+        Bytes.short2bytes(MAGIC, header);
+        //序列化方式
+        header[2] = serialization.getContentTypeId();
+        //心跳消息还是正常消息
+        if (res.isHeartbeat()) header[2] |= FLAG_EVENT;
+        //响应状态
+        byte status = res.getStatus();
+        header[3] = status;
+        //设置请求id
+        Bytes.long2bytes(res.getId(), header, 4);
+		//buffer为1024字节的ChannelBuffer
+        //获取buffer的写入位置
+        int savedWriteIndex = buffer.writerIndex();
+        //需要再加上协议头的长度之后，才是正确的写入位置
+        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH);
+        ChannelBufferOutputStream bos = new ChannelBufferOutputStream(buffer);
+        ObjectOutput out = serialization.serialize(channel.getUrl(), bos);
+        // 对响应信息或者错误消息进行编码
+        if (status == Response.OK) {
+            if (res.isHeartbeat()) {
+            	//心跳
+                encodeHeartbeatData(channel, out, res.getResult());
+            } else {
+            	//正常响应
+                encodeResponseData(channel, out, res.getResult());
+            }
+        }
+        //错误消息
+        else out.writeUTF(res.getErrorMessage());
+        out.flushBuffer();
+        bos.flush();
+        bos.close();
+		//写出去的消息的长度
+        int len = bos.writtenBytes();
+        //查看消息长度是否过长
+        checkPayload(channel, len);
+        Bytes.int2bytes(len, header, 12);
+        //重置写入的位置
+        buffer.writerIndex(savedWriteIndex);
+        //向buffer中写入消息头
+        buffer.writeBytes(header); // write header.
+        //buffer写出去的位置从writerIndex开始，加上header长度，加上数据长度
+        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
+    } catch (Throwable t) {
+        // 发送失败信息给Consumer，否则Consumer只能等超时了
+        if (! res.isEvent() &amp;&amp; res.getStatus() != Response.BAD_RESPONSE) {
+            try {
+                // FIXME 在Codec中打印出错日志？在IoHanndler的caught中统一处理？
+                logger.warn(&quot;Fail to encode response: &quot; + res + &quot;, send bad_response info instead, cause: &quot; + t.getMessage(), t);
+
+                Response r = new Response(res.getId(), res.getVersion());
+                r.setStatus(Response.BAD_RESPONSE);
+                r.setErrorMessage(&quot;Failed to send response: &quot; + res + &quot;, cause: &quot; + StringUtils.toString(t));
+                channel.send(r);
+
+                return;
+            } catch (RemotingException e) {
+                logger.warn(&quot;Failed to send bad_response info back: &quot; + res + &quot;, cause: &quot; + e.getMessage(), e);
+            }
+        }
+
+        // 重新抛出收到的异常
+        if (t instanceof IOException) {
+            throw (IOException) t;
+        } else if (t instanceof RuntimeException) {
+            throw (RuntimeException) t;
+        } else if (t instanceof Error) {
+            throw (Error) t;
+        } else  {
+            throw new RuntimeException(t.getMessage(), t);
+        }
+    }
+}
+</code></pre><h3 id="服务消费者对请求信息编码">服务消费者对请求信息编码</h3>
+<p>消费者端暂先不做解析</p>
+<h2 id="解码的过程">解码的过程</h2>
+<h3 id="服务提供者对请求消息的解码">服务提供者对请求消息的解码</h3>
+<p>decode方法一次只会解析一个完整的dubbo协议包，但是每次收到的协议包不一定是完整的，或者有可能是多个协议包。看下代码解析，首先看NettyCodecAdapter的内部类InternalDecoder的messageReceived方法：</p>
+<pre><code>public void messageReceived(ChannelHandlerContext ctx, MessageEvent event) throws Exception {
+    Object o = event.getMessage();
+    if (! (o instanceof ChannelBuffer)) {
+        ctx.sendUpstream(event);
+        return;
+    }
+
+    ChannelBuffer input = (ChannelBuffer) o;
+    int readable = input.readableBytes();
+    if (readable &lt;= 0) {
+        return;
+    }
+
+    com.alibaba.dubbo.remoting.buffer.ChannelBuffer message;
+    if (buffer.readable()) {
+        if (buffer instanceof DynamicChannelBuffer) {
+            buffer.writeBytes(input.toByteBuffer());
+            message = buffer;
+        } else {
+            int size = buffer.readableBytes() + input.readableBytes();
+            message = com.alibaba.dubbo.remoting.buffer.ChannelBuffers.dynamicBuffer(
+                size &gt; bufferSize ? size : bufferSize);
+            message.writeBytes(buffer, buffer.readableBytes());
+            message.writeBytes(input.toByteBuffer());
+        }
+    } else {
+        message = com.alibaba.dubbo.remoting.buffer.ChannelBuffers.wrappedBuffer(
+            input.toByteBuffer());
+    }
+
+    NettyChannel channel = NettyChannel.getOrAddChannel(ctx.getChannel(), url, handler);
+    Object msg;
+    //读索引
+    int saveReaderIndex;
+    try {
+        do {
+            saveReaderIndex = message.readerIndex();
+            try {
+            //解码
+                msg = codec.decode(channel, message);
+            } catch (IOException e) {
+                buffer = com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;
+                throw e;
+            }
+            //不完整的协议包
+            if (msg == Codec2.DecodeResult.NEED_MORE_INPUT) {
+            	//重置读索引
+                message.readerIndex(saveReaderIndex);
+                //跳出循环，之后在finally中把message赋值给buffer保存起来，等到下次接收到数据包的时候会追加到buffer的后面
+                break;
+            } else {//有多个协议包，触发messageReceived事件
+                if (saveReaderIndex == message.readerIndex()) {
+                    buffer = com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;
+                    throw new IOException(&quot;Decode without read data.&quot;);
+                }
+                if (msg != null) {
+                    Channels.fireMessageReceived(ctx, msg, event.getRemoteAddress());
+                }
+            }
+        } while (message.readable());
+    } finally {
+        if (message.readable()) {
+            message.discardReadBytes();
+            buffer = message;
+        } else {
+            buffer = com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;
+        }
+        NettyChannel.removeChannelIfDisconnected(ctx.getChannel());
+    }
+}
+</code></pre><p>继续看<code>codec.decode(channel, message);</code>这里是DubboCountCodec的decode方法：</p>
+<pre><code>public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
+	//当前的读索引记录下来
+    int save = buffer.readerIndex();
+    //多消息
+    MultiMessage result = MultiMessage.create();
+    do {
+    	//解码消息
+        Object obj = codec.decode(channel, buffer);
+        //不是完整的协议包
+        if (Codec2.DecodeResult.NEED_MORE_INPUT == obj) {
+            buffer.readerIndex(save);
+            break;
+        } else {//多个协议包
+            result.addMessage(obj);
+            logMessageLength(obj, buffer.readerIndex() - save);
+            save = buffer.readerIndex();
+        }
+    } while (true);
+    if (result.isEmpty()) {
+        return Codec2.DecodeResult.NEED_MORE_INPUT;
+    }
+    if (result.size() == 1) {
+        return result.get(0);
+    }
+    return result;
+}
+</code></pre><p>继续看ExchangeCodec的decode方法：</p>
+<pre><code>public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
+	//可读字节数
+    int readable = buffer.readableBytes();
+    byte[] header = new byte[Math.min(readable, HEADER_LENGTH)];
+    //协议头
+    buffer.readBytes(header);
+    //解码
+    return decode(channel, buffer, readable, header);
+}
+</code></pre><p>解码decode：</p>
+<pre><code>protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException {
+    //检查魔数.
+    if (readable &gt; 0 &amp;&amp; header[0] != MAGIC_HIGH 
+            || readable &gt; 1 &amp;&amp; header[1] != MAGIC_LOW) {
+        int length = header.length;
+        if (header.length &lt; readable) {
+            header = Bytes.copyOf(header, readable);
+            buffer.readBytes(header, length, readable - length);
+        }
+        for (int i = 1; i &lt; header.length - 1; i ++) {
+            if (header[i] == MAGIC_HIGH &amp;&amp; header[i + 1] == MAGIC_LOW) {
+                buffer.readerIndex(buffer.readerIndex() - header.length + i);
+                header = Bytes.copyOf(header, i);
+                break;
+            }
+        }
+        //telenet
+        return super.decode(channel, buffer, readable, header);
+    }
+    //不完整的包
+    if (readable &lt; HEADER_LENGTH) {
+        return DecodeResult.NEED_MORE_INPUT;
+    }
+
+    //数据长度
+    int len = Bytes.bytes2int(header, 12);
+    checkPayload(channel, len);
+
+    int tt = len + HEADER_LENGTH;
+    if( readable &lt; tt ) {
+        return DecodeResult.NEED_MORE_INPUT;
+    }
+
+    // limit input stream.
+    ChannelBufferInputStream is = new ChannelBufferInputStream(buffer, len);
+
+    try {
+    	//解码数据
+        return decodeBody(channel, is, header);
+    } finally {
+        if (is.available() &gt; 0) {
+            try {
+                StreamUtils.skipUnusedStream(is);
+            } catch (IOException e) { }
+        }
+    }
+}
+</code></pre><p>decodeBody解析数据部分：</p>
+<pre><code>protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException {
+    byte flag = header[2], proto = (byte) (flag &amp; SERIALIZATION_MASK);
+    //获取序列化方式
+    Serialization s = CodecSupport.getSerialization(channel.getUrl(), proto);
+    //反序列化
+    ObjectInput in = s.deserialize(channel.getUrl(), is);
+    //获取请求id
+    long id = Bytes.bytes2long(header, 4);
+    //这里是解码响应数据
+    if ((flag &amp; FLAG_REQUEST) == 0) {
+        //response的id设为来时候的Request的id，这样才能对上暗号
+        Response res = new Response(id);
+        //判断是什么类型请求
+        if ((flag &amp; FLAG_EVENT) != 0) {
+            res.setEvent(Response.HEARTBEAT_EVENT);
+        }
+        //获取状态
+        byte status = header[3];
+        res.setStatus(status);
+        if (status == Response.OK) {
+            try {
+                Object data;
+                if (res.isHeartbeat()) {
+                	//解码心跳数据
+                    data = decodeHeartbeatData(channel, in);
+                } else if (res.isEvent()) {
+                	//事件
+                    data = decodeEventData(channel, in);
+                } else {
+                	//响应
+                    data = decodeResponseData(channel, in, getRequestData(id));
+                }
+                res.setResult(data);
+            } catch (Throwable t) {
+                res.setStatus(Response.CLIENT_ERROR);
+                res.setErrorMessage(StringUtils.toString(t));
+            }
+        } else {
+            res.setErrorMessage(in.readUTF());
+        }
+        return res;
+    } else {//这是解码请求数据
+        // request的id
+        Request req = new Request(id);
+        req.setVersion(&quot;2.0.0&quot;);
+        req.setTwoWay((flag &amp; FLAG_TWOWAY) != 0);
+        if ((flag &amp; FLAG_EVENT) != 0) {
+            req.setEvent(Request.HEARTBEAT_EVENT);
+        }
+        try {
+            Object data;
+            if (req.isHeartbeat()) {
+            	//心跳
+                data = decodeHeartbeatData(channel, in);
+            } else if (req.isEvent()) {
+            	//事件
+                data = decodeEventData(channel, in);
+            } else {
+            	//请求
+                data = decodeRequestData(channel, in);
+            }
+            req.setData(data);
+        } catch (Throwable t) {
+            // bad request
+            req.setBroken(true);
+            req.setData(t);
+        }
+        return req;
+    }
+}
+</code></pre><p>具体的解码细节交给底层解码器，这里是使用的hessian2。</p>
+<h3 id="服务消费者对响应消息的解码">服务消费者对响应消息的解码</h3>
+<p>暂先不做解释。</p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
 </body>
 </html>

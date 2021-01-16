@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Lucene中的索引缓冲、刷新和提交</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Lucene中的索引缓冲、刷新和提交</h1>
+			<b><time>2018-06-17 19:43:02</time></b>
+		       
+		           <a href="/tags/lucene">Lucene</a>
+        	       
+
+			<div>
+				<p>Lucene中的索引缓冲、刷新和提交学习。</p>
+<h1 id="缓冲和刷新">缓冲和刷新</h1>
+<p>创建和删除文档操作时，会先被缓存之内存，而不是立即写盘，这些操作会以 衅端的形式周期性的写入索引的Directory，IndexWriter刷盘操作时机如下：</p>
+<ul>
+<li>当缓存占用空间超过设置的阈值，setRAMBufferSizeMB来设置</li>
+<li>在指定文档号对应的文档被添加进索引之后，通过调用setMaxBufferedDocs来完成刷新操作</li>
+<li>在删除和查询语句等操作占用内存总量超过预设值时，可通过调用setMaxBufferedDeleteTerm方法来触发刷新操作</li>
+</ul>
+<p>默认情况下IndexWriter在RAM用量为16M的时候启动刷新操作。</p>
+<p>发生刷新操作时，Writer会在Directory目录创建新的段和被删除文件，这些文件对于新打开的IndexReader不可见也不可用，直到Writer提交更改以及重新打开Reader后。</p>
+<ul>
+<li>刷新操作是用来释放缓存的更改</li>
+<li>提交操作是用来让所有更改在索引中保持可见。</li>
+</ul>
+<p>IndexReader所看到的一直是索引的起始状态，也就是IndexWriter被打开时的状态，直到IndexWriter提交更改为止。</p>
+<h1 id="索引提交">索引提交</h1>
+<p>IndexWriter的commit方法调用，都会创建一个新的索引提交，新打开或重启的IndexReader和IndexSearcher只能看到上次提交后的索引状态，IndexWriter在两次提交之间完成的更改对Reader来说不可见。而近实时搜索功能能够在不用首次向磁盘提交更改的情况下对IndexWriter所做的更改进行搜索。</p>
+<p>如果需要取消所有更改，可在上一次索引提交更改后，调用rollback方法删除当前IndexWriter包含的所有更改。</p>
+<p>IndexWriter的提交步骤：</p>
+<ul>
+<li>刷新所有缓存的文档和文档删除操作</li>
+<li>对所有新创建的文件进行同步，包括刷新的文件，还包括上一次调用commit方法或从打开IndexWriter后已完成的段合并操作所生成的所有文件。IndexWriter调用Directory.sync方法实现，该方法会在所有挂起的写操作都写到磁盘后才返回</li>
+<li>写入和同步下一个segment_X文件，一旦完成，IndexReader会立即看到上一次提交后发生的所有变化。</li>
+<li>通过调用IndexDeletionPolicy删除旧的提交。</li>
+</ul>
+<h1 id="两阶段提交">两阶段提交</h1>
+<p>对于需要提交包括Lucene索引和其他外部资源等事务的应用程序，Lucene提供了prepareCommit方法，该方法完成了上面步骤的前两步或前三部，但不能使新的segment_X文件对Reader可见，调用prepareCommit后还需要调用rollback或commit方法。</p>
+<h1 id="索引删除策略">索引删除策略</h1>
+<p>IndexDeletionPolicy负责通知IndexWriter何时能够安全删除旧的提交，默认策略KeepOnlyLastCommitDeletionPolicy，会在每次创建完新的提交后删除先前的提交。</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li>Lucene实战</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

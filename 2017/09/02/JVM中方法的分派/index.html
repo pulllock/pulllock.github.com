@@ -1,275 +1,52 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="JVM中方法分派和方法调用学习。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="JVM中方法的分派">
-<meta property="og:url" content="http://dachengxi.github.com/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="JVM中方法分派和方法调用学习。">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2017-09-02T08:17:40.000Z">
-<meta property="article:modified_time" content="2020-07-24T13:19:56.137Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="JVM">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>JVM中方法的分派 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM中方法的分派</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>JVM中方法的分派</h1>
+			<b><time>2017-09-02 16:17:40</time></b>
+		       
+		           <a href="/tags/jvm">JVM</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          JVM中方法的分派
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-09-02 16:17:40 16:17:40" itemprop="dateCreated datePublished" datetime="2017-09-02T16:17:40+08:00">2017-09-02 16:17:40</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/02/JVM中方法的分派/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>JVM中方法分派和方法调用学习。</p>
-<a id="more"></a>
-
-<h1 id="方法调用"><a href="#方法调用" class="headerlink" title="方法调用"></a>方法调用</h1><p>方法调用指令：</p>
+			<div>
+				<p>JVM中方法分派和方法调用学习。</p>
+<h1 id="方法调用">方法调用</h1>
+<p>方法调用指令：</p>
 <ul>
 <li>invokevirtual，用于调用对象的实例方法，根据对象的实际类型分派，是虚方法分派</li>
 <li>invokeinterface，用于调用接口方法，在运行时搜索一个实现了这个接口方法对象，找出合适的方法进行调用</li>
@@ -285,13 +62,16 @@
 <li>invokespecial指令调用的方法：私有方法、实例构造器、父类方法</li>
 <li>被final修饰的方法（invokevirtual指令调用）</li>
 </ul>
-<h1 id="分派"><a href="#分派" class="headerlink" title="分派"></a>分派</h1><p>多态具体体现是在运行期能根据对象实例的不同而执行不同的接口方法。实现多态的技术称为动态绑定，是指在执行期间判断所引用对象的实际类型，根据其实际的类型调用其相应的方法。动态绑定也叫晚绑定。</p>
-<h2 id="静态分派"><a href="#静态分派" class="headerlink" title="静态分派"></a>静态分派</h2><p>静态分派的体现：重载。</p>
+<h1 id="分派">分派</h1>
+<p>多态具体体现是在运行期能根据对象实例的不同而执行不同的接口方法。实现多态的技术称为动态绑定，是指在执行期间判断所引用对象的实际类型，根据其实际的类型调用其相应的方法。动态绑定也叫晚绑定。</p>
+<h2 id="静态分派">静态分派</h2>
+<p>静态分派的体现：重载。</p>
 <p>我们如果new一个对象，并将对象赋值给一个变量，那么这个变量的类型就是静态类型，也就是变量的类型是事先确定的。变量指向的对象的类型是是实际类型，这个对象的类型是可以变化的，也就是变量指向的对象类型是不确定的。</p>
 <p>静态类型在编译期可知，实际类型只有在运行期才可知。</p>
 <p>方法重载：方法名称相同，但是方法的参数不同。使用重载的时候，方法的接收者是确定的，而要调用哪个方法，是需要根据参数来确定的，这里包括参数的个数和参数的类型，类型是静态类型而不是实际类型。编译器在决定使用重载的哪个方法时，是根据参数的静态类型而不是实际类型来作为判断依据的，是在编译期可知的。</p>
 <p>依赖静态类型来决定方法执行版本的分派，就叫做静态分派，重载就是静态分派的典型应用，发生在编译阶段。</p>
-<h2 id="动态分派"><a href="#动态分派" class="headerlink" title="动态分派"></a>动态分派</h2><p>动态分派的体现：重写。</p>
+<h2 id="动态分派">动态分派</h2>
+<p>动态分派的体现：重写。</p>
 <p>假设一个父类有多个子类，在new各个子类的对象的时候，把new的对象赋值给父类类型的变量。此时变量的静态类型是父类，变量指向的对象是实际类型。使用静态类型的变量调用同一个方法的时候，执行的却是各个子类中的方法。</p>
 <p>虽然在声明的时候都是静态类型，但是实际执行的时候却是选择的实际类型，这种在运行期根据实际类型确定方法执行版本的分派过程就是动态分派。</p>
 <p>多态重写的实现是和invokevirtual字节码指令的实现逻辑有关的，invokevirtual指令后面跟着一个指向常量池的索引项，该常量池项是一个方法的符号引用，也就是invokevirtual要调用的方法是确定的，但是具体调用哪个对象的方法，字节码指令里是没有的。确定要调用哪个对象的方法是跟invokevirtual执行的逻辑有关的，invokevirtual执行时，需要操作数栈上的数据，操作数栈栈顶是指向对象的实际类型的指针，如果方法有参数的话，则栈中实际类型往下的栈是参数。</p>
@@ -301,10 +81,12 @@
 <li>如果在实际类型中没有找到对应方法，则需要从下往上挨个找父类，并进行方法的查找和验证。</li>
 <li>如果之后父类找完也没发现合适方法，就抛异常：AbstractMethodError。</li>
 </ul>
-<h2 id="单分派和多分派"><a href="#单分派和多分派" class="headerlink" title="单分派和多分派"></a>单分派和多分派</h2><p>方法的接收者和方法的参数都称为方法的宗量，根据使用宗量的数量可以划分为单分派和多分派。</p>
+<h2 id="单分派和多分派">单分派和多分派</h2>
+<p>方法的接收者和方法的参数都称为方法的宗量，根据使用宗量的数量可以划分为单分派和多分派。</p>
 <p>在编译期确定方法的版本叫做静态分派，静态分派的时候选择方法版本需要根据方法接收者和方法参数，也就是根据两个宗量来进行选择，所以Java的静态分派属于多分派。</p>
 <p>在运行期确定方法班班叫做动态分派，动态分派在执行的时候，其实就是invokevirtual指令执行的时候，方法名和参数已经确定了，只需要确定方法的接收者即可，也就是只需要根据单宗量来进行选择，所以Java的动态分派属于单分派。</p>
-<h1 id="vtable"><a href="#vtable" class="headerlink" title="vtable"></a>vtable</h1><p>virtual method table</p>
+<h1 id="vtable">vtable</h1>
+<p>virtual method table</p>
 <p>JVM使用vtable来实现动态绑定，在类加载的过程中，JVM会动态解析类的方法以及对方法父类的重写，然后构建出一个vtable，来支持运行期的方法动态绑定。</p>
 <ul>
 <li>static方法不会有运行期的动态绑定机制</li>
@@ -318,310 +100,65 @@
 <li>特殊的mirandas方法，顺序添加到虚方法表最后</li>
 </ul>
 <p>vtable由一组变长连续的vtableEntry元素构成的数组，每个vtableEntry用methodOop表示，指向一个方法:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">------------------------------------------</span><br><span class="line">| vtableEntry 1 | ...... | vtableEntry n |</span><br><span class="line">------------------------------------------</span><br></pre></td></tr></table></figure>
-
-<h1 id="itable"><a href="#itable" class="headerlink" title="itable"></a>itable</h1><p>itable由偏移表和方法表两个表组成，都是变长的。offset table entry保存的是类实现的一个接口KlassOop和该接口方法表所在的偏移位置。method table entry保存的是实现的接口方法。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-reStructuredText" data-lang="reStructuredText">------------------------------------------
+| vtableEntry 1 | ...... | vtableEntry n |
+------------------------------------------
+</code></pre></div><h1 id="itable">itable</h1>
+<p>itable由偏移表和方法表两个表组成，都是变长的。offset table entry保存的是类实现的一个接口KlassOop和该接口方法表所在的偏移位置。method table entry保存的是实现的接口方法。</p>
 <p>初始化itable的时候：</p>
 <ul>
 <li>将类实现的接口以及实现的方法填写在上面两个表中</li>
 <li>接口中非public、abstract方法不放入itable中</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">| offset table entry of interface 1 | ... | offset table entry of interface n |</span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">-------------------------------------------------------------------------------</span><br><span class="line">| method table entry of interface 1 | ... | method table entry of interface n |</span><br><span class="line">-------------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
-
-
-
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-reStructuredText" data-lang="reStructuredText">-------------------------------------------------------------------------------
+| offset table entry of interface 1 | ... | offset table entry of interface n |
+-------------------------------------------------------------------------------
+<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>-------------------------------------------------------------------------------
+| method table entry of interface 1 | ... | method table entry of interface n |
+-------------------------------------------------------------------------------
+</code></pre></div><h1 id="参考">参考</h1>
+<ul>
 <li>《深入Java虚拟机》</li>
 <li>《实战Java虚拟机 JVM故障诊断与性能优化》</li>
 <li>《HotSpot实战》</li>
 <li>《深入理解Java虚拟机：JVM高级特性与最佳实践》</li>
 <li>《Java虚拟机规范》</li>
 </ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/JVM/" rel="tag"># JVM</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" rel="prev" title="JVM中类的生命周期">
-      <i class="fa fa-chevron-left"></i> JVM中类的生命周期
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/09/09/JVM%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91/" rel="next" title="JVM中的即时编译">
-      JVM中的即时编译 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#方法调用"><span class="nav-number">1.</span> <span class="nav-text">方法调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分派"><span class="nav-number">2.</span> <span class="nav-text">分派</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#静态分派"><span class="nav-number">2.1.</span> <span class="nav-text">静态分派</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态分派"><span class="nav-number">2.2.</span> <span class="nav-text">动态分派</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单分派和多分派"><span class="nav-number">2.3.</span> <span class="nav-text">单分派和多分派</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vtable"><span class="nav-number">3.</span> <span class="nav-text">vtable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#itable"><span class="nav-number">4.</span> <span class="nav-text">itable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/";
-    this.page.identifier = "2017/09/02/JVM中方法的分派/";
-    this.page.title = "JVM中方法的分派";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

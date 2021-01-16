@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lock on Time Stream</title>
+    <link>http://cxis.me/tags/lock/</link>
+    <description>Recent content in Lock on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Sat, 08 Apr 2017 15:13:45 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/lock/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>JUC中Lock和ReentrantLock介绍及源码解析</title>
+      <link>http://cxis.me/2017/04/08/juc%E4%B8%ADlock%E5%92%8Creentrantlock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/08/juc%E4%B8%ADlock%E5%92%8Creentrantlock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

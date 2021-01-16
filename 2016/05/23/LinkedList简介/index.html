@@ -1,639 +1,204 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="LinkedList简介 LinkedList基于双向链表实现 LinkedList相对于Arraylist来说,get和set等随机访问会比较慢,LinkedList需要移动指针；add和remove会比较快。 LinkedList类还为在列表开头和结尾的get，remove，insert元素提供统一的命名方法，这些操作允许将链表用做堆栈、队列或者双端队列。此类实现 Deque 接口，为 add">
-<meta property="og:type" content="article">
-<meta property="og:title" content="LinkedList简介">
-<meta property="og:url" content="http://dachengxi.github.com/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="LinkedList简介 LinkedList基于双向链表实现 LinkedList相对于Arraylist来说,get和set等随机访问会比较慢,LinkedList需要移动指针；add和remove会比较快。 LinkedList类还为在列表开头和结尾的get，remove，insert元素提供统一的命名方法，这些操作允许将链表用做堆栈、队列或者双端队列。此类实现 Deque 接口，为 add">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2016-05-23T15:20:51.000Z">
-<meta property="article:modified_time" content="2016-12-02T06:26:44.000Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="linkedList">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>LinkedList简介 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>LinkedList简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>LinkedList简介</h1>
+			<b><time>2016-05-23 23:20:51</time></b>
+		       
+		           <a href="/tags/linkedlist">linkedList</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          LinkedList简介
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-05-23 23:20:51 23:20:51" itemprop="dateCreated datePublished" datetime="2016-05-23T23:20:51+08:00">2016-05-23 23:20:51</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">Java基础</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/05/23/LinkedList简介/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <h1 id="LinkedList简介"><a href="#LinkedList简介" class="headerlink" title="LinkedList简介"></a>LinkedList简介</h1><ol>
+			<div>
+				<h1 id="linkedlist简介">LinkedList简介</h1>
+<ol>
 <li>LinkedList基于双向链表实现</li>
 <li>LinkedList相对于Arraylist来说,get和set等随机访问会比较慢,LinkedList需要移动指针；add和remove会比较快。</li>
 <li>LinkedList类还为在列表开头和结尾的get，remove，insert元素提供统一的命名方法，这些操作允许将链表用做堆栈、队列或者双端队列。此类实现 Deque 接口，为 add、poll 提供先进先出队列操作，以及其他堆栈和双端队列操作。</li>
 <li>非线程安全，不同步。</li>
 </ol>
-<a id="more"></a>
-
-<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>LinkedList集成AbstractSequentialList，实现了List，Deque，Cloneable，Serializable接口。AbstractSequentialList提供了骨干实现。Deque一个线性 collection，支持在两端插入和移除元素，定义了双端队列的操作。</p>
-<h1 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h1><blockquote>
+<h1 id="定义">定义</h1>
+<p>LinkedList集成AbstractSequentialList，实现了List，Deque，Cloneable，Serializable接口。AbstractSequentialList提供了骨干实现。Deque一个线性 collection，支持在两端插入和移除元素，定义了双端队列的操作。</p>
+<h1 id="源码分析">源码分析</h1>
+<blockquote>
 <p>jdk1.7.0_71</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;节点个数</span><br><span class="line">transient int size &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F;前驱节点</span><br><span class="line">transient Node&lt;E&gt; first;</span><br><span class="line">&#x2F;&#x2F;后继节点</span><br><span class="line">transient Node&lt;E&gt; last;</span><br></pre></td></tr></table></figure>
+<pre><code>//节点个数
+transient int size = 0;
+//前驱节点
+transient Node&lt;E&gt; first;
+//后继节点
+transient Node&lt;E&gt; last;
+</code></pre><h2 id="无参构造">无参构造</h2>
+<pre><code>public LinkedList() {}
+</code></pre><h2 id="根据其他容器进行构造">根据其他容器进行构造</h2>
+<pre><code>public LinkedList(Collection&lt;? extends E&gt; c) {}
+</code></pre><h2 id="getfirstgetlast-获取第一个获取最后一个">getFirst()/getLast() 获取第一个/获取最后一个</h2>
+<pre><code>public E getFirst() {}
+public E getLast() {}
+</code></pre><h2 id="removefirstremovelast-删除第一个删除最后一个">removeFirst()/removeLast() 删除第一个/删除最后一个</h2>
+<pre><code>public E removeFirst() {}
+public E removeLast() {}
+</code></pre><h2 id="addfirste-eaddlaste-e-添加到头尾">addFirst(E e)/addLast(E e) 添加到头/尾</h2>
+<pre><code>public void addFirst(E e) {}
+public void addLast(E e) {}
+</code></pre><h2 id="是否包含指定的元素">是否包含指定的元素</h2>
+<pre><code>public boolean contains(Object o) {
+	return indexOf(o) != -1;
+}
+</code></pre><h2 id="指定元素的位置索引">指定元素的位置索引</h2>
+<pre><code>public int indexOf(Object o) {}
+</code></pre><h2 id="指定元素的最后的位置索引">指定元素的最后的位置索引</h2>
+<pre><code>public int lastIndexOf(Object o) {}
+</code></pre><h2 id="list的大小">list的大小</h2>
+<pre><code>public int size() {
+        return size;
+}
+</code></pre><h2 id="add-添加到末尾">add() 添加到末尾</h2>
+<pre><code>public boolean add(E e) {}
+</code></pre><h2 id="removeobject-oremovefirstoccurrenceobject-o-移除第一个o">remove(Object o)/removeFirstOccurrence(Object o) 移除第一个o</h2>
+<pre><code>public boolean remove(Object o) {}
 
-<h2 id="无参构造"><a href="#无参构造" class="headerlink" title="无参构造"></a>无参构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public LinkedList() &#123;&#125;</span><br></pre></td></tr></table></figure>
+public boolean removeFirstOccurrence(Object o){}
+</code></pre><h2 id="addallcollection-extends-e-c-添加到list结尾">addAll(Collection&lt;? extends E&gt; c) 添加到list结尾</h2>
+<pre><code>public boolean addAll(Collection&lt;? extends E&gt; c) {}
+</code></pre><h2 id="addallint-index-collection-extends-e-c-指定的位置以后添加全部">addAll(int index, Collection&lt;? extends E&gt; c) 指定的位置以后添加全部</h2>
+<pre><code>public boolean addAll(int index, Collection&lt;? extends E&gt; c) {}
+</code></pre><h2 id="clear-清空">clear() 清空</h2>
+<pre><code>public void clear() {}
+</code></pre><h2 id="getint-index-获取指定位置的元素">get(int index) 获取指定位置的元素</h2>
+<pre><code>public E get(int index) {}
+</code></pre><h2 id="指定位置替换成新元素返回旧元素">指定位置替换成新元素,返回旧元素</h2>
+<pre><code>public E set(int index, E element) {}
+</code></pre><h2 id="addint-index-e-element指定位置插入指定元素">add(int index, E element)指定位置插入指定元素</h2>
+<pre><code>public void add(int index, E element) {}
+</code></pre><h2 id="removeint-index-移除指定位置的元素">remove(int index) 移除指定位置的元素</h2>
+<pre><code>public E remove(int index) {}
+</code></pre><h2 id="peekpeekfirst-获取list头">peek()/peekFirst() 获取list头</h2>
+<pre><code>public E peek() {}
 
-<h2 id="根据其他容器进行构造"><a href="#根据其他容器进行构造" class="headerlink" title="根据其他容器进行构造"></a>根据其他容器进行构造</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public LinkedList(Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
+public E peekFirst() {}
+</code></pre><h2 id="element-获取list头">element() 获取list头</h2>
+<pre><code>public E element() {}
+</code></pre><h2 id="pollpollfirst-获取list头并删除">poll()/pollFirst() 获取list头,并删除</h2>
+<pre><code>public E poll() {}
 
-<h2 id="getFirst-getLast-获取第一个-获取最后一个"><a href="#getFirst-getLast-获取第一个-获取最后一个" class="headerlink" title="getFirst()/getLast() 获取第一个/获取最后一个"></a>getFirst()/getLast() 获取第一个/获取最后一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public E getFirst() &#123;&#125;</span><br><span class="line">public E getLast() &#123;&#125;</span><br></pre></td></tr></table></figure>
+public E pollFirst() {}
+</code></pre><h2 id="remove-删除第一个">remove() 删除第一个</h2>
+<pre><code>public E remove() {}
+</code></pre><h2 id="offere-eofferlaste-e-添加e到尾部">offer(E e)/offerLast(E e) 添加e到尾部</h2>
+<pre><code>public boolean offer(E e) {}
 
-<h2 id="removeFirst-removeLast-删除第一个-删除最后一个"><a href="#removeFirst-removeLast-删除第一个-删除最后一个" class="headerlink" title="removeFirst()/removeLast() 删除第一个/删除最后一个"></a>removeFirst()/removeLast() 删除第一个/删除最后一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public E removeFirst() &#123;&#125;</span><br><span class="line">public E removeLast() &#123;&#125;</span><br></pre></td></tr></table></figure>
+public boolean offerLast(E e) {}
+</code></pre><h2 id="offerfirste-epushe-e-添加e到头部">offerFirst(E e)/push(E e) 添加e到头部</h2>
+<pre><code>public boolean offerFirst(E e) {}
 
-<h2 id="addFirst-E-e-addLast-E-e-添加到头-尾"><a href="#addFirst-E-e-addLast-E-e-添加到头-尾" class="headerlink" title="addFirst(E e)/addLast(E e) 添加到头/尾"></a>addFirst(E e)/addLast(E e) 添加到头/尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public void addFirst(E e) &#123;&#125;</span><br><span class="line">public void addLast(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="是否包含指定的元素"><a href="#是否包含指定的元素" class="headerlink" title="是否包含指定的元素"></a>是否包含指定的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean contains(Object o) &#123;</span><br><span class="line">	return indexOf(o) !&#x3D; -1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="指定元素的位置索引"><a href="#指定元素的位置索引" class="headerlink" title="指定元素的位置索引"></a>指定元素的位置索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int indexOf(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="指定元素的最后的位置索引"><a href="#指定元素的最后的位置索引" class="headerlink" title="指定元素的最后的位置索引"></a>指定元素的最后的位置索引</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public int lastIndexOf(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="list的大小"><a href="#list的大小" class="headerlink" title="list的大小"></a>list的大小</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public int size() &#123;</span><br><span class="line">        return size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="add-添加到末尾"><a href="#add-添加到末尾" class="headerlink" title="add() 添加到末尾"></a>add() 添加到末尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean add(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="remove-Object-o-removeFirstOccurrence-Object-o-移除第一个o"><a href="#remove-Object-o-removeFirstOccurrence-Object-o-移除第一个o" class="headerlink" title="remove(Object o)/removeFirstOccurrence(Object o) 移除第一个o"></a>remove(Object o)/removeFirstOccurrence(Object o) 移除第一个o</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean remove(Object o) &#123;&#125;</span><br><span class="line"></span><br><span class="line">public boolean removeFirstOccurrence(Object o)&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="addAll-Collection-lt-extends-E-gt-c-添加到list结尾"><a href="#addAll-Collection-lt-extends-E-gt-c-添加到list结尾" class="headerlink" title="addAll(Collection&lt;? extends E&gt; c) 添加到list结尾"></a>addAll(Collection&lt;? extends E&gt; c) 添加到list结尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean addAll(Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="addAll-int-index-Collection-lt-extends-E-gt-c-指定的位置以后添加全部"><a href="#addAll-int-index-Collection-lt-extends-E-gt-c-指定的位置以后添加全部" class="headerlink" title="addAll(int index, Collection&lt;? extends E&gt; c) 指定的位置以后添加全部"></a>addAll(int index, Collection&lt;? extends E&gt; c) 指定的位置以后添加全部</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean addAll(int index, Collection&lt;? extends E&gt; c) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="clear-清空"><a href="#clear-清空" class="headerlink" title="clear() 清空"></a>clear() 清空</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void clear() &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="get-int-index-获取指定位置的元素"><a href="#get-int-index-获取指定位置的元素" class="headerlink" title="get(int index) 获取指定位置的元素"></a>get(int index) 获取指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E get(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="指定位置替换成新元素-返回旧元素"><a href="#指定位置替换成新元素-返回旧元素" class="headerlink" title="指定位置替换成新元素,返回旧元素"></a>指定位置替换成新元素,返回旧元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E set(int index, E element) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="add-int-index-E-element-指定位置插入指定元素"><a href="#add-int-index-E-element-指定位置插入指定元素" class="headerlink" title="add(int index, E element)指定位置插入指定元素"></a>add(int index, E element)指定位置插入指定元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void add(int index, E element) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="remove-int-index-移除指定位置的元素"><a href="#remove-int-index-移除指定位置的元素" class="headerlink" title="remove(int index) 移除指定位置的元素"></a>remove(int index) 移除指定位置的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E remove(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="peek-peekFirst-获取list头"><a href="#peek-peekFirst-获取list头" class="headerlink" title="peek()/peekFirst() 获取list头"></a>peek()/peekFirst() 获取list头</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public E peek() &#123;&#125;</span><br><span class="line"></span><br><span class="line">public E peekFirst() &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="element-获取list头"><a href="#element-获取list头" class="headerlink" title="element() 获取list头"></a>element() 获取list头</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E element() &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="poll-pollFirst-获取list头-并删除"><a href="#poll-pollFirst-获取list头-并删除" class="headerlink" title="poll()/pollFirst() 获取list头,并删除"></a>poll()/pollFirst() 获取list头,并删除</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public E poll() &#123;&#125;</span><br><span class="line"></span><br><span class="line">public E pollFirst() &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="remove-删除第一个"><a href="#remove-删除第一个" class="headerlink" title="remove() 删除第一个"></a>remove() 删除第一个</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E remove() &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="offer-E-e-offerLast-E-e-添加e到尾部"><a href="#offer-E-e-offerLast-E-e-添加e到尾部" class="headerlink" title="offer(E e)/offerLast(E e) 添加e到尾部"></a>offer(E e)/offerLast(E e) 添加e到尾部</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean offer(E e) &#123;&#125;</span><br><span class="line"></span><br><span class="line">public boolean offerLast(E e) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="offerFirst-E-e-push-E-e-添加e到头部"><a href="#offerFirst-E-e-push-E-e-添加e到头部" class="headerlink" title="offerFirst(E e)/push(E e) 添加e到头部"></a>offerFirst(E e)/push(E e) 添加e到头部</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public boolean offerFirst(E e) &#123;&#125;</span><br><span class="line"></span><br><span class="line">public void push(E e)&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="peekLast-获取list尾"><a href="#peekLast-获取list尾" class="headerlink" title="peekLast() 获取list尾"></a>peekLast() 获取list尾</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E peekLast() &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="pollLast-获取list尾-并删除"><a href="#pollLast-获取list尾-并删除" class="headerlink" title="pollLast() 获取list尾,并删除"></a>pollLast() 获取list尾,并删除</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E pollLast</span><br></pre></td></tr></table></figure>
-
-<h2 id="pop-删除头"><a href="#pop-删除头" class="headerlink" title="pop() 删除头"></a>pop() 删除头</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public E pop()&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="removeLastOccurrence-Object-o-从后面开始删除第一个匹配的元素"><a href="#removeLastOccurrence-Object-o-从后面开始删除第一个匹配的元素" class="headerlink" title="removeLastOccurrence(Object o)从后面开始删除第一个匹配的元素"></a>removeLastOccurrence(Object o)从后面开始删除第一个匹配的元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public boolean removeLastOccurrence(Object o) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="listIterator-int-index-从指定的位置开始返回一个listIterator"><a href="#listIterator-int-index-从指定的位置开始返回一个listIterator" class="headerlink" title="listIterator(int index)从指定的位置开始返回一个listIterator"></a>listIterator(int index)从指定的位置开始返回一个listIterator</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public ListIterator&lt;E&gt; listIterator(int index) &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="descendingIterator-逆序迭代器"><a href="#descendingIterator-逆序迭代器" class="headerlink" title="descendingIterator() 逆序迭代器"></a>descendingIterator() 逆序迭代器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public Iterator&lt;E&gt; descendingIterator() &#123;</span><br><span class="line">		&#x2F;&#x2F;内部类</span><br><span class="line">        return new DescendingIterator();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="clone-浅拷贝"><a href="#clone-浅拷贝" class="headerlink" title="clone() 浅拷贝"></a>clone() 浅拷贝</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Object clone() &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="toArray-转换成Object数组"><a href="#toArray-转换成Object数组" class="headerlink" title="toArray() 转换成Object数组"></a>toArray() 转换成Object数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public Object[] toArray() &#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="toArray-T-a-转换成指定类型的数组"><a href="#toArray-T-a-转换成指定类型的数组" class="headerlink" title="toArray(T[] a) 转换成指定类型的数组"></a>toArray(T[] a) 转换成指定类型的数组</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T&gt; T[] toArray(T[] a) &#123;</span><br><span class="line">        if (a.length &lt; size)</span><br><span class="line">            a &#x3D; (T[])java.lang.reflect.Array.newInstance(</span><br><span class="line">                                a.getClass().getComponentType(), size);</span><br><span class="line">        int i &#x3D; 0;</span><br><span class="line">        Object[] result &#x3D; a;</span><br><span class="line">        for (Node&lt;E&gt; x &#x3D; first; x !&#x3D; null; x &#x3D; x.next)</span><br><span class="line">            result[i++] &#x3D; x.item;</span><br><span class="line"></span><br><span class="line">        if (a.length &gt; size)</span><br><span class="line">            a[size] &#x3D; null;</span><br><span class="line"></span><br><span class="line">        return a;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.zybuluo.com/pastqing/note/208830" target="_blank" rel="noopener">https://www.zybuluo.com/pastqing/note/208830</a></p>
-<p><a href="http://blog.csdn.net/u013256816/article/details/50916689" target="_blank" rel="noopener">http://blog.csdn.net/u013256816/article/details/50916689</a></p>
-
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/linkedList/" rel="tag"># linkedList</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/" rel="prev" title="ArrayList简介">
-      <i class="fa fa-chevron-left"></i> ArrayList简介
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2016/05/24/Vector%E7%AE%80%E4%BB%8B/" rel="next" title="Vector简介">
-      Vector简介 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
+public void push(E e){}
+</code></pre><h2 id="peeklast-获取list尾">peekLast() 获取list尾</h2>
+<pre><code>public E peekLast() {}
+</code></pre><h2 id="polllast-获取list尾并删除">pollLast() 获取list尾,并删除</h2>
+<pre><code>public E pollLast
+</code></pre><h2 id="pop-删除头">pop() 删除头</h2>
+<pre><code>public E pop(){}
+</code></pre><h2 id="removelastoccurrenceobject-o从后面开始删除第一个匹配的元素">removeLastOccurrence(Object o)从后面开始删除第一个匹配的元素</h2>
+<pre><code>public boolean removeLastOccurrence(Object o) {}
+</code></pre><h2 id="listiteratorint-index从指定的位置开始返回一个listiterator">listIterator(int index)从指定的位置开始返回一个listIterator</h2>
+<pre><code>public ListIterator&lt;E&gt; listIterator(int index) {}
+</code></pre><h2 id="descendingiterator-逆序迭代器">descendingIterator() 逆序迭代器</h2>
+<pre><code>public Iterator&lt;E&gt; descendingIterator() {
+		//内部类
+        return new DescendingIterator();
     }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
+</code></pre><h2 id="clone-浅拷贝">clone() 浅拷贝</h2>
+<pre><code>public Object clone() {}
+</code></pre><h2 id="toarray-转换成object数组">toArray() 转换成Object数组</h2>
+<pre><code>public Object[] toArray() {}
+</code></pre><h2 id="toarrayt-a-转换成指定类型的数组">toArray(T[] a) 转换成指定类型的数组</h2>
+<pre><code>public &lt;T&gt; T[] toArray(T[] a) {
+        if (a.length &lt; size)
+            a = (T[])java.lang.reflect.Array.newInstance(
+                                a.getClass().getComponentType(), size);
+        int i = 0;
+        Object[] result = a;
+        for (Node&lt;E&gt; x = first; x != null; x = x.next)
+            result[i++] = x.item;
+
+        if (a.length &gt; size)
+            a[size] = null;
+
+        return a;
     }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LinkedList简介"><span class="nav-number">1.</span> <span class="nav-text">LinkedList简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#定义"><span class="nav-number">2.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#源码分析"><span class="nav-number">3.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#无参构造"><span class="nav-number">3.1.</span> <span class="nav-text">无参构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#根据其他容器进行构造"><span class="nav-number">3.2.</span> <span class="nav-text">根据其他容器进行构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getFirst-getLast-获取第一个-获取最后一个"><span class="nav-number">3.3.</span> <span class="nav-text">getFirst()&#x2F;getLast() 获取第一个&#x2F;获取最后一个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#removeFirst-removeLast-删除第一个-删除最后一个"><span class="nav-number">3.4.</span> <span class="nav-text">removeFirst()&#x2F;removeLast() 删除第一个&#x2F;删除最后一个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addFirst-E-e-addLast-E-e-添加到头-尾"><span class="nav-number">3.5.</span> <span class="nav-text">addFirst(E e)&#x2F;addLast(E e) 添加到头&#x2F;尾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#是否包含指定的元素"><span class="nav-number">3.6.</span> <span class="nav-text">是否包含指定的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指定元素的位置索引"><span class="nav-number">3.7.</span> <span class="nav-text">指定元素的位置索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指定元素的最后的位置索引"><span class="nav-number">3.8.</span> <span class="nav-text">指定元素的最后的位置索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#list的大小"><span class="nav-number">3.9.</span> <span class="nav-text">list的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-添加到末尾"><span class="nav-number">3.10.</span> <span class="nav-text">add() 添加到末尾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-Object-o-removeFirstOccurrence-Object-o-移除第一个o"><span class="nav-number">3.11.</span> <span class="nav-text">remove(Object o)&#x2F;removeFirstOccurrence(Object o) 移除第一个o</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addAll-Collection-lt-extends-E-gt-c-添加到list结尾"><span class="nav-number">3.12.</span> <span class="nav-text">addAll(Collection&lt;? extends E&gt; c) 添加到list结尾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#addAll-int-index-Collection-lt-extends-E-gt-c-指定的位置以后添加全部"><span class="nav-number">3.13.</span> <span class="nav-text">addAll(int index, Collection&lt;? extends E&gt; c) 指定的位置以后添加全部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clear-清空"><span class="nav-number">3.14.</span> <span class="nav-text">clear() 清空</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#get-int-index-获取指定位置的元素"><span class="nav-number">3.15.</span> <span class="nav-text">get(int index) 获取指定位置的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#指定位置替换成新元素-返回旧元素"><span class="nav-number">3.16.</span> <span class="nav-text">指定位置替换成新元素,返回旧元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#add-int-index-E-element-指定位置插入指定元素"><span class="nav-number">3.17.</span> <span class="nav-text">add(int index, E element)指定位置插入指定元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-int-index-移除指定位置的元素"><span class="nav-number">3.18.</span> <span class="nav-text">remove(int index) 移除指定位置的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#peek-peekFirst-获取list头"><span class="nav-number">3.19.</span> <span class="nav-text">peek()&#x2F;peekFirst() 获取list头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#element-获取list头"><span class="nav-number">3.20.</span> <span class="nav-text">element() 获取list头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#poll-pollFirst-获取list头-并删除"><span class="nav-number">3.21.</span> <span class="nav-text">poll()&#x2F;pollFirst() 获取list头,并删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#remove-删除第一个"><span class="nav-number">3.22.</span> <span class="nav-text">remove() 删除第一个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#offer-E-e-offerLast-E-e-添加e到尾部"><span class="nav-number">3.23.</span> <span class="nav-text">offer(E e)&#x2F;offerLast(E e) 添加e到尾部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#offerFirst-E-e-push-E-e-添加e到头部"><span class="nav-number">3.24.</span> <span class="nav-text">offerFirst(E e)&#x2F;push(E e) 添加e到头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#peekLast-获取list尾"><span class="nav-number">3.25.</span> <span class="nav-text">peekLast() 获取list尾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pollLast-获取list尾-并删除"><span class="nav-number">3.26.</span> <span class="nav-text">pollLast() 获取list尾,并删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pop-删除头"><span class="nav-number">3.27.</span> <span class="nav-text">pop() 删除头</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#removeLastOccurrence-Object-o-从后面开始删除第一个匹配的元素"><span class="nav-number">3.28.</span> <span class="nav-text">removeLastOccurrence(Object o)从后面开始删除第一个匹配的元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#listIterator-int-index-从指定的位置开始返回一个listIterator"><span class="nav-number">3.29.</span> <span class="nav-text">listIterator(int index)从指定的位置开始返回一个listIterator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#descendingIterator-逆序迭代器"><span class="nav-number">3.30.</span> <span class="nav-text">descendingIterator() 逆序迭代器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#clone-浅拷贝"><span class="nav-number">3.31.</span> <span class="nav-text">clone() 浅拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toArray-转换成Object数组"><span class="nav-number">3.32.</span> <span class="nav-text">toArray() 转换成Object数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#toArray-T-a-转换成指定类型的数组"><span class="nav-number">3.33.</span> <span class="nav-text">toArray(T[] a) 转换成指定类型的数组</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
+</code></pre><h1 id="参考">参考</h1>
+<p><a href="https://www.zybuluo.com/pastqing/note/208830">https://www.zybuluo.com/pastqing/note/208830</a></p>
+<p><a href="http://blog.csdn.net/u013256816/article/details/50916689">http://blog.csdn.net/u013256816/article/details/50916689</a></p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
 
 
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/";
-    this.page.identifier = "2016/05/23/LinkedList简介/";
-    this.page.title = "LinkedList简介";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

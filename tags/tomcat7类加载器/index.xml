@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tomcat7类加载器 on Time Stream</title>
+    <link>http://cxis.me/tags/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</link>
+    <description>Recent content in tomcat7类加载器 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Wed, 10 May 2017 11:12:56 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>tomcat7类加载器解析</title>
+      <link>http://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Wed, 10 May 2017 11:12:56 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;tomcat中也有很多的自定义的类加载器，保证容器的不同部分，以及运行在容器中的web应用可以访问不同的保存着类和资源的仓库。tomcat的类加载器机制跟jdk的类加载器机制基本类似，但是web应用类加载器处理请求的时候会稍微有些不同，jdk的类加载机制不再重复。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

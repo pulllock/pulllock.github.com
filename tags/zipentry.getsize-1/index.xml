@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ZipEntry.getSize()=-1 on Time Stream</title>
+    <link>http://cxis.me/tags/zipentry.getsize-1/</link>
+    <description>Recent content in ZipEntry.getSize()=-1 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Sat, 03 Mar 2018 21:27:51 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/zipentry.getsize-1/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题</title>
+      <link>http://cxis.me/2018/03/03/%E4%B8%8A%E4%BC%A0zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6zipentry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Sat, 03 Mar 2018 21:27:51 +0000</pubDate>
+      
+      <guid>http://cxis.me/2018/03/03/%E4%B8%8A%E4%BC%A0zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6zipentry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
+      <description>简介 这几天在做通过流下载zip文件以及上传zip文件不解压读取zip文件内容的功能，在读取zip文件内容的时候遇到了size为-1的情况，在</description>
+    </item>
+    
+  </channel>
+</rss>

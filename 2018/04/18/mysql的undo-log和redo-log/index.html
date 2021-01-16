@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>MySQL的undo log和redo log</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>MySQL的undo log和redo log</h1>
+			<b><time>2018-04-18 20:32:05</time></b>
+		       
+		           <a href="/tags/mysql">MySQL</a>
+        	       
+
+			<div>
+				<p>MySQL的undo log和redo log学习。</p>
+<p>InnoDB引擎提供了两种事务日志：redo log和undo log。redo log用于保证事务的持久性，undo log是事务原子性和隔离性实现的基础。</p>
+<h1 id="undo-log">undo log</h1>
+<p>回滚日志保存了事务发生之前的数据的一个版本，用于回滚和提供一致性读（MVCC）。</p>
+<p>在事务开始之前，当前版本行数据生成undo log，undo log也会产生redo log来保证undo log的可靠性；事务提交之后undo log不会立马删除，会放入待清理的链表，由purge线程判断是否有其他事务在使用undo段中表的上一个事务之前的版本信息，决定是否可以清理undo log。</p>
+<p>undo log是逻辑格式的日志，执行undo仅仅是将数据从逻辑上恢复至事务之前的状态，而不是从物理页面上操作。undo log也会产生对应的redo log。</p>
+<p>undo log是为了实现事务的原子性，undo log还可以用来实现MVCC。操作任何数据前线将数据备份到undo log，然后进行数据修改，如果出现错误或者执行了rollback，系统可以利用undo log中备份将数据恢复到事务开始之前的状态。</p>
+<p>当事务提交的时候，InnoDB不会立即删除undo log，因为后续还可能会用到undo log。事务提交的时候会将该事物对应的undo log放入到删除列表，未来通过purge来删除，提交事务时还会判断undo log分配的页是否可以重用，如果可以重用，则分配给后面来的事务，避免为每个事务分配独立的undo log页面浪费存储空间和性能。</p>
+<p>delete操作不会直接删除数据，而是将delete对象打上delete标记，标记为删除，最终删除操作是通过purge线程完成的</p>
+<p>update操作的列如果是主键列，update会先删除该行，在插入一行目标行；如果update的不是主键列，在undo log中直接反向记录是如何update的。</p>
+<h1 id="redo-log">redo log</h1>
+<p>重做日志可以确保事务的持久性，防止在发生故障的时候，脏页没有刷盘。重启MySQL服务的时候可以根据redo log进行重做，从而达到事务持久性这一特性。</p>
+<p>事务开始之后就会产生redo log，事务执行过程中就会逐步将redo log落盘。当事务对应的脏页写到磁盘后，redo log就没用了。</p>
+<p>redo log是物理格式的日志，记录的是物理数据页的修改信息，而不是某些行修改成怎样，redo log是顺序写入redo log file的物理文件中去的。</p>
+<p>redo log会先写到Innodb_log_buffer缓冲区，然后通过以下方式再将缓冲区日志刷新到磁盘上：</p>
+<ul>
+<li>Master Thread每秒执行刷新Innodb_log_buffer到redo log 文件中</li>
+<li>每个事务提交时会将redo log刷新到redo log文件中</li>
+<li>当重做日志缓存可用空间少于一半时，重做日志缓存被刷新到redo log文件中</li>
+</ul>
+<p>redo log记录的是新数据的备份，事务提交之前只要将redo log持久化即可，不需要持久化数据。系统崩溃时虽然数据没有持久化，但是redo log已经持久化，可以根据redo log内容将所有数据恢复到最新状态。</p>
+<p>redo log以块为单位进行存储，每块大小512字节。redo log缓冲区刷到redo log文件时，是追加写入的方式，也就是顺序写盘。</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://www.cnblogs.com/wy123/p/8365234.html">https://www.cnblogs.com/wy123/p/8365234.html</a></li>
+<li><a href="https://yq.aliyun.com/articles/592937">https://yq.aliyun.com/articles/592937</a></li>
+<li><a href="https://www.cnblogs.com/kismetv/p/10331633.html">https://www.cnblogs.com/kismetv/p/10331633.html</a></li>
+<li><a href="https://www.cnblogs.com/f-ck-need-u/p/9010872.html">https://www.cnblogs.com/f-ck-need-u/p/9010872.html</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

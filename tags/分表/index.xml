@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>分表 on Time Stream</title>
+    <link>http://cxis.me/tags/%E5%88%86%E8%A1%A8/</link>
+    <description>Recent content in 分表 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Wed, 03 Jun 2015 15:27:15 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/%E5%88%86%E8%A1%A8/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>分库分表简介</title>
+      <link>http://cxis.me/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 03 Jun 2015 15:27:15 +0000</pubDate>
+      
+      <guid>http://cxis.me/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/</guid>
+      <description>分库分表简介 此部分简介都是参考别人已经有的文章,目前还没在实际中使用分库分表,对此部分知识的理解还不够透彻.以后会添加自己的经验. 基于业务垂</description>
+    </item>
+    
+  </channel>
+</rss>

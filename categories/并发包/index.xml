@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>并发包 on Time Stream</title>
+    <link>http://cxis.me/categories/%E5%B9%B6%E5%8F%91%E5%8C%85/</link>
+    <description>Recent content in 并发包 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Sat, 08 Apr 2017 15:13:45 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/categories/%E5%B9%B6%E5%8F%91%E5%8C%85/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>JUC中Lock和ReentrantLock介绍及源码解析</title>
+      <link>http://cxis.me/2017/04/08/juc%E4%B8%ADlock%E5%92%8Creentrantlock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/08/juc%E4%B8%ADlock%E5%92%8Creentrantlock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JUC中AQS简介</title>
+      <link>http://cxis.me/2017/03/23/juc%E4%B8%ADaqs%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Thu, 23 Mar 2017 16:25:44 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/03/23/juc%E4%B8%ADaqs%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Executor框架简介</title>
+      <link>http://cxis.me/2016/08/11/executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Thu, 11 Aug 2016 15:16:11 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/08/11/executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</guid>
+      <description>Executor框架是在Java5中引入的，可以通过该框架来控制线程的启动，执行，关闭，简化并发编程。Executor框架把任务提交和执行解</description>
+    </item>
+    
+    <item>
+      <title>CyclicBarrier简介</title>
+      <link>http://cxis.me/2016/06/01/cyclicbarrier%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 01 Jun 2016 14:38:32 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/06/01/cyclicbarrier%E7%AE%80%E4%BB%8B/</guid>
+      <description>CyclicBarrier简介 CyclicBarrier和CountDownLatch不同,是当await的数量达到了设定的数量之后,才继续</description>
+    </item>
+    
+    <item>
+      <title>CountDownLatch简介</title>
+      <link>http://cxis.me/2016/06/01/countdownlatch%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 01 Jun 2016 14:26:33 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/06/01/countdownlatch%E7%AE%80%E4%BB%8B/</guid>
+      <description>CountDownLatch是并发包中提供的一个可用于控制多个线程同时开始某动作的类，可以看做是一个计数器，计数器操作是院子操作，同时只能有</description>
+    </item>
+    
+    <item>
+      <title>Semaphore简介</title>
+      <link>http://cxis.me/2016/06/01/semaphore%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 01 Jun 2016 13:25:04 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/06/01/semaphore%E7%AE%80%E4%BB%8B/</guid>
+      <description>Semaphore简介 Semaphore是并发包中提供的用于控制某资源同时被访问的个数 操作系统的信号量是个很重要的概念，在进程控制方面都有应</description>
+    </item>
+    
+    <item>
+      <title>ThreadPoolExecutor简介</title>
+      <link>http://cxis.me/2016/05/30/threadpoolexecutor%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 30 May 2016 14:04:19 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/30/threadpoolexecutor%E7%AE%80%E4%BB%8B/</guid>
+      <description>ThreadPoolExecutor简介 并发包中提供的一个线程池服务 线程池的工作过程 线程池刚创建,里面没有线程.任务队列是作为参数传进来的.</description>
+    </item>
+    
+    <item>
+      <title>AtomicInteger简介</title>
+      <link>http://cxis.me/2016/05/30/atomicinteger%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 30 May 2016 13:30:52 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/30/atomicinteger%E7%AE%80%E4%BB%8B/</guid>
+      <description>AtomicInteger简介 支持原子操作的Integer类 主要用于在高并发环境下的高效程序处理。使用非阻塞算法来实现并发控制。 源码分析 jdk1.7.0_71 /</description>
+    </item>
+    
+  </channel>
+</rss>

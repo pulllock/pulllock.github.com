@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Spring的@Enable注解的实现机制</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Spring的@Enable注解的实现机制</h1>
+			<b><time>2019-05-18 20:13:22</time></b>
+		       
+		           <a href="/tags/spring">Spring</a>
+        	       
+
+			<div>
+				<p>如果要了解Spring中@Enable的实现机制，需要提前了解下@Import的用途和实现方式，每个@Enable注解上都会有@Import注解，@Import中导入自定的ImportSelector或者ImportBeanDefinitionRegistrar或者配置，这里面会实现相关功能会引入相关功能。</p>
+<p>举个例子：@EnableCaching：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Target</span><span style="color:#f92672">(</span>ElementType<span style="color:#f92672">.</span><span style="color:#a6e22e">TYPE</span><span style="color:#f92672">)</span>
+<span style="color:#a6e22e">@Retention</span><span style="color:#f92672">(</span>RetentionPolicy<span style="color:#f92672">.</span><span style="color:#a6e22e">RUNTIME</span><span style="color:#f92672">)</span>
+<span style="color:#a6e22e">@Documented</span>
+<span style="color:#a6e22e">@Import</span><span style="color:#f92672">(</span>CachingConfigurationSelector<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">@interface</span> EnableCaching <span style="color:#f92672">{</span>
+
+	<span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">proxyTargetClass</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">default</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+
+	AdviceMode <span style="color:#a6e22e">mode</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">default</span> AdviceMode<span style="color:#f92672">.</span><span style="color:#a6e22e">PROXY</span><span style="color:#f92672">;</span>
+
+	<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">order</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">default</span> Ordered<span style="color:#f92672">.</span><span style="color:#a6e22e">LOWEST_PRECEDENCE</span><span style="color:#f92672">;</span>
+
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p>@EnableCaching注解上有注解@Import({CachingConfigurationSelector.class})，在处理@Import的时候，会调用CachingConfigurationSelector的selectImports方法来加入缓存相关功能和配置。</p>
+<p>可以认为@Enable就是帮我们使用@Import导入一些配置和实现等，我们也可以自己直接使用@Import，不使用@Enable。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

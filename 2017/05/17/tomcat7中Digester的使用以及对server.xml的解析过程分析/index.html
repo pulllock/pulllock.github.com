@@ -1,574 +1,201 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="tomcat7中Digester的使用以及对server.xml的解析过程分析">
-<meta property="og:url" content="http://dachengxi.github.com/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2017-05-16T16:16:15.000Z">
-<meta property="article:modified_time" content="2017-05-16T16:17:27.000Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="Digester">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>tomcat7中Digester的使用以及对server.xml的解析过程分析 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>tomcat7中Digester的使用以及对server.xml的解析过程分析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>tomcat7中Digester的使用以及对server.xml的解析过程分析</h1>
+			<b><time>2017-05-17 00:16:15</time></b>
+		       
+		           <a href="/tags/digester">Digester</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          tomcat7中Digester的使用以及对server.xml的解析过程分析
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-05-17 00:16:15 00:16:15" itemprop="dateCreated datePublished" datetime="2017-05-17T00:16:15+08:00">2017-05-17 00:16:15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tomcat7/" itemprop="url" rel="index"><span itemprop="name">tomcat7</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/17/tomcat7中Digester的使用以及对server.xml的解析过程分析/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。</p>
-<a id="more"></a>
+			<div>
+				<p>tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。</p>
 <p>load方法的代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public void load() &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Create and execute our Digester</span><br><span class="line">    Digester digester &#x3D; createStartDigester();</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            inputSource.setByteStream(inputStream);</span><br><span class="line">            digester.push(this);</span><br><span class="line">            digester.parse(inputSource);</span><br><span class="line">        &#125;</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码做了精简，只保留了Digester的最重要部分。首先是创建并配置要用来启动的Digester实例，然后获取到server.xml文件的输入流之后，使用digester进行解析。</p>
-<h1 id="Digester介绍"><a href="#Digester介绍" class="headerlink" title="Digester介绍"></a>Digester介绍</h1><p>在进行具体步骤的解析之前，首先看一下Digester的简单介绍，Digester用来处理xml，是对SAX的包装，所以也是基于文件流来解析xml的。Digester使用的步骤也很简单：</p>
+<pre><code>public void load() {
+
+    ...
+
+    // Create and execute our Digester
+    Digester digester = createStartDigester();
+
+    ...
+
+        try {
+            inputSource.setByteStream(inputStream);
+            digester.push(this);
+            digester.parse(inputSource);
+        }
+        ...
+
+}
+</code></pre><p>代码做了精简，只保留了Digester的最重要部分。首先是创建并配置要用来启动的Digester实例，然后获取到server.xml文件的输入流之后，使用digester进行解析。</p>
+<h1 id="digester介绍">Digester介绍</h1>
+<p>在进行具体步骤的解析之前，首先看一下Digester的简单介绍，Digester用来处理xml，是对SAX的包装，所以也是基于文件流来解析xml的。Digester使用的步骤也很简单：</p>
 <ul>
 <li>创建一个Digester实例</li>
 <li>设置相关属性</li>
 <li>设置具体的规则</li>
 <li>调用parse方法进行解析</li>
 </ul>
-<h1 id="createStartDigester"><a href="#createStartDigester" class="headerlink" title="createStartDigester"></a>createStartDigester</h1><p>此方法用来创建和配置Digester，对应着上面的前三个步骤，具体代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">protected Digester createStartDigester() &#123;</span><br><span class="line">    long t1&#x3D;System.currentTimeMillis();</span><br><span class="line">    &#x2F;&#x2F;创建一个digester实例</span><br><span class="line">    Digester digester &#x3D; new Digester();</span><br><span class="line">    &#x2F;&#x2F;是否需要验证xml文档的合法性，false表示不需要进行DTD规则校验</span><br><span class="line">    digester.setValidating(false);</span><br><span class="line">    &#x2F;&#x2F;是否需要进行节点设置规则校验</span><br><span class="line">    digester.setRulesValidation(true);</span><br><span class="line">    &#x2F;&#x2F;将xml节点中的className作为假属性，不用调用默认的setter方法</span><br><span class="line">    &#x2F;&#x2F;在解析时，调用相应对象的setter方法来设置属性值，setter的参数就是节点属性，</span><br><span class="line">    &#x2F;&#x2F;而有className的话，则直接使用className来直接实例化对象</span><br><span class="line">    HashMap&lt;Class&lt;?&gt;, List&lt;String&gt;&gt; fakeAttributes &#x3D; new HashMap&lt;Class&lt;?&gt;, List&lt;String&gt;&gt;();</span><br><span class="line">    ArrayList&lt;String&gt; attrs &#x3D; new ArrayList&lt;String&gt;();</span><br><span class="line">    attrs.add(&quot;className&quot;);</span><br><span class="line">    fakeAttributes.put(Object.class, attrs);</span><br><span class="line">    digester.setFakeAttributes(fakeAttributes);</span><br><span class="line">    digester.setUseContextClassLoader(true);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;下面添加各种规则</span><br><span class="line">    &#x2F;&#x2F;遇到xml中Server节点，就创建一个StandardServer对象</span><br><span class="line">    digester.addObjectCreate(&quot;Server&quot;, &quot;org.apache.catalina.core.StandardServer&quot;,  &quot;className&quot;);</span><br><span class="line">    &#x2F;&#x2F;根据Server节点中的属性信息，调用属性的setter方法，比如说server节点中会有port&#x3D;“8080”属性，则会调用setPort方法</span><br><span class="line">    digester.addSetProperties(&quot;Server&quot;);</span><br><span class="line">    &#x2F;&#x2F;在上面的load方法中有个digester.push(this)，this对象就是栈顶了</span><br><span class="line">    &#x2F;&#x2F;这里将Server节点对应的对象作为参数，调用this对象，也就是Catalina对象的setServer方法</span><br><span class="line">    digester.addSetNext(&quot;Server&quot;, &quot;setServer&quot;, &quot;org.apache.catalina.Server&quot;);</span><br><span class="line">    &#x2F;&#x2F;Server节点下的GlobalNamingResources节点，创建一个NamingResource对象</span><br><span class="line">    digester.addObjectCreate(&quot;Server&#x2F;GlobalNamingResources&quot;, &quot;org.apache.catalina.deploy.NamingResources&quot;);</span><br><span class="line">    digester.addSetProperties(&quot;Server&#x2F;GlobalNamingResources&quot;);</span><br><span class="line">    digester.addSetNext(&quot;Server&#x2F;GlobalNamingResources&quot;, &quot;setGlobalNamingResources&quot;, &quot;org.apache.catalina.deploy.NamingResources&quot;);</span><br><span class="line">    &#x2F;&#x2F;Server下的Listener节点</span><br><span class="line">    digester.addObjectCreate(&quot;Server&#x2F;Listener&quot;,  null, &#x2F;&#x2F; MUST be specified in the element &quot;className&quot;);</span><br><span class="line">    digester.addSetProperties(&quot;Server&#x2F;Listener&quot;);</span><br><span class="line">    digester.addSetNext(&quot;Server&#x2F;Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);</span><br><span class="line">    &#x2F;&#x2F;Server下的Service节点</span><br><span class="line">    digester.addObjectCreate(&quot;Server&#x2F;Service&quot;,  &quot;org.apache.catalina.core.StandardService&quot;, &quot;className&quot;);</span><br><span class="line">    digester.addSetProperties(&quot;Server&#x2F;Service&quot;);</span><br><span class="line">    digester.addSetNext(&quot;Server&#x2F;Service&quot;, &quot;addService&quot;, &quot;org.apache.catalina.Service&quot;);</span><br><span class="line">    &#x2F;&#x2F;Service节点下的Listener节点</span><br><span class="line">    digester.addObjectCreate(&quot;Server&#x2F;Service&#x2F;Listener&quot;, null,  &quot;className&quot;);</span><br><span class="line">    digester.addSetProperties(&quot;Server&#x2F;Service&#x2F;Listener&quot;);</span><br><span class="line">    digester.addSetNext(&quot;Server&#x2F;Service&#x2F;Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;Executor节点</span><br><span class="line">    digester.addObjectCreate(&quot;Server&#x2F;Service&#x2F;Executor&quot;,  &quot;org.apache.catalina.core.StandardThreadExecutor&quot;,  &quot;className&quot;);</span><br><span class="line">    digester.addSetProperties(&quot;Server&#x2F;Service&#x2F;Executor&quot;);</span><br><span class="line"></span><br><span class="line">    digester.addSetNext(&quot;Server&#x2F;Service&#x2F;Executor&quot;, &quot;addExecutor&quot;, &quot;org.apache.catalina.Executor&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;给Connector添加规则，就是当遇到Connector的时候，会调用ConnectorCreateRule里面定义的规则</span><br><span class="line">    &#x2F;&#x2F;跟上面的作用是一样的，只不过该节点的规则比较多，就创建一个规则类</span><br><span class="line">    digester.addRule(&quot;Server&#x2F;Service&#x2F;Connector&quot;, new ConnectorCreateRule());</span><br><span class="line">    digester.addRule(&quot;Server&#x2F;Service&#x2F;Connector&quot;,  new SetAllPropertiesRule(new String[]&#123;&quot;executor&quot;&#125;));</span><br><span class="line">    digester.addSetNext(&quot;Server&#x2F;Service&#x2F;Connector&quot;, &quot;addConnector&quot;, &quot;org.apache.catalina.connector.Connector&quot;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    digester.addObjectCreate(&quot;Server&#x2F;Service&#x2F;Connector&#x2F;Listener&quot;, null,  &quot;className&quot;);</span><br><span class="line">    digester.addSetProperties(&quot;Server&#x2F;Service&#x2F;Connector&#x2F;Listener&quot;);</span><br><span class="line">    digester.addSetNext(&quot;Server&#x2F;Service&#x2F;Connector&#x2F;Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;给嵌入元素添加RuleSet自定义规则</span><br><span class="line">    &#x2F;&#x2F;每个rule规则，都会有tomcat对自身业务逻辑的判断和处理</span><br><span class="line">    digester.addRuleSet(new NamingRuleSet(&quot;Server&#x2F;GlobalNamingResources&#x2F;&quot;));</span><br><span class="line">    digester.addRuleSet(new EngineRuleSet(&quot;Server&#x2F;Service&#x2F;&quot;));</span><br><span class="line">    digester.addRuleSet(new HostRuleSet(&quot;Server&#x2F;Service&#x2F;Engine&#x2F;&quot;));</span><br><span class="line">    digester.addRuleSet(new ContextRuleSet(&quot;Server&#x2F;Service&#x2F;Engine&#x2F;Host&#x2F;&quot;));</span><br><span class="line">    addClusterRuleSet(digester, &quot;Server&#x2F;Service&#x2F;Engine&#x2F;Host&#x2F;Cluster&#x2F;&quot;);</span><br><span class="line">    digester.addRuleSet(new NamingRuleSet(&quot;Server&#x2F;Service&#x2F;Engine&#x2F;Host&#x2F;Context&#x2F;&quot;));</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; When the &#39;engine&#39; is found, set the parentClassLoader.</span><br><span class="line">    digester.addRule(&quot;Server&#x2F;Service&#x2F;Engine&quot;, new SetParentClassLoaderRule(parentClassLoader));</span><br><span class="line">    addClusterRuleSet(digester, &quot;Server&#x2F;Service&#x2F;Engine&#x2F;Cluster&#x2F;&quot;);</span><br><span class="line"></span><br><span class="line">    return (digester);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面创建完Digester对象，并设置了属性和各种规则之后，接下来主要的就是解析工作。</p>
-<h1 id="parse解析"><a href="#parse解析" class="headerlink" title="parse解析"></a>parse解析</h1><p>parse方法代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public Object parse(InputSource input) throws IOException, SAXException &#123;</span><br><span class="line">    &#x2F;&#x2F;解析前的配置，默认什么也没做，需要子类去实现</span><br><span class="line">    configure();</span><br><span class="line">    &#x2F;&#x2F;获取解析器去解析</span><br><span class="line">    getXMLReader().parse(input);</span><br><span class="line">    return (root);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>解析完成之后，Server,Service等等在server.xml中存在的节点，就会有对应的对象存在，后续就可以使用这些对象进行初始化和启动了。</p>
+<h1 id="createstartdigester">createStartDigester</h1>
+<p>此方法用来创建和配置Digester，对应着上面的前三个步骤，具体代码如下：</p>
+<pre><code>protected Digester createStartDigester() {
+    long t1=System.currentTimeMillis();
+    //创建一个digester实例
+    Digester digester = new Digester();
+    //是否需要验证xml文档的合法性，false表示不需要进行DTD规则校验
+    digester.setValidating(false);
+    //是否需要进行节点设置规则校验
+    digester.setRulesValidation(true);
+    //将xml节点中的className作为假属性，不用调用默认的setter方法
+    //在解析时，调用相应对象的setter方法来设置属性值，setter的参数就是节点属性，
+    //而有className的话，则直接使用className来直接实例化对象
+    HashMap&lt;Class&lt;?&gt;, List&lt;String&gt;&gt; fakeAttributes = new HashMap&lt;Class&lt;?&gt;, List&lt;String&gt;&gt;();
+    ArrayList&lt;String&gt; attrs = new ArrayList&lt;String&gt;();
+    attrs.add(&quot;className&quot;);
+    fakeAttributes.put(Object.class, attrs);
+    digester.setFakeAttributes(fakeAttributes);
+    digester.setUseContextClassLoader(true);
+
+    //下面添加各种规则
+    //遇到xml中Server节点，就创建一个StandardServer对象
+    digester.addObjectCreate(&quot;Server&quot;, &quot;org.apache.catalina.core.StandardServer&quot;,  &quot;className&quot;);
+    //根据Server节点中的属性信息，调用属性的setter方法，比如说server节点中会有port=“8080”属性，则会调用setPort方法
+    digester.addSetProperties(&quot;Server&quot;);
+    //在上面的load方法中有个digester.push(this)，this对象就是栈顶了
+    //这里将Server节点对应的对象作为参数，调用this对象，也就是Catalina对象的setServer方法
+    digester.addSetNext(&quot;Server&quot;, &quot;setServer&quot;, &quot;org.apache.catalina.Server&quot;);
+    //Server节点下的GlobalNamingResources节点，创建一个NamingResource对象
+    digester.addObjectCreate(&quot;Server/GlobalNamingResources&quot;, &quot;org.apache.catalina.deploy.NamingResources&quot;);
+    digester.addSetProperties(&quot;Server/GlobalNamingResources&quot;);
+    digester.addSetNext(&quot;Server/GlobalNamingResources&quot;, &quot;setGlobalNamingResources&quot;, &quot;org.apache.catalina.deploy.NamingResources&quot;);
+    //Server下的Listener节点
+    digester.addObjectCreate(&quot;Server/Listener&quot;,  null, // MUST be specified in the element &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Listener&quot;);
+    digester.addSetNext(&quot;Server/Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);
+    //Server下的Service节点
+    digester.addObjectCreate(&quot;Server/Service&quot;,  &quot;org.apache.catalina.core.StandardService&quot;, &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Service&quot;);
+    digester.addSetNext(&quot;Server/Service&quot;, &quot;addService&quot;, &quot;org.apache.catalina.Service&quot;);
+    //Service节点下的Listener节点
+    digester.addObjectCreate(&quot;Server/Service/Listener&quot;, null,  &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Service/Listener&quot;);
+    digester.addSetNext(&quot;Server/Service/Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);
+
+    //Executor节点
+    digester.addObjectCreate(&quot;Server/Service/Executor&quot;,  &quot;org.apache.catalina.core.StandardThreadExecutor&quot;,  &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Service/Executor&quot;);
+
+    digester.addSetNext(&quot;Server/Service/Executor&quot;, &quot;addExecutor&quot;, &quot;org.apache.catalina.Executor&quot;);
+
+    //给Connector添加规则，就是当遇到Connector的时候，会调用ConnectorCreateRule里面定义的规则
+    //跟上面的作用是一样的，只不过该节点的规则比较多，就创建一个规则类
+    digester.addRule(&quot;Server/Service/Connector&quot;, new ConnectorCreateRule());
+    digester.addRule(&quot;Server/Service/Connector&quot;,  new SetAllPropertiesRule(new String[]{&quot;executor&quot;}));
+    digester.addSetNext(&quot;Server/Service/Connector&quot;, &quot;addConnector&quot;, &quot;org.apache.catalina.connector.Connector&quot;);
+
+
+    digester.addObjectCreate(&quot;Server/Service/Connector/Listener&quot;, null,  &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Service/Connector/Listener&quot;);
+    digester.addSetNext(&quot;Server/Service/Connector/Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);
+
+    //给嵌入元素添加RuleSet自定义规则
+    //每个rule规则，都会有tomcat对自身业务逻辑的判断和处理
+    digester.addRuleSet(new NamingRuleSet(&quot;Server/GlobalNamingResources/&quot;));
+    digester.addRuleSet(new EngineRuleSet(&quot;Server/Service/&quot;));
+    digester.addRuleSet(new HostRuleSet(&quot;Server/Service/Engine/&quot;));
+    digester.addRuleSet(new ContextRuleSet(&quot;Server/Service/Engine/Host/&quot;));
+    addClusterRuleSet(digester, &quot;Server/Service/Engine/Host/Cluster/&quot;);
+    digester.addRuleSet(new NamingRuleSet(&quot;Server/Service/Engine/Host/Context/&quot;));
+
+    // When the 'engine' is found, set the parentClassLoader.
+    digester.addRule(&quot;Server/Service/Engine&quot;, new SetParentClassLoaderRule(parentClassLoader));
+    addClusterRuleSet(digester, &quot;Server/Service/Engine/Cluster/&quot;);
+
+    return (digester);
+
+}
+</code></pre><p>上面创建完Digester对象，并设置了属性和各种规则之后，接下来主要的就是解析工作。</p>
+<h1 id="parse解析">parse解析</h1>
+<p>parse方法代码如下：</p>
+<pre><code>public Object parse(InputSource input) throws IOException, SAXException {
+    //解析前的配置，默认什么也没做，需要子类去实现
+    configure();
+    //获取解析器去解析
+    getXMLReader().parse(input);
+    return (root);
+
+}
+</code></pre><p>解析完成之后，Server,Service等等在server.xml中存在的节点，就会有对应的对象存在，后续就可以使用这些对象进行初始化和启动了。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Digester/" rel="tag"># Digester</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/" rel="prev" title="tomcat7的server.xml解析">
-      <i class="fa fa-chevron-left"></i> tomcat7的server.xml解析
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/05/20/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E4%BB%8B%E7%BB%8D/" rel="next" title="JVM运行时数据区域介绍">
-      JVM运行时数据区域介绍 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Digester介绍"><span class="nav-number">1.</span> <span class="nav-text">Digester介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#createStartDigester"><span class="nav-number">2.</span> <span class="nav-text">createStartDigester</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#parse解析"><span class="nav-number">3.</span> <span class="nav-text">parse解析</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/";
-    this.page.identifier = "2017/05/17/tomcat7中Digester的使用以及对server.xml的解析过程分析/";
-    this.page.title = "tomcat7中Digester的使用以及对server.xml的解析过程分析";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

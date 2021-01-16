@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>tomcat与memcached-session-manager共享session测试</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>tomcat与memcached-session-manager共享session测试</h1>
+			<b><time>2016-07-01 15:09:23</time></b>
+		       
+		           <a href="/tags/msm">msm</a>
+        	       
+		           <a href="/tags/memcached-session-manager">memcached-session-manager</a>
+        	       
+		           <a href="/tags/session%E5%85%B1%E4%BA%AB">session共享</a>
+        	       
+
+			<div>
+				<h2 id="简介">简介</h2>
+<p>看书刚好看到集群session共享,总觉得只看不做,不能确定这到底是怎么运行的.所以就做了这个测试.有关<a href="https://github.com/magro/memcached-session-manager">Memcached-Session-Manager</a>,Memcached,以及集群session共享等相关知识,请自行补充.本次就简单记录下测试过程.
+有关其他的方式以及其他的情况,本文不做说明,有需要的话,会再写其他情况和方式下的文章.</p>
+<!-- raw HTML omitted -->
+<h2 id="环境说明">环境说明</h2>
+<ul>
+<li>本机OSX 10.11,tomca7.0.57,memcached-1.4.24</li>
+<li>虚拟机Ubuntu16.04,tomca7.0.57,memcached-1.4.24</li>
+<li>使用non-sticky sessions（非粘性session）</li>
+<li>序列化:使用默认,java进行序列化，由memcached-session-manager.jar这个jar包来提供方法.</li>
+<li>有关粘性和非粘性的区别以及序列化等不做解释.</li>
+</ul>
+<h2 id="具体步骤">具体步骤</h2>
+<h3 id="安装jdkmemcachedtomcat">安装jdk,memcached,tomcat</h3>
+<p>不做详细说明</p>
+<h3 id="放jar包">放jar包</h3>
+<p>将如下相关jar包分别放置到两台机器的tomcat  <code>$CATALINA_HOME/lib/</code>目录中.</p>
+<ul>
+<li><a href="http://repo1.maven.org/maven2/de/javakaffee/msm/memcached-session-manager/">memcached-session-manager-${version}.jar</a></li>
+<li><a href="http://repo1.maven.org/maven2/de/javakaffee/msm/memcached-session-manager-tc7/">memcached-session-manager-tc7-${version}.jar</a></li>
+<li><a href="http://repo1.maven.org/maven2/net/spy/spymemcached/2.11.1/spymemcached-2.11.1.jar">spymemcached-2.11.1.jar</a></li>
+</ul>
+<h3 id="修改tomcat配置文件">修改tomcat配置文件</h3>
+<p>两台机器分别修改tomcat <code>$CATALINA_HOME/conf/context.xml</code>文件,添加如下代码到Context节点下:</p>
+<pre><code>&lt;Manager className=&quot;de.javakaffee.web.msm.MemcachedBackupSessionManager&quot;
+        memcachedNodes=&quot;n1:192.168.110.197:11211,n2:192.168.110.198:11211&quot;
+        sticky=&quot;false&quot;
+        sessionBackupAsync=&quot;false&quot;
+        requestUriIgnorePattern=&quot;.*\.(ico|png|gif|jpg|css|js)$&quot;
+ /&gt;
+</code></pre><h3 id="部署web项目到tomcat">部署Web项目到tomcat</h3>
+<p>新建测试用的web项目,并部署到两台tomcat中.测试代码简单如下:</p>
+<pre><code>&lt;body&gt;
+	Session ID:&lt;%=session.getId()%&gt; &lt;br&gt;
+	IP:&lt;%=request.getServerName()%&gt; &lt;br&gt;
+	Port:&lt;%=request.getServerPort()%&gt;
+&lt;/body&gt;
+</code></pre><h3 id="启动两台机器的memcached">启动两台机器的memcached</h3>
+<pre><code>memcached -m 32 -p 11211 -d
+</code></pre><h3 id="启动两台机器的tomcat">启动两台机器的tomcat</h3>
+<p>查看tomcat信息<code>tail -f catalina.out</code>未报错,看到类似如下信息就启动成功</p>
+<pre><code>信息: --------
+-  finished initialization:
+- sticky: false
+- operation timeout: 1000
+- node ids: [n1, n2]
+- failover node ids: []
+- storage key prefix: null
+--------
+
+</code></pre><h3 id="访问测试页面">访问测试页面</h3>
+<p>分别访问两台机器的测试页面:</p>
+<ul>
+<li>同一个浏览器</li>
+<li>两个浏览器</li>
+<li>结束掉一个机器的memcached进程在访问等等</li>
+</ul>
+<p>同一个浏览器不同标签页访问192.168.110.197和192.168.110.198 得到的sessionid都是一样的:</p>
+<pre><code>Session ID:39D5E175513B4496C136F5E1554478CD-n1 
+IP:192.168.110.197 
+Port:8080
+
+Session ID:39D5E175513B4496C136F5E1554478CD-n1 
+IP:192.168.110.198 
+Port:8080
+</code></pre><p>关闭ip为197的memcached进程之后,刷新页面:</p>
+<pre><code>Session ID:39D5E175513B4496C136F5E1554478CD-n2 
+IP:192.168.110.197 
+Port:8080
+
+Session ID:39D5E175513B4496C136F5E1554478CD-n2 
+IP:192.168.110.198 
+Port:8080
+</code></pre><p>测试成功.</p>
+<h2 id="参考">参考</h2>
+<p><a href="https://github.com/magro/memcached-session-manager/wiki/SetupAndConfiguration#introduction">https://github.com/magro/memcached-session-manager/wiki/SetupAndConfiguration#introduction</a></p>
+<p><a href="http://laoxu.blog.51cto.com/4120547/1566477">http://laoxu.blog.51cto.com/4120547/1566477</a></p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

@@ -1,679 +1,849 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Dubbo中SPI扩展机制详解">
-<meta property="og:url" content="http://dachengxi.github.com/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2017-02-18T15:13:34.000Z">
-<meta property="article:modified_time" content="2017-04-19T16:23:40.000Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="dubbo源码">
-<meta property="article:tag" content="dubbo SPI">
-<meta property="article:tag" content="dubbo 扩展机制">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>Dubbo中SPI扩展机制详解 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Dubbo中SPI扩展机制详解</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>Dubbo中SPI扩展机制详解</h1>
+			<b><time>2017-02-18 23:13:34</time></b>
+		       
+		           <a href="/tags/dubbo-spi">dubbo SPI</a>
+        	       
+		           <a href="/tags/dubbo-%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6">dubbo 扩展机制</a>
+        	       
+		           <a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Dubbo中SPI扩展机制详解
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-02-18 23:13:34 23:13:34" itemprop="dateCreated datePublished" datetime="2017-02-18T23:13:34+08:00">2017-02-18 23:13:34</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dubbo/" itemprop="url" rel="index"><span itemprop="name">dubbo</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/02/18/Dubbo中SPI扩展机制详解/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。</p>
-<a id="more"></a>
-<h1 id="Dubbo扩展点加载的功能"><a href="#Dubbo扩展点加载的功能" class="headerlink" title="Dubbo扩展点加载的功能"></a>Dubbo扩展点加载的功能</h1><p>Dubbo的扩展点加载机制类似于Java的SPI，我们知道Java的SPI在使用的时候，只能通过遍历来进行实现的查找和实例化，有可能会一次性把所有的实现都实例化，这样会造成有些不使用的扩展实现也会被实例化，这就会造成一定的资源浪费。有关Dubbo的改进，参照文档上的说明：</p>
+			<div>
+				<p>前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。</p>
+<h1 id="dubbo扩展点加载的功能">Dubbo扩展点加载的功能</h1>
+<p>Dubbo的扩展点加载机制类似于Java的SPI，我们知道Java的SPI在使用的时候，只能通过遍历来进行实现的查找和实例化，有可能会一次性把所有的实现都实例化，这样会造成有些不使用的扩展实现也会被实例化，这就会造成一定的资源浪费。有关Dubbo的改进，参照文档上的说明：</p>
 <ul>
 <li>JDK标准的SPI会一次性实例化扩展点所有实现，如果有扩展实现初始化很耗时，但如果没用上也加载，会很浪费资源。</li>
 <li>如果扩展点加载失败，连扩展点的名称都拿不到了。比如：JDK标准的ScriptEngine，通过getName();获取脚本类型的名称，但如果RubyScriptEngine因为所依赖的jruby.jar不存在，导致RubyScriptEngine类加载失败，这个失败原因被吃掉了，和ruby对应不起来，当用户执行ruby脚本时，会报不支持ruby，而不是真正失败的原因。</li>
 <li>增加了对扩展点IoC和AOP的支持，一个扩展点可以直接setter注入其它扩展点。</li>
 </ul>
 <p>关于第一点，通过和Java的SPI对比，就能明白；第二点还未做测试，不太清楚其中的缘由；第三点对于IOC和AOP的支持下面简单介绍下。</p>
-<h2 id="扩展点自动装配功能（IOC）"><a href="#扩展点自动装配功能（IOC）" class="headerlink" title="扩展点自动装配功能（IOC）"></a>扩展点自动装配功能（IOC）</h2><p>就是当加载一个扩展点时，会自动的注入这个扩展点所依赖的<strong>其他扩展点</strong>，如果描述不清楚的话，可以看下下面的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">接口A，实现类A1，A2</span><br><span class="line">接口B，实现类B1，B2</span><br></pre></td></tr></table></figure>
-<p>其中实现类A1含有setB()方法，当通过扩展机制加载A的实现的时候，会自动的注入一个B的实现类，但是，此时不是注入B1，也不是注入B2，而是注入一个自适应的B的实现类：<code>B$Adpative</code>，该实现类是动态生成的，能够根据参数的不同，自动选择B1或者B2来进行调用。</p>
-<h2 id="扩展点自适应"><a href="#扩展点自适应" class="headerlink" title="扩展点自适应"></a>扩展点自适应</h2><p>上面我们说，在自动装配的时候，并不是注入一个真正的实现，而是注入一个自适应的扩展点实现，其实就是动态的生成的代码，也就是手动拼装的代码，这段代码里会根据SPI上配置的信息来加入对于具体实现的选择功能。生成的代码类似于下面的，代码做了一下精简，把包都去掉了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.dubbo.common.extension.ExtensionLoader;</span><br><span class="line">public class Protocol$Adpative implements Protocol &#123;</span><br><span class="line">  public Invoker refer(Class arg0, URL arg1) throws Class &#123;</span><br><span class="line">    if (arg1 &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;url &#x3D;&#x3D; null&quot;);</span><br><span class="line"></span><br><span class="line">    URL url &#x3D; arg1;</span><br><span class="line">    String extName &#x3D; ( url.getProtocol() &#x3D;&#x3D; null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line"></span><br><span class="line">    if(extName &#x3D;&#x3D; null) throw new IllegalStateException(&quot;Fail to get extension(Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);</span><br><span class="line">    </span><br><span class="line">    Protocol extension &#x3D; (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.refer(arg0, arg1);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public Exporter export(Invoker arg0) throws Invoker &#123;</span><br><span class="line">    if (arg0 &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;Invoker argument &#x3D;&#x3D; null&quot;);</span><br><span class="line">    </span><br><span class="line">    if (arg0.getUrl() &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;Invoker argument getUrl() &#x3D;&#x3D; null&quot;);URL url &#x3D; arg0.getUrl();</span><br><span class="line">    &#x2F;&#x2F;这里会根据url中的信息获取具体的实现类名</span><br><span class="line">    String extName &#x3D; ( url.getProtocol() &#x3D;&#x3D; null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line">    </span><br><span class="line">    if(extName &#x3D;&#x3D; null) throw new IllegalStateException(&quot;Fail to get extension(Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);</span><br><span class="line">    &#x2F;&#x2F;根据上面的实现类名，会在运行时，通过Dubbo的扩展机制加载具体实现类</span><br><span class="line">    Protocol extension &#x3D; (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.export(arg0);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public void destroy() &#123;</span><br><span class="line">  	throw new UnsupportedOperationException(&quot;method public abstract void Protocol.destroy() of interface Protocol is not adaptive method!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public int getDefaultPort() &#123;</span><br><span class="line">  	throw new UnsupportedOperationException(&quot;method public abstract int Protocol.getDefaultPort() of interface Protocol is not adaptive method!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用这种方式的原因也很容易能想到，在我们加载扩展点实现的时候，并没有调用实现的具体逻辑，那我们注入一个扩展点，也就不知道这个扩展点的实现具体是什么，所以要注入一个自适应的实现。等到运行时候，才根据自适应实现，来调用真正实现。</p>
-<h2 id="扩展点自动包装功能（AOP）"><a href="#扩展点自动包装功能（AOP）" class="headerlink" title="扩展点自动包装功能（AOP）"></a>扩展点自动包装功能（AOP）</h2><p>先看下下面的示例，假如接口A还有另外一个实现者：AWrapper1：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class AWrapper1 implements A&#123;</span><br><span class="line">	private A a;</span><br><span class="line">    AWrapper1(A a)&#123;</span><br><span class="line">      this.a &#x3D; a;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>AWrapper1相当于A的包装类，类似于AOP的功能，AWrapper1增加了A的功能。当我们获取接口A的实现类的时候，得到的就是包装过的类。</p>
-<h1 id="Dubbo扩展点加载的实现"><a href="#Dubbo扩展点加载的实现" class="headerlink" title="Dubbo扩展点加载的实现"></a>Dubbo扩展点加载的实现</h1><p>首先还是定义接口，然后是接口的具体实现类，配置文件类似于Java的SPI配置文件，Dubbo的配置文件放在<code>META-INF/dubbo/</code>目录下，配置文件名为接口的全限定名，配置文件内容是<code>配置名=扩展实现类的全限定名</code>，加载实现类的功能是通过ExtensionLoader来实现，类似于Java中的ServiceLoader的作用。</p>
-<p>另外，扩展点使用单一实例加载，需要确保线程安全性。</p>
-<h1 id="Dubbo扩展点加载的一些定义"><a href="#Dubbo扩展点加载的一些定义" class="headerlink" title="Dubbo扩展点加载的一些定义"></a>Dubbo扩展点加载的一些定义</h1><ul>
-<li><p><code>@SPI</code>注解，被此注解标记的接口，就表示是一个可扩展的接口。</p>
-</li>
-<li><p><code>@Adaptive</code>注解，有两种注解方式：一种是注解在类上，一种是注解在方法上。</p>
-<ul>
-<li><p>注解在类上，而且是注解在实现类上，目前dubbo只有AdaptiveCompiler和AdaptiveExtensionFactory类上标注了此注解，这是些特殊的类，ExtensionLoader需要依赖他们工作，所以得使用此方式。</p>
-</li>
-<li><p>注解在方法上，注解在接口的方法上，除了上面两个类之外，所有的都是注解在方法上。ExtensionLoader根据接口定义动态的生成适配器代码，并实例化这个生成的动态类。被Adaptive注解的方法会生成具体的方法实现。没有注解的方法生成的实现都是抛不支持的操作异常UnsupportedOperationException。被注解的方法在生成的动态类中，会根据url里的参数信息，来决定实际调用哪个扩展。</p>
-<p>比如说这段代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static final Protocol refprotocol &#x3D; ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();</span><br></pre></td></tr></table></figure>
+<h2 id="扩展点自动装配功能ioc">扩展点自动装配功能（IOC）</h2>
+<p>就是当加载一个扩展点时，会自动的注入这个扩展点所依赖的<strong>其他扩展点</strong>，如果描述不清楚的话，可以看下下面的例子：</p>
+<pre><code>接口A，实现类A1，A2
+接口B，实现类B1，B2
+</code></pre><p>其中实现类A1含有setB()方法，当通过扩展机制加载A的实现的时候，会自动的注入一个B的实现类，但是，此时不是注入B1，也不是注入B2，而是注入一个自适应的B的实现类：<code>B$Adpative</code>，该实现类是动态生成的，能够根据参数的不同，自动选择B1或者B2来进行调用。</p>
+<h2 id="扩展点自适应">扩展点自适应</h2>
+<p>上面我们说，在自动装配的时候，并不是注入一个真正的实现，而是注入一个自适应的扩展点实现，其实就是动态的生成的代码，也就是手动拼装的代码，这段代码里会根据SPI上配置的信息来加入对于具体实现的选择功能。生成的代码类似于下面的，代码做了一下精简，把包都去掉了：</p>
+<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+public class Protocol$Adpative implements Protocol {
+  public Invoker refer(Class arg0, URL arg1) throws Class {
+    if (arg1 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
 
-<p>当上面代码执行的时候，我们其实还不知道要真正使用的Protocol是什么，可能是具体的实现DubboProtocol，也可能是其他的具体实现的Protocol，那么这时候refprotocol到底是什么呢？refprotocol其实是在调用getAdaptiveExtension()方法时候，自动生成的一个类，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.dubbo.common.extension.ExtensionLoader;</span><br><span class="line">public class Protocol$Adpative implements Protocol &#123;</span><br><span class="line">  public Invoker refer(Class arg0, URL arg1) throws Class &#123;</span><br><span class="line">    if (arg1 &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;url &#x3D;&#x3D; null&quot;);</span><br><span class="line"></span><br><span class="line">    URL url &#x3D; arg1;</span><br><span class="line">    String extName &#x3D; ( url.getProtocol() &#x3D;&#x3D; null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line"></span><br><span class="line">    if(extName &#x3D;&#x3D; null) throw new IllegalStateException(&quot;Fail to get extension(Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);</span><br><span class="line"></span><br><span class="line">    Protocol extension &#x3D; (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);</span><br><span class="line"></span><br><span class="line">    return extension.refer(arg0, arg1);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public Exporter export(Invoker arg0) throws Invoker &#123;</span><br><span class="line">    if (arg0 &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;Invoker argument &#x3D;&#x3D; null&quot;);</span><br><span class="line"></span><br><span class="line">    if (arg0.getUrl() &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;Invoker argument getUrl() &#x3D;&#x3D; null&quot;);URL url &#x3D; arg0.getUrl();</span><br><span class="line"></span><br><span class="line">    String extName &#x3D; ( url.getProtocol() &#x3D;&#x3D; null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line"></span><br><span class="line">    if(extName &#x3D;&#x3D; null) throw new IllegalStateException(&quot;Fail to get extension(Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);</span><br><span class="line"></span><br><span class="line">    Protocol extension &#x3D; (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);</span><br><span class="line"></span><br><span class="line">    return extension.export(arg0);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void destroy() &#123;</span><br><span class="line">    throw new UnsupportedOperationException(&quot;method public abstract void Protocol.destroy() of interface Protocol is not adaptive method!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public int getDefaultPort() &#123;</span><br><span class="line">    throw new UnsupportedOperationException(&quot;method public abstract int Protocol.getDefaultPort() of interface Protocol is not adaptive method!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到被@Adaptive注解的方法都生成了具体的实现，并且实现逻辑都相同。而没有被注解的方法直接抛出不支持操作的异常。</p>
+    URL url = arg1;
+    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+
+    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+    
+    Protocol extension = (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);
+    
+    return extension.refer(arg0, arg1);
+  }
+  
+  public Exporter export(Invoker arg0) throws Invoker {
+    if (arg0 == null) throw new IllegalArgumentException(&quot;Invoker argument == null&quot;);
+    
+    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;Invoker argument getUrl() == null&quot;);URL url = arg0.getUrl();
+    //这里会根据url中的信息获取具体的实现类名
+    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+    
+    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+    //根据上面的实现类名，会在运行时，通过Dubbo的扩展机制加载具体实现类
+    Protocol extension = (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);
+    
+    return extension.export(arg0);
+  }
+  
+  public void destroy() {
+  	throw new UnsupportedOperationException(&quot;method public abstract void Protocol.destroy() of interface Protocol is not adaptive method!&quot;);
+  }
+  
+  public int getDefaultPort() {
+  	throw new UnsupportedOperationException(&quot;method public abstract int Protocol.getDefaultPort() of interface Protocol is not adaptive method!&quot;);
+  }
+}
+</code></pre><p>使用这种方式的原因也很容易能想到，在我们加载扩展点实现的时候，并没有调用实现的具体逻辑，那我们注入一个扩展点，也就不知道这个扩展点的实现具体是什么，所以要注入一个自适应的实现。等到运行时候，才根据自适应实现，来调用真正实现。</p>
+<h2 id="扩展点自动包装功能aop">扩展点自动包装功能（AOP）</h2>
+<p>先看下下面的示例，假如接口A还有另外一个实现者：AWrapper1：</p>
+<pre><code>class AWrapper1 implements A{
+	private A a;
+    AWrapper1(A a){
+      this.a = a;
+    }
+    
+}
+</code></pre><p>AWrapper1相当于A的包装类，类似于AOP的功能，AWrapper1增加了A的功能。当我们获取接口A的实现类的时候，得到的就是包装过的类。</p>
+<h1 id="dubbo扩展点加载的实现">Dubbo扩展点加载的实现</h1>
+<p>首先还是定义接口，然后是接口的具体实现类，配置文件类似于Java的SPI配置文件，Dubbo的配置文件放在<code>META-INF/dubbo/</code>目录下，配置文件名为接口的全限定名，配置文件内容是<code>配置名=扩展实现类的全限定名</code>，加载实现类的功能是通过ExtensionLoader来实现，类似于Java中的ServiceLoader的作用。</p>
+<p>另外，扩展点使用单一实例加载，需要确保线程安全性。</p>
+<h1 id="dubbo扩展点加载的一些定义">Dubbo扩展点加载的一些定义</h1>
+<ul>
+<li>
+<p><code>@SPI</code>注解，被此注解标记的接口，就表示是一个可扩展的接口。</p>
+</li>
+<li>
+<p><code>@Adaptive</code>注解，有两种注解方式：一种是注解在类上，一种是注解在方法上。</p>
+</li>
+<li>
+<p>注解在类上，而且是注解在实现类上，目前dubbo只有AdaptiveCompiler和AdaptiveExtensionFactory类上标注了此注解，这是些特殊的类，ExtensionLoader需要依赖他们工作，所以得使用此方式。</p>
+</li>
+<li>
+<p>注解在方法上，注解在接口的方法上，除了上面两个类之外，所有的都是注解在方法上。ExtensionLoader根据接口定义动态的生成适配器代码，并实例化这个生成的动态类。被Adaptive注解的方法会生成具体的方法实现。没有注解的方法生成的实现都是抛不支持的操作异常UnsupportedOperationException。被注解的方法在生成的动态类中，会根据url里的参数信息，来决定实际调用哪个扩展。</p>
+<p>比如说这段代码：</p>
+<pre><code>private static final Protocol refprotocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
+</code></pre><p>当上面代码执行的时候，我们其实还不知道要真正使用的Protocol是什么，可能是具体的实现DubboProtocol，也可能是其他的具体实现的Protocol，那么这时候refprotocol到底是什么呢？refprotocol其实是在调用getAdaptiveExtension()方法时候，自动生成的一个类，代码如下：</p>
+<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+public class Protocol$Adpative implements Protocol {
+  public Invoker refer(Class arg0, URL arg1) throws Class {
+    if (arg1 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
+
+    URL url = arg1;
+    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+
+    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+
+    Protocol extension = (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);
+
+    return extension.refer(arg0, arg1);
+  }
+
+  public Exporter export(Invoker arg0) throws Invoker {
+    if (arg0 == null) throw new IllegalArgumentException(&quot;Invoker argument == null&quot;);
+
+    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;Invoker argument getUrl() == null&quot;);URL url = arg0.getUrl();
+
+    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+
+    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+
+    Protocol extension = (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);
+
+    return extension.export(arg0);
+  }
+
+  public void destroy() {
+    throw new UnsupportedOperationException(&quot;method public abstract void Protocol.destroy() of interface Protocol is not adaptive method!&quot;);
+  }
+
+  public int getDefaultPort() {
+    throw new UnsupportedOperationException(&quot;method public abstract int Protocol.getDefaultPort() of interface Protocol is not adaptive method!&quot;);
+  }
+}
+</code></pre><p>可以看到被@Adaptive注解的方法都生成了具体的实现，并且实现逻辑都相同。而没有被注解的方法直接抛出不支持操作的异常。</p>
 <p>当我们使用refprotocol调用方法的时候，其实是调用生成的类<code>Protocol$Adpative</code>中的方法，这里面的方法根据url中的参数配置来找到具体的实现类，找具体实现类的方式还是通过dubbo的扩展机制。比如url中可能会有protocol=dubbo，此时就可以根据这个dubbo来确定我们要找的类是DubboProtocol。可以查看下生成的代码中<code>getExtension(extName)</code>这里是根据具体的名字去查找实现类。</p>
 </li>
+<li>
+<p><code>@Activate</code>注解，此注解需要注解在类上或者方法上，并注明被激活的条件，以及所有的被激活实现类中的排序信息。</p>
+</li>
+<li>
+<p>ExtensionLoader，是dubbo的SPI机制的查找服务实现的工具类，类似与Java的ServiceLoader，可做类比。dubbo约定扩展点配置文件放在classpath下的<code>/META-INF/dubbo，/META-INF/dubbo/internal，/META-INF/services</code>目录下，配置文件名为接口的全限定名，配置文件内容为<code>配置名=扩展实现类的全限定名</code>。</p>
+</li>
 </ul>
-</li>
-<li><p><code>@Activate</code>注解，此注解需要注解在类上或者方法上，并注明被激活的条件，以及所有的被激活实现类中的排序信息。</p>
-</li>
-<li><p>ExtensionLoader，是dubbo的SPI机制的查找服务实现的工具类，类似与Java的ServiceLoader，可做类比。dubbo约定扩展点配置文件放在classpath下的<code>/META-INF/dubbo，/META-INF/dubbo/internal，/META-INF/services</code>目录下，配置文件名为接口的全限定名，配置文件内容为<code>配置名=扩展实现类的全限定名</code>。</p>
-</li>
-</ul>
-<h1 id="Dubbo扩展点加载的源码解析"><a href="#Dubbo扩展点加载的源码解析" class="headerlink" title="Dubbo扩展点加载的源码解析"></a>Dubbo扩展点加载的源码解析</h1><p>重点解析下ExtensionLoader这个类。Dubbo的扩展点使用单一实例去加载，缓存在ExtensionLoader中。每一个ExtensionLoader实例仅负责加载特定SPI扩展的实现，想要获得某个扩展的实现，首先要获得该扩展对应的ExtensionLoader实例。</p>
+<h1 id="dubbo扩展点加载的源码解析">Dubbo扩展点加载的源码解析</h1>
+<p>重点解析下ExtensionLoader这个类。Dubbo的扩展点使用单一实例去加载，缓存在ExtensionLoader中。每一个ExtensionLoader实例仅负责加载特定SPI扩展的实现，想要获得某个扩展的实现，首先要获得该扩展对应的ExtensionLoader实例。</p>
 <p>以Protocol为例进行分析扩展点的加载：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;这样使用，先获取ExtensionLoader实例，然后加载自适应的Protocol扩展点</span><br><span class="line">Protocol protocol &#x3D; ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();</span><br><span class="line">&#x2F;&#x2F;使用</span><br><span class="line">protocol.refer(Class&lt;T&gt; type, URL url))；</span><br></pre></td></tr></table></figure>
-<p>可以看到，使用扩展点加载的步骤大概有三步：</p>
+<pre><code>//这样使用，先获取ExtensionLoader实例，然后加载自适应的Protocol扩展点
+Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
+//使用
+protocol.refer(Class&lt;T&gt; type, URL url))；
+</code></pre><p>可以看到，使用扩展点加载的步骤大概有三步：</p>
 <ol>
 <li>获取ExtensionLoader实例。</li>
 <li>获取自适应实现。</li>
 <li>使用获取到的实现。</li>
 </ol>
 <p>下面我们就以这三步作为分界，来深入源码的解析。</p>
-<h2 id="获取ExtensionLoader实例"><a href="#获取ExtensionLoader实例" class="headerlink" title="获取ExtensionLoader实例"></a>获取ExtensionLoader实例</h2><p>第一步，getExtensionLoader(Protocol.class)，根据要加载的接口Protocol，创建出一个ExtensionLoader实例，加载完的实例会被缓存起来，下次再加载Protocol的ExtensionLoader的时候，会使用已经缓存的这个，不会再新建一个实例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public static &lt;T&gt; ExtensionLoader&lt;T&gt; getExtensionLoader(Class&lt;T&gt; type) &#123;</span><br><span class="line">    &#x2F;&#x2F;扩展点类型不能为空</span><br><span class="line">    if (type &#x3D;&#x3D; null)</span><br><span class="line">        throw new IllegalArgumentException();</span><br><span class="line">    &#x2F;&#x2F;扩展点类型只能是接口类型的</span><br><span class="line">    if(!type.isInterface()) &#123;</span><br><span class="line">        throw new IllegalArgumentException();</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;没有添加@SPI注解，只有注解了@SPI的才会解析</span><br><span class="line">    if(!withExtensionAnnotation(type)) &#123;</span><br><span class="line">        throw new IllegalArgumentException();</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;先从缓存中获取指定类型的ExtensionLoader</span><br><span class="line">    &#x2F;&#x2F;EXTENSION_LOADERS是一个ConcurrentHashMap，缓存了所有已经加载的ExtensionLoader的实例</span><br><span class="line">    &#x2F;&#x2F;比如这里加载Protocol.class，就以Protocol.class作为key，以新创建的ExtensionLoader作为value</span><br><span class="line">    &#x2F;&#x2F;每一个要加载的扩展点只会对应一个ExtensionLoader实例，也就是只会存在一个Protocol.class在缓存中</span><br><span class="line">    ExtensionLoader&lt;T&gt; loader &#x3D; (ExtensionLoader&lt;T&gt;) EXTENSION_LOADERS.get(type);</span><br><span class="line">    &#x2F;&#x2F;缓存中不存在</span><br><span class="line">    if (loader &#x3D;&#x3D; null) &#123;</span><br><span class="line">        &#x2F;&#x2F;创建一个新的ExtensionLoader实例，放到缓存中去</span><br><span class="line">        &#x2F;&#x2F;对于每一个扩展，dubbo中只有一个对应的ExtensionLoader实例</span><br><span class="line">        EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader&lt;T&gt;(type));</span><br><span class="line">        loader &#x3D; (ExtensionLoader&lt;T&gt;) EXTENSION_LOADERS.get(type);</span><br><span class="line">    &#125;</span><br><span class="line">    return loader;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面代码返回一个ExtensionLoader实例，<code>getExtensionLoader(Protocol.class)</code>这一步没有进行任何的加载工作，只是获得了一个ExtensionLoader的实例。</p>
-<h3 id="ExtensionLoader的构造方法"><a href="#ExtensionLoader的构造方法" class="headerlink" title="ExtensionLoader的构造方法"></a>ExtensionLoader的构造方法</h3><p>上面获取的是一个ExtensionLoader实例，接着看下构造实例的时候到底做了什么，我们发现在ExtensionLoader中只有一个私有的构造方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private ExtensionLoader(Class&lt;?&gt; type) &#123;</span><br><span class="line">	&#x2F;&#x2F;接口类型</span><br><span class="line">    this.type &#x3D; type;</span><br><span class="line">    &#x2F;&#x2F;对于扩展类型是ExtensionFactory的，设置为null</span><br><span class="line">    &#x2F;&#x2F;getAdaptiveExtension方法获取一个运行时自适应的扩展类型</span><br><span class="line">    &#x2F;&#x2F;每个Extension只能有一个@Adaptive类型的实现，如果么有，dubbo会自动生成一个类</span><br><span class="line">    &#x2F;&#x2F;objectFactory是一个ExtensionFactory类型的属性，主要用于加载需要注入的类型的实现</span><br><span class="line">    &#x2F;&#x2F;objectFactory主要用在注入那一步，详细说明见注入时候的说明</span><br><span class="line">    &#x2F;&#x2F;这里记住非ExtensionFactory类型的返回的都是一个AdaptiveExtensionFactory</span><br><span class="line">    objectFactory &#x3D; (type &#x3D;&#x3D; ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>不难理解，ExtensionFactory是主要是用来加载被注入的类的实现，分为SpiExtensionFactory和SpringExtensionFactory两个，分别用来加载SPI扩展实现和Spring中bean的实现。</p>
-<h2 id="获取自适应实现"><a href="#获取自适应实现" class="headerlink" title="获取自适应实现"></a>获取自适应实现</h2><p>上面返回一个ExtensionLoader的实例之后，开始加载自适应实现，加载是在调用getAdaptiveExtension()方法中进行的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">getAdaptiveExtension()--&gt;</span><br><span class="line">                createAdaptiveExtension()--&gt;</span><br><span class="line">                                getAdaptiveExtensionClass()--&gt;</span><br><span class="line">                                                getExtensionClasses()--&gt;</span><br><span class="line">                                                                loadExtensionClasses()</span><br></pre></td></tr></table></figure>
+<h2 id="获取extensionloader实例">获取ExtensionLoader实例</h2>
+<p>第一步，getExtensionLoader(Protocol.class)，根据要加载的接口Protocol，创建出一个ExtensionLoader实例，加载完的实例会被缓存起来，下次再加载Protocol的ExtensionLoader的时候，会使用已经缓存的这个，不会再新建一个实例：</p>
+<pre><code>public static &lt;T&gt; ExtensionLoader&lt;T&gt; getExtensionLoader(Class&lt;T&gt; type) {
+    //扩展点类型不能为空
+    if (type == null)
+        throw new IllegalArgumentException();
+    //扩展点类型只能是接口类型的
+    if(!type.isInterface()) {
+        throw new IllegalArgumentException();
+    }
+    //没有添加@SPI注解，只有注解了@SPI的才会解析
+    if(!withExtensionAnnotation(type)) {
+        throw new IllegalArgumentException();
+    }
+    //先从缓存中获取指定类型的ExtensionLoader
+    //EXTENSION_LOADERS是一个ConcurrentHashMap，缓存了所有已经加载的ExtensionLoader的实例
+    //比如这里加载Protocol.class，就以Protocol.class作为key，以新创建的ExtensionLoader作为value
+    //每一个要加载的扩展点只会对应一个ExtensionLoader实例，也就是只会存在一个Protocol.class在缓存中
+    ExtensionLoader&lt;T&gt; loader = (ExtensionLoader&lt;T&gt;) EXTENSION_LOADERS.get(type);
+    //缓存中不存在
+    if (loader == null) {
+        //创建一个新的ExtensionLoader实例，放到缓存中去
+        //对于每一个扩展，dubbo中只有一个对应的ExtensionLoader实例
+        EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader&lt;T&gt;(type));
+        loader = (ExtensionLoader&lt;T&gt;) EXTENSION_LOADERS.get(type);
+    }
+    return loader;
+}
+</code></pre><p>上面代码返回一个ExtensionLoader实例，<code>getExtensionLoader(Protocol.class)</code>这一步没有进行任何的加载工作，只是获得了一个ExtensionLoader的实例。</p>
+<h3 id="extensionloader的构造方法">ExtensionLoader的构造方法</h3>
+<p>上面获取的是一个ExtensionLoader实例，接着看下构造实例的时候到底做了什么，我们发现在ExtensionLoader中只有一个私有的构造方法：</p>
+<pre><code>private ExtensionLoader(Class&lt;?&gt; type) {
+	//接口类型
+    this.type = type;
+    //对于扩展类型是ExtensionFactory的，设置为null
+    //getAdaptiveExtension方法获取一个运行时自适应的扩展类型
+    //每个Extension只能有一个@Adaptive类型的实现，如果么有，dubbo会自动生成一个类
+    //objectFactory是一个ExtensionFactory类型的属性，主要用于加载需要注入的类型的实现
+    //objectFactory主要用在注入那一步，详细说明见注入时候的说明
+    //这里记住非ExtensionFactory类型的返回的都是一个AdaptiveExtensionFactory
+    objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
+}
+</code></pre><p>不难理解，ExtensionFactory是主要是用来加载被注入的类的实现，分为SpiExtensionFactory和SpringExtensionFactory两个，分别用来加载SPI扩展实现和Spring中bean的实现。</p>
+<h2 id="获取自适应实现">获取自适应实现</h2>
+<p>上面返回一个ExtensionLoader的实例之后，开始加载自适应实现，加载是在调用getAdaptiveExtension()方法中进行的：</p>
+<pre><code>getAdaptiveExtension()--&gt;
+                createAdaptiveExtension()--&gt;
+                                getAdaptiveExtensionClass()--&gt;
+                                                getExtensionClasses()--&gt;
+                                                                loadExtensionClasses()
 
-<p>先看下getAdaptiveExtension()方法，用来获取一个扩展的自适应实现类，最后返回的自适应实现类是一个类名为<code>Protocol$Adaptive</code>的类，并且这个类实现了Protocol接口：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public T getAdaptiveExtension() &#123;</span><br><span class="line">    &#x2F;&#x2F;先从实例缓存中查找实例对象</span><br><span class="line">    &#x2F;&#x2F;private final Holder&lt;Object&gt; cachedAdaptiveInstance &#x3D; new Holder&lt;Object&gt;();</span><br><span class="line">    &#x2F;&#x2F;在当前的ExtensionLoader中保存着一个Holder实例，用来缓存自适应实现类的实例</span><br><span class="line">    Object instance &#x3D; cachedAdaptiveInstance.get();</span><br><span class="line">    if (instance &#x3D;&#x3D; null) &#123;&#x2F;&#x2F;缓存中不存在</span><br><span class="line">        if(createAdaptiveInstanceError &#x3D;&#x3D; null) &#123;</span><br><span class="line">            synchronized (cachedAdaptiveInstance) &#123;</span><br><span class="line">                &#x2F;&#x2F;获取锁之后再检查一次缓存中是不是已经存在</span><br><span class="line">                instance &#x3D; cachedAdaptiveInstance.get();</span><br><span class="line">                if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        &#x2F;&#x2F;缓存中没有，就创建新的AdaptiveExtension实例</span><br><span class="line">                        instance &#x3D; createAdaptiveExtension();</span><br><span class="line">                        &#x2F;&#x2F;新实例加入缓存</span><br><span class="line">                        cachedAdaptiveInstance.set(instance);</span><br><span class="line">                    &#125; catch (Throwable t) &#123;createAdaptiveInstanceError &#x3D; t; &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return (T) instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="创建自适应扩展"><a href="#创建自适应扩展" class="headerlink" title="创建自适应扩展"></a>创建自适应扩展</h3><p>缓存中不存在自适应扩展的实例，表示还没有创建过自适应扩展的实例，接下来就是创建自适应扩展实现，createAdaptiveExtension()方法，用来创建自适应扩展类的实例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">private T createAdaptiveExtension() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;先通过getAdaptiveExtensionClass获取AdaptiveExtensionClass</span><br><span class="line">        &#x2F;&#x2F;然后获取其实例</span><br><span class="line">        &#x2F;&#x2F;最后进行注入处理</span><br><span class="line">        return injectExtension((T) getAdaptiveExtensionClass().newInstance());</span><br><span class="line">    &#125; catch (Exception e) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="获取自适应扩展类"><a href="#获取自适应扩展类" class="headerlink" title="获取自适应扩展类"></a>获取自适应扩展类</h3><p>接着查看getAdaptiveExtensionClass()方法，用来获取一个自适应扩展的Class，这个Class将会在下一步被实例化：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private Class&lt;?&gt; getAdaptiveExtensionClass() &#123;</span><br><span class="line">    &#x2F;&#x2F;加载当前Extension的所有实现（这里举例是Protocol，只会加载Protocol的所有实现类），如果有@Adaptive类型的实现类，会赋值给cachedAdaptiveClass</span><br><span class="line">    &#x2F;&#x2F;目前只有AdaptiveExtensionFactory和AdaptiveCompiler两个实现类是被注解了@Adaptive</span><br><span class="line">    &#x2F;&#x2F;除了ExtensionFactory和Compiler类型的扩展之外，其他类型的扩展都是下面动态创建的的实现</span><br><span class="line">    getExtensionClasses();</span><br><span class="line">    &#x2F;&#x2F;加载完所有的实现之后，发现有cachedAdaptiveClass不为空</span><br><span class="line">    &#x2F;&#x2F;也就是说当前获取的自适应实现类是AdaptiveExtensionFactory或者是AdaptiveCompiler，就直接返回，这两个类是特殊用处的，不用代码生成，而是现成的代码</span><br><span class="line">    if (cachedAdaptiveClass !&#x3D; null) &#123;</span><br><span class="line">        return cachedAdaptiveClass;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;没有找到Adaptive类型的实现，动态创建一个</span><br><span class="line">    &#x2F;&#x2F;比如Protocol的实现类，没有任何一个实现是用@Adaptive来注解的，只有Protocol接口的方法是有注解的</span><br><span class="line">    &#x2F;&#x2F;这时候就需要来动态的生成了，也就是生成Protocol$Adaptive</span><br><span class="line">    return cachedAdaptiveClass &#x3D; createAdaptiveExtensionClass();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="加载扩展类实现"><a href="#加载扩展类实现" class="headerlink" title="加载扩展类实现"></a>加载扩展类实现</h4><p>先看下getExtensionClasses()这个方法，加载所有的扩展类的实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">private Map&lt;String, Class&lt;?&gt;&gt; getExtensionClasses() &#123;</span><br><span class="line">    &#x2F;&#x2F;从缓存中获取，cachedClasses也是一个Holder，Holder这里持有的是一个Map，key是扩展点实现名，value是扩展点实现类</span><br><span class="line">    &#x2F;&#x2F;这里会存放当前扩展点类型的所有的扩展点的实现类</span><br><span class="line">    &#x2F;&#x2F;这里以Protocol为例，就是会存放Protocol的所有实现类</span><br><span class="line">    &#x2F;&#x2F;比如key为dubbo，value为com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol</span><br><span class="line">    &#x2F;&#x2F;cachedClasses扩展点实现名称对应的实现类</span><br><span class="line">    Map&lt;String, Class&lt;?&gt;&gt; classes &#x3D; cachedClasses.get();</span><br><span class="line">    &#x2F;&#x2F;如果为null，说明没有被加载过，就会进行加载，而且加载就只会进行这一次</span><br><span class="line">    if (classes &#x3D;&#x3D; null) &#123;</span><br><span class="line">        synchronized (cachedClasses) &#123;</span><br><span class="line">            classes &#x3D; cachedClasses.get();</span><br><span class="line">            if (classes &#x3D;&#x3D; null) &#123;</span><br><span class="line">                &#x2F;&#x2F;如果没有加载过Extension的实现，进行扫描加载，完成后缓存起来</span><br><span class="line">                &#x2F;&#x2F;每个扩展点，其实现的加载只会这执行一次</span><br><span class="line">                classes &#x3D; loadExtensionClasses();</span><br><span class="line">                cachedClasses.set(classes);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return classes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre><p>先看下getAdaptiveExtension()方法，用来获取一个扩展的自适应实现类，最后返回的自适应实现类是一个类名为<code>Protocol$Adaptive</code>的类，并且这个类实现了Protocol接口：</p>
+<pre><code>public T getAdaptiveExtension() {
+    //先从实例缓存中查找实例对象
+    //private final Holder&lt;Object&gt; cachedAdaptiveInstance = new Holder&lt;Object&gt;();
+    //在当前的ExtensionLoader中保存着一个Holder实例，用来缓存自适应实现类的实例
+    Object instance = cachedAdaptiveInstance.get();
+    if (instance == null) {//缓存中不存在
+        if(createAdaptiveInstanceError == null) {
+            synchronized (cachedAdaptiveInstance) {
+                //获取锁之后再检查一次缓存中是不是已经存在
+                instance = cachedAdaptiveInstance.get();
+                if (instance == null) {
+                    try {
+                        //缓存中没有，就创建新的AdaptiveExtension实例
+                        instance = createAdaptiveExtension();
+                        //新实例加入缓存
+                        cachedAdaptiveInstance.set(instance);
+                    } catch (Throwable t) {createAdaptiveInstanceError = t; }
+                }
+            }
+        }
+    }
 
-<p>看下loadExtensionClasses()方法，这个方法中加载扩展点的实现类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">private Map&lt;String, Class&lt;?&gt;&gt; loadExtensionClasses() &#123;</span><br><span class="line">    final SPI defaultAnnotation &#x3D; type.getAnnotation(SPI.class);</span><br><span class="line">    if(defaultAnnotation !&#x3D; null) &#123;</span><br><span class="line">        &#x2F;&#x2F;当前Extension的默认实现名字</span><br><span class="line">        &#x2F;&#x2F;比如说Protocol接口，注解是@SPI(&quot;dubbo&quot;)</span><br><span class="line">        &#x2F;&#x2F;这里dubbo就是默认的值</span><br><span class="line">        String value &#x3D; defaultAnnotation.value();</span><br><span class="line">        &#x2F;&#x2F;只能有一个默认的名字，如果多了，谁也不知道该用哪一个实现了。</span><br><span class="line">        if(value !&#x3D; null &amp;&amp; (value &#x3D; value.trim()).length() &gt; 0) &#123;</span><br><span class="line">            String[] names &#x3D; NAME_SEPARATOR.split(value);</span><br><span class="line">            if(names.length &gt; 1) &#123;</span><br><span class="line">                throw new IllegalStateException();</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F;默认的名字保存起来</span><br><span class="line">            if(names.length &#x3D;&#x3D; 1) cachedDefaultName &#x3D; names[0];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;下面就开始从配置文件中加载扩展实现类</span><br><span class="line">    Map&lt;String, Class&lt;?&gt;&gt; extensionClasses &#x3D; new HashMap&lt;String, Class&lt;?&gt;&gt;();</span><br><span class="line">    &#x2F;&#x2F;从META-INF&#x2F;dubbo&#x2F;internal目录下加载</span><br><span class="line">    loadFile(extensionClasses, DUBBO_INTERNAL_DIRECTORY);</span><br><span class="line">    &#x2F;&#x2F;从META-INF&#x2F;dubbo&#x2F;目录下加载</span><br><span class="line">    loadFile(extensionClasses, DUBBO_DIRECTORY);</span><br><span class="line">    &#x2F;&#x2F;从META-INF&#x2F;services&#x2F;下加载</span><br><span class="line">    loadFile(extensionClasses, SERVICES_DIRECTORY);</span><br><span class="line">    return extensionClasses;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>从各个位置的配置文件中加载实现类，对于Protocol来说加载的文件是以<code>com.alibaba.dubbo.rpc.Protocol</code>为名称的文件，文件的内容是（有好几个同名的配置文件，这里直接把内容全部写在了一起）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">registry&#x3D;com.alibaba.dubbo.registry.integration.RegistryProtocol</span><br><span class="line"></span><br><span class="line">filter&#x3D;com.alibaba.dubbo.rpc.protocol.ProtocolFilterWrapper</span><br><span class="line">listener&#x3D;com.alibaba.dubbo.rpc.protocol.ProtocolListenerWrapper</span><br><span class="line">mock&#x3D;com.alibaba.dubbo.rpc.support.MockProtocol</span><br><span class="line"></span><br><span class="line">dubbo&#x3D;com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol</span><br><span class="line"></span><br><span class="line">hessian&#x3D;com.alibaba.dubbo.rpc.protocol.hessian.HessianProtocol</span><br><span class="line"></span><br><span class="line">com.alibaba.dubbo.rpc.protocol.http.HttpProtocol</span><br><span class="line"></span><br><span class="line">injvm&#x3D;com.alibaba.dubbo.rpc.protocol.injvm.InjvmProtocol</span><br><span class="line"></span><br><span class="line">memcached&#x3D;memcom.alibaba.dubbo.rpc.protocol.memcached.MemcachedProtocol</span><br><span class="line"></span><br><span class="line">redis&#x3D;com.alibaba.dubbo.rpc.protocol.redis.RedisProtocol</span><br><span class="line"></span><br><span class="line">rmi&#x3D;com.alibaba.dubbo.rpc.protocol.rmi.RmiProtocol</span><br><span class="line"></span><br><span class="line">thrift&#x3D;com.alibaba.dubbo.rpc.protocol.thrift.ThriftProtocol</span><br><span class="line"></span><br><span class="line">com.alibaba.dubbo.rpc.protocol.webservice.WebServiceProtocol</span><br></pre></td></tr></table></figure>
+    return (T) instance;
+}
+</code></pre><h3 id="创建自适应扩展">创建自适应扩展</h3>
+<p>缓存中不存在自适应扩展的实例，表示还没有创建过自适应扩展的实例，接下来就是创建自适应扩展实现，createAdaptiveExtension()方法，用来创建自适应扩展类的实例：</p>
+<pre><code>private T createAdaptiveExtension() {
+    try {
+        //先通过getAdaptiveExtensionClass获取AdaptiveExtensionClass
+        //然后获取其实例
+        //最后进行注入处理
+        return injectExtension((T) getAdaptiveExtensionClass().newInstance());
+    } catch (Exception e) {}
+}
+</code></pre><h3 id="获取自适应扩展类">获取自适应扩展类</h3>
+<p>接着查看getAdaptiveExtensionClass()方法，用来获取一个自适应扩展的Class，这个Class将会在下一步被实例化：</p>
+<pre><code>private Class&lt;?&gt; getAdaptiveExtensionClass() {
+    //加载当前Extension的所有实现（这里举例是Protocol，只会加载Protocol的所有实现类），如果有@Adaptive类型的实现类，会赋值给cachedAdaptiveClass
+    //目前只有AdaptiveExtensionFactory和AdaptiveCompiler两个实现类是被注解了@Adaptive
+    //除了ExtensionFactory和Compiler类型的扩展之外，其他类型的扩展都是下面动态创建的的实现
+    getExtensionClasses();
+    //加载完所有的实现之后，发现有cachedAdaptiveClass不为空
+    //也就是说当前获取的自适应实现类是AdaptiveExtensionFactory或者是AdaptiveCompiler，就直接返回，这两个类是特殊用处的，不用代码生成，而是现成的代码
+    if (cachedAdaptiveClass != null) {
+        return cachedAdaptiveClass;
+    }
+    //没有找到Adaptive类型的实现，动态创建一个
+    //比如Protocol的实现类，没有任何一个实现是用@Adaptive来注解的，只有Protocol接口的方法是有注解的
+    //这时候就需要来动态的生成了，也就是生成Protocol$Adaptive
+    return cachedAdaptiveClass = createAdaptiveExtensionClass();
+}
+</code></pre><h4 id="加载扩展类实现">加载扩展类实现</h4>
+<p>先看下getExtensionClasses()这个方法，加载所有的扩展类的实现：</p>
+<pre><code>private Map&lt;String, Class&lt;?&gt;&gt; getExtensionClasses() {
+    //从缓存中获取，cachedClasses也是一个Holder，Holder这里持有的是一个Map，key是扩展点实现名，value是扩展点实现类
+    //这里会存放当前扩展点类型的所有的扩展点的实现类
+    //这里以Protocol为例，就是会存放Protocol的所有实现类
+    //比如key为dubbo，value为com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol
+    //cachedClasses扩展点实现名称对应的实现类
+    Map&lt;String, Class&lt;?&gt;&gt; classes = cachedClasses.get();
+    //如果为null，说明没有被加载过，就会进行加载，而且加载就只会进行这一次
+    if (classes == null) {
+        synchronized (cachedClasses) {
+            classes = cachedClasses.get();
+            if (classes == null) {
+                //如果没有加载过Extension的实现，进行扫描加载，完成后缓存起来
+                //每个扩展点，其实现的加载只会这执行一次
+                classes = loadExtensionClasses();
+                cachedClasses.set(classes);
+            }
+        }
+    }
+    return classes;
+}
+</code></pre><p>看下loadExtensionClasses()方法，这个方法中加载扩展点的实现类：</p>
+<pre><code>private Map&lt;String, Class&lt;?&gt;&gt; loadExtensionClasses() {
+    final SPI defaultAnnotation = type.getAnnotation(SPI.class);
+    if(defaultAnnotation != null) {
+        //当前Extension的默认实现名字
+        //比如说Protocol接口，注解是@SPI(&quot;dubbo&quot;)
+        //这里dubbo就是默认的值
+        String value = defaultAnnotation.value();
+        //只能有一个默认的名字，如果多了，谁也不知道该用哪一个实现了。
+        if(value != null &amp;&amp; (value = value.trim()).length() &gt; 0) {
+            String[] names = NAME_SEPARATOR.split(value);
+            if(names.length &gt; 1) {
+                throw new IllegalStateException();
+            }
+            //默认的名字保存起来
+            if(names.length == 1) cachedDefaultName = names[0];
+        }
+    }
 
-<p>看下loadFile()方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line">private void loadFile(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, String dir) &#123;</span><br><span class="line">    &#x2F;&#x2F;配置文件的名称</span><br><span class="line">    &#x2F;&#x2F;这里type是扩展类，比如com.alibaba.dubbo.rpc.Protocol类</span><br><span class="line">    String fileName &#x3D; dir + type.getName();</span><br><span class="line">    try &#123;</span><br><span class="line">        Enumeration&lt;java.net.URL&gt; urls;</span><br><span class="line">        &#x2F;&#x2F;获取类加载器</span><br><span class="line">        ClassLoader classLoader &#x3D; findClassLoader();</span><br><span class="line">        &#x2F;&#x2F;获取对应配置文件名的所有的文件</span><br><span class="line">        if (classLoader !&#x3D; null) &#123;</span><br><span class="line">            urls &#x3D; classLoader.getResources(fileName);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            urls &#x3D; ClassLoader.getSystemResources(fileName);</span><br><span class="line">        &#125;</span><br><span class="line">        if (urls !&#x3D; null) &#123;</span><br><span class="line">            &#x2F;&#x2F;遍历文件进行处理</span><br><span class="line">            while (urls.hasMoreElements()) &#123;</span><br><span class="line">                &#x2F;&#x2F;配置文件路径</span><br><span class="line">                java.net.URL url &#x3D; urls.nextElement();</span><br><span class="line">                try &#123;</span><br><span class="line">                    BufferedReader reader &#x3D; new BufferedReader(new InputStreamReader(url.openStream(), &quot;utf-8&quot;));</span><br><span class="line">                    try &#123;</span><br><span class="line">                        String line &#x3D; null;</span><br><span class="line">                        &#x2F;&#x2F;每次处理一行</span><br><span class="line">                        while ((line &#x3D; reader.readLine()) !&#x3D; null) &#123;</span><br><span class="line">                            &#x2F;&#x2F;#号以后的为注释</span><br><span class="line">                            final int ci &#x3D; line.indexOf(&#39;#&#39;);</span><br><span class="line">                            &#x2F;&#x2F;注释去掉</span><br><span class="line">                            if (ci &gt;&#x3D; 0) line &#x3D; line.substring(0, ci);</span><br><span class="line">                            line &#x3D; line.trim();</span><br><span class="line">                            if (line.length() &gt; 0) &#123;</span><br><span class="line">                                try &#123;</span><br><span class="line">                                    String name &#x3D; null;</span><br><span class="line">                                    &#x2F;&#x2F;&#x3D;号之前的为扩展名字，后面的为扩展类实现的全限定名</span><br><span class="line">                                    int i &#x3D; line.indexOf(&#39;&#x3D;&#39;);</span><br><span class="line">                                    if (i &gt; 0) &#123;</span><br><span class="line">                                        name &#x3D; line.substring(0, i).trim();</span><br><span class="line">                                        line &#x3D; line.substring(i + 1).trim();</span><br><span class="line">                                    &#125;</span><br><span class="line">                                    if (line.length() &gt; 0) &#123;</span><br><span class="line">                                        &#x2F;&#x2F;加载扩展类的实现</span><br><span class="line">                                        Class&lt;?&gt; clazz &#x3D; Class.forName(line, true, classLoader);</span><br><span class="line">                                        &#x2F;&#x2F;查看类型是否匹配</span><br><span class="line">                                        &#x2F;&#x2F;type是Protocol接口</span><br><span class="line">                                        &#x2F;&#x2F;clazz就是Protocol的各个实现类</span><br><span class="line">                                        if (! type.isAssignableFrom(clazz)) &#123;</span><br><span class="line">                                            throw new IllegalStateException();</span><br><span class="line">                                        &#125;</span><br><span class="line">                                        &#x2F;&#x2F;如果实现类是@Adaptive类型的，会赋值给cachedAdaptiveClass，这个用来存放被@Adaptive注解的实现类</span><br><span class="line">                                        if (clazz.isAnnotationPresent(Adaptive.class)) &#123;</span><br><span class="line">                                            if(cachedAdaptiveClass &#x3D;&#x3D; null) &#123;</span><br><span class="line">                                                cachedAdaptiveClass &#x3D; clazz;</span><br><span class="line">                                            &#125; else if (! cachedAdaptiveClass.equals(clazz)) &#123;</span><br><span class="line">                                                throw new IllegalStateException();</span><br><span class="line">                                            &#125;</span><br><span class="line">                                        &#125; else &#123;&#x2F;&#x2F;不是@Adaptice类型的类，就是没有注解@Adaptive的实现类</span><br><span class="line">                                            try &#123;&#x2F;&#x2F;判断是否是wrapper类型</span><br><span class="line">                                            	&#x2F;&#x2F;如果得到的实现类的构造方法中的参数是扩展点类型的，就是一个Wrapper类</span><br><span class="line">                                                &#x2F;&#x2F;比如ProtocolFilterWrapper，实现了Protocol类，</span><br><span class="line">                                                &#x2F;&#x2F;而它的构造方法是这样public ProtocolFilterWrapper(Protocol protocol)</span><br><span class="line">                                                &#x2F;&#x2F;就说明这个类是一个包装类</span><br><span class="line">                                                clazz.getConstructor(type);</span><br><span class="line">                                                &#x2F;&#x2F;cachedWrapperClasses用来存放当前扩展点实现类中的包装类</span><br><span class="line">                                                Set&lt;Class&lt;?&gt;&gt; wrappers &#x3D; cachedWrapperClasses;</span><br><span class="line">                                                if (wrappers &#x3D;&#x3D; null) &#123;</span><br><span class="line">                                                    cachedWrapperClasses &#x3D; new ConcurrentHashSet&lt;Class&lt;?&gt;&gt;();</span><br><span class="line">                                                    wrappers &#x3D; cachedWrapperClasses;</span><br><span class="line">                                                &#125;</span><br><span class="line">                                                wrappers.add(clazz);</span><br><span class="line">                                            &#125; catch (NoSuchMethodException e) &#123;</span><br><span class="line">                                            &#x2F;&#x2F;没有上面提到的构造器，则说明不是wrapper类型</span><br><span class="line">                                            	&#x2F;&#x2F;获取无参构造</span><br><span class="line">                                                clazz.getConstructor();</span><br><span class="line">                                                &#x2F;&#x2F;没有名字，就是配置文件中没有xxx&#x3D;xxxx.com.xxx这种</span><br><span class="line">                                                if (name &#x3D;&#x3D; null || name.length() &#x3D;&#x3D; 0) &#123;</span><br><span class="line">                                                	&#x2F;&#x2F;去找@Extension注解中配置的值</span><br><span class="line">                                                    name &#x3D; findAnnotationName(clazz);</span><br><span class="line">                                                    &#x2F;&#x2F;如果还没找到名字，从类名中获取</span><br><span class="line">                                                    if (name &#x3D;&#x3D; null || name.length() &#x3D;&#x3D; 0) &#123;</span><br><span class="line">                                                    	&#x2F;&#x2F;比如clazz是DubboProtocol，type是Protocol</span><br><span class="line">                                                        &#x2F;&#x2F;这里得到的name就是dubbo</span><br><span class="line">                                                        if (clazz.getSimpleName().length() &gt; type.getSimpleName().length()</span><br><span class="line">                                                                &amp;&amp; clazz.getSimpleName().endsWith(type.getSimpleName())) &#123;</span><br><span class="line">                                                            name &#x3D; clazz.getSimpleName().substring(0, clazz.getSimpleName().length() - type.getSimpleName().length()).toLowerCase();</span><br><span class="line">                                                        &#125; else &#123;</span><br><span class="line">                                                            throw new IllegalStateException(&quot;);</span><br><span class="line">                                                        &#125;</span><br><span class="line">                                                    &#125;</span><br><span class="line">                                                &#125;</span><br><span class="line">                                                &#x2F;&#x2F;有可能配置了多个名字</span><br><span class="line">                                                String[] names &#x3D; NAME_SEPARATOR.split(name);</span><br><span class="line">                                                if (names !&#x3D; null &amp;&amp; names.length &gt; 0) &#123;</span><br><span class="line">                                                    &#x2F;&#x2F;是否是Active类型的类</span><br><span class="line">                                                    Activate activate &#x3D; clazz.getAnnotation(Activate.class);</span><br><span class="line">                                                    if (activate !&#x3D; null) &#123;</span><br><span class="line">                                                    	&#x2F;&#x2F;第一个名字作为键，放进cachedActivates这个map中缓存</span><br><span class="line">                                                        cachedActivates.put(names[0], activate);</span><br><span class="line">                                                    &#125;</span><br><span class="line">                                                    for (String n : names) &#123;</span><br><span class="line">                                                        if (! cachedNames.containsKey(clazz)) &#123;</span><br><span class="line">                                                            &#x2F;&#x2F;放入Extension实现类与名称映射的缓存中去，每个class只对应第一个名称有效</span><br><span class="line">                                                            cachedNames.put(clazz, n);</span><br><span class="line">                                                        &#125;</span><br><span class="line">                                                        Class&lt;?&gt; c &#x3D; extensionClasses.get(n);</span><br><span class="line">                                                        if (c &#x3D;&#x3D; null) &#123;</span><br><span class="line">                                                            &#x2F;&#x2F;放入到extensionClasses缓存中去，多个name可能对应一份extensionClasses</span><br><span class="line">                                                            extensionClasses.put(n, clazz);</span><br><span class="line">                                                        &#125; else if (c !&#x3D; clazz) &#123;</span><br><span class="line">                                                            throw new IllegalStateException();</span><br><span class="line">                                                        &#125;</span><br><span class="line">                                                    &#125;</span><br><span class="line">                                                &#125;</span><br><span class="line">                                            &#125;</span><br><span class="line">                                        &#125;</span><br><span class="line">                                    &#125;</span><br><span class="line">                                &#125; catch (Throwable t) &#123; &#125;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; &#x2F;&#x2F; end of while read lines</span><br><span class="line">                    &#125; finally &#123;</span><br><span class="line">                        reader.close();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; catch (Throwable t) &#123; &#125;</span><br><span class="line">            &#125; &#x2F;&#x2F; end of while urls</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (Throwable t) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>到这里加载当前Extension的所有实现就已经完成了，继续返回getAdaptiveExtensionClass中，在调用完getExtensionClasses()之后，会首先检查是不是已经有@Adaptive注解的类被解析并加入到缓存中了，如果有就直接返回，这里的cachedAdaptiveClass中现在只能是AdaptiveExtensionFactory或者AdaptiveCompiler中的一个，如果没有，说明是一个普通扩展点，就动态创建一个，比如会创建一个<code>Protocol$Adaptive</code>。</p>
-<h4 id="创建自适应扩展类的代码"><a href="#创建自适应扩展类的代码" class="headerlink" title="创建自适应扩展类的代码"></a>创建自适应扩展类的代码</h4><p>看下createAdaptiveExtensionClass()这个方法，用来动态的创建自适应扩展类：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">private Class&lt;?&gt; createAdaptiveExtensionClass() &#123;</span><br><span class="line">	&#x2F;&#x2F;组装自适应扩展点类的代码</span><br><span class="line">    String code &#x3D; createAdaptiveExtensionClassCode();</span><br><span class="line">    &#x2F;&#x2F;获取到应用的类加载器</span><br><span class="line">    ClassLoader classLoader &#x3D; findClassLoader();</span><br><span class="line">    &#x2F;&#x2F;获取编译器</span><br><span class="line">    &#x2F;&#x2F;dubbo默认使用javassist</span><br><span class="line">    &#x2F;&#x2F;这里还是使用扩展点机制来找具体的Compiler的实现</span><br><span class="line">    &#x2F;&#x2F;现在就知道cachedAdaptiveClass是啥意思了，如果没有AdaptiveExtensionFactory和AdaptiveCompiler这两个类，这里又要去走加载流程然后来生成扩展点类的代码，不就死循环了么。</span><br><span class="line">    &#x2F;&#x2F;这里解析Compiler的实现类的时候，会在getAdaptiveExtensionClass中直接返回</span><br><span class="line">    &#x2F;&#x2F;可以查看下AdaptiveCompiler这个类，如果我们没有指定，默认使用javassist</span><br><span class="line">    &#x2F;&#x2F;这里Compiler是JavassistCompiler实例</span><br><span class="line">    com.alibaba.dubbo.common.compiler.Compiler compiler &#x3D; ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();</span><br><span class="line">    &#x2F;&#x2F;将代码转换成Class</span><br><span class="line">    return compiler.compile(code, classLoader);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    //下面就开始从配置文件中加载扩展实现类
+    Map&lt;String, Class&lt;?&gt;&gt; extensionClasses = new HashMap&lt;String, Class&lt;?&gt;&gt;();
+    //从META-INF/dubbo/internal目录下加载
+    loadFile(extensionClasses, DUBBO_INTERNAL_DIRECTORY);
+    //从META-INF/dubbo/目录下加载
+    loadFile(extensionClasses, DUBBO_DIRECTORY);
+    //从META-INF/services/下加载
+    loadFile(extensionClasses, SERVICES_DIRECTORY);
+    return extensionClasses;
+}
+</code></pre><p>从各个位置的配置文件中加载实现类，对于Protocol来说加载的文件是以<code>com.alibaba.dubbo.rpc.Protocol</code>为名称的文件，文件的内容是（有好几个同名的配置文件，这里直接把内容全部写在了一起）：</p>
+<pre><code>registry=com.alibaba.dubbo.registry.integration.RegistryProtocol
 
-<p>接着看下createAdaptiveExtensionClassCode()方法，用来组装自适应扩展类的代码（拼写源码，代码比较长不在列出），这里列出生成的<code>Protocol$Adaptive</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">import com.alibaba.dubbo.common.extension.ExtensionLoader;</span><br><span class="line">public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol &#123;</span><br><span class="line">  public com.alibaba.dubbo.rpc.Invoker refer(java.lang.Class arg0, com.alibaba.dubbo.common.URL arg1) throws java.lang.Class &#123;</span><br><span class="line">    if (arg1 &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;url &#x3D;&#x3D; null&quot;);</span><br><span class="line"></span><br><span class="line">    com.alibaba.dubbo.common.URL url &#x3D; arg1;</span><br><span class="line">    String extName &#x3D; ( url.getProtocol() &#x3D;&#x3D; null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line"></span><br><span class="line">    if(extName &#x3D;&#x3D; null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);</span><br><span class="line">    </span><br><span class="line">    com.alibaba.dubbo.rpc.Protocol extension &#x3D; (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.refer(arg0, arg1);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public com.alibaba.dubbo.rpc.Exporter export(com.alibaba.dubbo.rpc.Invoker arg0) throws com.alibaba.dubbo.rpc.Invoker &#123;</span><br><span class="line">    if (arg0 &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument &#x3D;&#x3D; null&quot;);</span><br><span class="line">    </span><br><span class="line">    if (arg0.getUrl() &#x3D;&#x3D; null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument getUrl() &#x3D;&#x3D; null&quot;);com.alibaba.dubbo.common.URL url &#x3D; arg0.getUrl();</span><br><span class="line">    </span><br><span class="line">    String extName &#x3D; ( url.getProtocol() &#x3D;&#x3D; null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line">    </span><br><span class="line">    if(extName &#x3D;&#x3D; null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);</span><br><span class="line">    </span><br><span class="line">    com.alibaba.dubbo.rpc.Protocol extension &#x3D; (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.export(arg0);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public void destroy() &#123;</span><br><span class="line">  	throw new UnsupportedOperationException(&quot;method public abstract void com.alibaba.dubbo.rpc.Protocol.destroy() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public int getDefaultPort() &#123;</span><br><span class="line">  	throw new UnsupportedOperationException(&quot;method public abstract int com.alibaba.dubbo.rpc.Protocol.getDefaultPort() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其他具体的扩展点的生成也类似。在生成完代码之后，是找到ClassLoader，然后获取到Compiler的自适应实现，这里得到的就是AdaptiveCompiler，最后调用<code>compiler.compile(code, classLoader);</code>来编译上面生成的类并返回，先进入AdaptiveCompiler的compile方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public Class&lt;?&gt; compile(String code, ClassLoader classLoader) &#123;</span><br><span class="line">    Compiler compiler;</span><br><span class="line">    &#x2F;&#x2F;得到一个ExtensionLoader</span><br><span class="line">    ExtensionLoader&lt;Compiler&gt; loader &#x3D; ExtensionLoader.getExtensionLoader(Compiler.class);</span><br><span class="line">    &#x2F;&#x2F;默认的Compiler名字</span><br><span class="line">    String name &#x3D; DEFAULT_COMPILER; &#x2F;&#x2F; copy reference</span><br><span class="line">    &#x2F;&#x2F;有指定了Compiler名字，就使用指定的名字来找到Compiler实现类</span><br><span class="line">    if (name !&#x3D; null &amp;&amp; name.length() &gt; 0) &#123;</span><br><span class="line">        compiler &#x3D; loader.getExtension(name);</span><br><span class="line">    &#125; else &#123;&#x2F;&#x2F;没有指定Compiler名字，就查找默认的Compiler的实现类</span><br><span class="line">        compiler &#x3D; loader.getDefaultExtension();</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;调用具体的实现类来进行编译</span><br><span class="line">    return compiler.compile(code, classLoader);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="获取指定名字的扩展"><a href="#获取指定名字的扩展" class="headerlink" title="获取指定名字的扩展"></a>获取指定名字的扩展</h4><p>先看下根据具体的名字来获取扩展的实现类<code>loader.getExtension(name);</code>，loader是<code>ExtensionLoader&lt;Compiler&gt;</code>类型的。这里就是比Java的SPI要方便的地方，Java的SPI只能通过遍历所有的实现类来查找，而dubbo能够指定一个名字查找。代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public T getExtension(String name) &#123;</span><br><span class="line">    if (name &#x3D;&#x3D; null || name.length() &#x3D;&#x3D; 0)</span><br><span class="line">        throw new IllegalArgumentException(&quot;Extension name &#x3D;&#x3D; null&quot;);</span><br><span class="line">    &#x2F;&#x2F;如果name指定为true，则获取默认实现</span><br><span class="line">    if (&quot;true&quot;.equals(name)) &#123;</span><br><span class="line">    	&#x2F;&#x2F;默认实现查找在下面解析</span><br><span class="line">        return getDefaultExtension();</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;先从缓存获取Holder，cachedInstance是一个ConcurrentHashMap，键是扩展的name，值是一个持有name对应的实现类实例的Holder。</span><br><span class="line">    Holder&lt;Object&gt; holder &#x3D; cachedInstances.get(name);</span><br><span class="line">    &#x2F;&#x2F;如果当前name对应的Holder不存在，就创建一个，添加进map中</span><br><span class="line">    if (holder &#x3D;&#x3D; null) &#123;</span><br><span class="line">        cachedInstances.putIfAbsent(name, new Holder&lt;Object&gt;());</span><br><span class="line">        holder &#x3D; cachedInstances.get(name);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;从Holder中获取保存的实例</span><br><span class="line">    Object instance &#x3D; holder.get();</span><br><span class="line">    &#x2F;&#x2F;不存在，就需要根据这个name找到实现类，实例化一个</span><br><span class="line">    if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">        synchronized (holder) &#123;</span><br><span class="line">            instance &#x3D; holder.get();</span><br><span class="line">            if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">                &#x2F;&#x2F;缓存不存在，创建实例</span><br><span class="line">                instance &#x3D; createExtension(name);</span><br><span class="line">                &#x2F;&#x2F;加入缓存</span><br><span class="line">                holder.set(instance);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;存在，就直接返回</span><br><span class="line">    return (T) instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+filter=com.alibaba.dubbo.rpc.protocol.ProtocolFilterWrapper
+listener=com.alibaba.dubbo.rpc.protocol.ProtocolListenerWrapper
+mock=com.alibaba.dubbo.rpc.support.MockProtocol
 
-<p>创建扩展实例，<code>createExtension(name);</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">private T createExtension(String name) &#123;</span><br><span class="line">    &#x2F;&#x2F;getExtensionClasses加载当前Extension的所有实现</span><br><span class="line">    &#x2F;&#x2F;上面已经解析过，返回的是一个Map，键是name，值是name对应的Class</span><br><span class="line">    &#x2F;&#x2F;根据name查找对应的Class</span><br><span class="line">    Class&lt;?&gt; clazz &#x3D; getExtensionClasses().get(name);</span><br><span class="line">    &#x2F;&#x2F;如果这时候class还不存在，说明在所有的配置文件中都没找到定义，抛异常</span><br><span class="line">    if (clazz &#x3D;&#x3D; null) &#123;</span><br><span class="line">        throw findException(name);</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;从已创建实例缓存中获取</span><br><span class="line">        T instance &#x3D; (T) EXTENSION_INSTANCES.get(clazz);</span><br><span class="line">        &#x2F;&#x2F;不存在的话就创建一个新实例，加入到缓存中去</span><br><span class="line">        if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">            EXTENSION_INSTANCES.putIfAbsent(clazz, (T) clazz.newInstance());</span><br><span class="line">            instance &#x3D; (T) EXTENSION_INSTANCES.get(clazz);</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;属性注入</span><br><span class="line">        injectExtension(instance);</span><br><span class="line">        &#x2F;&#x2F;Wrapper的包装</span><br><span class="line">        Set&lt;Class&lt;?&gt;&gt; wrapperClasses &#x3D; cachedWrapperClasses;</span><br><span class="line">        if (wrapperClasses !&#x3D; null &amp;&amp; wrapperClasses.size() &gt; 0) &#123;</span><br><span class="line">            for (Class&lt;?&gt; wrapperClass : wrapperClasses) &#123;</span><br><span class="line">                instance &#x3D; injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125; catch (Throwable t) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>有关属性注入和Wrapper的包装，下面再讲。到这里Compiler就能获得到一个指定name的具体实现类的实例了，然后就是调用实例的compile()方法对生成的代码进行编译。</p>
-<h4 id="获取默认扩展实现"><a href="#获取默认扩展实现" class="headerlink" title="获取默认扩展实现"></a>获取默认扩展实现</h4><p>如果在AdaptiveCompiler中没有找到指定的名字，就会找默认的扩展实现<code>loader.getDefaultExtension();</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public T getDefaultExtension() &#123;</span><br><span class="line">	&#x2F;&#x2F;首先还是先去加载所有的扩展实现</span><br><span class="line">    &#x2F;&#x2F;加载的时候会设置默认的名字cachedDefaultName，这个名字是在@SPI中指定的，比如Compiler就指定了@SPI(&quot;javassist&quot;)，所以这里是javassist</span><br><span class="line">    getExtensionClasses();</span><br><span class="line">    if(null &#x3D;&#x3D; cachedDefaultName || cachedDefaultName.length() &#x3D;&#x3D; 0</span><br><span class="line">            || &quot;true&quot;.equals(cachedDefaultName)) &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;根据javassist这个名字去查找扩展实现</span><br><span class="line">    &#x2F;&#x2F;具体的过程上面已经解析过了</span><br><span class="line">    return getExtension(cachedDefaultName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>关于javassist编译Class的过程暂先不说明。我们接着流程看：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> private T createAdaptiveExtension() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;先通过getAdaptiveExtensionClass获取AdaptiveExtensionClass（在上面这一步已经解析了，获得到了一个自适应实现类的Class）</span><br><span class="line">        &#x2F;&#x2F;然后获取其实例，newInstance进行实例</span><br><span class="line">        &#x2F;&#x2F;最后进行注入处理injectExtension</span><br><span class="line">        return injectExtension((T) getAdaptiveExtensionClass().newInstance());</span><br><span class="line">    &#125; catch (Exception e) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+dubbo=com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol
 
-<h3 id="扩展点注入"><a href="#扩展点注入" class="headerlink" title="扩展点注入"></a>扩展点注入</h3><p>接下来就是有关扩展点的注入的问题了，injectExtension，关于注入的解释查看最上面扩展点自动装配（IOC）的说明，injectExtension方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;这里的实例是Xxxx$Adaptive</span><br><span class="line">private T injectExtension(T instance) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">    	&#x2F;&#x2F;关于objectFactory的来路，先看下面的解析</span><br><span class="line">        &#x2F;&#x2F;这里的objectFactory是AdaptiveExtensionFactory</span><br><span class="line">        if (objectFactory !&#x3D; null) &#123;</span><br><span class="line">        	&#x2F;&#x2F;遍历扩展实现类实例的方法</span><br><span class="line">            for (Method method : instance.getClass().getMethods()) &#123;</span><br><span class="line">                &#x2F;&#x2F;只处理set方法</span><br><span class="line">                &#x2F;&#x2F;set开头，只有一个参数，public</span><br><span class="line">                if (method.getName().startsWith(&quot;set&quot;)</span><br><span class="line">                        &amp;&amp; method.getParameterTypes().length &#x3D;&#x3D; 1</span><br><span class="line">                        &amp;&amp; Modifier.isPublic(method.getModifiers())) &#123;</span><br><span class="line">                    &#x2F;&#x2F;set方法参数类型</span><br><span class="line">                    Class&lt;?&gt; pt &#x3D; method.getParameterTypes()[0];</span><br><span class="line">                    try &#123;</span><br><span class="line">                        &#x2F;&#x2F;setter方法对应的属性名</span><br><span class="line">                        String property &#x3D; method.getName().length() &gt; 3 ? method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4) : &quot;&quot;;</span><br><span class="line">                        &#x2F;&#x2F;根据类型和名称信息从ExtensionFactory中获取</span><br><span class="line">                        &#x2F;&#x2F;比如在某个扩展实现类中会有setProtocol(Protocol protocol)这样的set方法</span><br><span class="line">                        &#x2F;&#x2F;这里pt就是Protocol，property就是protocol</span><br><span class="line">                        &#x2F;&#x2F;AdaptiveExtensionFactory就会根据这两个参数去查找对应的扩展实现类</span><br><span class="line">                        &#x2F;&#x2F;这里就会返回Protocol$Adaptive</span><br><span class="line">                        Object object &#x3D; objectFactory.getExtension(pt, property);</span><br><span class="line">                        if (object !&#x3D; null) &#123;&#x2F;&#x2F;说明set方法的参数是扩展点类型，进行注入</span><br><span class="line">                            &#x2F;&#x2F;为set方法注入一个自适应的实现类</span><br><span class="line">                            method.invoke(instance, object);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; catch (Exception e) &#123; &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (Exception e) &#123;&#125;</span><br><span class="line">    return instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+hessian=com.alibaba.dubbo.rpc.protocol.hessian.HessianProtocol
 
-<p>有关AdaptiveExtensionFactory中获取Extension的过程，会首先在实例化的时候得到ExtensionFactory的具体实现类，然后遍历每个ExtensionFactory的实现类，分别在每个ExtensionFactory的实现类中获取Extension。</p>
+com.alibaba.dubbo.rpc.protocol.http.HttpProtocol
+
+injvm=com.alibaba.dubbo.rpc.protocol.injvm.InjvmProtocol
+
+memcached=memcom.alibaba.dubbo.rpc.protocol.memcached.MemcachedProtocol
+
+redis=com.alibaba.dubbo.rpc.protocol.redis.RedisProtocol
+
+rmi=com.alibaba.dubbo.rpc.protocol.rmi.RmiProtocol
+
+thrift=com.alibaba.dubbo.rpc.protocol.thrift.ThriftProtocol
+
+com.alibaba.dubbo.rpc.protocol.webservice.WebServiceProtocol
+</code></pre><p>看下loadFile()方法：</p>
+<pre><code>private void loadFile(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, String dir) {
+    //配置文件的名称
+    //这里type是扩展类，比如com.alibaba.dubbo.rpc.Protocol类
+    String fileName = dir + type.getName();
+    try {
+        Enumeration&lt;java.net.URL&gt; urls;
+        //获取类加载器
+        ClassLoader classLoader = findClassLoader();
+        //获取对应配置文件名的所有的文件
+        if (classLoader != null) {
+            urls = classLoader.getResources(fileName);
+        } else {
+            urls = ClassLoader.getSystemResources(fileName);
+        }
+        if (urls != null) {
+            //遍历文件进行处理
+            while (urls.hasMoreElements()) {
+                //配置文件路径
+                java.net.URL url = urls.nextElement();
+                try {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), &quot;utf-8&quot;));
+                    try {
+                        String line = null;
+                        //每次处理一行
+                        while ((line = reader.readLine()) != null) {
+                            //#号以后的为注释
+                            final int ci = line.indexOf('#');
+                            //注释去掉
+                            if (ci &gt;= 0) line = line.substring(0, ci);
+                            line = line.trim();
+                            if (line.length() &gt; 0) {
+                                try {
+                                    String name = null;
+                                    //=号之前的为扩展名字，后面的为扩展类实现的全限定名
+                                    int i = line.indexOf('=');
+                                    if (i &gt; 0) {
+                                        name = line.substring(0, i).trim();
+                                        line = line.substring(i + 1).trim();
+                                    }
+                                    if (line.length() &gt; 0) {
+                                        //加载扩展类的实现
+                                        Class&lt;?&gt; clazz = Class.forName(line, true, classLoader);
+                                        //查看类型是否匹配
+                                        //type是Protocol接口
+                                        //clazz就是Protocol的各个实现类
+                                        if (! type.isAssignableFrom(clazz)) {
+                                            throw new IllegalStateException();
+                                        }
+                                        //如果实现类是@Adaptive类型的，会赋值给cachedAdaptiveClass，这个用来存放被@Adaptive注解的实现类
+                                        if (clazz.isAnnotationPresent(Adaptive.class)) {
+                                            if(cachedAdaptiveClass == null) {
+                                                cachedAdaptiveClass = clazz;
+                                            } else if (! cachedAdaptiveClass.equals(clazz)) {
+                                                throw new IllegalStateException();
+                                            }
+                                        } else {//不是@Adaptice类型的类，就是没有注解@Adaptive的实现类
+                                            try {//判断是否是wrapper类型
+                                            	//如果得到的实现类的构造方法中的参数是扩展点类型的，就是一个Wrapper类
+                                                //比如ProtocolFilterWrapper，实现了Protocol类，
+                                                //而它的构造方法是这样public ProtocolFilterWrapper(Protocol protocol)
+                                                //就说明这个类是一个包装类
+                                                clazz.getConstructor(type);
+                                                //cachedWrapperClasses用来存放当前扩展点实现类中的包装类
+                                                Set&lt;Class&lt;?&gt;&gt; wrappers = cachedWrapperClasses;
+                                                if (wrappers == null) {
+                                                    cachedWrapperClasses = new ConcurrentHashSet&lt;Class&lt;?&gt;&gt;();
+                                                    wrappers = cachedWrapperClasses;
+                                                }
+                                                wrappers.add(clazz);
+                                            } catch (NoSuchMethodException e) {
+                                            //没有上面提到的构造器，则说明不是wrapper类型
+                                            	//获取无参构造
+                                                clazz.getConstructor();
+                                                //没有名字，就是配置文件中没有xxx=xxxx.com.xxx这种
+                                                if (name == null || name.length() == 0) {
+                                                	//去找@Extension注解中配置的值
+                                                    name = findAnnotationName(clazz);
+                                                    //如果还没找到名字，从类名中获取
+                                                    if (name == null || name.length() == 0) {
+                                                    	//比如clazz是DubboProtocol，type是Protocol
+                                                        //这里得到的name就是dubbo
+                                                        if (clazz.getSimpleName().length() &gt; type.getSimpleName().length()
+                                                                &amp;&amp; clazz.getSimpleName().endsWith(type.getSimpleName())) {
+                                                            name = clazz.getSimpleName().substring(0, clazz.getSimpleName().length() - type.getSimpleName().length()).toLowerCase();
+                                                        } else {
+                                                            throw new IllegalStateException(&quot;);
+                                                        }
+                                                    }
+                                                }
+                                                //有可能配置了多个名字
+                                                String[] names = NAME_SEPARATOR.split(name);
+                                                if (names != null &amp;&amp; names.length &gt; 0) {
+                                                    //是否是Active类型的类
+                                                    Activate activate = clazz.getAnnotation(Activate.class);
+                                                    if (activate != null) {
+                                                    	//第一个名字作为键，放进cachedActivates这个map中缓存
+                                                        cachedActivates.put(names[0], activate);
+                                                    }
+                                                    for (String n : names) {
+                                                        if (! cachedNames.containsKey(clazz)) {
+                                                            //放入Extension实现类与名称映射的缓存中去，每个class只对应第一个名称有效
+                                                            cachedNames.put(clazz, n);
+                                                        }
+                                                        Class&lt;?&gt; c = extensionClasses.get(n);
+                                                        if (c == null) {
+                                                            //放入到extensionClasses缓存中去，多个name可能对应一份extensionClasses
+                                                            extensionClasses.put(n, clazz);
+                                                        } else if (c != clazz) {
+                                                            throw new IllegalStateException();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } catch (Throwable t) { }
+                            }
+                        } // end of while read lines
+                    } finally {
+                        reader.close();
+                    }
+                } catch (Throwable t) { }
+            } // end of while urls
+        }
+    } catch (Throwable t) { }
+}
+</code></pre><p>到这里加载当前Extension的所有实现就已经完成了，继续返回getAdaptiveExtensionClass中，在调用完getExtensionClasses()之后，会首先检查是不是已经有@Adaptive注解的类被解析并加入到缓存中了，如果有就直接返回，这里的cachedAdaptiveClass中现在只能是AdaptiveExtensionFactory或者AdaptiveCompiler中的一个，如果没有，说明是一个普通扩展点，就动态创建一个，比如会创建一个<code>Protocol$Adaptive</code>。</p>
+<h4 id="创建自适应扩展类的代码">创建自适应扩展类的代码</h4>
+<p>看下createAdaptiveExtensionClass()这个方法，用来动态的创建自适应扩展类：</p>
+<pre><code>private Class&lt;?&gt; createAdaptiveExtensionClass() {
+	//组装自适应扩展点类的代码
+    String code = createAdaptiveExtensionClassCode();
+    //获取到应用的类加载器
+    ClassLoader classLoader = findClassLoader();
+    //获取编译器
+    //dubbo默认使用javassist
+    //这里还是使用扩展点机制来找具体的Compiler的实现
+    //现在就知道cachedAdaptiveClass是啥意思了，如果没有AdaptiveExtensionFactory和AdaptiveCompiler这两个类，这里又要去走加载流程然后来生成扩展点类的代码，不就死循环了么。
+    //这里解析Compiler的实现类的时候，会在getAdaptiveExtensionClass中直接返回
+    //可以查看下AdaptiveCompiler这个类，如果我们没有指定，默认使用javassist
+    //这里Compiler是JavassistCompiler实例
+    com.alibaba.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();
+    //将代码转换成Class
+    return compiler.compile(code, classLoader);
+}
+</code></pre><p>接着看下createAdaptiveExtensionClassCode()方法，用来组装自适应扩展类的代码（拼写源码，代码比较长不在列出），这里列出生成的<code>Protocol$Adaptive</code>：</p>
+<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol {
+  public com.alibaba.dubbo.rpc.Invoker refer(java.lang.Class arg0, com.alibaba.dubbo.common.URL arg1) throws java.lang.Class {
+    if (arg1 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
+
+    com.alibaba.dubbo.common.URL url = arg1;
+    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+
+    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+    
+    com.alibaba.dubbo.rpc.Protocol extension = (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);
+    
+    return extension.refer(arg0, arg1);
+  }
+  
+  public com.alibaba.dubbo.rpc.Exporter export(com.alibaba.dubbo.rpc.Invoker arg0) throws com.alibaba.dubbo.rpc.Invoker {
+    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument == null&quot;);
+    
+    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
+    
+    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+    
+    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+    
+    com.alibaba.dubbo.rpc.Protocol extension = (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);
+    
+    return extension.export(arg0);
+  }
+  
+  public void destroy() {
+  	throw new UnsupportedOperationException(&quot;method public abstract void com.alibaba.dubbo.rpc.Protocol.destroy() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);
+  }
+  
+  public int getDefaultPort() {
+  	throw new UnsupportedOperationException(&quot;method public abstract int com.alibaba.dubbo.rpc.Protocol.getDefaultPort() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);
+  }
+}
+</code></pre><p>其他具体的扩展点的生成也类似。在生成完代码之后，是找到ClassLoader，然后获取到Compiler的自适应实现，这里得到的就是AdaptiveCompiler，最后调用<code>compiler.compile(code, classLoader);</code>来编译上面生成的类并返回，先进入AdaptiveCompiler的compile方法：</p>
+<pre><code>public Class&lt;?&gt; compile(String code, ClassLoader classLoader) {
+    Compiler compiler;
+    //得到一个ExtensionLoader
+    ExtensionLoader&lt;Compiler&gt; loader = ExtensionLoader.getExtensionLoader(Compiler.class);
+    //默认的Compiler名字
+    String name = DEFAULT_COMPILER; // copy reference
+    //有指定了Compiler名字，就使用指定的名字来找到Compiler实现类
+    if (name != null &amp;&amp; name.length() &gt; 0) {
+        compiler = loader.getExtension(name);
+    } else {//没有指定Compiler名字，就查找默认的Compiler的实现类
+        compiler = loader.getDefaultExtension();
+    }
+    //调用具体的实现类来进行编译
+    return compiler.compile(code, classLoader);
+}
+</code></pre><h4 id="获取指定名字的扩展">获取指定名字的扩展</h4>
+<p>先看下根据具体的名字来获取扩展的实现类<code>loader.getExtension(name);</code>，loader是<code>ExtensionLoader&lt;Compiler&gt; </code>类型的。这里就是比Java的SPI要方便的地方，Java的SPI只能通过遍历所有的实现类来查找，而dubbo能够指定一个名字查找。代码如下：</p>
+<pre><code>public T getExtension(String name) {
+    if (name == null || name.length() == 0)
+        throw new IllegalArgumentException(&quot;Extension name == null&quot;);
+    //如果name指定为true，则获取默认实现
+    if (&quot;true&quot;.equals(name)) {
+    	//默认实现查找在下面解析
+        return getDefaultExtension();
+    }
+    //先从缓存获取Holder，cachedInstance是一个ConcurrentHashMap，键是扩展的name，值是一个持有name对应的实现类实例的Holder。
+    Holder&lt;Object&gt; holder = cachedInstances.get(name);
+    //如果当前name对应的Holder不存在，就创建一个，添加进map中
+    if (holder == null) {
+        cachedInstances.putIfAbsent(name, new Holder&lt;Object&gt;());
+        holder = cachedInstances.get(name);
+    }
+    //从Holder中获取保存的实例
+    Object instance = holder.get();
+    //不存在，就需要根据这个name找到实现类，实例化一个
+    if (instance == null) {
+        synchronized (holder) {
+            instance = holder.get();
+            if (instance == null) {
+                //缓存不存在，创建实例
+                instance = createExtension(name);
+                //加入缓存
+                holder.set(instance);
+            }
+        }
+    }
+    //存在，就直接返回
+    return (T) instance;
+}
+</code></pre><p>创建扩展实例，<code>createExtension(name);</code>：</p>
+<pre><code>private T createExtension(String name) {
+    //getExtensionClasses加载当前Extension的所有实现
+    //上面已经解析过，返回的是一个Map，键是name，值是name对应的Class
+    //根据name查找对应的Class
+    Class&lt;?&gt; clazz = getExtensionClasses().get(name);
+    //如果这时候class还不存在，说明在所有的配置文件中都没找到定义，抛异常
+    if (clazz == null) {
+        throw findException(name);
+    }
+    try {
+        //从已创建实例缓存中获取
+        T instance = (T) EXTENSION_INSTANCES.get(clazz);
+        //不存在的话就创建一个新实例，加入到缓存中去
+        if (instance == null) {
+            EXTENSION_INSTANCES.putIfAbsent(clazz, (T) clazz.newInstance());
+            instance = (T) EXTENSION_INSTANCES.get(clazz);
+        }
+        //属性注入
+        injectExtension(instance);
+        //Wrapper的包装
+        Set&lt;Class&lt;?&gt;&gt; wrapperClasses = cachedWrapperClasses;
+        if (wrapperClasses != null &amp;&amp; wrapperClasses.size() &gt; 0) {
+            for (Class&lt;?&gt; wrapperClass : wrapperClasses) {
+                instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
+            }
+        }
+        return instance;
+    } catch (Throwable t) { }
+}
+</code></pre><p>有关属性注入和Wrapper的包装，下面再讲。到这里Compiler就能获得到一个指定name的具体实现类的实例了，然后就是调用实例的compile()方法对生成的代码进行编译。</p>
+<h4 id="获取默认扩展实现">获取默认扩展实现</h4>
+<p>如果在AdaptiveCompiler中没有找到指定的名字，就会找默认的扩展实现<code>loader.getDefaultExtension();</code>：</p>
+<pre><code>public T getDefaultExtension() {
+	//首先还是先去加载所有的扩展实现
+    //加载的时候会设置默认的名字cachedDefaultName，这个名字是在@SPI中指定的，比如Compiler就指定了@SPI(&quot;javassist&quot;)，所以这里是javassist
+    getExtensionClasses();
+    if(null == cachedDefaultName || cachedDefaultName.length() == 0
+            || &quot;true&quot;.equals(cachedDefaultName)) {
+        return null;
+    }
+    //根据javassist这个名字去查找扩展实现
+    //具体的过程上面已经解析过了
+    return getExtension(cachedDefaultName);
+}
+</code></pre><p>关于javassist编译Class的过程暂先不说明。我们接着流程看：</p>
+<pre><code> private T createAdaptiveExtension() {
+    try {
+        //先通过getAdaptiveExtensionClass获取AdaptiveExtensionClass（在上面这一步已经解析了，获得到了一个自适应实现类的Class）
+        //然后获取其实例，newInstance进行实例
+        //最后进行注入处理injectExtension
+        return injectExtension((T) getAdaptiveExtensionClass().newInstance());
+    } catch (Exception e) { }
+}
+</code></pre><h3 id="扩展点注入">扩展点注入</h3>
+<p>接下来就是有关扩展点的注入的问题了，injectExtension，关于注入的解释查看最上面扩展点自动装配（IOC）的说明，injectExtension方法：</p>
+<pre><code>//这里的实例是Xxxx$Adaptive
+private T injectExtension(T instance) {
+    try {
+    	//关于objectFactory的来路，先看下面的解析
+        //这里的objectFactory是AdaptiveExtensionFactory
+        if (objectFactory != null) {
+        	//遍历扩展实现类实例的方法
+            for (Method method : instance.getClass().getMethods()) {
+                //只处理set方法
+                //set开头，只有一个参数，public
+                if (method.getName().startsWith(&quot;set&quot;)
+                        &amp;&amp; method.getParameterTypes().length == 1
+                        &amp;&amp; Modifier.isPublic(method.getModifiers())) {
+                    //set方法参数类型
+                    Class&lt;?&gt; pt = method.getParameterTypes()[0];
+                    try {
+                        //setter方法对应的属性名
+                        String property = method.getName().length() &gt; 3 ? method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4) : &quot;&quot;;
+                        //根据类型和名称信息从ExtensionFactory中获取
+                        //比如在某个扩展实现类中会有setProtocol(Protocol protocol)这样的set方法
+                        //这里pt就是Protocol，property就是protocol
+                        //AdaptiveExtensionFactory就会根据这两个参数去查找对应的扩展实现类
+                        //这里就会返回Protocol$Adaptive
+                        Object object = objectFactory.getExtension(pt, property);
+                        if (object != null) {//说明set方法的参数是扩展点类型，进行注入
+                            //为set方法注入一个自适应的实现类
+                            method.invoke(instance, object);
+                        }
+                    } catch (Exception e) { }
+                }
+            }
+        }
+    } catch (Exception e) {}
+    return instance;
+}
+</code></pre><p>有关AdaptiveExtensionFactory中获取Extension的过程，会首先在实例化的时候得到ExtensionFactory的具体实现类，然后遍历每个ExtensionFactory的实现类，分别在每个ExtensionFactory的实现类中获取Extension。</p>
 <p>这里使用SpiExtensionFactory的获取扩展的方法为例，getExtension，也是先判断给定类是否是注解了@SPI的接口，然后根据类去获取ExtensionLoader，在使用得到的ExtensionLoader去加载自适应扩展。</p>
-<h4 id="objectFactory的来历"><a href="#objectFactory的来历" class="headerlink" title="objectFactory的来历"></a>objectFactory的来历</h4><p>objectFactory的来路，在ExtensionLoader中有个私有构造器：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;当我们调用getExtensionLoader这个静态方法的时候，会触发ExtensionLoader类的实例化，会先初始化静态变量和静态块，然后是构造代码块，最后是构造器的初始化</span><br><span class="line">private ExtensionLoader(Class&lt;?&gt; type) &#123;</span><br><span class="line">    this.type &#x3D; type;</span><br><span class="line">    &#x2F;&#x2F;这里会获得一个AdaptiveExtensionFactory</span><br><span class="line">    &#x2F;&#x2F;根据类型和名称信息从ExtensionFactory中获取</span><br><span class="line">    &#x2F;&#x2F;获取实现</span><br><span class="line">    &#x2F;&#x2F;为什么要使用对象工厂来获取setter方法中对应的实现？</span><br><span class="line">    &#x2F;&#x2F;不能通过spi直接获取自适应实现吗？比如ExtensionLoader.getExtension(pt);</span><br><span class="line">    &#x2F;&#x2F;因为setter方法中有可能是一个spi，也有可能是普通的bean</span><br><span class="line">    &#x2F;&#x2F;所以此时不能写死通过spi获取，还需要有其他方式来获取实现进行注入</span><br><span class="line">    &#x2F;&#x2F; dubbo中有两个实现，一个是spi的ExtensionFactory，一个是spring的ExtensionFactory</span><br><span class="line">    &#x2F;&#x2F;如果还有其他的，我们可以自定义ExtensionFactory</span><br><span class="line">    &#x2F;&#x2F;objectFactory是AdaptiveExtensionFactory实例</span><br><span class="line">    objectFactory &#x3D; (type &#x3D;&#x3D; ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>到此为止createAdaptiveExtension方法解析完成，接着返回上层getAdaptiveExtension()方法中，发现创建完自适应扩展实例之后，就会加入到cachedAdaptiveInstance缓存起来，然后就会返回给调用的地方一个<code>Xxx$Adaptive</code>实例。</p>
+<h4 id="objectfactory的来历">objectFactory的来历</h4>
+<p>objectFactory的来路，在ExtensionLoader中有个私有构造器：</p>
+<pre><code>//当我们调用getExtensionLoader这个静态方法的时候，会触发ExtensionLoader类的实例化，会先初始化静态变量和静态块，然后是构造代码块，最后是构造器的初始化
+private ExtensionLoader(Class&lt;?&gt; type) {
+    this.type = type;
+    //这里会获得一个AdaptiveExtensionFactory
+    //根据类型和名称信息从ExtensionFactory中获取
+    //获取实现
+    //为什么要使用对象工厂来获取setter方法中对应的实现？
+    //不能通过spi直接获取自适应实现吗？比如ExtensionLoader.getExtension(pt);
+    //因为setter方法中有可能是一个spi，也有可能是普通的bean
+    //所以此时不能写死通过spi获取，还需要有其他方式来获取实现进行注入
+    // dubbo中有两个实现，一个是spi的ExtensionFactory，一个是spring的ExtensionFactory
+    //如果还有其他的，我们可以自定义ExtensionFactory
+    //objectFactory是AdaptiveExtensionFactory实例
+    objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
+}
+</code></pre><p>到此为止createAdaptiveExtension方法解析完成，接着返回上层getAdaptiveExtension()方法中，发现创建完自适应扩展实例之后，就会加入到cachedAdaptiveInstance缓存起来，然后就会返回给调用的地方一个<code>Xxx$Adaptive</code>实例。</p>
 <p>走到这里，下面的代码就解析完了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static final Protocol refprotocol &#x3D; ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();</span><br></pre></td></tr></table></figure>
+<pre><code>private static final Protocol refprotocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
+</code></pre><h2 id="得到扩展之后的使用">得到扩展之后的使用</h2>
+<p>我们得到了一个<code>Protocol$Adaptive</code>实例，接着就是调用了，比如说我们要调用<code>refprotocol.refer(Class&lt;T&gt; type, URL url))</code>方法，由于这里refprotocol是一个<code>Protocol$Adaptive</code>实例，所以就先调用这个实例的refer方法，这里的实例的代码在最上面：</p>
+<pre><code>//这里为了好看，代码做了精简，包名都去掉了
+public Invoker refer(Class arg0, URL arg1) throws Class {
+    if (arg1 == null) throw new IllegalArgumentException();
 
-<h2 id="得到扩展之后的使用"><a href="#得到扩展之后的使用" class="headerlink" title="得到扩展之后的使用"></a>得到扩展之后的使用</h2><p>我们得到了一个<code>Protocol$Adaptive</code>实例，接着就是调用了，比如说我们要调用<code>refprotocol.refer(Class&lt;T&gt; type, URL url))</code>方法，由于这里refprotocol是一个<code>Protocol$Adaptive</code>实例，所以就先调用这个实例的refer方法，这里的实例的代码在最上面：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;这里为了好看，代码做了精简，包名都去掉了</span><br><span class="line">public Invoker refer(Class arg0, URL arg1) throws Class &#123;</span><br><span class="line">    if (arg1 &#x3D;&#x3D; null) throw new IllegalArgumentException();</span><br><span class="line"></span><br><span class="line">    URL url &#x3D; arg1;</span><br><span class="line">    String extName &#x3D; ( url.getProtocol() &#x3D;&#x3D; null ? &quot;dubbo&quot; : url.getProtocol() );</span><br><span class="line"></span><br><span class="line">    if(extName &#x3D;&#x3D; null) throw new IllegalStateException();</span><br><span class="line">    </span><br><span class="line">    Protocol extension &#x3D; (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);</span><br><span class="line">    </span><br><span class="line">    return extension.refer(arg0, arg1);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到这里首先根据url中的参数获取扩展名字，如果url中没有就使用默认的扩展名，然后根据扩展名去获取具体的实现。关于getExtension(String name)上面已经解析过一次，这里再次列出：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public T getExtension(String name) &#123;</span><br><span class="line">    if (name &#x3D;&#x3D; null || name.length() &#x3D;&#x3D; 0)</span><br><span class="line">        throw new IllegalArgumentException(&quot;Extension name &#x3D;&#x3D; null&quot;);</span><br><span class="line">    &#x2F;&#x2F;如果name指定为true，则获取默认实现</span><br><span class="line">    if (&quot;true&quot;.equals(name)) &#123;</span><br><span class="line">    	&#x2F;&#x2F;默认实现查找在下面解析</span><br><span class="line">        return getDefaultExtension();</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;先从缓存获取Holder，cachedInstance是一个ConcurrentHashMap，键是扩展的name，值是一个持有name对应的实现类实例的Holder。</span><br><span class="line">    Holder&lt;Object&gt; holder &#x3D; cachedInstances.get(name);</span><br><span class="line">    &#x2F;&#x2F;如果当前name对应的Holder不存在，就创建一个，添加进map中</span><br><span class="line">    if (holder &#x3D;&#x3D; null) &#123;</span><br><span class="line">        cachedInstances.putIfAbsent(name, new Holder&lt;Object&gt;());</span><br><span class="line">        holder &#x3D; cachedInstances.get(name);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;从Holder中获取保存的实例</span><br><span class="line">    Object instance &#x3D; holder.get();</span><br><span class="line">    &#x2F;&#x2F;不存在，就需要根据这个name找到实现类，实例化一个</span><br><span class="line">    if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">        synchronized (holder) &#123;</span><br><span class="line">            instance &#x3D; holder.get();</span><br><span class="line">            if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">                &#x2F;&#x2F;缓存不存在，创建实例</span><br><span class="line">                instance &#x3D; createExtension(name);</span><br><span class="line">                &#x2F;&#x2F;加入缓存</span><br><span class="line">                holder.set(instance);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;存在，就直接返回</span><br><span class="line">    return (T) instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    URL url = arg1;
+    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
 
-<p>创建扩展实例，<code>createExtension(name);</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">private T createExtension(String name) &#123;</span><br><span class="line">    &#x2F;&#x2F;getExtensionClasses加载当前Extension的所有实现</span><br><span class="line">    &#x2F;&#x2F;上面已经解析过，返回的是一个Map，键是name，值是name对应的Class</span><br><span class="line">    &#x2F;&#x2F;根据name查找对应的Class</span><br><span class="line">    &#x2F;&#x2F;比如name是dubbo，Class就是com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol</span><br><span class="line">    Class&lt;?&gt; clazz &#x3D; getExtensionClasses().get(name);</span><br><span class="line">    &#x2F;&#x2F;如果这时候class还不存在，说明在所有的配置文件中都没找到定义，抛异常</span><br><span class="line">    if (clazz &#x3D;&#x3D; null) &#123;</span><br><span class="line">        throw findException(name);</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">        &#x2F;&#x2F;从已创建实例缓存中获取</span><br><span class="line">        T instance &#x3D; (T) EXTENSION_INSTANCES.get(clazz);</span><br><span class="line">        &#x2F;&#x2F;不存在的话就创建一个新实例，加入到缓存中去</span><br><span class="line">        if (instance &#x3D;&#x3D; null) &#123;</span><br><span class="line">            EXTENSION_INSTANCES.putIfAbsent(clazz, (T) clazz.newInstance());</span><br><span class="line">            instance &#x3D; (T) EXTENSION_INSTANCES.get(clazz);</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;这里实例就是具体实现的实例了比如是DubboProtocol的实例</span><br><span class="line">        &#x2F;&#x2F;属性注入，在上面已经解析过了，根据实例中的setXxx方法进行注入</span><br><span class="line">        injectExtension(instance);</span><br><span class="line">        &#x2F;&#x2F;Wrapper的包装</span><br><span class="line">        &#x2F;&#x2F;cachedWrapperClasses存放着所有的Wrapper类</span><br><span class="line">        &#x2F;&#x2F;cachedWrapperClasses是在加载扩展实现类的时候放进去的</span><br><span class="line">        &#x2F;&#x2F;Wrapper类的说明在最上面扩展点自动包装（AOP）</span><br><span class="line">        Set&lt;Class&lt;?&gt;&gt; wrapperClasses &#x3D; cachedWrapperClasses;</span><br><span class="line">        if (wrapperClasses !&#x3D; null &amp;&amp; wrapperClasses.size() &gt; 0) &#123;</span><br><span class="line">            for (Class&lt;?&gt; wrapperClass : wrapperClasses) &#123;</span><br><span class="line">            	&#x2F;&#x2F;比如在包装之前的instance是DubboProtocol实例</span><br><span class="line">                &#x2F;&#x2F;先使用构造器来实例化当前的包装类</span><br><span class="line">                &#x2F;&#x2F;包装类中就已经包含了我们的DubboProtocol实例</span><br><span class="line">                &#x2F;&#x2F;然后对包装类进行injectExtension注入，注入过程在上面</span><br><span class="line">                &#x2F;&#x2F;最后返回的Instance就是包装类的实例。</span><br><span class="line">                instance &#x3D; injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;这里返回的是经过所有的包装类包装之后的实例</span><br><span class="line">        return instance;</span><br><span class="line">    &#125; catch (Throwable t) &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>获取的Extension是经过层层包装的扩展实现，然后就是调用经过包装的refer方法了，这就到了具体的实现中的方法了。</p>
+    if(extName == null) throw new IllegalStateException();
+    
+    Protocol extension = (Protocol)ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(extName);
+    
+    return extension.refer(arg0, arg1);
+  }
+</code></pre><p>可以看到这里首先根据url中的参数获取扩展名字，如果url中没有就使用默认的扩展名，然后根据扩展名去获取具体的实现。关于getExtension(String name)上面已经解析过一次，这里再次列出：</p>
+<pre><code>public T getExtension(String name) {
+    if (name == null || name.length() == 0)
+        throw new IllegalArgumentException(&quot;Extension name == null&quot;);
+    //如果name指定为true，则获取默认实现
+    if (&quot;true&quot;.equals(name)) {
+    	//默认实现查找在下面解析
+        return getDefaultExtension();
+    }
+    //先从缓存获取Holder，cachedInstance是一个ConcurrentHashMap，键是扩展的name，值是一个持有name对应的实现类实例的Holder。
+    Holder&lt;Object&gt; holder = cachedInstances.get(name);
+    //如果当前name对应的Holder不存在，就创建一个，添加进map中
+    if (holder == null) {
+        cachedInstances.putIfAbsent(name, new Holder&lt;Object&gt;());
+        holder = cachedInstances.get(name);
+    }
+    //从Holder中获取保存的实例
+    Object instance = holder.get();
+    //不存在，就需要根据这个name找到实现类，实例化一个
+    if (instance == null) {
+        synchronized (holder) {
+            instance = holder.get();
+            if (instance == null) {
+                //缓存不存在，创建实例
+                instance = createExtension(name);
+                //加入缓存
+                holder.set(instance);
+            }
+        }
+    }
+    //存在，就直接返回
+    return (T) instance;
+}
+</code></pre><p>创建扩展实例，<code>createExtension(name);</code>：</p>
+<pre><code>private T createExtension(String name) {
+    //getExtensionClasses加载当前Extension的所有实现
+    //上面已经解析过，返回的是一个Map，键是name，值是name对应的Class
+    //根据name查找对应的Class
+    //比如name是dubbo，Class就是com.alibaba.dubbo.rpc.protocol.dubbo.DubboProtocol
+    Class&lt;?&gt; clazz = getExtensionClasses().get(name);
+    //如果这时候class还不存在，说明在所有的配置文件中都没找到定义，抛异常
+    if (clazz == null) {
+        throw findException(name);
+    }
+    try {
+        //从已创建实例缓存中获取
+        T instance = (T) EXTENSION_INSTANCES.get(clazz);
+        //不存在的话就创建一个新实例，加入到缓存中去
+        if (instance == null) {
+            EXTENSION_INSTANCES.putIfAbsent(clazz, (T) clazz.newInstance());
+            instance = (T) EXTENSION_INSTANCES.get(clazz);
+        }
+        //这里实例就是具体实现的实例了比如是DubboProtocol的实例
+        //属性注入，在上面已经解析过了，根据实例中的setXxx方法进行注入
+        injectExtension(instance);
+        //Wrapper的包装
+        //cachedWrapperClasses存放着所有的Wrapper类
+        //cachedWrapperClasses是在加载扩展实现类的时候放进去的
+        //Wrapper类的说明在最上面扩展点自动包装（AOP）
+        Set&lt;Class&lt;?&gt;&gt; wrapperClasses = cachedWrapperClasses;
+        if (wrapperClasses != null &amp;&amp; wrapperClasses.size() &gt; 0) {
+            for (Class&lt;?&gt; wrapperClass : wrapperClasses) {
+            	//比如在包装之前的instance是DubboProtocol实例
+                //先使用构造器来实例化当前的包装类
+                //包装类中就已经包含了我们的DubboProtocol实例
+                //然后对包装类进行injectExtension注入，注入过程在上面
+                //最后返回的Instance就是包装类的实例。
+                instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
+            }
+        }
+        //这里返回的是经过所有的包装类包装之后的实例
+        return instance;
+    } catch (Throwable t) { }
+}
+</code></pre><p>获取的Extension是经过层层包装的扩展实现，然后就是调用经过包装的refer方法了，这就到了具体的实现中的方法了。</p>
 <p>到此为止调用<code>refprotocol.refer(Class&lt;T&gt; type, URL url))</code>方法的过程也解析完了。</p>
 <p>关于getActivateExtension方法的解析，等下再添加。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/dubbo%E6%BA%90%E7%A0%81/" rel="tag"># dubbo源码</a>
-              <a href="/tags/dubbo-SPI/" rel="tag"># dubbo SPI</a>
-              <a href="/tags/dubbo-%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6/" rel="tag"># dubbo 扩展机制</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/" rel="prev" title="Spring的ApplicationContext事件机制">
-      <i class="fa fa-chevron-left"></i> Spring的ApplicationContext事件机制
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/" rel="next" title="Dubbo中暴露服务的过程解析">
-      Dubbo中暴露服务的过程解析 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dubbo扩展点加载的功能"><span class="nav-number">1.</span> <span class="nav-text">Dubbo扩展点加载的功能</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展点自动装配功能（IOC）"><span class="nav-number">1.1.</span> <span class="nav-text">扩展点自动装配功能（IOC）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展点自适应"><span class="nav-number">1.2.</span> <span class="nav-text">扩展点自适应</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展点自动包装功能（AOP）"><span class="nav-number">1.3.</span> <span class="nav-text">扩展点自动包装功能（AOP）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dubbo扩展点加载的实现"><span class="nav-number">2.</span> <span class="nav-text">Dubbo扩展点加载的实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dubbo扩展点加载的一些定义"><span class="nav-number">3.</span> <span class="nav-text">Dubbo扩展点加载的一些定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Dubbo扩展点加载的源码解析"><span class="nav-number">4.</span> <span class="nav-text">Dubbo扩展点加载的源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取ExtensionLoader实例"><span class="nav-number">4.1.</span> <span class="nav-text">获取ExtensionLoader实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ExtensionLoader的构造方法"><span class="nav-number">4.1.1.</span> <span class="nav-text">ExtensionLoader的构造方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取自适应实现"><span class="nav-number">4.2.</span> <span class="nav-text">获取自适应实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建自适应扩展"><span class="nav-number">4.2.1.</span> <span class="nav-text">创建自适应扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取自适应扩展类"><span class="nav-number">4.2.2.</span> <span class="nav-text">获取自适应扩展类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#加载扩展类实现"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">加载扩展类实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建自适应扩展类的代码"><span class="nav-number">4.2.2.2.</span> <span class="nav-text">创建自适应扩展类的代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取指定名字的扩展"><span class="nav-number">4.2.2.3.</span> <span class="nav-text">获取指定名字的扩展</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#获取默认扩展实现"><span class="nav-number">4.2.2.4.</span> <span class="nav-text">获取默认扩展实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展点注入"><span class="nav-number">4.2.3.</span> <span class="nav-text">扩展点注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#objectFactory的来历"><span class="nav-number">4.2.3.1.</span> <span class="nav-text">objectFactory的来历</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#得到扩展之后的使用"><span class="nav-number">4.3.</span> <span class="nav-text">得到扩展之后的使用</span></a></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/";
-    this.page.identifier = "2017/02/18/Dubbo中SPI扩展机制详解/";
-    this.page.title = "Dubbo中SPI扩展机制详解";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

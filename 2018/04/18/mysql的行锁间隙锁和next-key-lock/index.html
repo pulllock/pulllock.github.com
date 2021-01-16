@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>MySQL的行锁、间隙锁和next-key lock</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>MySQL的行锁、间隙锁和next-key lock</h1>
+			<b><time>2018-04-18 19:29:02</time></b>
+		       
+		           <a href="/tags/mysql">MySQL</a>
+        	       
+
+			<div>
+				<p>MySQL的行锁、间隙锁和next-key lock学习。</p>
+<h1 id="行锁">行锁</h1>
+<p>Record Lock，行锁，InnoDB行锁是针对索引进行加锁，不是对记录加锁，如果索引失效就会从行锁升级为表锁。</p>
+<p>使用行锁开销大，加锁慢，会出现死锁，但是行锁的锁粒度小，并发度高。</p>
+<p>加锁的方式：</p>
+<ul>
+<li>自动加锁，update、delete、insert操作，InnoDB引擎都会自动给涉及到的数据加排它锁，select语句不会加锁。</li>
+<li>显示加锁，使用select&hellip;lock in share mode或select&hellip;for update</li>
+</ul>
+<h1 id="间隙锁">间隙锁</h1>
+<p>间隙锁，锁定索引记录间隙，确保索引记录间隙不变。间隙锁在Repeatable Read以上的隔离级别才可用。间隙锁为了解决同一事务中出现幻读的问题。</p>
+<p>自动使用间隙锁的条件：</p>
+<ul>
+<li>必须在Repeatable Read级别下</li>
+<li>检索条件必须有索引，如果没有索引会变成表锁锁定整张表。</li>
+</ul>
+<h1 id="next-key-lock">Next-Key Lock</h1>
+<p>行锁和间隙锁组合起来叫做Next-Key Lock。</p>
+<p>InnoDB引擎中Repeatable Read隔离级别下也不会出现幻读，是用的就是Next-Key Lock（行锁加间隙锁）来解决的。当InnoDB扫描索引记录的时候，先对索引记录加上行锁，再对索引记录两边的间隙加上间隙锁，之后其他事务就不能在这个间隙修改或者插入记录。</p>
+<p>Next-Key Lock是行锁和间隙锁组合，对数据进行条件检索、范围检索时，对其范围内间隙进行加锁。InnoDB对行的查询都采用Next-Key Lock的算法，但当查询的索引含有唯一属性（唯一索引、主键索引）时，InnoDB会给Next-Key Lock进行优化，降为行锁，仅锁住索引本身，而不是范围。如果是普通辅助索引，会使用Next-Key Lock进行范围锁定。</p>
+<h1 id="幻读解决">幻读解决</h1>
+<ul>
+<li>快照读，使用MVCC解决幻读</li>
+<li>当前读，依赖间隙锁解决幻读</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://www.cnblogs.com/itdragon/p/8194622.html">https://www.cnblogs.com/itdragon/p/8194622.html</a></li>
+<li><a href="https://www.cnblogs.com/zhoujinyi/p/3435982.html">https://www.cnblogs.com/zhoujinyi/p/3435982.html</a></li>
+<li><a href="https://blog.csdn.net/liqfyiyi/article/details/72771845">https://blog.csdn.net/liqfyiyi/article/details/72771845</a></li>
+<li><a href="https://www.cnblogs.com/aspirant/p/9177978.html">https://www.cnblogs.com/aspirant/p/9177978.html</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

@@ -1,275 +1,52 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="SNMP全称Simple Network Management Protocol，简单网络管理协议。是TCP&#x2F;IP协议的一部分，属于应用层协议。SNMP协议主要用来解决网络设备的管理，大多数的网络管理系统都是基于SNMP协议。通过该协议可以实现在被管理的设备上获取各种参数，还可以设置修改这些参数。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="SNMP-MIB-SNMP4J简介">
-<meta property="og:url" content="http://dachengxi.github.com/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="SNMP全称Simple Network Management Protocol，简单网络管理协议。是TCP&#x2F;IP协议的一部分，属于应用层协议。SNMP协议主要用来解决网络设备的管理，大多数的网络管理系统都是基于SNMP协议。通过该协议可以实现在被管理的设备上获取各种参数，还可以设置修改这些参数。">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2016-12-27T07:15:15.000Z">
-<meta property="article:modified_time" content="2017-02-28T10:15:06.000Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="SNMP">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>SNMP-MIB-SNMP4J简介 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>SNMP-MIB-SNMP4J简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>SNMP-MIB-SNMP4J简介</h1>
+			<b><time>2016-12-27 15:15:15</time></b>
+		       
+		           <a href="/tags/snmp">SNMP</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          SNMP-MIB-SNMP4J简介
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-12-27 15:15:15 15:15:15" itemprop="dateCreated datePublished" datetime="2016-12-27T15:15:15+08:00">2016-12-27 15:15:15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" itemprop="url" rel="index"><span itemprop="name">网络协议</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/12/27/SNMP-MIB-SNMP4J简介/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>SNMP全称Simple Network Management Protocol，简单网络管理协议。是TCP/IP协议的一部分，属于应用层协议。SNMP协议主要用来解决网络设备的管理，大多数的网络管理系统都是基于SNMP协议。通过该协议可以实现在被管理的设备上获取各种参数，还可以设置修改这些参数。</p>
-<a id="more"></a>
-
-<h2 id="SNMP系统的组成"><a href="#SNMP系统的组成" class="headerlink" title="SNMP系统的组成"></a>SNMP系统的组成</h2><p>一般SNMP系统组成大致有4个部分：</p>
+			<div>
+				<p>SNMP全称Simple Network Management Protocol，简单网络管理协议。是TCP/IP协议的一部分，属于应用层协议。SNMP协议主要用来解决网络设备的管理，大多数的网络管理系统都是基于SNMP协议。通过该协议可以实现在被管理的设备上获取各种参数，还可以设置修改这些参数。</p>
+<h2 id="snmp系统的组成">SNMP系统的组成</h2>
+<p>一般SNMP系统组成大致有4个部分：</p>
 <ol>
 <li>网络管理软件，也就是客户端，网络管理员或者是你和我可以通过管理软件对网络设备进行管理。也就是相当于我们平时使用的系统的后台管理。</li>
 <li>网络设备，也就是被管理的设备，比如服务器，路由器，交换机等网络设备。</li>
@@ -278,7 +55,8 @@
 </ol>
 <p>SNMP协议就是用在网络管理软件和被管理的网络设备之间的协议，通过此协议被管理的网络设备才会听我们的话。</p>
 <p>一般情况下做开发，比如我是做Java开发的，所需要做的就是开发网络管理软件，也就是客户端；服务器端的设备运行着代理程序，所有的信息都存储在MIB库中；我们要做的就是通过SNMP协议去读取和设置这些MIB库存的数据。</p>
-<h2 id="SNMP协议的结构"><a href="#SNMP协议的结构" class="headerlink" title="SNMP协议的结构"></a>SNMP协议的结构</h2><p>SNMP使用UDP进行无连接操作，主要包括SNMP报头和协议数据单元：</p>
+<h2 id="snmp协议的结构">SNMP协议的结构</h2>
+<p>SNMP使用UDP进行无连接操作，主要包括SNMP报头和协议数据单元：</p>
 <ul>
 <li>版本标识符</li>
 <li>团体名</li>
@@ -292,316 +70,128 @@
 <li>get-response，代理程序返回值，上面三种请求都会使代理程序返回参数值</li>
 <li>trap，代理程序主动发送的报文</li>
 </ol>
-<h2 id="MIB库简介"><a href="#MIB库简介" class="headerlink" title="MIB库简介"></a>MIB库简介</h2><p>Management Information Base 管理信息库，每个被管理的设备都需要有MIB库的存在，我们才能对设备进行管理。</p>
-<p>MIB库中定义了可访问的网络设备及其属性，通过OID，Object Identifer来区别。MIB采用分级树形结构，以下是结构图：<br>![mib]MIB.png)<br>结构类似于DNS和Unix的文件系统，例如<code>1.3.6.1.2.1</code>就代表<code>iso.org.dod.internet.mgmt.mib</code>。</p>
-<h2 id="net-snmp"><a href="#net-snmp" class="headerlink" title="net-snmp"></a>net-snmp</h2><p>net-snmp是一种开放源代码的简单网络管理协议（Simple Network Management Protocol）软件，可以安装在linux系统，unix以及windows上。作用就是上面提到的代理程序。</p>
-<h3 id="安装使用"><a href="#安装使用" class="headerlink" title="安装使用"></a>安装使用</h3><p>本次在Centos7上面安装使用net-snmp软件，具体步骤如下：</p>
+<h2 id="mib库简介">MIB库简介</h2>
+<p>Management Information Base 管理信息库，每个被管理的设备都需要有MIB库的存在，我们才能对设备进行管理。</p>
+<p>MIB库中定义了可访问的网络设备及其属性，通过OID，Object Identifer来区别。MIB采用分级树形结构，以下是结构图：
+![mib]MIB.png)
+结构类似于DNS和Unix的文件系统，例如<code>1.3.6.1.2.1</code>就代表<code>iso.org.dod.internet.mgmt.mib</code>。</p>
+<h2 id="net-snmp">net-snmp</h2>
+<p>net-snmp是一种开放源代码的简单网络管理协议（Simple Network Management Protocol）软件，可以安装在linux系统，unix以及windows上。作用就是上面提到的代理程序。</p>
+<h3 id="安装使用">安装使用</h3>
+<p>本次在Centos7上面安装使用net-snmp软件，具体步骤如下：</p>
 <p>安装net-snmp：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install net-snmp*</span><br></pre></td></tr></table></figure>
-
-<p>安装完成之后，修改net-snmp配置文件<code>/etc/snmp/snmpd.conf</code>，在下面代码后面添加两行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">##       sec.name  source          community</span><br><span class="line">#com2sec local     localhost       COMMUNITY</span><br><span class="line">#com2sec mynetwork NETWORK&#x2F;24      COMMUNITY</span><br></pre></td></tr></table></figure>
-<p>添加两行如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">com2sec local     localhost       public</span><br><span class="line">com2sec mynet    192.168.0.0&#x2F;24   public</span><br></pre></td></tr></table></figure>
-<p>上面的<code>192.168.0.0/24</code>根据你的实际情况添加，我的局域网网段是<code>192.168.1.xxx</code>，所以上面写的是<code>192.168.0.0</code>，后面的<code>24</code>是子网掩码<code>255.255.255.0</code>。</p>
+<pre><code>sudo yum install net-snmp*
+</code></pre><p>安装完成之后，修改net-snmp配置文件<code>/etc/snmp/snmpd.conf</code>，在下面代码后面添加两行：</p>
+<pre><code>##       sec.name  source          community
+#com2sec local     localhost       COMMUNITY
+#com2sec mynetwork NETWORK/24      COMMUNITY
+</code></pre><p>添加两行如下：</p>
+<pre><code>com2sec local     localhost       public
+com2sec mynet    192.168.0.0/24   public
+</code></pre><p>上面的<code>192.168.0.0/24</code>根据你的实际情况添加，我的局域网网段是<code>192.168.1.xxx</code>，所以上面写的是<code>192.168.0.0</code>，后面的<code>24</code>是子网掩码<code>255.255.255.0</code>。</p>
 <p>修改完配置文件后，启动net-snmp服务：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start snmpd.service</span><br></pre></td></tr></table></figure>
+<pre><code>systemctl start snmpd.service
+</code></pre><p>启动后可以使用以下命令查看启动是否有错：</p>
+<pre><code>systemctl status snmpd.service -l
+</code></pre><p>如果没有提示错误啥的，现在服务应该就已经起来了，可以使用以下命令测试下：</p>
+<pre><code>snmpwalk -v1 -c public 192.168.110.198
+</code></pre><p>后面的ip写net-snmp安装的那台机器的ip。回车后会输出以下信息(不会跟我的完全一样，只是类似的就对了)：</p>
+<pre><code>SNMPv2-MIB::sysDescr.0 = STRING: Linux localhost.localdomain 3.10.0-514.2.2.el7.x86_64 #1 SMP Tue Dec 6 23:06:41 UTC 2016 x86_64
+SNMPv2-MIB::sysObjectID.0 = OID: NET-SNMP-MIB::netSnmpAgentOIDs.10
+DISMAN-EVENT-MIB::sysUpTimeInstance = Timeticks: (4549) 0:00:45.49
+SNMPv2-MIB::sysContact.0 = STRING: Root &lt;root@localhost&gt; (configure /etc/snmp/snmp.local.conf)
+SNMPv2-MIB::sysName.0 = STRING: localhost.localdomain
+SNMPv2-MIB::sysLocation.0 = STRING: Unknown (edit /etc/snmp/snmpd.conf)
+SNMPv2-MIB::sysORLastChange.0 = Timeticks: (4) 0:00:00.04
+SNMPv2-MIB::sysORID.1 = OID: SNMP-MPD-MIB::snmpMPDCompliance
+SNMPv2-MIB::sysORID.2 = OID: SNMP-USER-BASED-SM-MIB::usmMIBCompliance
+SNMPv2-MIB::sysORID.3 = OID: SNMP-FRAMEWORK-MIB::snmpFrameworkMIBCompliance
+........还有很多输出，省略了......
+</code></pre><h2 id="使用snmp4j开发">使用SNMP4J开发</h2>
+<p>简单的例子：</p>
+<pre><code>public class GetCentosSystemInformation {
 
-<p>启动后可以使用以下命令查看启动是否有错：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status snmpd.service -l</span><br></pre></td></tr></table></figure>
-
-<p>如果没有提示错误啥的，现在服务应该就已经起来了，可以使用以下命令测试下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">snmpwalk -v1 -c public 192.168.110.198</span><br></pre></td></tr></table></figure>
-<p>后面的ip写net-snmp安装的那台机器的ip。回车后会输出以下信息(不会跟我的完全一样，只是类似的就对了)：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">SNMPv2-MIB::sysDescr.0 &#x3D; STRING: Linux localhost.localdomain 3.10.0-514.2.2.el7.x86_64 #1 SMP Tue Dec 6 23:06:41 UTC 2016 x86_64</span><br><span class="line">SNMPv2-MIB::sysObjectID.0 &#x3D; OID: NET-SNMP-MIB::netSnmpAgentOIDs.10</span><br><span class="line">DISMAN-EVENT-MIB::sysUpTimeInstance &#x3D; Timeticks: (4549) 0:00:45.49</span><br><span class="line">SNMPv2-MIB::sysContact.0 &#x3D; STRING: Root &lt;root@localhost&gt; (configure &#x2F;etc&#x2F;snmp&#x2F;snmp.local.conf)</span><br><span class="line">SNMPv2-MIB::sysName.0 &#x3D; STRING: localhost.localdomain</span><br><span class="line">SNMPv2-MIB::sysLocation.0 &#x3D; STRING: Unknown (edit &#x2F;etc&#x2F;snmp&#x2F;snmpd.conf)</span><br><span class="line">SNMPv2-MIB::sysORLastChange.0 &#x3D; Timeticks: (4) 0:00:00.04</span><br><span class="line">SNMPv2-MIB::sysORID.1 &#x3D; OID: SNMP-MPD-MIB::snmpMPDCompliance</span><br><span class="line">SNMPv2-MIB::sysORID.2 &#x3D; OID: SNMP-USER-BASED-SM-MIB::usmMIBCompliance</span><br><span class="line">SNMPv2-MIB::sysORID.3 &#x3D; OID: SNMP-FRAMEWORK-MIB::snmpFrameworkMIBCompliance</span><br><span class="line">........还有很多输出，省略了......</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用SNMP4J开发"><a href="#使用SNMP4J开发" class="headerlink" title="使用SNMP4J开发"></a>使用SNMP4J开发</h2><p>简单的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">public class GetCentosSystemInformation &#123;</span><br><span class="line"></span><br><span class="line">    private final static String REMOTE_ADDRESS &#x3D; &quot;udp:192.168.110.198&#x2F;161&quot;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IOException &#123;</span><br><span class="line">        &#x2F;&#x2F;初始化</span><br><span class="line">        Address remoteAddress &#x3D; GenericAddress.parse(REMOTE_ADDRESS);</span><br><span class="line">        System.out.println(&quot;SNMP地址：&quot; + REMOTE_ADDRESS + &quot;；有效：&quot; + remoteAddress.isValid());</span><br><span class="line">        TransportMapping transportMapping &#x3D; new DefaultUdpTransportMapping();</span><br><span class="line">        Snmp snmp &#x3D; new Snmp(transportMapping);</span><br><span class="line">        snmp.listen();</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;构造发送目标</span><br><span class="line">        CommunityTarget target &#x3D; new CommunityTarget();</span><br><span class="line">        target.setCommunity(new OctetString(&quot;public&quot;));</span><br><span class="line">        target.setAddress(remoteAddress);</span><br><span class="line">        target.setVersion(SnmpConstants.version2c);</span><br><span class="line">        target.setRetries(10);</span><br><span class="line">        target.setTimeout(1500);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;构造发送内容</span><br><span class="line">        PDU pdu &#x3D; new PDU();</span><br><span class="line">        OID oid &#x3D; new OID(&quot;1.3.6.1.2.10&quot;);</span><br><span class="line">        pdu.add(new VariableBinding(oid));</span><br><span class="line">        pdu.setType(PDU.GETNEXT);</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;异步监听响应</span><br><span class="line">        ResponseListener responseListener &#x3D; new ResponseListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onResponse(ResponseEvent event) &#123;</span><br><span class="line">                ((Snmp)event.getSource()).cancel(event.getRequest(),this);</span><br><span class="line">                PDU response &#x3D; event.getResponse();</span><br><span class="line">                PDU request &#x3D; event.getRequest();</span><br><span class="line">                if(response &#x3D;&#x3D; null)&#123;</span><br><span class="line">                    System.out.println(&quot;请求超时：&quot; + response + &quot;，请求的内容：&quot; + request);</span><br><span class="line">                &#125;else &#123;</span><br><span class="line">                    System.out.println(&quot;获取到信息：&quot; + response);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;发送</span><br><span class="line">        snmp.send(pdu,target,null,responseListener);</span><br><span class="line">        &#x2F;&#x2F;由于是异步获取信息，在这里需要程序不能结束运行，否则接收不到异步获取的消息。</span><br><span class="line">        System.in.read();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
+    private final static String REMOTE_ADDRESS = &quot;udp:192.168.110.198/161&quot;;
 
 
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/SNMP/" rel="tag"># SNMP</a>
-          </div>
+    public static void main(String[] args) throws IOException {
+        //初始化
+        Address remoteAddress = GenericAddress.parse(REMOTE_ADDRESS);
+        System.out.println(&quot;SNMP地址：&quot; + REMOTE_ADDRESS + &quot;；有效：&quot; + remoteAddress.isValid());
+        TransportMapping transportMapping = new DefaultUdpTransportMapping();
+        Snmp snmp = new Snmp(transportMapping);
+        snmp.listen();
 
-        
+        //构造发送目标
+        CommunityTarget target = new CommunityTarget();
+        target.setCommunity(new OctetString(&quot;public&quot;));
+        target.setAddress(remoteAddress);
+        target.setVersion(SnmpConstants.version2c);
+        target.setRetries(10);
+        target.setTimeout(1500);
 
+        //构造发送内容
+        PDU pdu = new PDU();
+        OID oid = new OID(&quot;1.3.6.1.2.10&quot;);
+        pdu.add(new VariableBinding(oid));
+        pdu.setType(PDU.GETNEXT);
 
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2016/12/15/volatile%E7%AE%80%E4%BB%8B/" rel="prev" title="volatile简介">
-      <i class="fa fa-chevron-left"></i> volatile简介
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/02/10/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/" rel="next" title="Spring中IOC容器的初始化过程">
-      Spring中IOC容器的初始化过程 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
+        //异步监听响应
+        ResponseListener responseListener = new ResponseListener() {
+            @Override
+            public void onResponse(ResponseEvent event) {
+                ((Snmp)event.getSource()).cancel(event.getRequest(),this);
+                PDU response = event.getResponse();
+                PDU request = event.getRequest();
+                if(response == null){
+                    System.out.println(&quot;请求超时：&quot; + response + &quot;，请求的内容：&quot; + request);
+                }else {
+                    System.out.println(&quot;获取到信息：&quot; + response);
+                }
+            }
+        };
 
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
+        //发送
+        snmp.send(pdu,target,null,responseListener);
+        //由于是异步获取信息，在这里需要程序不能结束运行，否则接收不到异步获取的消息。
+        System.in.read();
     }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SNMP系统的组成"><span class="nav-number">1.</span> <span class="nav-text">SNMP系统的组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SNMP协议的结构"><span class="nav-number">2.</span> <span class="nav-text">SNMP协议的结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MIB库简介"><span class="nav-number">3.</span> <span class="nav-text">MIB库简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#net-snmp"><span class="nav-number">4.</span> <span class="nav-text">net-snmp</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装使用"><span class="nav-number">4.1.</span> <span class="nav-text">安装使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用SNMP4J开发"><span class="nav-number">5.</span> <span class="nav-text">使用SNMP4J开发</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
+}
+</code></pre>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
 
 
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/";
-    this.page.identifier = "2016/12/27/SNMP-MIB-SNMP4J简介/";
-    this.page.title = "SNMP-MIB-SNMP4J简介";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

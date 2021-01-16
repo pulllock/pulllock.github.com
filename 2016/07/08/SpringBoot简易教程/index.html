@@ -1,292 +1,93 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="此为个人学习所用,从pom文件配置,datasource,log配置,到集成druid以及dubbo等都只做了简单的介绍.顺序按照个人习惯,从建立项目,到每项配置挨个进行.SpringBoot零配置,但是此项目还是用到了xml进行配置dubbo等,注解方式暂时没有去做.源码请点此查看">
-<meta property="og:type" content="article">
-<meta property="og:title" content="SpringBoot简易教程">
-<meta property="og:url" content="http://dachengxi.github.com/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="此为个人学习所用,从pom文件配置,datasource,log配置,到集成druid以及dubbo等都只做了简单的介绍.顺序按照个人习惯,从建立项目,到每项配置挨个进行.SpringBoot零配置,但是此项目还是用到了xml进行配置dubbo等,注解方式暂时没有去做.源码请点此查看">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2016-07-08T06:36:41.000Z">
-<meta property="article:modified_time" content="2020-04-02T13:13:51.855Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="Spring">
-<meta property="article:tag" content="SpringBoot">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>SpringBoot简易教程 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>SpringBoot简易教程</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>SpringBoot简易教程</h1>
+			<b><time>2016-07-08 14:36:41</time></b>
+		       
+		           <a href="/tags/spring">Spring</a>
+        	       
+		           <a href="/tags/springboot">SpringBoot</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          SpringBoot简易教程
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2016-07-08 14:36:41 14:36:41" itemprop="dateCreated datePublished" datetime="2016-07-08T14:36:41+08:00">2016-07-08 14:36:41</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SpringBoot/" itemprop="url" rel="index"><span itemprop="name">SpringBoot</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/08/SpringBoot简易教程/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>此为个人学习所用,从pom文件配置,datasource,log配置,到集成druid以及dubbo等都只做了简单的介绍.顺序按照个人习惯,从建立项目,到每项配置挨个进行.SpringBoot零配置,但是此项目还是用到了xml进行配置dubbo等,注解方式暂时没有去做.<a href="https://github.com/dachengxi/SpringBootSetup" target="_blank" rel="noopener">源码请点此查看</a></p>
-<a id="more"></a>
-
-<h1 id="构建工具配置"><a href="#构建工具配置" class="headerlink" title="构建工具配置"></a>构建工具配置</h1><h2 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h2><p>可以使用两种方式:继承starter parent或者使用依赖管理器配置.</p>
-<h3 id="继承spring-boot-starter-parent"><a href="#继承spring-boot-starter-parent" class="headerlink" title="继承spring-boot-starter-parent"></a>继承spring-boot-starter-parent</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;parent&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-parent&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.3.6.RELEASE&lt;&#x2F;version&gt;</span><br><span class="line">  &lt;&#x2F;parent&gt;</span><br></pre></td></tr></table></figure>
-<p>接着下面的依赖可以指定导入其他的starter.</p>
-<h3 id="使用依赖管理"><a href="#使用依赖管理" class="headerlink" title="使用依赖管理"></a>使用依赖管理</h3><p>注意加上<code>&lt;scope&gt;import&lt;/scope&gt;</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependencyManagement&gt;</span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">      &lt;dependency&gt;</span><br><span class="line">        &lt;!-- Import dependency management from Spring Boot --&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-boot-dependencies&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;version&gt;1.3.6.RELEASE&lt;&#x2F;version&gt;</span><br><span class="line">        &lt;type&gt;pom&lt;&#x2F;type&gt;</span><br><span class="line">        &lt;scope&gt;import&lt;&#x2F;scope&gt;</span><br><span class="line">      &lt;&#x2F;dependency&gt;</span><br><span class="line">    &lt;&#x2F;dependencies&gt;</span><br><span class="line">  &lt;&#x2F;dependencyManagement&gt;</span><br></pre></td></tr></table></figure>
-<p>接着下面的依赖可以指定导入其他的starter.</p>
-<h2 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h2><p>直接添加各个starter依赖,无需配置parent之类的.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    compile(&quot;org.springframework.boot:spring-boot-starter-web:1.3.6.RELEASE&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="spring-boot-starter列表"><a href="#spring-boot-starter列表" class="headerlink" title="spring-boot-starter列表"></a>spring-boot-starter列表</h1><table>
+			<div>
+				<p>此为个人学习所用,从pom文件配置,datasource,log配置,到集成druid以及dubbo等都只做了简单的介绍.顺序按照个人习惯,从建立项目,到每项配置挨个进行.SpringBoot零配置,但是此项目还是用到了xml进行配置dubbo等,注解方式暂时没有去做.<a href="https://github.com/dachengxi/SpringBootSetup">源码请点此查看</a></p>
+<!-- raw HTML omitted -->
+<h1 id="构建工具配置">构建工具配置</h1>
+<h2 id="maven">Maven</h2>
+<p>可以使用两种方式:继承starter parent或者使用依赖管理器配置.</p>
+<h3 id="继承spring-boot-starter-parent">继承spring-boot-starter-parent</h3>
+<pre><code>&lt;parent&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;1.3.6.RELEASE&lt;/version&gt;
+  &lt;/parent&gt;
+</code></pre><p>接着下面的依赖可以指定导入其他的starter.</p>
+<h3 id="使用依赖管理">使用依赖管理</h3>
+<p>注意加上<code>&lt;scope&gt;import&lt;/scope&gt;</code></p>
+<pre><code>&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+      &lt;dependency&gt;
+        &lt;!-- Import dependency management from Spring Boot --&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;
+        &lt;version&gt;1.3.6.RELEASE&lt;/version&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+        &lt;scope&gt;import&lt;/scope&gt;
+      &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+  &lt;/dependencyManagement&gt;
+</code></pre><p>接着下面的依赖可以指定导入其他的starter.</p>
+<h2 id="gradle">Gradle</h2>
+<p>直接添加各个starter依赖,无需配置parent之类的.</p>
+<pre><code>dependencies {
+    compile(&quot;org.springframework.boot:spring-boot-starter-web:1.3.6.RELEASE&quot;)
+}
+</code></pre><h1 id="spring-boot-starter列表">spring-boot-starter列表</h1>
+<table>
 <thead>
 <tr>
 <th>名称</th>
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>spring-boot-starter</td>
 <td>核心starter,包含自动配置支持,日志和 YAML配置文件的支持</td>
 </tr>
@@ -434,7 +235,8 @@
 <td>spring-boot-starter-ws</td>
 <td>支持Spring Web Services</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>生产准备的starts</p>
 <table>
 <thead>
@@ -443,7 +245,8 @@
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>spring-boot-starter-actuator</td>
 <td>生产环境,监控和管理应用程序</td>
 </tr>
@@ -451,7 +254,8 @@
 <td>spring-boot-starter-remote-shell</td>
 <td>支持远程ssh shell</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>可替换spring boot中默认的starters</p>
 <table>
 <thead>
@@ -460,7 +264,8 @@
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>spring-boot-starter-jetty</td>
 <td>导入Jetty HTTP引擎,作为Tomcat的替代</td>
 </tr>
@@ -480,375 +285,439 @@
 <td>spring-boot-starter-undertow</td>
 <td>导入Undertow HTTP引擎,作为Tomcat的替代</td>
 </tr>
-</tbody></table>
-<p>注意:其他Starters的支持可参考官方文档说明,<a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-starters/README.adoc" target="_blank" rel="noopener">Starters</a></p>
-<h1 id="日志记录"><a href="#日志记录" class="headerlink" title="日志记录"></a>日志记录</h1><p>##Logback<br>日志记录两种方式:</p>
+</tbody>
+</table>
+<p>注意:其他Starters的支持可参考官方文档说明,<a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-starters/README.adoc">Starters</a></p>
+<h1 id="日志记录">日志记录</h1>
+<p>##Logback
+日志记录两种方式:</p>
 <ol>
 <li>在src/main/resources(以Maven项目为例)下面创建logback.xml</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;include resource&#x3D;&quot;org&#x2F;springframework&#x2F;boot&#x2F;logging&#x2F;logback&#x2F;base.xml&quot;&#x2F;&gt;</span><br><span class="line">    &lt;logger name&#x3D;&quot;org.springframework.web&quot; level&#x3D;&quot;DEBUG&quot;&#x2F;&gt;</span><br><span class="line">&lt;&#x2F;configuration&gt;</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;configuration&gt;
+    &lt;include resource=&quot;org/springframework/boot/logging/logback/base.xml&quot;/&gt;
+    &lt;logger name=&quot;org.springframework.web&quot; level=&quot;DEBUG&quot;/&gt;
+&lt;/configuration&gt;
+</code></pre><ol start="2">
 <li>在application.properties或者application.yml中配置</li>
 </ol>
 <p>application.properties:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logging.level.org.springframework.web&#x3D;DEBUG</span><br></pre></td></tr></table></figure>
+<pre><code>logging.level.org.springframework.web=DEBUG
+</code></pre><p>application.yml:</p>
+<pre><code>spring:
+logging:
+    level:
+      org.springframework.web: DEBUG
+</code></pre><p>##Logback多环境配置(yml)参考</p>
+<pre><code>spring:
+  profiles:
+    #可在此处选择环境的配置,dev,prod,test
+    #也可以在启动时添加参数-Dspring.profiles.active=dev
+    active: dev
+---
+#dev环境
+spring:
+  profiles: dev
+# 日志,logback配置
+logging:
+  #日志文件
+  file: logs/spring-boot-setup.log
+  pattern:
+    #控制台输出格式
+    console: &quot;%d %-5level %logger : %msg%n&quot;
+    #文件输出格式
+    file: &quot;%d %-5level [%thread] %logger : %msg%n&quot;
+  #日志级别
+  level:
+    org.springframework.web: DEBUG
 
-<p>application.yml:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">logging:</span><br><span class="line">    level:</span><br><span class="line">      org.springframework.web: DEBUG</span><br></pre></td></tr></table></figure>
-
-<p>##Logback多环境配置(yml)参考</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  profiles:</span><br><span class="line">    #可在此处选择环境的配置,dev,prod,test</span><br><span class="line">    #也可以在启动时添加参数-Dspring.profiles.active&#x3D;dev</span><br><span class="line">    active: dev</span><br><span class="line">---</span><br><span class="line">#dev环境</span><br><span class="line">spring:</span><br><span class="line">  profiles: dev</span><br><span class="line"># 日志,logback配置</span><br><span class="line">logging:</span><br><span class="line">  #日志文件</span><br><span class="line">  file: logs&#x2F;spring-boot-setup.log</span><br><span class="line">  pattern:</span><br><span class="line">    #控制台输出格式</span><br><span class="line">    console: &quot;%d %-5level %logger : %msg%n&quot;</span><br><span class="line">    #文件输出格式</span><br><span class="line">    file: &quot;%d %-5level [%thread] %logger : %msg%n&quot;</span><br><span class="line">  #日志级别</span><br><span class="line">  level:</span><br><span class="line">    org.springframework.web: DEBUG</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">#prod环境</span><br><span class="line">spring:</span><br><span class="line">  profiles: prod</span><br><span class="line"># 日志,logback配置</span><br><span class="line">logging:</span><br><span class="line">  #日志文件</span><br><span class="line">  file: logs&#x2F;spring-boot-setup.log</span><br><span class="line">  pattern:</span><br><span class="line">    #控制台无输出</span><br><span class="line">    #文件输出格式</span><br><span class="line">    file: &quot;%d %-5level [%thread] %logger : %msg%n&quot;</span><br><span class="line">  #日志级别</span><br><span class="line">  level:</span><br><span class="line">    org.springframework.web: WARN</span><br><span class="line">---</span><br><span class="line">#test环境</span><br><span class="line">spring:</span><br><span class="line">  profiles: test</span><br><span class="line"># 日志,logback配置</span><br><span class="line">logging:</span><br><span class="line">  #日志文件</span><br><span class="line">  file: logs&#x2F;spring-boot-setup.log</span><br><span class="line">  pattern:</span><br><span class="line">    #控制台输出格式</span><br><span class="line">    console: &quot;%d %-5level %logger : %msg%n&quot;</span><br><span class="line">    #文件输出格式</span><br><span class="line">    file: &quot;%d %-5level [%thread] %logger : %msg%n&quot;</span><br><span class="line">  #日志级别</span><br><span class="line">  level:</span><br><span class="line">    org.springframework.web: INFO</span><br></pre></td></tr></table></figure>
-
-<h1 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h1><h2 id="数据源"><a href="#数据源" class="headerlink" title="数据源"></a>数据源</h2><p>以mysql为例:</p>
+---
+#prod环境
+spring:
+  profiles: prod
+# 日志,logback配置
+logging:
+  #日志文件
+  file: logs/spring-boot-setup.log
+  pattern:
+    #控制台无输出
+    #文件输出格式
+    file: &quot;%d %-5level [%thread] %logger : %msg%n&quot;
+  #日志级别
+  level:
+    org.springframework.web: WARN
+---
+#test环境
+spring:
+  profiles: test
+# 日志,logback配置
+logging:
+  #日志文件
+  file: logs/spring-boot-setup.log
+  pattern:
+    #控制台输出格式
+    console: &quot;%d %-5level %logger : %msg%n&quot;
+    #文件输出格式
+    file: &quot;%d %-5level [%thread] %logger : %msg%n&quot;
+  #日志级别
+  level:
+    org.springframework.web: INFO
+</code></pre><h1 id="数据库">数据库</h1>
+<h2 id="数据源">数据源</h2>
+<p>以mysql为例:</p>
 <p>注意:使用数据库需要在pom文件中添加spring-boot-starter-jdbc和mysql-connector-java的依赖</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#数据源</span><br><span class="line">  datasource:</span><br><span class="line">    driver-class-name: com.mysql.jdbc.Driver</span><br><span class="line">    url: jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;xxx-test</span><br><span class="line">    username: root</span><br><span class="line">    password: 123456</span><br></pre></td></tr></table></figure>
+<pre><code>#数据源
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/xxx-test
+    username: root
+    password: 123456
+</code></pre><h2 id="数据库连接池">数据库连接池</h2>
+<h3 id="默认tomcat-jdbc连接池">默认Tomcat JDBC连接池</h3>
+<p>Spring Boot默认采用Tomcat JDBC连接池</p>
+<pre><code>datasource:
+    max-idle: 10
+    max-wait: 10000
+    min-idle: 5
+    initial-size: 5
+    validation-query: SELECT 1
+    test-on-borrow: false
+    test-while-idle: true
+    time-between-eviction-runs-millis: 18800
+    jdbc-interceptors: ConnectionState;SlowQueryReport(threshold=0)
+</code></pre><h2 id="druid">Druid</h2>
+<p>首先添加上druid的依赖:</p>
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+  &lt;artifactId&gt;druid&lt;/artifactId&gt;
+  &lt;version&gt;1.0.18&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>使用其他的连接池,需要配置自己的DataSource bean:</p>
+<pre><code>@Component
+@ConfigurationProperties(prefix = &quot;spring.datasource&quot;)
+public class DruidConfig {
+    private String url;
 
-<h2 id="数据库连接池"><a href="#数据库连接池" class="headerlink" title="数据库连接池"></a>数据库连接池</h2><h3 id="默认Tomcat-JDBC连接池"><a href="#默认Tomcat-JDBC连接池" class="headerlink" title="默认Tomcat JDBC连接池"></a>默认Tomcat JDBC连接池</h3><p>Spring Boot默认采用Tomcat JDBC连接池</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">datasource:</span><br><span class="line">    max-idle: 10</span><br><span class="line">    max-wait: 10000</span><br><span class="line">    min-idle: 5</span><br><span class="line">    initial-size: 5</span><br><span class="line">    validation-query: SELECT 1</span><br><span class="line">    test-on-borrow: false</span><br><span class="line">    test-while-idle: true</span><br><span class="line">    time-between-eviction-runs-millis: 18800</span><br><span class="line">    jdbc-interceptors: ConnectionState;SlowQueryReport(threshold&#x3D;0)</span><br></pre></td></tr></table></figure>
-<h2 id="Druid"><a href="#Druid" class="headerlink" title="Druid"></a>Druid</h2><p>首先添加上druid的依赖:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;druid&lt;&#x2F;artifactId&gt;</span><br><span class="line">  &lt;version&gt;1.0.18&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+    private String username;
 
-<p>使用其他的连接池,需要配置自己的DataSource bean:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">@ConfigurationProperties(prefix &#x3D; &quot;spring.datasource&quot;)</span><br><span class="line">public class DruidConfig &#123;</span><br><span class="line">    private String url;</span><br><span class="line"></span><br><span class="line">    private String username;</span><br><span class="line"></span><br><span class="line">    private String password;</span><br><span class="line"></span><br><span class="line">    private String driverClassName;</span><br><span class="line"></span><br><span class="line">    private int initialSize;</span><br><span class="line"></span><br><span class="line">    private int maxActive;</span><br><span class="line"></span><br><span class="line">    private int minIdle;</span><br><span class="line"></span><br><span class="line">    private int maxWait;</span><br><span class="line"></span><br><span class="line">    private long timeBetweenEvictionRunsMillis;</span><br><span class="line"></span><br><span class="line">    private long minEvictableIdleTimeMillis;</span><br><span class="line"></span><br><span class="line">    private String validationQuery;</span><br><span class="line"></span><br><span class="line">    private boolean testWhileIdle;</span><br><span class="line"></span><br><span class="line">    private boolean testOnBorrow;</span><br><span class="line"></span><br><span class="line">    private boolean testOnReturn;</span><br><span class="line"></span><br><span class="line">    private boolean poolPreparedStatements;</span><br><span class="line"></span><br><span class="line">    private int maxPoolPreparedStatementPerConnectionSize;</span><br><span class="line"></span><br><span class="line">    private String filters;</span><br><span class="line"></span><br><span class="line">    public DruidConfig() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public DruidConfig(String url, String username, String password, String driverClassName, int initialSize, int maxActive, int minIdle, int maxWait, long timeBetweenEvictionRunsMillis, long minEvictableIdleTimeMillis, String validationQuery, boolean testWhileIdle, boolean testOnBorrow, boolean testOnReturn, boolean poolPreparedStatements, int maxPoolPreparedStatementPerConnectionSize, String filters) &#123;</span><br><span class="line">        this.url &#x3D; url;</span><br><span class="line">        this.username &#x3D; username;</span><br><span class="line">        this.password &#x3D; password;</span><br><span class="line">        this.driverClassName &#x3D; driverClassName;</span><br><span class="line">        this.initialSize &#x3D; initialSize;</span><br><span class="line">        this.maxActive &#x3D; maxActive;</span><br><span class="line">        this.minIdle &#x3D; minIdle;</span><br><span class="line">        this.maxWait &#x3D; maxWait;</span><br><span class="line">        this.timeBetweenEvictionRunsMillis &#x3D; timeBetweenEvictionRunsMillis;</span><br><span class="line">        this.minEvictableIdleTimeMillis &#x3D; minEvictableIdleTimeMillis;</span><br><span class="line">        this.validationQuery &#x3D; validationQuery;</span><br><span class="line">        this.testWhileIdle &#x3D; testWhileIdle;</span><br><span class="line">        this.testOnBorrow &#x3D; testOnBorrow;</span><br><span class="line">        this.testOnReturn &#x3D; testOnReturn;</span><br><span class="line">        this.poolPreparedStatements &#x3D; poolPreparedStatements;</span><br><span class="line">        this.maxPoolPreparedStatementPerConnectionSize &#x3D; maxPoolPreparedStatementPerConnectionSize;</span><br><span class="line">        this.filters &#x3D; filters;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @Primary</span><br><span class="line">    public DataSource dataSource() throws Exception&#123;</span><br><span class="line">        DruidDataSource druidDataSource &#x3D; new DruidDataSource();</span><br><span class="line">        druidDataSource.setUrl(this.url);</span><br><span class="line">        druidDataSource.setUsername(this.username);</span><br><span class="line">        druidDataSource.setPassword(this.password);</span><br><span class="line">        druidDataSource.setDriverClassName(this.driverClassName);</span><br><span class="line">        druidDataSource.setInitialSize(this.initialSize);</span><br><span class="line">        druidDataSource.setMaxActive(this.maxActive);</span><br><span class="line">        druidDataSource.setMinIdle(this.minIdle);</span><br><span class="line">        druidDataSource.setMaxWait(this.maxWait);</span><br><span class="line">        druidDataSource.setTimeBetweenEvictionRunsMillis(this.timeBetweenEvictionRunsMillis);</span><br><span class="line">        druidDataSource.setMinEvictableIdleTimeMillis(this.minEvictableIdleTimeMillis);</span><br><span class="line">        druidDataSource.setValidationQuery(this.validationQuery);</span><br><span class="line">        druidDataSource.setTestWhileIdle(this.testWhileIdle);</span><br><span class="line">        druidDataSource.setTestOnBorrow(this.testOnBorrow);</span><br><span class="line">        druidDataSource.setTestOnReturn(this.testOnReturn);</span><br><span class="line">        druidDataSource.setPoolPreparedStatements(this.poolPreparedStatements);</span><br><span class="line">        druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(this.maxPoolPreparedStatementPerConnectionSize);</span><br><span class="line">        druidDataSource.setFilters(this.filters);</span><br><span class="line">        try &#123;</span><br><span class="line">            if(null !&#x3D; druidDataSource) &#123;</span><br><span class="line">                druidDataSource.setFilters(&quot;wall,stat&quot;);</span><br><span class="line">                druidDataSource.setUseGlobalDataSourceStat(true);</span><br><span class="line">                druidDataSource.init();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            throw new RuntimeException(&quot;load datasource error, dbProperties is :&quot;, e);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return druidDataSource;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"> ...</span><br><span class="line"> geter and setter</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+    private String password;
 
-<p>配置druid的数据监控页面路径和拦截路径:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Bean</span><br><span class="line">    public ServletRegistrationBean druidServlet() &#123;</span><br><span class="line"></span><br><span class="line">        return new ServletRegistrationBean(new StatViewServlet(), &quot;&#x2F;druid&#x2F;*&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    public FilterRegistrationBean filterRegistrationBean() &#123;</span><br><span class="line">        FilterRegistrationBean filterRegistrationBean &#x3D; new FilterRegistrationBean();</span><br><span class="line">        filterRegistrationBean.setFilter(new WebStatFilter());</span><br><span class="line">        filterRegistrationBean.addUrlPatterns(&quot;&#x2F;*&quot;);</span><br><span class="line">        filterRegistrationBean.addInitParameter(&quot;exclusions&quot;, &quot;*.js,*.gif,*.jpg,*.png,*.css,*.ico,&#x2F;druid&#x2F;*&quot;);</span><br><span class="line">        return filterRegistrationBean;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>然后浏览器访问<a href="http://localhost:8080/druid即可看到界面" target="_blank" rel="noopener">http://localhost:8080/druid即可看到界面</a>.</p>
-<h1 id="Mybatis集成"><a href="#Mybatis集成" class="headerlink" title="Mybatis集成"></a>Mybatis集成</h1><h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.mybatis.spring.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;mybatis-spring-boot-starter&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.1.1&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+    private String driverClassName;
 
-<h2 id="配置application-yml"><a href="#配置application-yml" class="headerlink" title="配置application.yml"></a>配置application.yml</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#Mybatis配置</span><br><span class="line">mybatis:</span><br><span class="line">  mapperLocations: classpath*:me.cxis.springboot.setup.mapper&#x2F;*.xml</span><br><span class="line">  typeAliasesPackage: me.cxis.springboot.setup.dto</span><br></pre></td></tr></table></figure>
+    private int initialSize;
 
-<h2 id="编写UserMapper接口和UserMapper-xml文件"><a href="#编写UserMapper接口和UserMapper-xml文件" class="headerlink" title="编写UserMapper接口和UserMapper.xml文件"></a>编写UserMapper接口和UserMapper.xml文件</h2><p>UserMapper接口:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Mapper</span><br><span class="line">public interface UserMapper &#123;</span><br><span class="line">    List&lt;User&gt; getUserList();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    private int maxActive;
 
-<p>UserMapper.xml文件:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;mapper namespace&#x3D;&quot;me.cxis.springboot.setup.mapper.UserMapper&quot;&gt;</span><br><span class="line">    &lt;select id&#x3D;&quot;getUserList&quot; resultType&#x3D;&quot;me.cxis.springboot.setup.dto.User&quot;&gt;</span><br><span class="line">        select * from t_user;</span><br><span class="line">    &lt;&#x2F;select&gt;</span><br><span class="line">&lt;&#x2F;mapper&gt;</span><br></pre></td></tr></table></figure>
+    private int minIdle;
 
+    private int maxWait;
 
-<h1 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h1><p>在Application中添加注解<code>@EnableTransactionManagement</code>启用事务管理,在需要开启事务的地方使用注解<code>@Transactional</code></p>
-<h1 id="FreeMarker模板引擎"><a href="#FreeMarker模板引擎" class="headerlink" title="FreeMarker模板引擎"></a>FreeMarker模板引擎</h1><h2 id="添加依赖-1"><a href="#添加依赖-1" class="headerlink" title="添加依赖"></a>添加依赖</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-starter-freemarker&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+    private long timeBetweenEvictionRunsMillis;
 
-<h2 id="添加配置"><a href="#添加配置" class="headerlink" title="添加配置"></a>添加配置</h2><p>在application.yml中添加freemarker配置</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#freemarker配置</span><br><span class="line">  freemarker:</span><br><span class="line">    cache: false</span><br><span class="line">    charset: UTF-8</span><br><span class="line">    check-template-location: true</span><br><span class="line">    content-type: text&#x2F;html</span><br><span class="line">    expose-request-attributes: true</span><br><span class="line">    expose-session-attributes: true</span><br><span class="line">    request-context-attribute: request</span><br></pre></td></tr></table></figure>
+    private long minEvictableIdleTimeMillis;
 
-<h2 id="创建templates目录"><a href="#创建templates目录" class="headerlink" title="创建templates目录"></a>创建templates目录</h2><p>src/main/resources 创建目录 templates,接着在此目录下创建模板文件test.ftl</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;Freemarker&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    Date: $&#123;time?date&#125;</span><br><span class="line">    &lt;br&gt;</span><br><span class="line">    Time: $&#123;time?time&#125;</span><br><span class="line">    &lt;br&gt;</span><br><span class="line">    Message: $&#123;message&#125;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
+    private String validationQuery;
 
-<p>编写Controller代码:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(value &#x3D; &quot;test&quot;)</span><br><span class="line">    public String testFreeMarker(ModelMap modelMap)&#123;</span><br><span class="line">        modelMap.put(&quot;time&quot;,new Date());</span><br><span class="line">        modelMap.put(&quot;message&quot;,&quot;测试Freemarker&quot;);</span><br><span class="line">        return &quot;test&quot;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+    private boolean testWhileIdle;
 
-<h1 id="集成dubbo"><a href="#集成dubbo" class="headerlink" title="集成dubbo"></a>集成dubbo</h1><h2 id="添加依赖-2"><a href="#添加依赖-2" class="headerlink" title="添加依赖"></a>添加依赖</h2><p>分别添加dubbo,zookeeper,zkclient的依赖,同时需要排除依赖中的spring,log4j等</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;com.alibaba&lt;&#x2F;groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;dubbo&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;version&gt;2.5.3&lt;&#x2F;version&gt;</span><br><span class="line">        &lt;exclusions&gt;</span><br><span class="line">          &lt;exclusion&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring&lt;&#x2F;artifactId&gt;</span><br><span class="line">          &lt;&#x2F;exclusion&gt;</span><br><span class="line">        &lt;&#x2F;exclusions&gt;</span><br><span class="line">      &lt;&#x2F;dependency&gt;</span><br><span class="line">      &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.apache.zookeeper&lt;&#x2F;groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;zookeeper&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;version&gt;3.4.6&lt;&#x2F;version&gt;</span><br><span class="line">        &lt;exclusions&gt;</span><br><span class="line">          &lt;exclusion&gt;</span><br><span class="line">            &lt;groupId&gt;org.slf4j&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;slf4j-log4j12&lt;&#x2F;artifactId&gt;</span><br><span class="line">          &lt;&#x2F;exclusion&gt;</span><br><span class="line">          &lt;exclusion&gt;</span><br><span class="line">            &lt;groupId&gt;log4j&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;log4j&lt;&#x2F;artifactId&gt;</span><br><span class="line">          &lt;&#x2F;exclusion&gt;</span><br><span class="line">        &lt;&#x2F;exclusions&gt;</span><br><span class="line">      &lt;&#x2F;dependency&gt;</span><br><span class="line">      &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;com.github.sgroschupf&lt;&#x2F;groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;zkclient&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;version&gt;0.1&lt;&#x2F;version&gt;</span><br><span class="line">      &lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="服务提供方"><a href="#服务提供方" class="headerlink" title="服务提供方"></a>服务提供方</h2><p>添加dubbo.properties文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dubbo.container&#x3D;log4j,spring</span><br><span class="line">dubbo.application.name&#x3D;tb-core</span><br><span class="line">dubbo.application.owner&#x3D;</span><br><span class="line">#dubbo.registry.address&#x3D;multicast:&#x2F;&#x2F;224.5.6.7:1234</span><br><span class="line">dubbo.registry.address&#x3D;zookeeper\:&#x2F;&#x2F;127.0.0.1\:2181</span><br><span class="line">#dubbo.registry.address&#x3D;redis:&#x2F;&#x2F;127.0.0.1:6379</span><br><span class="line">#dubbo.registry.address&#x3D;dubbo:&#x2F;&#x2F;127.0.0.1:9090</span><br><span class="line">dubbo.monitor.protocol&#x3D;registry</span><br><span class="line">dubbo.protocol.name&#x3D;dubbo</span><br><span class="line">dubbo.protocol.port&#x3D;20881</span><br><span class="line">dubbo.service.loadbalance&#x3D;roundrobin</span><br><span class="line">dubbo.log4j.file&#x3D;logs&#x2F;SpringBootDubboProvider.log</span><br><span class="line">dubbo.log4j.level&#x3D;DEBUG</span><br></pre></td></tr></table></figure>
-<p>添加dubbo-provider.xml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&quot;</span><br><span class="line">       xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;</span><br><span class="line">       xmlns:dubbo&#x3D;&quot;http:&#x2F;&#x2F;code.alibabatech.com&#x2F;schema&#x2F;dubbo&quot;</span><br><span class="line">       xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans</span><br><span class="line">       http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&#x2F;spring-beans.xsd</span><br><span class="line">       http:&#x2F;&#x2F;code.alibabatech.com&#x2F;schema&#x2F;dubbo</span><br><span class="line">	   http:&#x2F;&#x2F;code.alibabatech.com&#x2F;schema&#x2F;dubbo&#x2F;dubbo.xsd&quot;&gt;</span><br><span class="line">       &lt;bean id&#x3D;&quot;userService&quot; class&#x3D;&quot;me.cxis.springboot.setup.service.impl.UserServiceImpl&quot;&gt;&lt;&#x2F;bean&gt;</span><br><span class="line">       &lt;dubbo:service timeout&#x3D;&quot;3000&quot; retries&#x3D;&quot;0&quot; interface&#x3D;&quot;me.cxis.springboot.setup.service.UserService&quot; ref&#x3D;&quot;userService&quot;&#x2F;&gt;</span><br><span class="line">&lt;&#x2F;beans&gt;</span><br></pre></td></tr></table></figure>
+    private boolean testOnBorrow;
 
-<p>在application添加注解,导入dubbo配置文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@ImportResource(&quot;classpath*:dubbo-provider.xml&quot;)</span><br><span class="line">public class Application &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(Application.class,args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    private boolean testOnReturn;
 
-<h2 id="服务消费方"><a href="#服务消费方" class="headerlink" title="服务消费方"></a>服务消费方</h2><p>添加dubbo.properties文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">dubbo.container&#x3D;log4j,spring</span><br><span class="line">dubbo.application.name&#x3D;SpringBootDubboConsumer</span><br><span class="line">dubbo.application.owner&#x3D;</span><br><span class="line">#dubbo.registry.address&#x3D;multicast:&#x2F;&#x2F;224.5.6.7:1234</span><br><span class="line">dubbo.registry.address&#x3D;zookeeper\:&#x2F;&#x2F;127.0.0.1\:2181</span><br><span class="line">#dubbo.registry.address&#x3D;redis:&#x2F;&#x2F;127.0.0.1:6379</span><br><span class="line">#dubbo.registry.address&#x3D;dubbo:&#x2F;&#x2F;127.0.0.1:9090</span><br><span class="line">dubbo.monitor.protocol&#x3D;registry</span><br><span class="line">dubbo.protocol.name&#x3D;dubbo</span><br><span class="line">dubbo.protocol.port&#x3D;20884</span><br><span class="line">dubbo.service.loadbalance&#x3D;roundrobin</span><br><span class="line">dubbo.log4j.file&#x3D;logs&#x2F;SpringBootDubboConsumer.log</span><br><span class="line">dubbo.log4j.level&#x3D;DEBUG</span><br></pre></td></tr></table></figure>
-<p>添加dubbo-consumer.xml</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns&#x3D;&quot;http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&quot;</span><br><span class="line">	xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot; </span><br><span class="line">	xmlns:dubbo&#x3D;&quot;http:&#x2F;&#x2F;code.alibabatech.com&#x2F;schema&#x2F;dubbo&quot;</span><br><span class="line">	xsi:schemaLocation&#x3D;&quot;</span><br><span class="line">	http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans http:&#x2F;&#x2F;www.springframework.org&#x2F;schema&#x2F;beans&#x2F;spring-beans-3.0.xsd  </span><br><span class="line">	http:&#x2F;&#x2F;code.alibabatech.com&#x2F;schema&#x2F;dubbo http:&#x2F;&#x2F;code.alibabatech.com&#x2F;schema&#x2F;dubbo&#x2F;dubbo.xsd&quot;&gt;</span><br><span class="line"></span><br><span class="line">	&lt;dubbo:reference id&#x3D;&quot;userService&quot; interface&#x3D;&quot;me.cxis.springboot.setup.service.UserService&quot;&#x2F;&gt;</span><br><span class="line">&lt;&#x2F;beans&gt;</span><br></pre></td></tr></table></figure>
+    private boolean poolPreparedStatements;
 
-<p>在application添加注解,导入dubbo配置文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@ImportResource(&quot;classpath*:dubbo-consumer.xml&quot;)</span><br><span class="line">public class Application &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(Application.class,args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    private int maxPoolPreparedStatementPerConnectionSize;
 
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle" target="_blank" rel="noopener">http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle</a></p>
-<p><a href="https://www.ibm.com/developerworks/cn/java/j-lo-spring-boot/" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/java/j-lo-spring-boot/</a></p>
-<p><a href="https://qbgbook.gitbooks.io/spring-boot-reference-guide-zh/content/" target="_blank" rel="noopener">https://qbgbook.gitbooks.io/spring-boot-reference-guide-zh/content/</a></p>
-<p><a href="https://springframework.guru/using-yaml-in-spring-boot-to-configure-logback/" target="_blank" rel="noopener">https://springframework.guru/using-yaml-in-spring-boot-to-configure-logback/</a></p>
-<p><a href="http://blog.csdn.net/catoop/article/details/50501714" target="_blank" rel="noopener">http://blog.csdn.net/catoop/article/details/50501714</a></p>
-<p><a href="http://my.oschina.net/angerbaby/blog/552936" target="_blank" rel="noopener">http://my.oschina.net/angerbaby/blog/552936</a></p>
-<p><a href="http://www.voidcn.com/blog/yingxiake/article/p-5930835.html" target="_blank" rel="noopener">http://www.voidcn.com/blog/yingxiake/article/p-5930835.html</a></p>
+    private String filters;
 
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Spring/" rel="tag"># Spring</a>
-              <a href="/tags/SpringBoot/" rel="tag"># SpringBoot</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2016/07/01/tomcat-%E4%B8%8Ememcached-session-manager%E5%85%B1%E4%BA%ABsession%E6%B5%8B%E8%AF%95/" rel="prev" title="tomcat与memcached-session-manager共享session测试">
-      <i class="fa fa-chevron-left"></i> tomcat与memcached-session-manager共享session测试
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2016/07/29/%E6%88%91%E7%9A%84%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B9%8B%E8%B7%AF/" rel="next" title="我的计算机之路">
-      我的计算机之路 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
+    public DruidConfig() {
     }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
+
+    public DruidConfig(String url, String username, String password, String driverClassName, int initialSize, int maxActive, int minIdle, int maxWait, long timeBetweenEvictionRunsMillis, long minEvictableIdleTimeMillis, String validationQuery, boolean testWhileIdle, boolean testOnBorrow, boolean testOnReturn, boolean poolPreparedStatements, int maxPoolPreparedStatementPerConnectionSize, String filters) {
+        this.url = url;
+        this.username = username;
+        this.password = password;
+        this.driverClassName = driverClassName;
+        this.initialSize = initialSize;
+        this.maxActive = maxActive;
+        this.minIdle = minIdle;
+        this.maxWait = maxWait;
+        this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+        this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+        this.validationQuery = validationQuery;
+        this.testWhileIdle = testWhileIdle;
+        this.testOnBorrow = testOnBorrow;
+        this.testOnReturn = testOnReturn;
+        this.poolPreparedStatements = poolPreparedStatements;
+        this.maxPoolPreparedStatementPerConnectionSize = maxPoolPreparedStatementPerConnectionSize;
+        this.filters = filters;
     }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
+    @Bean
+    @Primary
+    public DataSource dataSource() throws Exception{
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setUrl(this.url);
+        druidDataSource.setUsername(this.username);
+        druidDataSource.setPassword(this.password);
+        druidDataSource.setDriverClassName(this.driverClassName);
+        druidDataSource.setInitialSize(this.initialSize);
+        druidDataSource.setMaxActive(this.maxActive);
+        druidDataSource.setMinIdle(this.minIdle);
+        druidDataSource.setMaxWait(this.maxWait);
+        druidDataSource.setTimeBetweenEvictionRunsMillis(this.timeBetweenEvictionRunsMillis);
+        druidDataSource.setMinEvictableIdleTimeMillis(this.minEvictableIdleTimeMillis);
+        druidDataSource.setValidationQuery(this.validationQuery);
+        druidDataSource.setTestWhileIdle(this.testWhileIdle);
+        druidDataSource.setTestOnBorrow(this.testOnBorrow);
+        druidDataSource.setTestOnReturn(this.testOnReturn);
+        druidDataSource.setPoolPreparedStatements(this.poolPreparedStatements);
+        druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(this.maxPoolPreparedStatementPerConnectionSize);
+        druidDataSource.setFilters(this.filters);
+        try {
+            if(null != druidDataSource) {
+                druidDataSource.setFilters(&quot;wall,stat&quot;);
+                druidDataSource.setUseGlobalDataSourceStat(true);
+                druidDataSource.init();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(&quot;load datasource error, dbProperties is :&quot;, e);
+        }
 
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#构建工具配置"><span class="nav-number">1.</span> <span class="nav-text">构建工具配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Maven"><span class="nav-number">1.1.</span> <span class="nav-text">Maven</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#继承spring-boot-starter-parent"><span class="nav-number">1.1.1.</span> <span class="nav-text">继承spring-boot-starter-parent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用依赖管理"><span class="nav-number">1.1.2.</span> <span class="nav-text">使用依赖管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gradle"><span class="nav-number">1.2.</span> <span class="nav-text">Gradle</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#spring-boot-starter列表"><span class="nav-number">2.</span> <span class="nav-text">spring-boot-starter列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#日志记录"><span class="nav-number">3.</span> <span class="nav-text">日志记录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据库"><span class="nav-number">4.</span> <span class="nav-text">数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据源"><span class="nav-number">4.1.</span> <span class="nav-text">数据源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库连接池"><span class="nav-number">4.2.</span> <span class="nav-text">数据库连接池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#默认Tomcat-JDBC连接池"><span class="nav-number">4.2.1.</span> <span class="nav-text">默认Tomcat JDBC连接池</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Druid"><span class="nav-number">4.3.</span> <span class="nav-text">Druid</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mybatis集成"><span class="nav-number">5.</span> <span class="nav-text">Mybatis集成</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#添加依赖"><span class="nav-number">5.1.</span> <span class="nav-text">添加依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置application-yml"><span class="nav-number">5.2.</span> <span class="nav-text">配置application.yml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编写UserMapper接口和UserMapper-xml文件"><span class="nav-number">5.3.</span> <span class="nav-text">编写UserMapper接口和UserMapper.xml文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#事务管理"><span class="nav-number">6.</span> <span class="nav-text">事务管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FreeMarker模板引擎"><span class="nav-number">7.</span> <span class="nav-text">FreeMarker模板引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#添加依赖-1"><span class="nav-number">7.1.</span> <span class="nav-text">添加依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加配置"><span class="nav-number">7.2.</span> <span class="nav-text">添加配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建templates目录"><span class="nav-number">7.3.</span> <span class="nav-text">创建templates目录</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集成dubbo"><span class="nav-number">8.</span> <span class="nav-text">集成dubbo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#添加依赖-2"><span class="nav-number">8.1.</span> <span class="nav-text">添加依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务提供方"><span class="nav-number">8.2.</span> <span class="nav-text">服务提供方</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务消费方"><span class="nav-number">8.3.</span> <span class="nav-text">服务消费方</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/";
-    this.page.identifier = "2016/07/08/SpringBoot简易教程/";
-    this.page.title = "SpringBoot简易教程";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
+        return druidDataSource;
     }
-  });
-</script>
 
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+ ...
+ geter and setter
+ ...
+</code></pre><p>配置druid的数据监控页面路径和拦截路径:</p>
+<pre><code>@Bean
+    public ServletRegistrationBean druidServlet() {
+
+        return new ServletRegistrationBean(new StatViewServlet(), &quot;/druid/*&quot;);
+    }
+
+    @Bean
+    public FilterRegistrationBean filterRegistrationBean() {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(new WebStatFilter());
+        filterRegistrationBean.addUrlPatterns(&quot;/*&quot;);
+        filterRegistrationBean.addInitParameter(&quot;exclusions&quot;, &quot;*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*&quot;);
+        return filterRegistrationBean;
+    }
+</code></pre><p>然后浏览器访问http://localhost:8080/druid即可看到界面.</p>
+<h1 id="mybatis集成">Mybatis集成</h1>
+<h2 id="添加依赖">添加依赖</h2>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+    &lt;version&gt;1.1.1&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><h2 id="配置applicationyml">配置application.yml</h2>
+<pre><code>#Mybatis配置
+mybatis:
+  mapperLocations: classpath*:me.cxis.springboot.setup.mapper/*.xml
+  typeAliasesPackage: me.cxis.springboot.setup.dto
+
+</code></pre><h2 id="编写usermapper接口和usermapperxml文件">编写UserMapper接口和UserMapper.xml文件</h2>
+<p>UserMapper接口:</p>
+<pre><code>@Mapper
+public interface UserMapper {
+    List&lt;User&gt; getUserList();
+}
+</code></pre><p>UserMapper.xml文件:</p>
+<pre><code>&lt;mapper namespace=&quot;me.cxis.springboot.setup.mapper.UserMapper&quot;&gt;
+    &lt;select id=&quot;getUserList&quot; resultType=&quot;me.cxis.springboot.setup.dto.User&quot;&gt;
+        select * from t_user;
+    &lt;/select&gt;
+&lt;/mapper&gt;
+</code></pre><h1 id="事务管理">事务管理</h1>
+<p>在Application中添加注解<code>@EnableTransactionManagement</code>启用事务管理,在需要开启事务的地方使用注解<code>@Transactional</code></p>
+<h1 id="freemarker模板引擎">FreeMarker模板引擎</h1>
+<h2 id="添加依赖-1">添加依赖</h2>
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-boot-starter-freemarker&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre><h2 id="添加配置">添加配置</h2>
+<p>在application.yml中添加freemarker配置</p>
+<pre><code>#freemarker配置
+  freemarker:
+    cache: false
+    charset: UTF-8
+    check-template-location: true
+    content-type: text/html
+    expose-request-attributes: true
+    expose-session-attributes: true
+    request-context-attribute: request
+</code></pre><h2 id="创建templates目录">创建templates目录</h2>
+<p>src/main/resources 创建目录 templates,接着在此目录下创建模板文件test.ftl</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Freemarker&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    Date: ${time?date}
+    &lt;br&gt;
+    Time: ${time?time}
+    &lt;br&gt;
+    Message: ${message}
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>编写Controller代码:</p>
+<pre><code>@RequestMapping(value = &quot;test&quot;)
+    public String testFreeMarker(ModelMap modelMap){
+        modelMap.put(&quot;time&quot;,new Date());
+        modelMap.put(&quot;message&quot;,&quot;测试Freemarker&quot;);
+        return &quot;test&quot;;
+    }
+</code></pre><h1 id="集成dubbo">集成dubbo</h1>
+<h2 id="添加依赖-2">添加依赖</h2>
+<p>分别添加dubbo,zookeeper,zkclient的依赖,同时需要排除依赖中的spring,log4j等</p>
+<pre><code>&lt;dependency&gt;
+        &lt;groupId&gt;com.alibaba&lt;/groupId&gt;
+        &lt;artifactId&gt;dubbo&lt;/artifactId&gt;
+        &lt;version&gt;2.5.3&lt;/version&gt;
+        &lt;exclusions&gt;
+          &lt;exclusion&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring&lt;/artifactId&gt;
+          &lt;/exclusion&gt;
+        &lt;/exclusions&gt;
+      &lt;/dependency&gt;
+      &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.zookeeper&lt;/groupId&gt;
+        &lt;artifactId&gt;zookeeper&lt;/artifactId&gt;
+        &lt;version&gt;3.4.6&lt;/version&gt;
+        &lt;exclusions&gt;
+          &lt;exclusion&gt;
+            &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+            &lt;artifactId&gt;slf4j-log4j12&lt;/artifactId&gt;
+          &lt;/exclusion&gt;
+          &lt;exclusion&gt;
+            &lt;groupId&gt;log4j&lt;/groupId&gt;
+            &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+          &lt;/exclusion&gt;
+        &lt;/exclusions&gt;
+      &lt;/dependency&gt;
+      &lt;dependency&gt;
+        &lt;groupId&gt;com.github.sgroschupf&lt;/groupId&gt;
+        &lt;artifactId&gt;zkclient&lt;/artifactId&gt;
+        &lt;version&gt;0.1&lt;/version&gt;
+      &lt;/dependency&gt;
+</code></pre><h2 id="服务提供方">服务提供方</h2>
+<p>添加dubbo.properties文件</p>
+<pre><code>dubbo.container=log4j,spring
+dubbo.application.name=tb-core
+dubbo.application.owner=
+#dubbo.registry.address=multicast://224.5.6.7:1234
+dubbo.registry.address=zookeeper\://127.0.0.1\:2181
+#dubbo.registry.address=redis://127.0.0.1:6379
+#dubbo.registry.address=dubbo://127.0.0.1:9090
+dubbo.monitor.protocol=registry
+dubbo.protocol.name=dubbo
+dubbo.protocol.port=20881
+dubbo.service.loadbalance=roundrobin
+dubbo.log4j.file=logs/SpringBootDubboProvider.log
+dubbo.log4j.level=DEBUG
+</code></pre><p>添加dubbo-provider.xml</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:dubbo=&quot;http://code.alibabatech.com/schema/dubbo&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://code.alibabatech.com/schema/dubbo
+	   http://code.alibabatech.com/schema/dubbo/dubbo.xsd&quot;&gt;
+       &lt;bean id=&quot;userService&quot; class=&quot;me.cxis.springboot.setup.service.impl.UserServiceImpl&quot;&gt;&lt;/bean&gt;
+       &lt;dubbo:service timeout=&quot;3000&quot; retries=&quot;0&quot; interface=&quot;me.cxis.springboot.setup.service.UserService&quot; ref=&quot;userService&quot;/&gt;
+&lt;/beans&gt;
+</code></pre><p>在application添加注解,导入dubbo配置文件</p>
+<pre><code>@ImportResource(&quot;classpath*:dubbo-provider.xml&quot;)
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class,args);
+    }
+}
+</code></pre><h2 id="服务消费方">服务消费方</h2>
+<p>添加dubbo.properties文件</p>
+<pre><code>dubbo.container=log4j,spring
+dubbo.application.name=SpringBootDubboConsumer
+dubbo.application.owner=
+#dubbo.registry.address=multicast://224.5.6.7:1234
+dubbo.registry.address=zookeeper\://127.0.0.1\:2181
+#dubbo.registry.address=redis://127.0.0.1:6379
+#dubbo.registry.address=dubbo://127.0.0.1:9090
+dubbo.monitor.protocol=registry
+dubbo.protocol.name=dubbo
+dubbo.protocol.port=20884
+dubbo.service.loadbalance=roundrobin
+dubbo.log4j.file=logs/SpringBootDubboConsumer.log
+dubbo.log4j.level=DEBUG
+</code></pre><p>添加dubbo-consumer.xml</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; 
+	xmlns:dubbo=&quot;http://code.alibabatech.com/schema/dubbo&quot;
+	xsi:schemaLocation=&quot;
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd&quot;&gt;
+
+	&lt;dubbo:reference id=&quot;userService&quot; interface=&quot;me.cxis.springboot.setup.service.UserService&quot;/&gt;
+&lt;/beans&gt;
+</code></pre><p>在application添加注解,导入dubbo配置文件</p>
+<pre><code>@ImportResource(&quot;classpath*:dubbo-consumer.xml&quot;)
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class,args);
+    }
+}
+</code></pre><h1 id="参考">参考</h1>
+<p><a href="http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle">http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle</a></p>
+<p><a href="https://www.ibm.com/developerworks/cn/java/j-lo-spring-boot/">https://www.ibm.com/developerworks/cn/java/j-lo-spring-boot/</a></p>
+<p><a href="https://qbgbook.gitbooks.io/spring-boot-reference-guide-zh/content/">https://qbgbook.gitbooks.io/spring-boot-reference-guide-zh/content/</a></p>
+<p><a href="https://springframework.guru/using-yaml-in-spring-boot-to-configure-logback/">https://springframework.guru/using-yaml-in-spring-boot-to-configure-logback/</a></p>
+<p><a href="http://blog.csdn.net/catoop/article/details/50501714">http://blog.csdn.net/catoop/article/details/50501714</a></p>
+<p><a href="http://my.oschina.net/angerbaby/blog/552936">http://my.oschina.net/angerbaby/blog/552936</a></p>
+<p><a href="http://www.voidcn.com/blog/yingxiake/article/p-5930835.html">http://www.voidcn.com/blog/yingxiake/article/p-5930835.html</a></p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
 </body>
 </html>

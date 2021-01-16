@@ -1,279 +1,54 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="Minor GC、Major GC、Full GC">
-<meta property="og:type" content="article">
-<meta property="og:title" content="JVM中的MinorGC-MajorGC-FullGC">
-<meta property="og:url" content="http://dachengxi.github.com/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="Minor GC、Major GC、Full GC">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://dachengxi.github.com/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/JVM%E5%8D%A1%E8%A1%A8.png">
-<meta property="article:published_time" content="2017-06-17T08:02:05.000Z">
-<meta property="article:modified_time" content="2020-04-17T15:46:50.746Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="JVM">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://dachengxi.github.com/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/JVM%E5%8D%A1%E8%A1%A8.png">
-
-<link rel="canonical" href="http://dachengxi.github.com/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>JVM中的MinorGC-MajorGC-FullGC | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM中的MinorGC-MajorGC-FullGC</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>JVM中的MinorGC-MajorGC-FullGC</h1>
+			<b><time>2017-06-17 16:02:05</time></b>
+		       
+		           <a href="/tags/jvm">JVM</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          JVM中的MinorGC-MajorGC-FullGC
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-06-17 16:02:05 16:02:05" itemprop="dateCreated datePublished" datetime="2017-06-17T16:02:05+08:00">2017-06-17 16:02:05</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/06/17/JVM中的MinorGC-MajorGC-FullGC/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>Minor GC、Major GC、Full GC</p>
-<a id="more"></a>
-
+			<div>
+				<p>Minor GC、Major GC、Full GC</p>
 <p>HotSpot VM实现，GC分为两种：</p>
 <ul>
-<li>Partial GC（局部GC），不收集整个GC堆的模式<ul>
+<li>Partial GC（局部GC），不收集整个GC堆的模式
+<ul>
 <li>Young GC（Minor GC），只收集新生代的GC。</li>
 <li>Old GC，只收集老年代的GC，只有CMS的并发收集是这个模式。</li>
 <li>Mixed GC，收集整个新生代以及部分老年代的GC，是有G1有这个模式。</li>
@@ -282,22 +57,32 @@
 <li>Full GC，收集整个堆，包括新生代、老年代、永久代所有部分的模式。</li>
 </ul>
 <p>Major GC通常是跟Full GC是等价的，收集整个GC堆。但因为HotSpot VM发展了这么多年，外界对各种名词的解读已经完全混乱了，当有人说“Major GC”的时候一定要问清楚他想要指的是上面的Full GC还是Old GC。</p>
-<h1 id="Young-GC（Minor-GC）"><a href="#Young-GC（Minor-GC）" class="headerlink" title="Young GC（Minor GC）"></a>Young GC（Minor GC）</h1><p>发生在新生代的GC，当新生代中的Eden区满的时候触发。Young GC中有部分存活对象会晋升到老年代，所以Young GC后老年代的占用量通常会有所升高。</p>
+<h1 id="young-gcminor-gc">Young GC（Minor GC）</h1>
+<p>发生在新生代的GC，当新生代中的Eden区满的时候触发。Young GC中有部分存活对象会晋升到老年代，所以Young GC后老年代的占用量通常会有所升高。</p>
 <p>新生代分为Eden区和两个Survivor区，发生YGC的时候，Eden区和一个Survivor区中存活的对象被复制到另外一个空闲Survivor区。</p>
-<h2 id="晋升到老年代的条件"><a href="#晋升到老年代的条件" class="headerlink" title="晋升到老年代的条件"></a>晋升到老年代的条件</h2><ul>
+<h2 id="晋升到老年代的条件">晋升到老年代的条件</h2>
+<ul>
 <li>新生代的Eden区满的时候，会进行一次YGC，当Eden和Survivor区中依然存活的对象无法放到Survivor区中，通过分配担保机制提前转移到老年代中。这称为过早提升(Premature Promotion)，这会导致老年代中短期存活对象的增长，可能会引发严重的性能问题。在Minor GC过程中，如果老年代满了而无法容纳更多的对象，YGC 之后通常就会进行Full GC,这将导致遍历整个Java堆，这称为提升失败(Promotion Failure)。</li>
 <li>新建对象太大，新生代无法容纳这个对象，会直接在老年代分配，参数<code>-XX:PretenureSizeThreshold</code>用来设置这个门限值，此参数只对Serial及ParNew两款收集器有效。</li>
 <li>长期存活的对象进入老年代，对象头的Mark Word中包含对象的年龄，年龄达到了参数<code>-XX:MaxTenuringThreshold</code>指定的阈值（默认15，Mark Word中记录年轻的字段有4位），会晋升到老年代中。每一YGC后对象还能存活的话，年龄就会加1。</li>
 <li>动态年龄对象判定，虚拟机不总是要求对象年龄必须达到<code>-XX:MaxTenuringThreshold</code>设置的值后才能晋升到老年代，如果在Survivor区中相同年龄的对象的所有大小之和超过Survivor空间的一半，年龄大于或等于该年龄的对象就可以直接进入老年代，不需要等到参数<code>-XX:MaxTenuringThreshold</code>设置的阈值。</li>
 </ul>
-<h2 id="Young-GC和卡表"><a href="#Young-GC和卡表" class="headerlink" title="Young GC和卡表"></a>Young GC和卡表</h2><p>YGC存在一个问题，老年代对象可能引用新生代对象，在标记存活对象的时候，就需要扫描老年代的对象，如果该对象拥有对新生代对象的引用，那么这个引用也会被作为 GC Roots。这相当于就做了全堆扫描。为了避免全堆扫描，JVM使用了卡表技术：</p>
-<img src="/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/JVM%E5%8D%A1%E8%A1%A8.png" class="JVM卡表">
+<h2 id="young-gc和卡表">Young GC和卡表</h2>
+<p>YGC存在一个问题，老年代对象可能引用新生代对象，在标记存活对象的时候，就需要扫描老年代的对象，如果该对象拥有对新生代对象的引用，那么这个引用也会被作为 GC Roots。这相当于就做了全堆扫描。为了避免全堆扫描，JVM使用了卡表技术：</p>
+<p>
+<figure>
+  <img src="/JVM%e4%b8%ad%e7%9a%84MinorGC-MajorGC-FullGC/JVM%e5%8d%a1%e8%a1%a8.png" alt="JVM卡表" />
+</figure>
 
+
+</p>
 <p>卡表的具体策略是：将老年代的空间分成大小为 512B的若干张卡，并且维护一个卡表，卡表本省是字节数组，数组中的每个元素对应着一张卡，其实就是一个标识位，这个标识位代表对应的卡是否可能存有指向新生代对象的引用，如果可能存在，那么我们认为这张卡是脏的，即脏卡。如上图所示，卡表3被标记为脏。</p>
 <p>在进行YGC的时候，我们便可以不用扫描整个老年代，而是在卡表中寻找脏卡，并将脏卡中的老年代指向新生代的引用加入到 Minor GC的GC Roots里，当完成所有脏卡的扫描之后，Java 虚拟机便会将所有脏卡的标识位清零。这样虚拟机以空间换时间，避免了全表扫描。</p>
-<h2 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h2><p>YGC之前，JVM会先检查老年代最大可用连续空间大小是否大于新生代所有对象的总大小，如果大于新生代所有对象总大小，这次YGC就是安全的。</p>
+<h2 id="空间分配担保">空间分配担保</h2>
+<p>YGC之前，JVM会先检查老年代最大可用连续空间大小是否大于新生代所有对象的总大小，如果大于新生代所有对象总大小，这次YGC就是安全的。</p>
 <p>如果小于新生代所有对象总大小，JVM会查看HandlePromotionFailure设置的值，如果设置为false表示不允许失败担保，则进行一次Full GC；如果设置为true表示允许担保失败，JVM会检查老年大最大可用连续空间大小是否大于历次晋升到老年代的对象的平均大小，如果大于的话则可以继续进行一次YGC，但是这次YGC是有风险的；如果小于的话，则进行一次Full GC。</p>
-<h1 id="Full-GC"><a href="#Full-GC" class="headerlink" title="Full GC"></a>Full GC</h1><p>针对不同的垃圾收集器，Full GC的触发条件可能不都一样。按HotSpot VM的serial GC的实现来看，触发条件是：</p>
+<h1 id="full-gc">Full GC</h1>
+<p>针对不同的垃圾收集器，Full GC的触发条件可能不都一样。按HotSpot VM的serial GC的实现来看，触发条件是：</p>
 <ul>
 <li>当准备要触发一次Young GC时，如果发现统计数据说之前Young GC的平均晋升大小比目前老年代剩余的空间大，则不会触发Young GC而是转为触发Full GC（因为HotSpot VM的GC里，除了CMS的并发收集之外，其它能收集老年代的GC都会同时收集整个GC堆，包括新生代，所以不需要事先触发一次单独的Young GC）。</li>
 <li>如果有永久代（方法区）的话，要在永久代分配空间但已经没有足够空间时，也要触发一次Full GC。</li>
@@ -307,294 +92,44 @@
 </ul>
 <p>而在 Parallel Scavenge 收集器下，默认是在要触发 Full GC前先执行一次 YGC，并且两次GC之间能让应用程序稍微运行一小下，以期降低 Full GC的暂停时间 (因为 YGC 会尽量清理了新生代的死对象，减少了 Full GC的工作量)，控制这个行为的VM参数是<code>-XX:+ScavengeBeforeFullGC</code>。</p>
 <p>并发GC的触发条件就不一样，以 CMS GC为例，它主要是定时去检查老年代的使用量，但使用量超过了触发比例就会启动一次 CMS GC，对老年代做并发收集。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
-<li><strong>引用自R大（加粗加大这一行）：<a href="https://www.zhihu.com/question/41922036/answer/93079526" target="_blank" rel="noopener">https://www.zhihu.com/question/41922036/answer/93079526</a></strong></li>
+<h1 id="参考">参考</h1>
+<ul>
+<li><strong>引用自R大（加粗加大这一行）：https://www.zhihu.com/question/41922036/answer/93079526</strong></li>
 </ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/JVM/" rel="tag"># JVM</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" rel="prev" title="JVM垃圾收集算法和垃圾收集器">
-      <i class="fa fa-chevron-left"></i> JVM垃圾收集算法和垃圾收集器
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/" rel="next" title="JVM动态对象年龄判断">
-      JVM动态对象年龄判断 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Young-GC（Minor-GC）"><span class="nav-number">1.</span> <span class="nav-text">Young GC（Minor GC）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#晋升到老年代的条件"><span class="nav-number">1.1.</span> <span class="nav-text">晋升到老年代的条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Young-GC和卡表"><span class="nav-number">1.2.</span> <span class="nav-text">Young GC和卡表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#空间分配担保"><span class="nav-number">1.3.</span> <span class="nav-text">空间分配担保</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Full-GC"><span class="nav-number">2.</span> <span class="nav-text">Full GC</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/";
-    this.page.identifier = "2017/06/17/JVM中的MinorGC-MajorGC-FullGC/";
-    this.page.title = "JVM中的MinorGC-MajorGC-FullGC";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>

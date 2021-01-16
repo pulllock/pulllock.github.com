@@ -1,290 +1,98 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"dachengxi.github.com","root":"/","scheme":"Mist","version":"7.7.2","exturl":false,"sidebar":{"position":"right","display":"hide","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
-
-  <meta name="description" content="主要记录一下http协议的一些简单的知识，主要包括请求消息，响应消息的组成，以及get和post的‘对比’，对于更详细的信息可以看下http RFC。https也没有做说明。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="http协议简单解析">
-<meta property="og:url" content="http://dachengxi.github.com/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/index.html">
-<meta property="og:site_name" content="Time Stream">
-<meta property="og:description" content="主要记录一下http协议的一些简单的知识，主要包括请求消息，响应消息的组成，以及get和post的‘对比’，对于更详细的信息可以看下http RFC。https也没有做说明。">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2017-05-04T07:13:44.000Z">
-<meta property="article:modified_time" content="2017-05-04T07:14:49.000Z">
-<meta property="article:author" content="dachengxi">
-<meta property="article:tag" content="http协议">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://dachengxi.github.com/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>http协议简单解析 | Time Stream</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>http协议简单解析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
 </head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+	
+	<main>
+		<article>
+			<h1>http协议简单解析</h1>
+			<b><time>2017-05-04 15:13:44</time></b>
+		       
+		           <a href="/tags/http%E5%8D%8F%E8%AE%AE">http协议</a>
+        	       
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Time Stream</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">多读书</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>列表</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-book">
-
-    <a href="/book/" rel="section"><i class="fa fa-fw fa-question-circle"></i>读书</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
-
-  </li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
-</div>
-
-    </div>
-  </div>
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dachengxi.github.com/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dachengxi">
-      <meta itemprop="description" content="一个小学生">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Time Stream">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          http协议简单解析
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-05-04 15:13:44 15:13:44" itemprop="dateCreated datePublished" datetime="2017-05-04T15:13:44+08:00">2017-05-04 15:13:44</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/http%E5%8D%8F%E8%AE%AE/" itemprop="url" rel="index"><span itemprop="name">http协议</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/05/04/http协议简单解析/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-        <p>主要记录一下http协议的一些简单的知识，主要包括请求消息，响应消息的组成，以及get和post的‘对比’，对于更详细的信息可以看下http RFC。https也没有做说明。</p>
-<a id="more"></a>
+			<div>
+				<p>主要记录一下http协议的一些简单的知识，主要包括请求消息，响应消息的组成，以及get和post的‘对比’，对于更详细的信息可以看下http RFC。https也没有做说明。</p>
 <p>http基于请求响应模式，无状态，应用层的协议，特点如下：</p>
 <ul>
 <li>支持C/S模式。</li>
 <li>无连接，每次连接只处理一个请求，服务器处理完请求，并返回给客户端之后，就会断开连接。</li>
 <li>无状态，指的是协议对于事务处理没有记忆能力，如果需要前面的信息，需要重传。</li>
 </ul>
-<h2 id="http请求消息（Request）"><a href="#http请求消息（Request）" class="headerlink" title="http请求消息（Request）"></a>http请求消息（Request）</h2><p>http请求由三部分组成：请求行，请求头，请求体。比如下面的例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F; HTTP&#x2F;1.1</span><br><span class="line">Host: cxis.me</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0 (X11; Linux x86_64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;58.0.3029.81 Safari&#x2F;537.36</span><br><span class="line">Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;webp,*&#x2F;*;q&#x3D;0.8</span><br><span class="line">Accept-Encoding: gzip, deflate, sdch</span><br><span class="line">Accept-Language: zh-CN,zh;q&#x3D;0.8,en-US;q&#x3D;0.6,en;q&#x3D;0.4,zh-TW;q&#x3D;0.2,nb;q&#x3D;0.2,da;q&#x3D;0.2</span><br></pre></td></tr></table></figure>
-
-<p><code>GET / HTTP/1.1</code>是请求行，GET是请求方法，<code>/</code>是请求资源在服务器上的路径，<code>HTTP/1.1</code>是http协议版本号。</p>
+<h2 id="http请求消息request">http请求消息（Request）</h2>
+<p>http请求由三部分组成：请求行，请求头，请求体。比如下面的例子：</p>
+<pre><code>GET / HTTP/1.1
+Host: cxis.me
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Encoding: gzip, deflate, sdch
+Accept-Language: zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,zh-TW;q=0.2,nb;q=0.2,da;q=0.2
+</code></pre><p><code>GET / HTTP/1.1</code>是请求行，GET是请求方法，<code>/</code>是请求资源在服务器上的路径，<code>HTTP/1.1</code>是http协议版本号。</p>
 <p>剩下的是请求头，格式为<code>xxxx: value</code>。</p>
 <p>这里是get方法，所有没有请求体，请求体是向服务器提交的数据，在请求头和请求体中间会有一行空行。</p>
-<h2 id="http响应消息（Response）"><a href="#http响应消息（Response）" class="headerlink" title="http响应消息（Response）"></a>http响应消息（Response）</h2><p>响应消息包括：响应行，响应头，响应体。一个响应消息如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">HTTP&#x2F;1.1 200 OK</span><br><span class="line">Server: GitHub.com</span><br><span class="line">Content-Type: text&#x2F;html; charset&#x3D;utf-8</span><br><span class="line">Last-Modified: Wed, 03 May 2017 08:32:57 GMT</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Expires: Wed, 03 May 2017 13:51:42 GMT</span><br><span class="line">Cache-Control: max-age&#x3D;600</span><br><span class="line">Content-Encoding: gzip</span><br><span class="line">X-GitHub-Request-Id: AACA:40A3:65A338:8EB391:5909DE15</span><br><span class="line">Content-Length: 9905</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Date: Wed, 03 May 2017 14:41:45 GMT</span><br><span class="line">Via: 1.1 varnish</span><br><span class="line">Age: 0</span><br><span class="line">Connection: keep-alive</span><br><span class="line">X-Served-By: cache-nrt6130-NRT</span><br><span class="line">X-Cache: HIT</span><br><span class="line">X-Cache-Hits: 1</span><br><span class="line">X-Timer: S1493822505.031176,VS0,VE181</span><br><span class="line">Vary: Accept-Encoding</span><br><span class="line">X-Fastly-Request-ID: bc385cef3dbff07f200175fa461c920cb6ca4b3f</span><br></pre></td></tr></table></figure>
-<p><code>HTTP/1.1 200 OK</code>是响应行，<code>HTTP/1.1</code>是http协议版本号，200是状态码，OK是状态消息，和响应码对应。</p>
+<h2 id="http响应消息response">http响应消息（Response）</h2>
+<p>响应消息包括：响应行，响应头，响应体。一个响应消息如下：</p>
+<pre><code>HTTP/1.1 200 OK
+Server: GitHub.com
+Content-Type: text/html; charset=utf-8
+Last-Modified: Wed, 03 May 2017 08:32:57 GMT
+Access-Control-Allow-Origin: *
+Expires: Wed, 03 May 2017 13:51:42 GMT
+Cache-Control: max-age=600
+Content-Encoding: gzip
+X-GitHub-Request-Id: AACA:40A3:65A338:8EB391:5909DE15
+Content-Length: 9905
+Accept-Ranges: bytes
+Date: Wed, 03 May 2017 14:41:45 GMT
+Via: 1.1 varnish
+Age: 0
+Connection: keep-alive
+X-Served-By: cache-nrt6130-NRT
+X-Cache: HIT
+X-Cache-Hits: 1
+X-Timer: S1493822505.031176,VS0,VE181
+Vary: Accept-Encoding
+X-Fastly-Request-ID: bc385cef3dbff07f200175fa461c920cb6ca4b3f
+</code></pre><p><code>HTTP/1.1 200 OK</code>是响应行，<code>HTTP/1.1</code>是http协议版本号，200是状态码，OK是状态消息，和响应码对应。</p>
 <p>剩下的是响应头，这里没有响应体。GET方法的响应体为空。</p>
-<h2 id="请求方法"><a href="#请求方法" class="headerlink" title="请求方法"></a>请求方法</h2><ul>
+<h2 id="请求方法">请求方法</h2>
+<ul>
 <li>GET，获取被Request-URI指定的信息。</li>
 <li>POST，向服务器提交数据。</li>
 <li>HEAD，获取响应消息报头。</li>
@@ -294,15 +102,23 @@
 <li>OPTIONS，查询相关的资源和选项。</li>
 <li>CONNECT，预留关键字，现在没有用。</li>
 </ul>
-<h2 id="GET和POST对比"><a href="#GET和POST对比" class="headerlink" title="GET和POST对比"></a>GET和POST对比</h2><p>GET和POST我觉得不应该硬拿来对比，他们是http规范定义的两种不同的方法，各有各的用处，为什么要对比呢？</p>
-<h3 id="关于定义"><a href="#关于定义" class="headerlink" title="关于定义"></a>关于定义</h3><p>GET是获取资源，是幂等的；POST是提交资源，是非幂等的。它们是http协议里面定义的两个不同的方法。</p>
-<h3 id="关于缓存"><a href="#关于缓存" class="headerlink" title="关于缓存"></a>关于缓存</h3><p>GET请求的响应是可缓存的，但是需要响应满足HTTP缓存的要求。POST响应是不可缓存的，除非响应里面有Cache-Control或者Expires属性。</p>
-<h3 id="关于请求数据"><a href="#关于请求数据" class="headerlink" title="关于请求数据"></a>关于请求数据</h3><p>GET方法会把请求的数据附加到URL之后，也就是放到请求行中；POST则是把提交的数据放到请求体中。因此在地址栏可以直接看到GET请求提交的参数，而看不到POST请求的参数。</p>
-<h3 id="关于安全"><a href="#关于安全" class="headerlink" title="关于安全"></a>关于安全</h3><p>通常我们说的有关安全，只是相对的安全，比如说GET方法能直接在地址栏看到参数，而POST不能。这通常让人认为是安全和不安全的区别，其实如果抓包或者其他手段一样可以看到GET和POST提交的数据，两者并没有什么安全可言。</p>
-<h3 id="关于数据长度"><a href="#关于数据长度" class="headerlink" title="关于数据长度"></a>关于数据长度</h3><p>http协议并没有对传输的数据大小做限制，也没有对URL长度做限制，所以从http协议本身来说并没有长度的限制。而我们通常说的URL或者数据的长度限制其实是浏览器或者服务器的限制。</p>
+<h2 id="get和post对比">GET和POST对比</h2>
+<p>GET和POST我觉得不应该硬拿来对比，他们是http规范定义的两种不同的方法，各有各的用处，为什么要对比呢？</p>
+<h3 id="关于定义">关于定义</h3>
+<p>GET是获取资源，是幂等的；POST是提交资源，是非幂等的。它们是http协议里面定义的两个不同的方法。</p>
+<h3 id="关于缓存">关于缓存</h3>
+<p>GET请求的响应是可缓存的，但是需要响应满足HTTP缓存的要求。POST响应是不可缓存的，除非响应里面有Cache-Control或者Expires属性。</p>
+<h3 id="关于请求数据">关于请求数据</h3>
+<p>GET方法会把请求的数据附加到URL之后，也就是放到请求行中；POST则是把提交的数据放到请求体中。因此在地址栏可以直接看到GET请求提交的参数，而看不到POST请求的参数。</p>
+<h3 id="关于安全">关于安全</h3>
+<p>通常我们说的有关安全，只是相对的安全，比如说GET方法能直接在地址栏看到参数，而POST不能。这通常让人认为是安全和不安全的区别，其实如果抓包或者其他手段一样可以看到GET和POST提交的数据，两者并没有什么安全可言。</p>
+<h3 id="关于数据长度">关于数据长度</h3>
+<p>http协议并没有对传输的数据大小做限制，也没有对URL长度做限制，所以从http协议本身来说并没有长度的限制。而我们通常说的URL或者数据的长度限制其实是浏览器或者服务器的限制。</p>
 <p>对于GET请求来说，提交的数据都会在URL中，各浏览器对URL的限制不太一样，所以没有什么标准可言；对于POST请求来说，数据存放在请求体中，并没有长度限制，但是服务器通常会有对POST提交数据的大小限制，因此也没有标准可言。</p>
-<h3 id="关于POST两次请求"><a href="#关于POST两次请求" class="headerlink" title="关于POST两次请求"></a>关于POST两次请求</h3><p>对于GET请求，浏览器会把请求头和请求体一起发送；而对于POST请求，浏览器会先发送请求头，服务器响应<code>100 continue</code>之后，浏览器再发送请求体。</p>
-<h2 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h2><p>在响应消息的状态行中有一个状态码和状态消息，两者是对应的，状态码总共有五大类：</p>
+<h3 id="关于post两次请求">关于POST两次请求</h3>
+<p>对于GET请求，浏览器会把请求头和请求体一起发送；而对于POST请求，浏览器会先发送请求头，服务器响应<code>100 continue</code>之后，浏览器再发送请求体。</p>
+<h2 id="状态码">状态码</h2>
+<p>在响应消息的状态行中有一个状态码和状态消息，两者是对应的，状态码总共有五大类：</p>
 <ul>
 <li>1xx，做指示信息，表示请求被接收到，继续处理。</li>
 <li>2xx，成功，表示被成功接收，理解，接受。</li>
@@ -322,9 +138,11 @@
 <li>502 Bad Gateway，网关错误</li>
 <li>503 Service Unavailable，服务不可用</li>
 </ul>
-<h2 id="消息报头"><a href="#消息报头" class="headerlink" title="消息报头"></a>消息报头</h2><p>在请求消息的第二部分是请求头，在响应消息的第二部分是响应头，请求头和响应头又叫做消息报头，这是可选的。其实消息报头不只是包括请求头和响应头，一个消息报头包括：普通报头、请求报头、响应报头、实体报头。</p>
-<p>下面列出了各种报头，含义没有一一列出，如有需要可以查看<a href="https://tools.ietf.org/html/rfc2616" target="_blank" rel="noopener">http RFC</a></p>
-<h3 id="普通报头"><a href="#普通报头" class="headerlink" title="普通报头"></a>普通报头</h3><p>普通报头既适用于请求消息也适用于响应消息，这些头域不适用于实体传输，只适用于传输消息。</p>
+<h2 id="消息报头">消息报头</h2>
+<p>在请求消息的第二部分是请求头，在响应消息的第二部分是响应头，请求头和响应头又叫做消息报头，这是可选的。其实消息报头不只是包括请求头和响应头，一个消息报头包括：普通报头、请求报头、响应报头、实体报头。</p>
+<p>下面列出了各种报头，含义没有一一列出，如有需要可以查看<a href="https://tools.ietf.org/html/rfc2616">http RFC</a></p>
+<h3 id="普通报头">普通报头</h3>
+<p>普通报头既适用于请求消息也适用于响应消息，这些头域不适用于实体传输，只适用于传输消息。</p>
 <ul>
 <li>Cache-Control 控制缓存指令，缓存指令是单向，独立的。</li>
 <li>Connection 允许发送指定连接的选项</li>
@@ -336,371 +154,88 @@
 <li>Via</li>
 <li>Waring</li>
 </ul>
-<h3 id="请求报头"><a href="#请求报头" class="headerlink" title="请求报头"></a>请求报头</h3><ul>
-<li><p>Accept 指定客户端接受哪些类型的信息</p>
-</li>
-<li><p>Accept-Charset 指定客户端接受的字符集</p>
-</li>
-<li><p>Accept-Encoding 指定客户端可接受的内容编码</p>
-</li>
-<li><p>Accept-Language 指定客户端可接受的语言</p>
-</li>
-<li><p>Authorization 客户端有权限查看某个资源</p>
-</li>
-<li><p>Expect</p>
-</li>
-<li><p>From</p>
-</li>
-<li><p>Host 指定被请求资源的主机和端口号</p>
-</li>
-<li><p>If-Match</p>
-</li>
-<li><p>If-Modified-Since</p>
-</li>
-<li><p>If-None-Match</p>
-</li>
-<li><p>If-Range</p>
-</li>
-<li><p>If-Unmodified-Since</p>
-</li>
-<li><p>Max-Forwards</p>
-</li>
-<li><p>Proxy-Authorization</p>
-</li>
-<li><p>Range</p>
-</li>
-<li><p>Referer</p>
-</li>
-<li><p>TE</p>
-</li>
-<li><p>User-Agent</p>
-<h3 id="响应报头"><a href="#响应报头" class="headerlink" title="响应报头"></a>响应报头</h3></li>
-<li><p>Accept-Ranges</p>
-</li>
-<li><p>Age</p>
-</li>
-<li><p>ETag</p>
-</li>
-<li><p>Location</p>
-</li>
-<li><p>Proxy-Authenticate</p>
-</li>
-<li><p>Retry-After</p>
-</li>
-<li><p>Server</p>
-</li>
-<li><p>Vary</p>
-</li>
-<li><p>WWW-Authenticate</p>
-<h3 id="实体报头"><a href="#实体报头" class="headerlink" title="实体报头"></a>实体报头</h3></li>
-<li><p>Allow</p>
-</li>
-<li><p>Content-Encoding</p>
-</li>
-<li><p>Content-Language</p>
-</li>
-<li><p>Content-Length 指明实体正文的长度，以字节方式存储的十进制数字来表示</p>
-</li>
-<li><p>Content-Location</p>
-</li>
-<li><p>Content-MD5</p>
-</li>
-<li><p>Content-Range</p>
-</li>
-<li><p>Content-Type 指明发送给接收者的实体正文的媒体类型</p>
-</li>
-<li><p>Expires 响应过期的日期和时间</p>
-</li>
-<li><p>Last-Modified 用于指示资源的最后修改日期和时间</p>
-</li>
-<li><p>extension-header</p>
-</li>
+<h3 id="请求报头">请求报头</h3>
+<ul>
+<li>Accept 指定客户端接受哪些类型的信息</li>
+<li>Accept-Charset 指定客户端接受的字符集</li>
+<li>Accept-Encoding 指定客户端可接受的内容编码</li>
+<li>Accept-Language 指定客户端可接受的语言</li>
+<li>Authorization 客户端有权限查看某个资源</li>
+<li>Expect</li>
+<li>From</li>
+<li>Host 指定被请求资源的主机和端口号</li>
+<li>If-Match</li>
+<li>If-Modified-Since</li>
+<li>If-None-Match</li>
+<li>If-Range</li>
+<li>If-Unmodified-Since</li>
+<li>Max-Forwards</li>
+<li>Proxy-Authorization</li>
+<li>Range</li>
+<li>Referer</li>
+<li>TE</li>
+<li>User-Agent</li>
 </ul>
+<h3 id="响应报头">响应报头</h3>
+<ul>
+<li>Accept-Ranges</li>
+<li>Age</li>
+<li>ETag</li>
+<li>Location</li>
+<li>Proxy-Authenticate</li>
+<li>Retry-After</li>
+<li>Server</li>
+<li>Vary</li>
+<li>WWW-Authenticate</li>
+</ul>
+<h3 id="实体报头">实体报头</h3>
+<ul>
+<li>Allow</li>
+<li>Content-Encoding</li>
+<li>Content-Language</li>
+<li>Content-Length 指明实体正文的长度，以字节方式存储的十进制数字来表示</li>
+<li>Content-Location</li>
+<li>Content-MD5</li>
+<li>Content-Range</li>
+<li>Content-Type 指明发送给接收者的实体正文的媒体类型</li>
+<li>Expires 响应过期的日期和时间</li>
+<li>Last-Modified 用于指示资源的最后修改日期和时间</li>
+<li>extension-header</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/mybatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/springboot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
 
-    </div>
-
-    
-    
-    
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.jpg" alt="dachengxi 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="dachengxi 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/http%E5%8D%8F%E8%AE%AE/" rel="tag"># http协议</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/" rel="prev" title="跨域以及CORS相关知识简介">
-      <i class="fa fa-chevron-left"></i> 跨域以及CORS相关知识简介
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2017/05/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/" rel="next" title="设计模式中的责任链模式解析">
-      设计模式中的责任链模式解析 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#http请求消息（Request）"><span class="nav-number">1.</span> <span class="nav-text">http请求消息（Request）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#http响应消息（Response）"><span class="nav-number">2.</span> <span class="nav-text">http响应消息（Response）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求方法"><span class="nav-number">3.</span> <span class="nav-text">请求方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GET和POST对比"><span class="nav-number">4.</span> <span class="nav-text">GET和POST对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于定义"><span class="nav-number">4.1.</span> <span class="nav-text">关于定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于缓存"><span class="nav-number">4.2.</span> <span class="nav-text">关于缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于请求数据"><span class="nav-number">4.3.</span> <span class="nav-text">关于请求数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于安全"><span class="nav-number">4.4.</span> <span class="nav-text">关于安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于数据长度"><span class="nav-number">4.5.</span> <span class="nav-text">关于数据长度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于POST两次请求"><span class="nav-number">4.6.</span> <span class="nav-text">关于POST两次请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#状态码"><span class="nav-number">5.</span> <span class="nav-text">状态码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息报头"><span class="nav-number">6.</span> <span class="nav-text">消息报头</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#普通报头"><span class="nav-number">6.1.</span> <span class="nav-text">普通报头</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求报头"><span class="nav-number">6.2.</span> <span class="nav-text">请求报头</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#响应报头"><span class="nav-number">6.3.</span> <span class="nav-text">响应报头</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实体报头"><span class="nav-number">6.4.</span> <span class="nav-text">实体报头</span></a></li></ol></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="dachengxi"
-      src="/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">dachengxi</p>
-  <div class="site-description" itemprop="description">一个小学生</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">227</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">37</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/dachengxi" title="GitHub → https://github.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://weibo.com/dachengxi" title="微博 → http://weibo.com/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>微博</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="http://git.oschina.net/dachengxi" title="码云 → http://git.oschina.net/dachengxi" rel="noopener" target="_blank"><i class="fa fa-fw fa-git"></i>码云</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="http://hexo.io" title="http://hexo.io" rel="noopener" target="_blank">Hexo</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://github.com/iissnan/hexo-theme-next" title="https://github.com/iissnan/hexo-theme-next" rel="noopener" target="_blank">Next Theme</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2014 – 
-  <span itemprop="copyrightYear">2020</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">dachengxi</span>
-</div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-  
-<script src="/js/local-search.js"></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://cxis.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "http://dachengxi.github.com/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/";
-    this.page.identifier = "2017/05/04/http协议简单解析/";
-    this.page.title = "http协议简单解析";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://cxis.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
-
-  <a href="https://github.com/dachengxi" target="_blank" rel="noopener"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
 </body>
 </html>
