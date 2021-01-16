@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>linkedList on Time Stream</title>
-    <link>http://cxis.me/tags/linkedlist/</link>
+    <link>http://cxis.me/tags/linkedList/</link>
     <description>Recent content in linkedList on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Mon, 23 May 2016 23:20:51 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/linkedlist/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://cxis.me/tags/linkedList/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>LinkedList简介</title>
-      <link>http://cxis.me/2016/05/23/linkedlist%E7%AE%80%E4%BB%8B/</link>
+      <link>http://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 23 May 2016 23:20:51 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/23/linkedlist%E7%AE%80%E4%BB%8B/</guid>
+      <guid>http://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;h1 id=&#34;linkedlist简介&#34;&gt;LinkedList简介&lt;/h1&gt;
 &lt;ol&gt;
 &lt;li&gt;LinkedList基于双向链表实现&lt;/li&gt;

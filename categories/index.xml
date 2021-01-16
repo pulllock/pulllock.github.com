@@ -14,46 +14,46 @@
     
     <item>
       <title>MyBatis</title>
-      <link>http://cxis.me/categories/mybatis/</link>
+      <link>http://cxis.me/categories/MyBatis/</link>
       <pubDate>Mon, 02 Nov 2020 22:31:10 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/mybatis/</guid>
+      <guid>http://cxis.me/categories/MyBatis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Spring</title>
-      <link>http://cxis.me/categories/spring/</link>
+      <link>http://cxis.me/categories/Spring/</link>
       <pubDate>Mon, 26 Oct 2020 13:54:40 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/spring/</guid>
+      <guid>http://cxis.me/categories/Spring/</guid>
       <description></description>
     </item>
     
     <item>
       <title>SpringBoot</title>
-      <link>http://cxis.me/categories/springboot/</link>
+      <link>http://cxis.me/categories/SpringBoot/</link>
       <pubDate>Mon, 26 Oct 2020 13:54:40 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/springboot/</guid>
+      <guid>http://cxis.me/categories/SpringBoot/</guid>
       <description></description>
     </item>
     
     <item>
       <title>DynamicConfigCenter</title>
-      <link>http://cxis.me/categories/dynamicconfigcenter/</link>
+      <link>http://cxis.me/categories/DynamicConfigCenter/</link>
       <pubDate>Mon, 04 May 2020 10:22:12 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/dynamicconfigcenter/</guid>
+      <guid>http://cxis.me/categories/DynamicConfigCenter/</guid>
       <description></description>
     </item>
     
     <item>
       <title>APIGateway</title>
-      <link>http://cxis.me/categories/apigateway/</link>
+      <link>http://cxis.me/categories/APIGateway/</link>
       <pubDate>Mon, 13 Apr 2020 21:42:13 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/apigateway/</guid>
+      <guid>http://cxis.me/categories/APIGateway/</guid>
       <description></description>
     </item>
     
@@ -77,55 +77,55 @@
     
     <item>
       <title>Java</title>
-      <link>http://cxis.me/categories/java/</link>
+      <link>http://cxis.me/categories/Java/</link>
       <pubDate>Fri, 19 Oct 2018 21:19:37 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/java/</guid>
+      <guid>http://cxis.me/categories/Java/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java基础</title>
-      <link>http://cxis.me/categories/java%E5%9F%BA%E7%A1%80/</link>
+      <link>http://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Fri, 19 Oct 2018 21:19:37 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/java%E5%9F%BA%E7%A1%80/</guid>
+      <guid>http://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Lucene</title>
-      <link>http://cxis.me/categories/lucene/</link>
+      <link>http://cxis.me/categories/Lucene/</link>
       <pubDate>Mon, 18 Jun 2018 14:08:31 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/lucene/</guid>
+      <guid>http://cxis.me/categories/Lucene/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Elasticsearch</title>
-      <link>http://cxis.me/categories/elasticsearch/</link>
+      <link>http://cxis.me/categories/Elasticsearch/</link>
       <pubDate>Sat, 16 Jun 2018 23:34:40 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/elasticsearch/</guid>
+      <guid>http://cxis.me/categories/Elasticsearch/</guid>
       <description></description>
     </item>
     
     <item>
       <title>MQ</title>
-      <link>http://cxis.me/categories/mq/</link>
+      <link>http://cxis.me/categories/MQ/</link>
       <pubDate>Fri, 25 May 2018 21:44:30 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/mq/</guid>
+      <guid>http://cxis.me/categories/MQ/</guid>
       <description></description>
     </item>
     
     <item>
       <title>MySQL</title>
-      <link>http://cxis.me/categories/mysql/</link>
+      <link>http://cxis.me/categories/MySQL/</link>
       <pubDate>Fri, 20 Apr 2018 19:02:49 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/mysql/</guid>
+      <guid>http://cxis.me/categories/MySQL/</guid>
       <description></description>
     </item>
     
@@ -140,10 +140,10 @@
     
     <item>
       <title>JVM</title>
-      <link>http://cxis.me/categories/jvm/</link>
+      <link>http://cxis.me/categories/JVM/</link>
       <pubDate>Sun, 17 Sep 2017 19:03:34 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/jvm/</guid>
+      <guid>http://cxis.me/categories/JVM/</guid>
       <description></description>
     </item>
     
@@ -185,10 +185,10 @@
     
     <item>
       <title>CORS</title>
-      <link>http://cxis.me/categories/cors/</link>
+      <link>http://cxis.me/categories/CORS/</link>
       <pubDate>Wed, 03 May 2017 16:28:21 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/cors/</guid>
+      <guid>http://cxis.me/categories/CORS/</guid>
       <description></description>
     </item>
     
@@ -203,10 +203,10 @@
     
     <item>
       <title>SPI</title>
-      <link>http://cxis.me/categories/spi/</link>
+      <link>http://cxis.me/categories/SPI/</link>
       <pubDate>Mon, 17 Apr 2017 15:18:47 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/spi/</guid>
+      <guid>http://cxis.me/categories/SPI/</guid>
       <description></description>
     </item>
     
@@ -221,10 +221,10 @@
     
     <item>
       <title>Servlet</title>
-      <link>http://cxis.me/categories/servlet/</link>
+      <link>http://cxis.me/categories/Servlet/</link>
       <pubDate>Thu, 13 Apr 2017 16:33:01 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/servlet/</guid>
+      <guid>http://cxis.me/categories/Servlet/</guid>
       <description></description>
     </item>
     
@@ -239,19 +239,19 @@
     
     <item>
       <title>Ubuntu</title>
-      <link>http://cxis.me/categories/ubuntu/</link>
+      <link>http://cxis.me/categories/Ubuntu/</link>
       <pubDate>Thu, 06 Apr 2017 09:29:09 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/ubuntu/</guid>
+      <guid>http://cxis.me/categories/Ubuntu/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Netty3</title>
-      <link>http://cxis.me/categories/netty3/</link>
+      <link>http://cxis.me/categories/Netty3/</link>
       <pubDate>Sun, 19 Mar 2017 20:27:39 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/netty3/</guid>
+      <guid>http://cxis.me/categories/Netty3/</guid>
       <description></description>
     </item>
     
@@ -266,19 +266,19 @@
     
     <item>
       <title>Java线程</title>
-      <link>http://cxis.me/categories/java%E7%BA%BF%E7%A8%8B/</link>
+      <link>http://cxis.me/categories/Java%E7%BA%BF%E7%A8%8B/</link>
       <pubDate>Wed, 30 Nov 2016 20:17:41 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/java%E7%BA%BF%E7%A8%8B/</guid>
+      <guid>http://cxis.me/categories/Java%E7%BA%BF%E7%A8%8B/</guid>
       <description></description>
     </item>
     
     <item>
       <title>J2EE基础</title>
-      <link>http://cxis.me/categories/j2ee%E5%9F%BA%E7%A1%80/</link>
+      <link>http://cxis.me/categories/J2EE%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Mon, 28 Nov 2016 21:34:00 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/j2ee%E5%9F%BA%E7%A1%80/</guid>
+      <guid>http://cxis.me/categories/J2EE%E5%9F%BA%E7%A1%80/</guid>
       <description></description>
     </item>
     
@@ -329,10 +329,10 @@
     
     <item>
       <title>LogCollector</title>
-      <link>http://cxis.me/categories/logcollector/</link>
+      <link>http://cxis.me/categories/LogCollector/</link>
       <pubDate>Mon, 24 May 2010 15:32:57 +0000</pubDate>
       
-      <guid>http://cxis.me/categories/logcollector/</guid>
+      <guid>http://cxis.me/categories/LogCollector/</guid>
       <description></description>
     </item>
     

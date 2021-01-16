@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CopyOnWriteArraySet on Time Stream</title>
-    <link>http://cxis.me/tags/copyonwritearrayset/</link>
+    <link>http://cxis.me/tags/CopyOnWriteArraySet/</link>
     <description>Recent content in CopyOnWriteArraySet on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Fri, 27 May 2016 17:20:34 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/copyonwritearrayset/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://cxis.me/tags/CopyOnWriteArraySet/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>CopyOnWriteArraySet简介</title>
-      <link>http://cxis.me/2016/05/27/copyonwritearrayset%E7%AE%80%E4%BB%8B/</link>
+      <link>http://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 27 May 2016 17:20:34 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/27/copyonwritearrayset%E7%AE%80%E4%BB%8B/</guid>
+      <guid>http://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</guid>
       <description>基于CopyOnWriteArrayList实现，线程安全无需集合。 add调用的是CopyOnWriteArraylist的addIfAbs</description>
     </item>
     

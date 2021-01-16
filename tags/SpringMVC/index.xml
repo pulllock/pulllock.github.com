@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SpringMVC on Time Stream</title>
-    <link>http://cxis.me/tags/springmvc/</link>
+    <link>http://cxis.me/tags/SpringMVC/</link>
     <description>Recent content in SpringMVC on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Thu, 06 Apr 2017 22:47:17 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/springmvc/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://cxis.me/tags/SpringMVC/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>SpringMVC执行流程及源码解析</title>
-      <link>http://cxis.me/2017/04/06/springmvc%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>http://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Thu, 06 Apr 2017 22:47:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/06/springmvc%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>http://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;在SpringMVC中主要是围绕着DispatcherServlet来设计，可以把它当做指挥中心。这里先说明一下SpringMVC文档给出的执行流程，然后是我们稍微具体的执行流程，最后是流程大致的源码跟踪。关于很很很详细的源码解析，这里暂先不做。&lt;/p&gt;</description>
     </item>
     

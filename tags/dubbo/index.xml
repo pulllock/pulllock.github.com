@@ -14,19 +14,19 @@
     
     <item>
       <title>Dubbo启动以及服务调用的过程总结</title>
-      <link>http://cxis.me/2020/03/20/dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
+      <link>http://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
       <pubDate>Fri, 20 Mar 2020 23:25:44 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/20/dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
+      <guid>http://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;服务暴露过程、服务引用过程、服务调用过程、消费者调用底层通信过程、提供者接受请求底层通信过程简单总结。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo架构简单理解</title>
-      <link>http://cxis.me/2020/03/19/dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</link>
+      <link>http://cxis.me/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</link>
       <pubDate>Thu, 19 Mar 2020 22:32:11 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/19/dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</guid>
+      <guid>http://cxis.me/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</guid>
       <description>&lt;p&gt;分析总结一下Dubbo的架构，通过对Dubbo、RocketMQ、Tair等架构的类比，从整体上来理解一般分布式框架、应用的组成。&lt;/p&gt;</description>
     </item>
     

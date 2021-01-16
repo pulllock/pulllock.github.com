@@ -14,46 +14,46 @@
     
     <item>
       <title>MyBatis</title>
-      <link>http://cxis.me/tags/mybatis/</link>
+      <link>http://cxis.me/tags/MyBatis/</link>
       <pubDate>Mon, 02 Nov 2020 22:31:10 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/mybatis/</guid>
+      <guid>http://cxis.me/tags/MyBatis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Spring</title>
-      <link>http://cxis.me/tags/spring/</link>
+      <link>http://cxis.me/tags/Spring/</link>
       <pubDate>Mon, 26 Oct 2020 13:54:40 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/spring/</guid>
+      <guid>http://cxis.me/tags/Spring/</guid>
       <description></description>
     </item>
     
     <item>
       <title>SpringBoot</title>
-      <link>http://cxis.me/tags/springboot/</link>
+      <link>http://cxis.me/tags/SpringBoot/</link>
       <pubDate>Mon, 26 Oct 2020 13:54:40 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/springboot/</guid>
+      <guid>http://cxis.me/tags/SpringBoot/</guid>
       <description></description>
     </item>
     
     <item>
       <title>DynamicConfigCenter</title>
-      <link>http://cxis.me/tags/dynamicconfigcenter/</link>
+      <link>http://cxis.me/tags/DynamicConfigCenter/</link>
       <pubDate>Mon, 04 May 2020 10:22:12 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/dynamicconfigcenter/</guid>
+      <guid>http://cxis.me/tags/DynamicConfigCenter/</guid>
       <description></description>
     </item>
     
     <item>
       <title>APIGateway</title>
-      <link>http://cxis.me/tags/apigateway/</link>
+      <link>http://cxis.me/tags/APIGateway/</link>
       <pubDate>Mon, 13 Apr 2020 21:42:13 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/apigateway/</guid>
+      <guid>http://cxis.me/tags/APIGateway/</guid>
       <description></description>
     </item>
     
@@ -77,10 +77,10 @@
     
     <item>
       <title>dubbo SPI</title>
-      <link>http://cxis.me/tags/dubbo-spi/</link>
+      <link>http://cxis.me/tags/dubbo-SPI/</link>
       <pubDate>Wed, 20 Feb 2019 20:15:34 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/dubbo-spi/</guid>
+      <guid>http://cxis.me/tags/dubbo-SPI/</guid>
       <description></description>
     </item>
     
@@ -104,91 +104,91 @@
     
     <item>
       <title>arrayList</title>
-      <link>http://cxis.me/tags/arraylist/</link>
+      <link>http://cxis.me/tags/arrayList/</link>
       <pubDate>Fri, 19 Oct 2018 21:19:37 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/arraylist/</guid>
+      <guid>http://cxis.me/tags/arrayList/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Lucene</title>
-      <link>http://cxis.me/tags/lucene/</link>
+      <link>http://cxis.me/tags/Lucene/</link>
       <pubDate>Mon, 18 Jun 2018 14:08:31 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/lucene/</guid>
+      <guid>http://cxis.me/tags/Lucene/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Elasticsearch</title>
-      <link>http://cxis.me/tags/elasticsearch/</link>
+      <link>http://cxis.me/tags/Elasticsearch/</link>
       <pubDate>Sat, 16 Jun 2018 23:34:40 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/elasticsearch/</guid>
+      <guid>http://cxis.me/tags/Elasticsearch/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Kafka</title>
-      <link>http://cxis.me/tags/kafka/</link>
+      <link>http://cxis.me/tags/Kafka/</link>
       <pubDate>Fri, 25 May 2018 21:44:30 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/kafka/</guid>
+      <guid>http://cxis.me/tags/Kafka/</guid>
       <description></description>
     </item>
     
     <item>
       <title>MySQL</title>
-      <link>http://cxis.me/tags/mysql/</link>
+      <link>http://cxis.me/tags/MySQL/</link>
       <pubDate>Fri, 20 Apr 2018 19:02:49 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/mysql/</guid>
+      <guid>http://cxis.me/tags/MySQL/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ZipEntry.getSize()=-1</title>
-      <link>http://cxis.me/tags/zipentry.getsize-1/</link>
+      <link>http://cxis.me/tags/ZipEntry.getSize-1/</link>
       <pubDate>Sat, 03 Mar 2018 21:27:51 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/zipentry.getsize-1/</guid>
+      <guid>http://cxis.me/tags/ZipEntry.getSize-1/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ZipEntry的size为-1</title>
-      <link>http://cxis.me/tags/zipentry%E7%9A%84size%E4%B8%BA-1/</link>
+      <link>http://cxis.me/tags/ZipEntry%E7%9A%84size%E4%B8%BA-1/</link>
       <pubDate>Sat, 03 Mar 2018 21:27:51 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/zipentry%E7%9A%84size%E4%B8%BA-1/</guid>
+      <guid>http://cxis.me/tags/ZipEntry%E7%9A%84size%E4%B8%BA-1/</guid>
       <description></description>
     </item>
     
     <item>
       <title>RocketMQ</title>
-      <link>http://cxis.me/tags/rocketmq/</link>
+      <link>http://cxis.me/tags/RocketMQ/</link>
       <pubDate>Tue, 23 Jan 2018 15:39:27 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/rocketmq/</guid>
+      <guid>http://cxis.me/tags/RocketMQ/</guid>
       <description></description>
     </item>
     
     <item>
       <title>JVM</title>
-      <link>http://cxis.me/tags/jvm/</link>
+      <link>http://cxis.me/tags/JVM/</link>
       <pubDate>Sun, 17 Sep 2017 19:03:34 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/jvm/</guid>
+      <guid>http://cxis.me/tags/JVM/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Digester</title>
-      <link>http://cxis.me/tags/digester/</link>
+      <link>http://cxis.me/tags/Digester/</link>
       <pubDate>Wed, 17 May 2017 00:16:15 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/digester/</guid>
+      <guid>http://cxis.me/tags/Digester/</guid>
       <description></description>
     </item>
     
@@ -239,10 +239,10 @@
     
     <item>
       <title>UTF-8 BOM</title>
-      <link>http://cxis.me/tags/utf-8-bom/</link>
+      <link>http://cxis.me/tags/UTF-8-BOM/</link>
       <pubDate>Tue, 09 May 2017 21:33:28 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/utf-8-bom/</guid>
+      <guid>http://cxis.me/tags/UTF-8-BOM/</guid>
       <description></description>
     </item>
     
@@ -293,46 +293,46 @@
     
     <item>
       <title>CORS</title>
-      <link>http://cxis.me/tags/cors/</link>
+      <link>http://cxis.me/tags/CORS/</link>
       <pubDate>Wed, 03 May 2017 16:28:21 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/cors/</guid>
+      <guid>http://cxis.me/tags/CORS/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java</title>
-      <link>http://cxis.me/tags/java/</link>
+      <link>http://cxis.me/tags/Java/</link>
       <pubDate>Mon, 17 Apr 2017 15:18:47 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/java/</guid>
+      <guid>http://cxis.me/tags/Java/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java SPI</title>
-      <link>http://cxis.me/tags/java-spi/</link>
+      <link>http://cxis.me/tags/Java-SPI/</link>
       <pubDate>Mon, 17 Apr 2017 15:18:47 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/java-spi/</guid>
+      <guid>http://cxis.me/tags/Java-SPI/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Servlet</title>
-      <link>http://cxis.me/tags/servlet/</link>
+      <link>http://cxis.me/tags/Servlet/</link>
       <pubDate>Thu, 13 Apr 2017 16:33:01 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/servlet/</guid>
+      <guid>http://cxis.me/tags/Servlet/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java动态代理</title>
-      <link>http://cxis.me/tags/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/</link>
+      <link>http://cxis.me/tags/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/</link>
       <pubDate>Wed, 12 Apr 2017 21:09:20 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/</guid>
+      <guid>http://cxis.me/tags/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/</guid>
       <description></description>
     </item>
     
@@ -356,28 +356,28 @@
     
     <item>
       <title>Lock</title>
-      <link>http://cxis.me/tags/lock/</link>
+      <link>http://cxis.me/tags/Lock/</link>
       <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/lock/</guid>
+      <guid>http://cxis.me/tags/Lock/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ReentrantLock</title>
-      <link>http://cxis.me/tags/reentrantlock/</link>
+      <link>http://cxis.me/tags/ReentrantLock/</link>
       <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/reentrantlock/</guid>
+      <guid>http://cxis.me/tags/ReentrantLock/</guid>
       <description></description>
     </item>
     
     <item>
       <title>SpringMVC</title>
-      <link>http://cxis.me/tags/springmvc/</link>
+      <link>http://cxis.me/tags/SpringMVC/</link>
       <pubDate>Thu, 06 Apr 2017 22:47:17 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/springmvc/</guid>
+      <guid>http://cxis.me/tags/SpringMVC/</guid>
       <description></description>
     </item>
     
@@ -401,10 +401,10 @@
     
     <item>
       <title>dubbo Directory</title>
-      <link>http://cxis.me/tags/dubbo-directory/</link>
+      <link>http://cxis.me/tags/dubbo-Directory/</link>
       <pubDate>Sun, 02 Apr 2017 23:38:55 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/dubbo-directory/</guid>
+      <guid>http://cxis.me/tags/dubbo-Directory/</guid>
       <description></description>
     </item>
     
@@ -455,10 +455,10 @@
     
     <item>
       <title>AQS</title>
-      <link>http://cxis.me/tags/aqs/</link>
+      <link>http://cxis.me/tags/AQS/</link>
       <pubDate>Thu, 23 Mar 2017 16:25:44 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/aqs/</guid>
+      <guid>http://cxis.me/tags/AQS/</guid>
       <description></description>
     </item>
     
@@ -491,19 +491,19 @@
     
     <item>
       <title>Netty3</title>
-      <link>http://cxis.me/tags/netty3/</link>
+      <link>http://cxis.me/tags/Netty3/</link>
       <pubDate>Sun, 19 Mar 2017 20:27:39 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/netty3/</guid>
+      <guid>http://cxis.me/tags/Netty3/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Netty3流程</title>
-      <link>http://cxis.me/tags/netty3%E6%B5%81%E7%A8%8B/</link>
+      <link>http://cxis.me/tags/Netty3%E6%B5%81%E7%A8%8B/</link>
       <pubDate>Sun, 19 Mar 2017 20:27:39 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/netty3%E6%B5%81%E7%A8%8B/</guid>
+      <guid>http://cxis.me/tags/Netty3%E6%B5%81%E7%A8%8B/</guid>
       <description></description>
     </item>
     
@@ -518,10 +518,10 @@
     
     <item>
       <title>SNMP</title>
-      <link>http://cxis.me/tags/snmp/</link>
+      <link>http://cxis.me/tags/SNMP/</link>
       <pubDate>Tue, 27 Dec 2016 15:15:15 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/snmp/</guid>
+      <guid>http://cxis.me/tags/SNMP/</guid>
       <description></description>
     </item>
     
@@ -545,64 +545,64 @@
     
     <item>
       <title>ThreadLocal简介</title>
-      <link>http://cxis.me/tags/threadlocal%E7%AE%80%E4%BB%8B/</link>
+      <link>http://cxis.me/tags/ThreadLocal%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 05 Dec 2016 20:55:59 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/threadlocal%E7%AE%80%E4%BB%8B/</guid>
+      <guid>http://cxis.me/tags/ThreadLocal%E7%AE%80%E4%BB%8B/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java同步简介</title>
-      <link>http://cxis.me/tags/java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</link>
+      <link>http://cxis.me/tags/Java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 30 Nov 2016 20:17:41 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</guid>
+      <guid>http://cxis.me/tags/Java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java多线程简介</title>
-      <link>http://cxis.me/tags/java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
+      <link>http://cxis.me/tags/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Tue, 29 Nov 2016 21:40:15 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
+      <guid>http://cxis.me/tags/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
       <description></description>
     </item>
     
     <item>
       <title>MVC简介</title>
-      <link>http://cxis.me/tags/mvc%E7%AE%80%E4%BB%8B/</link>
+      <link>http://cxis.me/tags/MVC%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 28 Nov 2016 21:34:00 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/mvc%E7%AE%80%E4%BB%8B/</guid>
+      <guid>http://cxis.me/tags/MVC%E7%AE%80%E4%BB%8B/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Executor</title>
-      <link>http://cxis.me/tags/executor/</link>
+      <link>http://cxis.me/tags/Executor/</link>
       <pubDate>Thu, 11 Aug 2016 15:16:11 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/executor/</guid>
+      <guid>http://cxis.me/tags/Executor/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ConcurrentLinkedQueue</title>
-      <link>http://cxis.me/tags/concurrentlinkedqueue/</link>
+      <link>http://cxis.me/tags/ConcurrentLinkedQueue/</link>
       <pubDate>Fri, 05 Aug 2016 22:06:52 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/concurrentlinkedqueue/</guid>
+      <guid>http://cxis.me/tags/ConcurrentLinkedQueue/</guid>
       <description></description>
     </item>
     
     <item>
       <title>LinkedBlockingQueue</title>
-      <link>http://cxis.me/tags/linkedblockingqueue/</link>
+      <link>http://cxis.me/tags/LinkedBlockingQueue/</link>
       <pubDate>Fri, 05 Aug 2016 10:17:46 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/linkedblockingqueue/</guid>
+      <guid>http://cxis.me/tags/LinkedBlockingQueue/</guid>
       <description></description>
     </item>
     
@@ -644,10 +644,10 @@
     
     <item>
       <title>java.lang.OutOfMemoryError:-PermGen-space</title>
-      <link>http://cxis.me/tags/java.lang.outofmemoryerror-permgen-space/</link>
+      <link>http://cxis.me/tags/java.lang.OutOfMemoryError-PermGen-space/</link>
       <pubDate>Tue, 28 Jun 2016 13:51:13 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/java.lang.outofmemoryerror-permgen-space/</guid>
+      <guid>http://cxis.me/tags/java.lang.OutOfMemoryError-PermGen-space/</guid>
       <description></description>
     </item>
     
@@ -689,136 +689,136 @@
     
     <item>
       <title>CyclicBarrier</title>
-      <link>http://cxis.me/tags/cyclicbarrier/</link>
+      <link>http://cxis.me/tags/CyclicBarrier/</link>
       <pubDate>Wed, 01 Jun 2016 14:38:32 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/cyclicbarrier/</guid>
+      <guid>http://cxis.me/tags/CyclicBarrier/</guid>
       <description></description>
     </item>
     
     <item>
       <title>CountDownLatch</title>
-      <link>http://cxis.me/tags/countdownlatch/</link>
+      <link>http://cxis.me/tags/CountDownLatch/</link>
       <pubDate>Wed, 01 Jun 2016 14:26:33 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/countdownlatch/</guid>
+      <guid>http://cxis.me/tags/CountDownLatch/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Semaphore</title>
-      <link>http://cxis.me/tags/semaphore/</link>
+      <link>http://cxis.me/tags/Semaphore/</link>
       <pubDate>Wed, 01 Jun 2016 13:25:04 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/semaphore/</guid>
+      <guid>http://cxis.me/tags/Semaphore/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ThreadPoolExecutor</title>
-      <link>http://cxis.me/tags/threadpoolexecutor/</link>
+      <link>http://cxis.me/tags/ThreadPoolExecutor/</link>
       <pubDate>Mon, 30 May 2016 14:04:19 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/threadpoolexecutor/</guid>
+      <guid>http://cxis.me/tags/ThreadPoolExecutor/</guid>
       <description></description>
     </item>
     
     <item>
       <title>AtomicInteger</title>
-      <link>http://cxis.me/tags/atomicinteger/</link>
+      <link>http://cxis.me/tags/AtomicInteger/</link>
       <pubDate>Mon, 30 May 2016 13:30:52 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/atomicinteger/</guid>
+      <guid>http://cxis.me/tags/AtomicInteger/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ArrayBlockingQueue</title>
-      <link>http://cxis.me/tags/arrayblockingqueue/</link>
+      <link>http://cxis.me/tags/ArrayBlockingQueue/</link>
       <pubDate>Sun, 29 May 2016 18:46:59 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/arrayblockingqueue/</guid>
+      <guid>http://cxis.me/tags/ArrayBlockingQueue/</guid>
       <description></description>
     </item>
     
     <item>
       <title>CopyOnWriteArraySet</title>
-      <link>http://cxis.me/tags/copyonwritearrayset/</link>
+      <link>http://cxis.me/tags/CopyOnWriteArraySet/</link>
       <pubDate>Fri, 27 May 2016 17:20:34 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/copyonwritearrayset/</guid>
+      <guid>http://cxis.me/tags/CopyOnWriteArraySet/</guid>
       <description></description>
     </item>
     
     <item>
       <title>TreeSet</title>
-      <link>http://cxis.me/tags/treeset/</link>
+      <link>http://cxis.me/tags/TreeSet/</link>
       <pubDate>Fri, 27 May 2016 16:50:50 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/treeset/</guid>
+      <guid>http://cxis.me/tags/TreeSet/</guid>
       <description></description>
     </item>
     
     <item>
       <title>HashSet</title>
-      <link>http://cxis.me/tags/hashset/</link>
+      <link>http://cxis.me/tags/HashSet/</link>
       <pubDate>Fri, 27 May 2016 16:35:17 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/hashset/</guid>
+      <guid>http://cxis.me/tags/HashSet/</guid>
       <description></description>
     </item>
     
     <item>
       <title>TreeMap</title>
-      <link>http://cxis.me/tags/treemap/</link>
+      <link>http://cxis.me/tags/TreeMap/</link>
       <pubDate>Fri, 27 May 2016 13:58:00 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/treemap/</guid>
+      <guid>http://cxis.me/tags/TreeMap/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ConcurrentHashMap</title>
-      <link>http://cxis.me/tags/concurrenthashmap/</link>
+      <link>http://cxis.me/tags/ConcurrentHashMap/</link>
       <pubDate>Thu, 26 May 2016 11:00:23 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/concurrenthashmap/</guid>
+      <guid>http://cxis.me/tags/ConcurrentHashMap/</guid>
       <description></description>
     </item>
     
     <item>
       <title>HashTable</title>
-      <link>http://cxis.me/tags/hashtable/</link>
+      <link>http://cxis.me/tags/HashTable/</link>
       <pubDate>Thu, 26 May 2016 10:35:01 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/hashtable/</guid>
+      <guid>http://cxis.me/tags/HashTable/</guid>
       <description></description>
     </item>
     
     <item>
       <title>HashMap</title>
-      <link>http://cxis.me/tags/hashmap/</link>
+      <link>http://cxis.me/tags/HashMap/</link>
       <pubDate>Wed, 25 May 2016 15:47:13 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/hashmap/</guid>
+      <guid>http://cxis.me/tags/HashMap/</guid>
       <description></description>
     </item>
     
     <item>
       <title>CopyOnWriteArrayList</title>
-      <link>http://cxis.me/tags/copyonwritearraylist/</link>
+      <link>http://cxis.me/tags/CopyOnWriteArrayList/</link>
       <pubDate>Wed, 25 May 2016 10:30:09 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/copyonwritearraylist/</guid>
+      <guid>http://cxis.me/tags/CopyOnWriteArrayList/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Stack</title>
-      <link>http://cxis.me/tags/stack/</link>
+      <link>http://cxis.me/tags/Stack/</link>
       <pubDate>Wed, 25 May 2016 10:20:44 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/stack/</guid>
+      <guid>http://cxis.me/tags/Stack/</guid>
       <description></description>
     </item>
     
@@ -833,10 +833,10 @@
     
     <item>
       <title>linkedList</title>
-      <link>http://cxis.me/tags/linkedlist/</link>
+      <link>http://cxis.me/tags/linkedList/</link>
       <pubDate>Mon, 23 May 2016 23:20:51 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/linkedlist/</guid>
+      <guid>http://cxis.me/tags/linkedList/</guid>
       <description></description>
     </item>
     
@@ -914,19 +914,19 @@
     
     <item>
       <title>test Tag</title>
-      <link>http://cxis.me/tags/test-tag/</link>
+      <link>http://cxis.me/tags/test-Tag/</link>
       <pubDate>Fri, 02 May 2014 09:26:17 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/test-tag/</guid>
+      <guid>http://cxis.me/tags/test-Tag/</guid>
       <description></description>
     </item>
     
     <item>
       <title>LogCollector</title>
-      <link>http://cxis.me/tags/logcollector/</link>
+      <link>http://cxis.me/tags/LogCollector/</link>
       <pubDate>Mon, 24 May 2010 15:32:57 +0000</pubDate>
       
-      <guid>http://cxis.me/tags/logcollector/</guid>
+      <guid>http://cxis.me/tags/LogCollector/</guid>
       <description></description>
     </item>
     

@@ -2,238 +2,238 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Spring on Time Stream</title>
-    <link>http://cxis.me/categories/spring/</link>
+    <link>http://cxis.me/categories/Spring/</link>
     <description>Recent content in Spring on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Mon, 26 Oct 2020 13:54:40 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/categories/spring/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://cxis.me/categories/Spring/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Spring中对Groovy支持的源码分析</title>
-      <link>http://cxis.me/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <link>http://cxis.me/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
       <pubDate>Wed, 26 Aug 2020 20:32:49 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/08/26/spring%E4%B8%AD%E5%AF%B9groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <guid>http://cxis.me/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
       <description>&lt;p&gt;分析一下Spring中对Groovy使用的源码。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中使用Groovy的示例</title>
-      <link>http://cxis.me/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/</link>
+      <link>http://cxis.me/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/</link>
       <pubDate>Tue, 25 Aug 2020 22:17:07 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/08/25/spring%E4%B8%AD%E4%BD%BF%E7%94%A8groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/</guid>
+      <guid>http://cxis.me/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/</guid>
       <description>&lt;p&gt;Spring对动态语言提供了支持，最近准备在项目中使用Groovy实现功能的热插拔，这里记录下Spring中使用Groovy的示例。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中Placeholder的解析过程</title>
-      <link>http://cxis.me/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</link>
+      <link>http://cxis.me/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Tue, 05 May 2020 10:46:26 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/05/05/spring%E4%B8%ADplaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</guid>
+      <guid>http://cxis.me/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;Spring中Placeholder的解析过程简单梳理。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring同一个类中的注解方法调用AOP失效问题总结</title>
-      <link>http://cxis.me/2020/03/23/spring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8aop%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</link>
+      <link>http://cxis.me/2020/03/23/Spring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8AOP%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 23 Mar 2020 23:01:20 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/23/spring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8aop%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</guid>
+      <guid>http://cxis.me/2020/03/23/Spring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8AOP%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;Spring中在同一个类中两个方法调用，会导致代理失效，比如同一个类中一个方法A调用另外一个带事务的方法B，会发现B方法的事务不生效；同一个类中一个方法A调用另外一个带注解的清除缓存的方法B，会发现清除缓存不成功。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP流程的总结</title>
-      <link>http://cxis.me/2020/03/23/spring%E4%B8%ADaop%E6%B5%81%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93/</link>
+      <link>http://cxis.me/2020/03/23/Spring%E4%B8%ADAOP%E6%B5%81%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 23 Mar 2020 21:45:18 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/23/spring%E4%B8%ADaop%E6%B5%81%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93/</guid>
+      <guid>http://cxis.me/2020/03/23/Spring%E4%B8%ADAOP%E6%B5%81%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;总结一下Spring中AOP的流程，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring解决循环依赖的过程总结</title>
-      <link>http://cxis.me/2020/03/22/spring%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
+      <link>http://cxis.me/2020/03/22/Spring%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sun, 22 Mar 2020 23:25:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/22/spring%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
+      <guid>http://cxis.me/2020/03/22/Spring%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
       <description>简单将Spring是怎么解决循环依赖做一下总结，具体的源码实现网上有很多文章，这里不做具体分析。 Spring在初始化Bean的时候，会先初始</description>
     </item>
     
     <item>
       <title>Spring中Bean的生命周期总结</title>
-      <link>http://cxis.me/2020/03/22/spring%E4%B8%ADbean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93/</link>
+      <link>http://cxis.me/2020/03/22/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sun, 22 Mar 2020 22:21:18 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/22/spring%E4%B8%ADbean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93/</guid>
+      <guid>http://cxis.me/2020/03/22/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;总结一下Spring中Bean的生命周期，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中IOC容器的初始化过程总结</title>
-      <link>http://cxis.me/2020/03/22/spring%E4%B8%ADioc%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
+      <link>http://cxis.me/2020/03/22/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sun, 22 Mar 2020 21:16:14 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/22/spring%E4%B8%ADioc%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
+      <guid>http://cxis.me/2020/03/22/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;总结一下Spring IOC容器的初始化过程，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@ComponentScan注解实现机制</title>
-      <link>http://cxis.me/2019/08/03/spring%E7%9A%84componentscan%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>http://cxis.me/2019/08/03/Spring%E7%9A%84ComponentScan%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sat, 03 Aug 2019 22:34:33 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/08/03/spring%E7%9A%84componentscan%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>http://cxis.me/2019/08/03/Spring%E7%9A%84ComponentScan%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;记录下Spring中@ComponentScan注解的实现原理。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Configuration注解实现机制</title>
-      <link>http://cxis.me/2019/05/30/spring%E7%9A%84configuration%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>http://cxis.me/2019/05/30/Spring%E7%9A%84Configuration%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Thu, 30 May 2019 15:26:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/30/spring%E7%9A%84configuration%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>http://cxis.me/2019/05/30/Spring%E7%9A%84Configuration%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;记录下Spring中@Configuration注解的实现原理。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Component等注解实现机制</title>
-      <link>http://cxis.me/2019/05/27/spring%E7%9A%84component%E7%AD%89%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>http://cxis.me/2019/05/27/Spring%E7%9A%84Component%E7%AD%89%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Mon, 27 May 2019 21:39:15 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/27/spring%E7%9A%84component%E7%AD%89%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>http://cxis.me/2019/05/27/Spring%E7%9A%84Component%E7%AD%89%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;记录下Spring中@Component注解的实现原理，@Controller、@Repository、@Service等注解都是@Component注解，都是一样的。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Autowired注解实现机制</title>
-      <link>http://cxis.me/2019/05/26/spring%E7%9A%84autowired%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>http://cxis.me/2019/05/26/Spring%E7%9A%84Autowired%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sun, 26 May 2019 13:48:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/26/spring%E7%9A%84autowired%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>http://cxis.me/2019/05/26/Spring%E7%9A%84Autowired%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;记录下Spring中@Autowired注解的实现原理。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Enable注解的实现机制</title>
-      <link>http://cxis.me/2019/05/18/spring%E7%9A%84enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>http://cxis.me/2019/05/18/Spring%E7%9A%84Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sat, 18 May 2019 20:13:22 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/18/spring%E7%9A%84enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>http://cxis.me/2019/05/18/Spring%E7%9A%84Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;如果要了解Spring中@Enable的实现机制，需要提前了解下@Import的用途和实现方式，每个@Enable注解上都会有@Import注解，@Import中导入自定的ImportSelector或者ImportBeanDefinitionRegistrar或者配置，这里面会实现相关功能会引入相关功能。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Import是怎样工作的</title>
-      <link>http://cxis.me/2019/05/15/spring%E7%9A%84import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/</link>
+      <link>http://cxis.me/2019/05/15/Spring%E7%9A%84Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/</link>
       <pubDate>Wed, 15 May 2019 21:04:35 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/15/spring%E7%9A%84import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/</guid>
+      <guid>http://cxis.me/2019/05/15/Spring%E7%9A%84Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/</guid>
       <description>&lt;p&gt;Spring提供了JavaConfig配置的方式，可以将原来的xml配置文件使用JavaConfig配置的方式来替换。xml配置文件可以类比@Configuration注解的文件，@Import注解可以类比xml配置文件中的&lt;code&gt;&amp;lt;import&amp;gt;&lt;/code&gt;标签，@Bean注解可以类比xml配置文件的&lt;code&gt;&amp;lt;bean&amp;gt;&lt;/code&gt;标签。&lt;code&gt;&amp;lt;import&amp;gt;&lt;/code&gt;标签用来将多个分散的xml配置文件整合起来，@Import注解可以将多个分散的@Configuration整合起来。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的工厂加载机制SpringFactoriesLoader介绍</title>
-      <link>http://cxis.me/2019/05/12/spring%E7%9A%84%E5%B7%A5%E5%8E%82%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6springfactoriesloader%E4%BB%8B%E7%BB%8D/</link>
+      <link>http://cxis.me/2019/05/12/Spring%E7%9A%84%E5%B7%A5%E5%8E%82%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6SpringFactoriesLoader%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Sun, 12 May 2019 21:00:46 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/12/spring%E7%9A%84%E5%B7%A5%E5%8E%82%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6springfactoriesloader%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>http://cxis.me/2019/05/12/Spring%E7%9A%84%E5%B7%A5%E5%8E%82%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6SpringFactoriesLoader%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;SpringFactoriesLoader和Java的SPI机制一样，SpringFactoriesLoader是Spring框架内部使用的，用来加载Spring一些工厂类的工具。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中扩展点汇总</title>
-      <link>http://cxis.me/2019/05/11/spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</link>
+      <link>http://cxis.me/2019/05/11/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</link>
       <pubDate>Sat, 11 May 2019 22:10:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/11/spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</guid>
+      <guid>http://cxis.me/2019/05/11/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</guid>
       <description>通过阅读Spring的源码，按照自己的理解，汇总了一下Spring中常用的扩展点，可能还有遗漏或者理解不对的地方。直接使用processon</description>
     </item>
     
     <item>
       <title>Spring定时器的配置从1.0到5.0的演进</title>
-      <link>http://cxis.me/2017/04/19/spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
+      <link>http://cxis.me/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
       <pubDate>Wed, 19 Apr 2017 16:20:43 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/19/spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
+      <guid>http://cxis.me/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
       <description>&lt;p&gt;这里主要是记录下从Spring1.0到现在的5.0中定时器的配置方式，关于源码，暂先不解释。主要用作自己记录用，如果有错误的还请指出一起改正学习，免得误导别人，谢谢。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP源码深入解析</title>
-      <link>http://cxis.me/2017/04/12/spring%E4%B8%ADaop%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/</link>
+      <link>http://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 12 Apr 2017 22:39:24 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/12/spring%E4%B8%ADaop%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/</guid>
+      <guid>http://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;有关AOP相关概念以及Spring AOP相关概念和Spring AOP的使用不再重复。关于AOP在Spring中的地位，不用说相信我们都知道，也都会用，但是对于更深入的东西，还未接触过，这里就对Spring AOP的相关源码进行说明一下，看看到底Spring中AOP是怎么实现的。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP概念，原理，应用介绍</title>
-      <link>http://cxis.me/2017/04/12/spring%E4%B8%ADaop%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/</link>
+      <link>http://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Wed, 12 Apr 2017 14:12:55 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/12/spring%E4%B8%ADaop%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>http://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;心情没法不沉重，被问到AOP是什么？AOP原理是什么？我竟然张大了嘴巴，说不出来！对于一个程序员的打击，还能有比这更大的吗？我没脸说我是个写代码的，我也没脸说我是程序员。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP的配置从1.0到5.0的演进</title>
-      <link>http://cxis.me/2017/04/10/spring%E4%B8%ADaop%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
+      <link>http://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
       <pubDate>Mon, 10 Apr 2017 16:17:35 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/10/spring%E4%B8%ADaop%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
+      <guid>http://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
       <description>&lt;p&gt;最近在学习Spring稍微深入一点的东西，在这过程中发现虽然有很多关于各种AOP，IOC原理配置等的文章，但是都只是针对某一版本或者压根儿就没有标明版本的解析配置等。或许是我理解力不够，为了方便自己以后快速找到这些东西去看，还是自己记录下。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>SpringMVC执行流程及源码解析</title>
-      <link>http://cxis.me/2017/04/06/springmvc%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>http://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Thu, 06 Apr 2017 22:47:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/06/springmvc%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>http://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;在SpringMVC中主要是围绕着DispatcherServlet来设计，可以把它当做指挥中心。这里先说明一下SpringMVC文档给出的执行流程，然后是我们稍微具体的执行流程，最后是流程大致的源码跟踪。关于很很很详细的源码解析，这里暂先不做。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的ApplicationContext事件机制</title>
-      <link>http://cxis.me/2017/02/15/spring%E7%9A%84applicationcontext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/</link>
+      <link>http://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Wed, 15 Feb 2017 19:04:30 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/15/spring%E7%9A%84applicationcontext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/</guid>
+      <guid>http://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;ApplicationContext中事件处理是由ApplicationEvent类和ApplicationListener接口来提供的。如果一个Bean实现了ApplicationListener接口，并且已经发布到容器中去，每次ApplicationContext发布一个ApplicationEvent事件，这个Bean就会接到通知。Spring事件机制是观察者模式的实现。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中Bean的生命周期</title>
-      <link>http://cxis.me/2017/02/12/spring%E4%B8%ADbean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</link>
+      <link>http://cxis.me/2017/02/12/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</link>
       <pubDate>Sun, 12 Feb 2017 22:02:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/12/spring%E4%B8%ADbean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</guid>
+      <guid>http://cxis.me/2017/02/12/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</guid>
       <description>&lt;p&gt;BeanFactory和ApplicationContext是Spring中两种很重要的容器，前者提供了最基本的依赖注入的支持，后者在继承前者的基础上进行了功能的拓展，增加了事件传播，资源访问，国际化的支持等功能。同时两者的生命周期也稍微有些不同。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中IOC容器的初始化过程</title>
-      <link>http://cxis.me/2017/02/10/spring%E4%B8%ADioc%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/</link>
+      <link>http://cxis.me/2017/02/10/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Fri, 10 Feb 2017 23:59:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/10/spring%E4%B8%ADioc%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/</guid>
+      <guid>http://cxis.me/2017/02/10/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;Spring IOC容器初始化过程分为Resource定位，载入解析，注册。IOC容器初始化过程中不包含Bean的依赖注入。Bean的依赖注入一般会发生在第一次通过getBean向容器索取Bean的时候。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring事务简介</title>
-      <link>http://cxis.me/2016/06/13/spring%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B/</link>
+      <link>http://cxis.me/2016/06/13/Spring%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 13 Jun 2016 17:16:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/13/spring%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B/</guid>
+      <guid>http://cxis.me/2016/06/13/Spring%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B/</guid>
       <description>事务的传播行为 Spring事务有7种传播行为: PROPAGATION_REQUIRED 支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。 PROPAGATION_SUPPORTS 支持当前事务，如果当前没</description>
     </item>
     

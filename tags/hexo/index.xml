@@ -14,10 +14,10 @@
     
     <item>
       <title>使用Hexo在GitHub上搭建个人博客</title>
-      <link>http://cxis.me/2016/05/03/%E4%BD%BF%E7%94%A8hexo%E5%9C%A8github%E4%B8%8A%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</link>
+      <link>http://cxis.me/2016/05/03/%E4%BD%BF%E7%94%A8Hexo%E5%9C%A8GitHub%E4%B8%8A%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</link>
       <pubDate>Tue, 03 May 2016 09:26:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/03/%E4%BD%BF%E7%94%A8hexo%E5%9C%A8github%E4%B8%8A%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</guid>
+      <guid>http://cxis.me/2016/05/03/%E4%BD%BF%E7%94%A8Hexo%E5%9C%A8GitHub%E4%B8%8A%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</guid>
       <description>&lt;h1 id=&#34;本机环境&#34;&gt;本机环境&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;系统：Ubuntu 16.04 LTS&lt;/li&gt;
@@ -36,10 +36,10 @@
     
     <item>
       <title>Hello World</title>
-      <link>http://cxis.me/2014/05/02/hello-world/</link>
+      <link>http://cxis.me/2014/05/02/Hello-World/</link>
       <pubDate>Fri, 02 May 2014 09:26:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2014/05/02/hello-world/</guid>
+      <guid>http://cxis.me/2014/05/02/Hello-World/</guid>
       <description>&lt;p&gt;Welcome to &lt;a href=&#34;https://hexo.io/&#34;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&#34;https://hexo.io/docs/&#34;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&#34;https://hexo.io/docs/troubleshooting.html&#34;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&#34;https://github.com/hexojs/hexo/issues&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     

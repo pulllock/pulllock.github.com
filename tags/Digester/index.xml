@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Digester on Time Stream</title>
-    <link>http://cxis.me/tags/digester/</link>
+    <link>http://cxis.me/tags/Digester/</link>
     <description>Recent content in Digester on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Wed, 17 May 2017 00:16:15 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/digester/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://cxis.me/tags/Digester/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>tomcat7中Digester的使用以及对server.xml的解析过程分析</title>
-      <link>http://cxis.me/2017/05/17/tomcat7%E4%B8%ADdigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</link>
+      <link>http://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</link>
       <pubDate>Wed, 17 May 2017 00:16:15 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/17/tomcat7%E4%B8%ADdigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</guid>
+      <guid>http://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</guid>
       <description>&lt;p&gt;tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。&lt;/p&gt;</description>
     </item>
     

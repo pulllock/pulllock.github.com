@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Servlet on Time Stream</title>
-    <link>http://cxis.me/tags/servlet/</link>
+    <link>http://cxis.me/tags/Servlet/</link>
     <description>Recent content in Servlet on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Thu, 13 Apr 2017 16:33:01 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/servlet/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://cxis.me/tags/Servlet/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>关于Servlet线程安全性和DispatcherServlet的线程安全性的解析</title>
-      <link>http://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8Eservlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8Cdispatcherservlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
+      <link>http://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Thu, 13 Apr 2017 16:33:01 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8Eservlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8Cdispatcherservlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
+      <guid>http://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java Servlet工作流程以及源码解析</title>
-      <link>http://cxis.me/2017/04/13/java-servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>http://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Thu, 13 Apr 2017 12:11:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/13/java-servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>http://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;关于Servlet的学习还是在上学的时候，自学Java，也就是只是了解了Servlet是什么以及怎么使用，现在慢慢的明白很多很多的框架等等都是在Servlet上做的扩展，也开始明白自己的基础不好。现在回头来学习一下Servlet的相关知识。&lt;/p&gt;</description>
     </item>
     

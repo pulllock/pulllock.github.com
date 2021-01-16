@@ -2,103 +2,103 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Lucene on Time Stream</title>
-    <link>http://cxis.me/categories/lucene/</link>
+    <link>http://cxis.me/categories/Lucene/</link>
     <description>Recent content in Lucene on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Mon, 18 Jun 2018 14:08:31 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/categories/lucene/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://cxis.me/categories/Lucene/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Lucene中的索引结构</title>
-      <link>http://cxis.me/2018/06/18/lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/</link>
+      <link>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/</link>
       <pubDate>Mon, 18 Jun 2018 14:08:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/18/lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/</guid>
+      <guid>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/</guid>
       <description>&lt;p&gt;Lucene中的索引结构学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的Query</title>
-      <link>http://cxis.me/2018/06/18/lucene%E4%B8%AD%E7%9A%84query/</link>
+      <link>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/</link>
       <pubDate>Mon, 18 Jun 2018 11:25:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/18/lucene%E4%B8%AD%E7%9A%84query/</guid>
+      <guid>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/</guid>
       <description>&lt;p&gt;Lucene中的各种Query学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的Segment合并</title>
-      <link>http://cxis.me/2018/06/18/lucene%E4%B8%AD%E7%9A%84segment%E5%90%88%E5%B9%B6/</link>
+      <link>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Segment%E5%90%88%E5%B9%B6/</link>
       <pubDate>Mon, 18 Jun 2018 09:51:10 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/18/lucene%E4%B8%AD%E7%9A%84segment%E5%90%88%E5%B9%B6/</guid>
+      <guid>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Segment%E5%90%88%E5%B9%B6/</guid>
       <description>&lt;p&gt;Lucene中的Segment合并学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的文档删除</title>
-      <link>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4/</link>
+      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4/</link>
       <pubDate>Sun, 17 Jun 2018 19:43:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4/</guid>
+      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4/</guid>
       <description>&lt;p&gt;Lucene中文档删除的更深入学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的索引缓冲、刷新和提交</title>
-      <link>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4/</link>
+      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4/</link>
       <pubDate>Sun, 17 Jun 2018 19:43:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4/</guid>
+      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4/</guid>
       <description>&lt;p&gt;Lucene中的索引缓冲、刷新和提交学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的Directory</title>
-      <link>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84directory/</link>
+      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Directory/</link>
       <pubDate>Sun, 17 Jun 2018 16:28:23 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84directory/</guid>
+      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Directory/</guid>
       <description>&lt;p&gt;Lucene的Directory学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的并发、线程安全及锁机制</title>
-      <link>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6/</link>
+      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sun, 17 Jun 2018 16:28:23 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6/</guid>
+      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;Lucene中的并发、线程安全及锁机制学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的Field</title>
-      <link>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84field/</link>
+      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Field/</link>
       <pubDate>Sun, 17 Jun 2018 15:10:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84field/</guid>
+      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Field/</guid>
       <description>&lt;p&gt;Lucene的Field学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的索引过程和基本操作</title>
-      <link>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</link>
+      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</link>
       <pubDate>Sun, 17 Jun 2018 13:25:05 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</guid>
+      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</guid>
       <description>&lt;p&gt;Lucene索引过程学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的基础核心类</title>
-      <link>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/</link>
+      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/</link>
       <pubDate>Sun, 17 Jun 2018 11:33:26 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/</guid>
+      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/</guid>
       <description>&lt;p&gt;Lucene索引创建和搜索索引的核心类学习。&lt;/p&gt;</description>
     </item>
     

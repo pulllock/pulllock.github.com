@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>test Tag on Time Stream</title>
-    <link>http://cxis.me/tags/test-tag/</link>
+    <link>http://cxis.me/tags/test-Tag/</link>
     <description>Recent content in test Tag on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Fri, 02 May 2014 09:26:17 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/test-tag/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://cxis.me/tags/test-Tag/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Hello World</title>
-      <link>http://cxis.me/2014/05/02/hello-world/</link>
+      <link>http://cxis.me/2014/05/02/Hello-World/</link>
       <pubDate>Fri, 02 May 2014 09:26:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2014/05/02/hello-world/</guid>
+      <guid>http://cxis.me/2014/05/02/Hello-World/</guid>
       <description>&lt;p&gt;Welcome to &lt;a href=&#34;https://hexo.io/&#34;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&#34;https://hexo.io/docs/&#34;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&#34;https://hexo.io/docs/troubleshooting.html&#34;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&#34;https://github.com/hexojs/hexo/issues&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     

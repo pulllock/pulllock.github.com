@@ -40,10 +40,10 @@
 		
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/04/02/dubbo%E4%B8%ADdirectory%E8%A7%A3%E6%9E%90/">Dubbo中Directory解析</a></h1>
+	<h1><a href="http://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/">Dubbo中Directory解析</a></h1>
 	<b><time>2017-04-02 23:38:55</time></b>
 	
-	<a href="/tags/dubbo-directory">dubbo Directory</a>
+	<a href="/tags/dubbo-Directory">dubbo Directory</a>
 	
 	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
 	
@@ -52,14 +52,14 @@
 <p>Directory代表多个Invoker，可以把它看成List<!-- raw HTML omitted -->，但与List不同的是，它的值可能是动态变化的，比如注册中心推送变更。Cluster将Directory中的多个Invoker伪装成一个Invoker，对上层透明，伪装过程包含了容错逻辑，调用失败后，重试另一个。</p>
 </blockquote>
 		
-			<a href="http://cxis.me/2017/04/02/dubbo%E4%B8%ADdirectory%E8%A7%A3%E6%9E%90/">Read more...</a>
+			<a href="http://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/04/02/dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/">Dubbo中订阅和通知解析</a></h1>
+	<h1><a href="http://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/">Dubbo中订阅和通知解析</a></h1>
 	<b><time>2017-04-02 20:02:46</time></b>
 	
 	<a href="/tags/dubbo%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5">dubbo订阅和通知</a>
@@ -69,14 +69,14 @@
 	<div>
 		<p>Dubbo中关于服务的订阅和通知主要发生在服务提供方暴露服务的过程和服务消费方初始化时候引用服务的过程中。</p>
 		
-			<a href="http://cxis.me/2017/04/02/dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/">Read more...</a>
+			<a href="http://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/03/26/dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/">Dubbo中集群Cluster，负载均衡，容错，路由解析</a></h1>
+	<h1><a href="http://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/">Dubbo中集群Cluster，负载均衡，容错，路由解析</a></h1>
 	<b><time>2017-03-26 12:12:49</time></b>
 	
 	<a href="/tags/dubbo%E9%9B%86%E7%BE%A4">dubbo集群</a>
@@ -92,29 +92,29 @@
 	<div>
 		<p>Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）</p>
 		
-			<a href="http://cxis.me/2017/03/26/dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/">Read more...</a>
+			<a href="http://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/03/23/juc%E4%B8%ADaqs%E7%AE%80%E4%BB%8B/">JUC中AQS简介</a></h1>
+	<h1><a href="http://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/">JUC中AQS简介</a></h1>
 	<b><time>2017-03-23 16:25:44</time></b>
 	
-	<a href="/tags/aqs">AQS</a>
+	<a href="/tags/AQS">AQS</a>
 	
 	<div>
 		<p>AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。</p>
 		
-			<a href="http://cxis.me/2017/03/23/juc%E4%B8%ADaqs%E7%AE%80%E4%BB%8B/">Read more...</a>
+			<a href="http://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/03/21/dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/">Dubbo中服务消费者和服务提供者之间的请求和响应过程</a></h1>
+	<h1><a href="http://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/">Dubbo中服务消费者和服务提供者之间的请求和响应过程</a></h1>
 	<b><time>2017-03-21 23:58:13</time></b>
 	
 	<a href="/tags/dubbo%E8%AF%B7%E6%B1%82%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B">dubbo请求响应过程</a>
@@ -125,14 +125,14 @@
 		<p>服务提供者初始化完成之后，对外暴露Exporter。服务消费者初始化完成之后，得到的是Proxy代理，方法调用的时候就是调用代理。</p>
 <p>服务消费者经过初始化之后，得到的是一个动态代理类，InvokerInvocationHandler，包含MockClusterInvoker，MockClusterInvoker包含一个RegistryDirectory和FailoverClusterInvoker。</p>
 		
-			<a href="http://cxis.me/2017/03/21/dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/">Read more...</a>
+			<a href="http://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/03/21/dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Dubbo中消费者初始化的过程解析</a></h1>
+	<h1><a href="http://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Dubbo中消费者初始化的过程解析</a></h1>
 	<b><time>2017-03-21 20:30:29</time></b>
 	
 	<a href="/tags/dubbo%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96">dubbo消费者初始化</a>
@@ -143,14 +143,14 @@
 		<p>首先还是Spring碰到dubbo的标签之后，会使用parseCustomElement解析dubbo标签，使用的解析器是dubbo的DubboBeanDefinitionParser，解析完成之后返回BeanDefinition给Spring管理。</p>
 <p>服务消费者端对应的是ReferenceBean，实现了ApplicationContextAware接口，Spring会在Bean的实例化那一步回调setApplicationContext方法。也实现了InitializingBean接口，接着会回调afterPropertySet方法。还实现了FactoryBean接口，实现FactoryBean可以在后期获取bean的时候做一些操作，dubbo在这个时候做初始化。另外ReferenceBean还实现了DisposableBean，会在bean销毁的时候调用destory方法。</p>
 		
-			<a href="http://cxis.me/2017/03/21/dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Read more...</a>
+			<a href="http://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/03/19/dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/">Dubbo中编码和解码的解析</a></h1>
+	<h1><a href="http://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/">Dubbo中编码和解码的解析</a></h1>
 	<b><time>2017-03-19 23:25:51</time></b>
 	
 	<a href="/tags/dubbo%E7%BC%96%E8%A7%A3%E7%A0%81">dubbo编解码</a>
@@ -160,32 +160,32 @@
 	<div>
 		（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2
 		
-			<a href="http://cxis.me/2017/03/19/dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/">Read more...</a>
+			<a href="http://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/03/19/netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/">Netty3服务端流程简介</a></h1>
+	<h1><a href="http://cxis.me/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/">Netty3服务端流程简介</a></h1>
 	<b><time>2017-03-19 20:27:39</time></b>
 	
-	<a href="/tags/netty3">Netty3</a>
+	<a href="/tags/Netty3">Netty3</a>
 	
-	<a href="/tags/netty3%E6%B5%81%E7%A8%8B">Netty3流程</a>
+	<a href="/tags/Netty3%E6%B5%81%E7%A8%8B">Netty3流程</a>
 	
 	<div>
 		<p>在学习Dubbo的时候需要学习Netty的流程等，在此做一个简单的入门学习。Dubbo中使用的是Netty3，所以这里说的都是Netty3。</p>
 <p>Netty3可以看成是对Reactor的实现，所以先简单看下Reactor模式。</p>
 		
-			<a href="http://cxis.me/2017/03/19/netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/">Read more...</a>
+			<a href="http://cxis.me/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/02/19/dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Dubbo中暴露服务的过程解析</a></h1>
+	<h1><a href="http://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Dubbo中暴露服务的过程解析</a></h1>
 	<b><time>2017-02-19 00:46:14</time></b>
 	
 	<a href="/tags/dubbo%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2">dubbo服务暴露</a>
@@ -200,17 +200,17 @@
 </ul>
 <p>但是不管延迟与否，都是使用ServiceConfig的export()方法进行服务的暴露。使用export初始化的时候会将Bean对象转换成URL格式，所有Bean属性转换成URL的参数。</p>
 		
-			<a href="http://cxis.me/2017/02/19/dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Read more...</a>
+			<a href="http://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Read more...</a>
 		
 	</div>
 </article>
 
 		
 			<article>
-	<h1><a href="http://cxis.me/2017/02/18/dubbo%E4%B8%ADspi%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">Dubbo中SPI扩展机制详解</a></h1>
+	<h1><a href="http://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">Dubbo中SPI扩展机制详解</a></h1>
 	<b><time>2017-02-18 23:13:34</time></b>
 	
-	<a href="/tags/dubbo-spi">dubbo SPI</a>
+	<a href="/tags/dubbo-SPI">dubbo SPI</a>
 	
 	<a href="/tags/dubbo-%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6">dubbo 扩展机制</a>
 	
@@ -219,7 +219,7 @@
 	<div>
 		<p>前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。</p>
 		
-			<a href="http://cxis.me/2017/02/18/dubbo%E4%B8%ADspi%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">Read more...</a>
+			<a href="http://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">Read more...</a>
 		
 	</div>
 </article>
