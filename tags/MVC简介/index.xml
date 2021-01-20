@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>MVC简介 on Time Stream</title>
-    <link>http://cxis.me/tags/MVC%E7%AE%80%E4%BB%8B/</link>
+    <link>https://cxis.me/tags/MVC%E7%AE%80%E4%BB%8B/</link>
     <description>Recent content in MVC简介 on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Mon, 28 Nov 2016 21:34:00 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/MVC%E7%AE%80%E4%BB%8B/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/MVC%E7%AE%80%E4%BB%8B/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>MVC简介</title>
-      <link>http://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 28 Nov 2016 21:34:00 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;h1 id=&#34;mvc简介&#34;&gt;MVC简介&lt;/h1&gt;
 &lt;p&gt;面试的时候被问到关于MVC相关的知识，才发现自己只会说出来什么叫MVC，但是其详细的东西自己却无法顺利的表述出来，特在此记录下。&lt;/p&gt;</description>
     </item>

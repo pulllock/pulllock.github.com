@@ -2,67 +2,67 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>并发集合 on Time Stream</title>
-    <link>http://cxis.me/categories/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88/</link>
+    <link>https://cxis.me/categories/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88/</link>
     <description>Recent content in 并发集合 on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Fri, 05 Aug 2016 22:06:52 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/categories/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/categories/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>ConcurrentLinkedQueue简介</title>
-      <link>http://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 05 Aug 2016 22:06:52 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</guid>
       <description>ConcurrentLinkedQueue是一个基于链表的无界线程安全队列，非阻塞实现方式，先进先出，适合高并发的场景。 非阻塞的性能较好，采</description>
     </item>
     
     <item>
       <title>LinkedBlockingQueue简介</title>
-      <link>http://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 05 Aug 2016 10:17:46 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
       <description>LinkedBlockingQueue是一个单向链表实现的阻塞队列，先进先出的顺序。支持多线程并发操作。 相比于数组实现的ArrayBlock</description>
     </item>
     
     <item>
       <title>ArrayBlockingQueue简介</title>
-      <link>http://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sun, 29 May 2016 18:46:59 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
       <description>ArrayBlockingQueue基于数组，先进先出，从尾部插入到队列，从头部开始返回。 线程安全的有序阻塞队列，内部通过“互斥锁”保护竞争</description>
     </item>
     
     <item>
       <title>CopyOnWriteArraySet简介</title>
-      <link>http://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 27 May 2016 17:20:34 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</guid>
       <description>基于CopyOnWriteArrayList实现，线程安全无需集合。 add调用的是CopyOnWriteArraylist的addIfAbs</description>
     </item>
     
     <item>
       <title>ConcurrentHashMap简介</title>
-      <link>http://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Thu, 26 May 2016 11:00:23 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</guid>
       <description>ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程</description>
     </item>
     
     <item>
       <title>CopyOnWriteArrayList简介</title>
-      <link>http://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 25 May 2016 10:30:09 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</guid>
       <description>CopyOnWriteArrayList，写数组的拷贝，支持高效率并发且是线程安全的,读操作无锁的ArrayList。所有可变操作都是通过对</description>
     </item>
     

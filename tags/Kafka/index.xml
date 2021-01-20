@@ -2,103 +2,103 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kafka on Time Stream</title>
-    <link>http://cxis.me/tags/Kafka/</link>
+    <link>https://cxis.me/tags/Kafka/</link>
     <description>Recent content in Kafka on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Fri, 25 May 2018 21:44:30 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/Kafka/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/Kafka/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Kafka中的事务</title>
-      <link>http://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</link>
+      <link>https://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</link>
       <pubDate>Fri, 25 May 2018 21:44:30 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</guid>
+      <guid>https://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</guid>
       <description>&lt;p&gt;Kafka的事务学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka为什么这么快</title>
-      <link>http://cxis.me/2018/05/25/Kafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB/</link>
+      <link>https://cxis.me/2018/05/25/Kafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB/</link>
       <pubDate>Fri, 25 May 2018 20:07:11 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/25/Kafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB/</guid>
+      <guid>https://cxis.me/2018/05/25/Kafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB/</guid>
       <description>&lt;p&gt;Kafka的高吞吐量和低延迟，速度快，原因大概是：顺序写盘、内存映射、页缓存、零拷贝、批量发送。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的副本</title>
-      <link>http://cxis.me/2018/05/23/Kafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC/</link>
+      <link>https://cxis.me/2018/05/23/Kafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC/</link>
       <pubDate>Wed, 23 May 2018 20:14:08 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/23/Kafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC/</guid>
+      <guid>https://cxis.me/2018/05/23/Kafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC/</guid>
       <description>&lt;p&gt;Kafka的副本学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的负载均衡</title>
-      <link>http://cxis.me/2018/05/20/Kafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</link>
+      <link>https://cxis.me/2018/05/20/Kafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</link>
       <pubDate>Sun, 20 May 2018 10:39:27 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/20/Kafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</guid>
+      <guid>https://cxis.me/2018/05/20/Kafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</guid>
       <description>&lt;p&gt;Kafka的负载均衡学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的日志存储</title>
-      <link>http://cxis.me/2018/05/19/Kafka%E4%B8%AD%E7%9A%84%E6%97%A5%E5%BF%97%E5%AD%98%E5%82%A8/</link>
+      <link>https://cxis.me/2018/05/19/Kafka%E4%B8%AD%E7%9A%84%E6%97%A5%E5%BF%97%E5%AD%98%E5%82%A8/</link>
       <pubDate>Sat, 19 May 2018 19:28:00 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/19/Kafka%E4%B8%AD%E7%9A%84%E6%97%A5%E5%BF%97%E5%AD%98%E5%82%A8/</guid>
+      <guid>https://cxis.me/2018/05/19/Kafka%E4%B8%AD%E7%9A%84%E6%97%A5%E5%BF%97%E5%AD%98%E5%82%A8/</guid>
       <description>&lt;p&gt;Kafka的日志存储学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的主题和分区</title>
-      <link>http://cxis.me/2018/05/15/Kafka%E4%B8%AD%E7%9A%84%E4%B8%BB%E9%A2%98%E5%92%8C%E5%88%86%E5%8C%BA/</link>
+      <link>https://cxis.me/2018/05/15/Kafka%E4%B8%AD%E7%9A%84%E4%B8%BB%E9%A2%98%E5%92%8C%E5%88%86%E5%8C%BA/</link>
       <pubDate>Tue, 15 May 2018 20:56:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/15/Kafka%E4%B8%AD%E7%9A%84%E4%B8%BB%E9%A2%98%E5%92%8C%E5%88%86%E5%8C%BA/</guid>
+      <guid>https://cxis.me/2018/05/15/Kafka%E4%B8%AD%E7%9A%84%E4%B8%BB%E9%A2%98%E5%92%8C%E5%88%86%E5%8C%BA/</guid>
       <description>&lt;p&gt;Kafka的主题和分区学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的Consumer</title>
-      <link>http://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Consumer/</link>
+      <link>https://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Consumer/</link>
       <pubDate>Sun, 13 May 2018 15:30:22 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Consumer/</guid>
+      <guid>https://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Consumer/</guid>
       <description>&lt;p&gt;Kafka的Consumer学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的Producer</title>
-      <link>http://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Producer/</link>
+      <link>https://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Producer/</link>
       <pubDate>Sun, 13 May 2018 11:54:28 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Producer/</guid>
+      <guid>https://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Producer/</guid>
       <description>&lt;p&gt;Kafka的Producer学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的Broker</title>
-      <link>http://cxis.me/2018/05/03/Kafka%E4%B8%AD%E7%9A%84Broker/</link>
+      <link>https://cxis.me/2018/05/03/Kafka%E4%B8%AD%E7%9A%84Broker/</link>
       <pubDate>Thu, 03 May 2018 21:54:12 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/03/Kafka%E4%B8%AD%E7%9A%84Broker/</guid>
+      <guid>https://cxis.me/2018/05/03/Kafka%E4%B8%AD%E7%9A%84Broker/</guid>
       <description>&lt;p&gt;Kafka的Broker学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka概要</title>
-      <link>http://cxis.me/2018/05/01/Kafka%E6%A6%82%E8%A6%81/</link>
+      <link>https://cxis.me/2018/05/01/Kafka%E6%A6%82%E8%A6%81/</link>
       <pubDate>Tue, 01 May 2018 20:49:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/01/Kafka%E6%A6%82%E8%A6%81/</guid>
+      <guid>https://cxis.me/2018/05/01/Kafka%E6%A6%82%E8%A6%81/</guid>
       <description>&lt;p&gt;初识Kafka。&lt;/p&gt;</description>
     </item>
     

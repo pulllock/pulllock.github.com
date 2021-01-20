@@ -2,67 +2,67 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>tomcat7 on Time Stream</title>
-    <link>http://cxis.me/categories/tomcat7/</link>
+    <link>https://cxis.me/categories/tomcat7/</link>
     <description>Recent content in tomcat7 on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Wed, 17 May 2017 00:16:15 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/categories/tomcat7/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/categories/tomcat7/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>tomcat7中Digester的使用以及对server.xml的解析过程分析</title>
-      <link>http://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</link>
       <pubDate>Wed, 17 May 2017 00:16:15 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</guid>
       <description>&lt;p&gt;tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7的server.xml解析</title>
-      <link>http://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Tue, 16 May 2017 00:04:07 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;这里对tomcat7的server.xml文件进行解释一下，方便在分析启动源码的时候理解Digester做的事情。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7启动流程源码分析</title>
-      <link>http://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
       <pubDate>Wed, 10 May 2017 17:58:39 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
       <description>&lt;p&gt;主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7类加载器解析</title>
-      <link>http://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 10 May 2017 11:12:56 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;tomcat中也有很多的自定义的类加载器，保证容器的不同部分，以及运行在容器中的web应用可以访问不同的保存着类和资源的仓库。tomcat的类加载器机制跟jdk的类加载器机制基本类似，但是web应用类加载器处理请求的时候会稍微有些不同，jdk的类加载机制不再重复。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7中对http请求的处理过程</title>
-      <link>http://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</link>
+      <link>https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Fri, 05 May 2017 23:44:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</guid>
+      <guid>https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;每个Server可以代表Tomcat，每个Server下面有多个Service，每个Service中包含多个Connector和一个Container，Connector用来处理和客户端的通信，然后把请求交给Container进行处理。这里就简单看下处理http请求的流程。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7架构简介</title>
-      <link>http://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 05 May 2017 23:41:35 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;这里仅仅是对Tomcat7中主要组件进行简单说明，详细的可以查看下tomcat的相关文档。&lt;/p&gt;</description>
     </item>
     

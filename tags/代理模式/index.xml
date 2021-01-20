@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>代理模式 on Time Stream</title>
-    <link>http://cxis.me/tags/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
+    <link>https://cxis.me/tags/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
     <description>Recent content in 代理模式 on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Wed, 12 Apr 2017 16:35:57 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>设计模式中的代理模式解析</title>
-      <link>http://cxis.me/2017/04/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 12 Apr 2017 16:35:57 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;很多地方都用到了代理模式，比如AOP就是代理模式的一种应用，还有dubbo中消费者在初始化的时候，并没有真正的去调用服务提供者执行真正业务逻辑，而是返回一个代理，等到使用的时候，再去调用调用实际业务逻辑。代理模式还有很多其他的应用，比如资源懒加载等。&lt;/p&gt;</description>
     </item>
     

@@ -2,1535 +2,1535 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Time Stream</title>
-    <link>http://cxis.me/posts/</link>
+    <link>https://cxis.me/posts/</link>
     <description>Recent content in Posts on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Mon, 02 Nov 2020 22:31:10 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>MyBatis启动过程介绍</title>
-      <link>http://cxis.me/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Mon, 02 Nov 2020 22:31:10 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;MyBatis启动过程学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>SpringBoot中扩展点汇总</title>
-      <link>http://cxis.me/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</link>
+      <link>https://cxis.me/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</link>
       <pubDate>Mon, 26 Oct 2020 13:54:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</guid>
+      <guid>https://cxis.me/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</guid>
       <description>&lt;p&gt;通过阅读SpringBoot的源码，按照自己的理解，汇总了一下SpringBoot中常用的扩展点，可能还有遗漏或者理解不对的地方。直接使用drawio画了一张图来描述。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中对Groovy支持的源码分析</title>
-      <link>http://cxis.me/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <link>https://cxis.me/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
       <pubDate>Wed, 26 Aug 2020 20:32:49 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <guid>https://cxis.me/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
       <description>&lt;p&gt;分析一下Spring中对Groovy使用的源码。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中使用Groovy的示例</title>
-      <link>http://cxis.me/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/</link>
+      <link>https://cxis.me/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/</link>
       <pubDate>Tue, 25 Aug 2020 22:17:07 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/</guid>
+      <guid>https://cxis.me/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/</guid>
       <description>&lt;p&gt;Spring对动态语言提供了支持，最近准备在项目中使用Groovy实现功能的热插拔，这里记录下Spring中使用Groovy的示例。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中Placeholder的解析过程</title>
-      <link>http://cxis.me/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</link>
+      <link>https://cxis.me/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Tue, 05 May 2020 10:46:26 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</guid>
+      <guid>https://cxis.me/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;Spring中Placeholder的解析过程简单梳理。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter中基于Spring的Schema扩展功能</title>
-      <link>http://cxis.me/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/</link>
+      <link>https://cxis.me/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/</link>
       <pubDate>Mon, 04 May 2020 10:22:12 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/</guid>
+      <guid>https://cxis.me/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/</guid>
       <description>&lt;p&gt;集成Spring，使用Spring的scheme扩展机制。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter中的监听器模式</title>
-      <link>http://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%AD%E7%9A%84%E7%9B%91%E5%90%AC%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <link>https://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%AD%E7%9A%84%E7%9B%91%E5%90%AC%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Tue, 28 Apr 2020 14:17:16 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%AD%E7%9A%84%E7%9B%91%E5%90%AC%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <guid>https://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%AD%E7%9A%84%E7%9B%91%E5%90%AC%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
       <description>&lt;p&gt;监听器模式运用。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter中Zookeeper监听机制使用</title>
-      <link>http://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6%E4%BD%BF%E7%94%A8/</link>
+      <link>https://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Tue, 28 Apr 2020 09:51:52 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6%E4%BD%BF%E7%94%A8/</guid>
+      <guid>https://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6%E4%BD%BF%E7%94%A8/</guid>
       <description>&lt;p&gt;重新温习一下Zookeeper监听机制。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter中Zookeeper相关操作</title>
-      <link>http://cxis.me/2020/04/27/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/</link>
+      <link>https://cxis.me/2020/04/27/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/</link>
       <pubDate>Mon, 27 Apr 2020 21:13:46 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/27/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/</guid>
+      <guid>https://cxis.me/2020/04/27/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/</guid>
       <description>&lt;p&gt;重新温习一下操作Zookeeper的一些方法。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter设计文档</title>
-      <link>http://cxis.me/2020/04/26/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
+      <link>https://cxis.me/2020/04/26/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
       <pubDate>Sun, 26 Apr 2020 20:07:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/26/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
+      <guid>https://cxis.me/2020/04/26/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
       <description>&lt;p&gt;大概列一下动态配置中心需要实现的功能。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter设计的思路</title>
-      <link>http://cxis.me/2020/04/25/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
+      <link>https://cxis.me/2020/04/25/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
       <pubDate>Sat, 25 Apr 2020 20:07:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/25/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
+      <guid>https://cxis.me/2020/04/25/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
       <description>&lt;p&gt;大概列一下动态配置中心需要实现的功能。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway总结</title>
-      <link>http://cxis.me/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</link>
+      <link>https://cxis.me/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 13 Apr 2020 21:42:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://cxis.me/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;用了几天时间来设计和实现一个APIGateway，这里进行一下文档和代码的汇总。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中获取客户端IP的方法</title>
-      <link>http://cxis.me/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</link>
+      <link>https://cxis.me/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</link>
       <pubDate>Sun, 12 Apr 2020 21:35:24 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</guid>
+      <guid>https://cxis.me/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</guid>
       <description>&lt;p&gt;在使用ServletRequest获取客户端ip的时候，不仅仅只使用getRemoteHost来获取，还要使用XFF（X-Forwarded-For）。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中使用Dubbo泛化调用</title>
-      <link>http://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</link>
+      <link>https://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</link>
       <pubDate>Thu, 09 Apr 2020 22:52:28 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</guid>
+      <guid>https://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</guid>
       <description>&lt;p&gt;APIGateway需要调用各个业务系统的接口，但是不可能作为消费者依赖所有系统的接口jar包，可以使用Dubbo的泛化调用功能来实现。APIGateway作为消费者，连接到注册中心，拿到相应接口后可以使用泛化调用。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中流控介绍</title>
-      <link>http://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Thu, 09 Apr 2020 21:29:14 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;流控或者叫限流，可以通过控制流量来保护我们的系统不被大流量或者异常流量冲垮，常用的限流算法有：计数器算法、令牌桶算法、漏桶算法。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中加密验签介绍</title>
-      <link>http://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Wed, 08 Apr 2020 21:57:10 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;需要提供给接口调用方一个用来加密的key，调用方根据key、一些其他参数以及业务参数进行加密，还需要对报文进行签名，使用加密的参数请求接口。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中责任链模式的使用</title>
-      <link>http://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
+      <link>https://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Wed, 08 Apr 2020 20:49:22 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
+      <guid>https://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
       <description>&lt;p&gt;重新看一下责任链模式，在APIGateway设计中要用到责任链模式。简单写了代码测试下Spring中使用以及Apache CommonsChain使用。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway设计文档</title>
-      <link>http://cxis.me/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
+      <link>https://cxis.me/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
       <pubDate>Tue, 07 Apr 2020 23:49:05 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
+      <guid>https://cxis.me/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
       <description>&lt;p&gt;APIGateway的设计文档，包括整体架构和数据库设计。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway设计的思路</title>
-      <link>http://cxis.me/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
+      <link>https://cxis.me/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
       <pubDate>Mon, 06 Apr 2020 21:53:08 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
+      <guid>https://cxis.me/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
       <description>&lt;p&gt;简述一下APIGateway的设计思路，准备从头写一个网关。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>SpringBoot启动流程简易图</title>
-      <link>http://cxis.me/2020/04/02/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E7%AE%80%E6%98%93%E5%9B%BE/</link>
+      <link>https://cxis.me/2020/04/02/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E7%AE%80%E6%98%93%E5%9B%BE/</link>
       <pubDate>Thu, 02 Apr 2020 21:29:21 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/04/02/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E7%AE%80%E6%98%93%E5%9B%BE/</guid>
+      <guid>https://cxis.me/2020/04/02/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E7%AE%80%E6%98%93%E5%9B%BE/</guid>
       <description>&lt;p&gt;简单总结了下SpringBoot的启动流程，可能还有遗漏或者理解不对的地方。直接使用processon画了一张图，供后面详细阅读源码使用。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring同一个类中的注解方法调用AOP失效问题总结</title>
-      <link>http://cxis.me/2020/03/23/Spring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8AOP%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</link>
+      <link>https://cxis.me/2020/03/23/Spring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8AOP%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 23 Mar 2020 23:01:20 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/23/Spring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8AOP%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://cxis.me/2020/03/23/Spring%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E4%B8%AD%E7%9A%84%E6%B3%A8%E8%A7%A3%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8AOP%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;Spring中在同一个类中两个方法调用，会导致代理失效，比如同一个类中一个方法A调用另外一个带事务的方法B，会发现B方法的事务不生效；同一个类中一个方法A调用另外一个带注解的清除缓存的方法B，会发现清除缓存不成功。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP流程的总结</title>
-      <link>http://cxis.me/2020/03/23/Spring%E4%B8%ADAOP%E6%B5%81%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93/</link>
+      <link>https://cxis.me/2020/03/23/Spring%E4%B8%ADAOP%E6%B5%81%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 23 Mar 2020 21:45:18 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/23/Spring%E4%B8%ADAOP%E6%B5%81%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://cxis.me/2020/03/23/Spring%E4%B8%ADAOP%E6%B5%81%E7%A8%8B%E7%9A%84%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;总结一下Spring中AOP的流程，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring解决循环依赖的过程总结</title>
-      <link>http://cxis.me/2020/03/22/Spring%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
+      <link>https://cxis.me/2020/03/22/Spring%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sun, 22 Mar 2020 23:25:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/22/Spring%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://cxis.me/2020/03/22/Spring%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
       <description>简单将Spring是怎么解决循环依赖做一下总结，具体的源码实现网上有很多文章，这里不做具体分析。 Spring在初始化Bean的时候，会先初始</description>
     </item>
     
     <item>
       <title>Spring中Bean的生命周期总结</title>
-      <link>http://cxis.me/2020/03/22/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93/</link>
+      <link>https://cxis.me/2020/03/22/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sun, 22 Mar 2020 22:21:18 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/22/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://cxis.me/2020/03/22/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;总结一下Spring中Bean的生命周期，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中IOC容器的初始化过程总结</title>
-      <link>http://cxis.me/2020/03/22/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
+      <link>https://cxis.me/2020/03/22/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sun, 22 Mar 2020 21:16:14 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/22/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://cxis.me/2020/03/22/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;总结一下Spring IOC容器的初始化过程，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo启动以及服务调用的过程总结</title>
-      <link>http://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
+      <link>https://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
       <pubDate>Fri, 20 Mar 2020 23:25:44 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
+      <guid>https://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;服务暴露过程、服务引用过程、服务调用过程、消费者调用底层通信过程、提供者接受请求底层通信过程简单总结。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo架构简单理解</title>
-      <link>http://cxis.me/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</link>
+      <link>https://cxis.me/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</link>
       <pubDate>Thu, 19 Mar 2020 22:32:11 +0000</pubDate>
       
-      <guid>http://cxis.me/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</guid>
+      <guid>https://cxis.me/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</guid>
       <description>&lt;p&gt;分析总结一下Dubbo的架构，通过对Dubbo、RocketMQ、Tair等架构的类比，从整体上来理解一般分布式框架、应用的组成。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@ComponentScan注解实现机制</title>
-      <link>http://cxis.me/2019/08/03/Spring%E7%9A%84ComponentScan%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2019/08/03/Spring%E7%9A%84ComponentScan%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sat, 03 Aug 2019 22:34:33 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/08/03/Spring%E7%9A%84ComponentScan%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2019/08/03/Spring%E7%9A%84ComponentScan%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;记录下Spring中@ComponentScan注解的实现原理。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis的MappedStatement介绍</title>
-      <link>http://cxis.me/2019/07/20/MyBatis%E7%9A%84MappedStatement%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2019/07/20/MyBatis%E7%9A%84MappedStatement%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Sat, 20 Jul 2019 20:01:04 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/07/20/MyBatis%E7%9A%84MappedStatement%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2019/07/20/MyBatis%E7%9A%84MappedStatement%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;MyBatis中的SqlSession在使用Executor进行具体的操作之前，会先到Configuration中获取一个MappedStatement，MappedStatement是对mapper文件中的select、update、delete、insert等结点的封装。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis中的策略模式</title>
-      <link>http://cxis.me/2019/07/08/MyBatis%E4%B8%AD%E7%9A%84%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</link>
+      <link>https://cxis.me/2019/07/08/MyBatis%E4%B8%AD%E7%9A%84%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Mon, 08 Jul 2019 22:11:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/07/08/MyBatis%E4%B8%AD%E7%9A%84%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <guid>https://cxis.me/2019/07/08/MyBatis%E4%B8%AD%E7%9A%84%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F/</guid>
       <description>&lt;p&gt;MyBatis的DefaultSqlSession使用具体Executor的时候，用的是策略模式。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis中的装饰器模式</title>
-      <link>http://cxis.me/2019/07/07/MyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <link>https://cxis.me/2019/07/07/MyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Sun, 07 Jul 2019 20:48:19 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/07/07/MyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <guid>https://cxis.me/2019/07/07/MyBatis%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
       <description>&lt;p&gt;在MyBatis的Executor和缓存的学习的时候，提到了CachingExecutor使用了装饰器模式来增加二级缓存，这里对MyBatis中的装饰器模式进行简单学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis缓存机制介绍</title>
-      <link>http://cxis.me/2019/07/06/MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2019/07/06/MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Sat, 06 Jul 2019 21:58:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/07/06/MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2019/07/06/MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;MyBatis提供一级缓存和二级缓存，默认一级缓存是开启的，二级缓存是需要手动开启的。MyBatis的一级缓存是SqlSession级别的，二级缓存是mapper级别的，多个SqlSession可共享同一个二级缓存。如果开始了二级缓存，查询数据会先查询二级缓存，在查询一级缓存，最后才是查库。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis中Executor介绍</title>
-      <link>http://cxis.me/2019/06/23/MyBatis%E4%B8%ADExecutor%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2019/06/23/MyBatis%E4%B8%ADExecutor%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Sun, 23 Jun 2019 18:10:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/06/23/MyBatis%E4%B8%ADExecutor%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2019/06/23/MyBatis%E4%B8%ADExecutor%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;在MyBatis的执行流程中，SqlSession会使用Executor来执行实际的操作，Executor中定义了操作数据库的基本方法。Executor的具体实现再使用StatementHandler来执行更底层操作。Executor是核心组件之一。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis执行流程图解</title>
-      <link>http://cxis.me/2019/06/15/MyBatis%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE%E8%A7%A3/</link>
+      <link>https://cxis.me/2019/06/15/MyBatis%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE%E8%A7%A3/</link>
       <pubDate>Sat, 15 Jun 2019 22:22:39 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/06/15/MyBatis%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE%E8%A7%A3/</guid>
+      <guid>https://cxis.me/2019/06/15/MyBatis%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE%E8%A7%A3/</guid>
       <description>&lt;p&gt;记录一下MyBatis执行流程，使用图解方便看源码。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis的mapper文件标签和类对应关系</title>
-      <link>http://cxis.me/2019/06/09/MyBatis%E7%9A%84mapper%E6%96%87%E4%BB%B6%E6%A0%87%E7%AD%BE%E5%92%8C%E7%B1%BB%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/</link>
+      <link>https://cxis.me/2019/06/09/MyBatis%E7%9A%84mapper%E6%96%87%E4%BB%B6%E6%A0%87%E7%AD%BE%E5%92%8C%E7%B1%BB%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/</link>
       <pubDate>Sun, 09 Jun 2019 20:17:56 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/06/09/MyBatis%E7%9A%84mapper%E6%96%87%E4%BB%B6%E6%A0%87%E7%AD%BE%E5%92%8C%E7%B1%BB%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/</guid>
+      <guid>https://cxis.me/2019/06/09/MyBatis%E7%9A%84mapper%E6%96%87%E4%BB%B6%E6%A0%87%E7%AD%BE%E5%92%8C%E7%B1%BB%E5%AF%B9%E5%BA%94%E5%85%B3%E7%B3%BB/</guid>
       <description>&lt;p&gt;列举了一下MyBatis的mapper.xml文件中标签和类的对应关系。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis的Configuration图解</title>
-      <link>http://cxis.me/2019/06/07/MyBatis%E7%9A%84Configuration%E5%9B%BE%E8%A7%A3/</link>
+      <link>https://cxis.me/2019/06/07/MyBatis%E7%9A%84Configuration%E5%9B%BE%E8%A7%A3/</link>
       <pubDate>Fri, 07 Jun 2019 22:10:30 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/06/07/MyBatis%E7%9A%84Configuration%E5%9B%BE%E8%A7%A3/</guid>
+      <guid>https://cxis.me/2019/06/07/MyBatis%E7%9A%84Configuration%E5%9B%BE%E8%A7%A3/</guid>
       <description>&lt;p&gt;MyBatis的配置文件mybatis-config.xml、映射配置文件mapper.xml以及Mapper接口中的注解信息等等，都会在解析后保存在Configuration对象中。Configuration对象是核心内容。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MyBatis整体架构设计</title>
-      <link>http://cxis.me/2019/06/01/MyBatis%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/</link>
+      <link>https://cxis.me/2019/06/01/MyBatis%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/</link>
       <pubDate>Sat, 01 Jun 2019 14:14:34 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/06/01/MyBatis%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/</guid>
+      <guid>https://cxis.me/2019/06/01/MyBatis%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/</guid>
       <description>&lt;p&gt;学习一下MyBatis整体架构设计，以及主要模块的功能说明。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Configuration注解实现机制</title>
-      <link>http://cxis.me/2019/05/30/Spring%E7%9A%84Configuration%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2019/05/30/Spring%E7%9A%84Configuration%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Thu, 30 May 2019 15:26:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/30/Spring%E7%9A%84Configuration%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2019/05/30/Spring%E7%9A%84Configuration%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;记录下Spring中@Configuration注解的实现原理。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Component等注解实现机制</title>
-      <link>http://cxis.me/2019/05/27/Spring%E7%9A%84Component%E7%AD%89%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2019/05/27/Spring%E7%9A%84Component%E7%AD%89%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Mon, 27 May 2019 21:39:15 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/27/Spring%E7%9A%84Component%E7%AD%89%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2019/05/27/Spring%E7%9A%84Component%E7%AD%89%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;记录下Spring中@Component注解的实现原理，@Controller、@Repository、@Service等注解都是@Component注解，都是一样的。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Autowired注解实现机制</title>
-      <link>http://cxis.me/2019/05/26/Spring%E7%9A%84Autowired%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2019/05/26/Spring%E7%9A%84Autowired%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sun, 26 May 2019 13:48:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/26/Spring%E7%9A%84Autowired%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2019/05/26/Spring%E7%9A%84Autowired%E6%B3%A8%E8%A7%A3%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;记录下Spring中@Autowired注解的实现原理。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>SpringBoot自动配置的原理</title>
-      <link>http://cxis.me/2019/05/25/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84%E5%8E%9F%E7%90%86/</link>
+      <link>https://cxis.me/2019/05/25/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84%E5%8E%9F%E7%90%86/</link>
       <pubDate>Sat, 25 May 2019 21:09:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/25/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84%E5%8E%9F%E7%90%86/</guid>
+      <guid>https://cxis.me/2019/05/25/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84%E5%8E%9F%E7%90%86/</guid>
       <description>&lt;p&gt;需要先了解一下Spring的@Import注解和@Enable注解的实现原理，以及SpringFactoriesLoader的实现，再来看SpringBoot的自动配置原理就基本上会明白了。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Enable注解的实现机制</title>
-      <link>http://cxis.me/2019/05/18/Spring%E7%9A%84Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2019/05/18/Spring%E7%9A%84Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sat, 18 May 2019 20:13:22 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/18/Spring%E7%9A%84Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2019/05/18/Spring%E7%9A%84Enable%E6%B3%A8%E8%A7%A3%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;如果要了解Spring中@Enable的实现机制，需要提前了解下@Import的用途和实现方式，每个@Enable注解上都会有@Import注解，@Import中导入自定的ImportSelector或者ImportBeanDefinitionRegistrar或者配置，这里面会实现相关功能会引入相关功能。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的@Import是怎样工作的</title>
-      <link>http://cxis.me/2019/05/15/Spring%E7%9A%84Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/</link>
+      <link>https://cxis.me/2019/05/15/Spring%E7%9A%84Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/</link>
       <pubDate>Wed, 15 May 2019 21:04:35 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/15/Spring%E7%9A%84Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/</guid>
+      <guid>https://cxis.me/2019/05/15/Spring%E7%9A%84Import%E6%98%AF%E6%80%8E%E6%A0%B7%E5%B7%A5%E4%BD%9C%E7%9A%84/</guid>
       <description>&lt;p&gt;Spring提供了JavaConfig配置的方式，可以将原来的xml配置文件使用JavaConfig配置的方式来替换。xml配置文件可以类比@Configuration注解的文件，@Import注解可以类比xml配置文件中的&lt;code&gt;&amp;lt;import&amp;gt;&lt;/code&gt;标签，@Bean注解可以类比xml配置文件的&lt;code&gt;&amp;lt;bean&amp;gt;&lt;/code&gt;标签。&lt;code&gt;&amp;lt;import&amp;gt;&lt;/code&gt;标签用来将多个分散的xml配置文件整合起来，@Import注解可以将多个分散的@Configuration整合起来。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的工厂加载机制SpringFactoriesLoader介绍</title>
-      <link>http://cxis.me/2019/05/12/Spring%E7%9A%84%E5%B7%A5%E5%8E%82%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6SpringFactoriesLoader%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2019/05/12/Spring%E7%9A%84%E5%B7%A5%E5%8E%82%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6SpringFactoriesLoader%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Sun, 12 May 2019 21:00:46 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/12/Spring%E7%9A%84%E5%B7%A5%E5%8E%82%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6SpringFactoriesLoader%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2019/05/12/Spring%E7%9A%84%E5%B7%A5%E5%8E%82%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6SpringFactoriesLoader%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;SpringFactoriesLoader和Java的SPI机制一样，SpringFactoriesLoader是Spring框架内部使用的，用来加载Spring一些工厂类的工具。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中扩展点汇总</title>
-      <link>http://cxis.me/2019/05/11/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</link>
+      <link>https://cxis.me/2019/05/11/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</link>
       <pubDate>Sat, 11 May 2019 22:10:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/11/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</guid>
+      <guid>https://cxis.me/2019/05/11/Spring%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/</guid>
       <description>通过阅读Spring的源码，按照自己的理解，汇总了一下Spring中常用的扩展点，可能还有遗漏或者理解不对的地方。直接使用processon</description>
     </item>
     
     <item>
       <title>Redis内存模型</title>
-      <link>http://cxis.me/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</link>
+      <link>https://cxis.me/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</link>
       <pubDate>Sat, 04 May 2019 17:30:28 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</guid>
+      <guid>https://cxis.me/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</guid>
       <description>&lt;p&gt;Redis内存主要可以分为：数据部分、Redis进程本身、缓冲区内存、内存碎片这四个部分。Redis默认通过jemalloc来分配内存。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis分布式锁及其他分布式锁实现方式</title>
-      <link>http://cxis.me/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/</link>
+      <link>https://cxis.me/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/</link>
       <pubDate>Sat, 20 Apr 2019 21:10:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/</guid>
+      <guid>https://cxis.me/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/</guid>
       <description>&lt;p&gt;Redis实现分布式锁大概有几种方案：使用set命令同时指定过期时间和NX、使用lua脚本和setnx加过期时间配合、基于Redlock算法的Redisson实现。分布式锁除了可以使用Redis实现外，还可以使用其他的实现，比如：mysql数据库方式、Tair实现、Zookeeper等等。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis跳表</title>
-      <link>http://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</link>
+      <link>https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</link>
       <pubDate>Fri, 19 Apr 2019 22:20:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</guid>
+      <guid>https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</guid>
       <description>&lt;p&gt;跳表skiplist是一种有序数据结构，在每个节点维持指向其他节点的指针，可以达到快速访问节点的目的。可以认为跳表在原有的有序链表上增加了多级索引，通过索引就可以快速查找。跳表的查找、插入、删除事件复杂度都是O(log n)，还可以实现区间查找。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis对象的9种类型</title>
-      <link>http://cxis.me/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/</link>
+      <link>https://cxis.me/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/</link>
       <pubDate>Sun, 14 Apr 2019 21:11:03 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/</guid>
+      <guid>https://cxis.me/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/</guid>
       <description>&lt;p&gt;Redis中基本数据结构有：简单动态字符串SDS、双端链表、跳表、字典、整数集合、压缩列表。但是Redis并没有直接使用这些数据结构来存放键值对，而是在这些基本数据结构之上构建了Redis的对象来表示。Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet、bitmaps、HyperLogLogs、Streams、GeoHash。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis内存淘汰机制</title>
-      <link>http://cxis.me/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sun, 14 Apr 2019 17:02:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;Redis可以设置key的过期时间，key过期了之后会根据key过期策略将key进行淘汰，但是如果Redis的内存到达了一定的阈值，即使key没有过期，也会根据一定的策略对数据进行淘汰。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis事务</title>
-      <link>http://cxis.me/2019/04/14/Redis%E4%BA%8B%E5%8A%A1/</link>
+      <link>https://cxis.me/2019/04/14/Redis%E4%BA%8B%E5%8A%A1/</link>
       <pubDate>Sun, 14 Apr 2019 15:10:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/14/Redis%E4%BA%8B%E5%8A%A1/</guid>
+      <guid>https://cxis.me/2019/04/14/Redis%E4%BA%8B%E5%8A%A1/</guid>
       <description>&lt;p&gt;Redis事务会将多个命令请求打包，一次性的按照顺序执行多个命令，在事务执行期间，服务器不会中断事务去执行其他客户端的请求命令，会一直执行完。涉及到的命令：MULTI、EXEC、WATCH。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis发布与订阅</title>
-      <link>http://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/</link>
+      <link>https://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/</link>
       <pubDate>Sun, 14 Apr 2019 14:08:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/</guid>
+      <guid>https://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/</guid>
       <description>&lt;p&gt;Redis支持发布订阅功能，SUBSCRIBE命令可以让客户端订阅一个或者多个频道，PSUBSCRIBE可以让客户端订阅一个或多个模式的，PUBLISH用来发布消息。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis集群Cluster</title>
-      <link>http://cxis.me/2019/04/13/Redis%E9%9B%86%E7%BE%A4Cluster/</link>
+      <link>https://cxis.me/2019/04/13/Redis%E9%9B%86%E7%BE%A4Cluster/</link>
       <pubDate>Sat, 13 Apr 2019 22:20:27 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/13/Redis%E9%9B%86%E7%BE%A4Cluster/</guid>
+      <guid>https://cxis.me/2019/04/13/Redis%E9%9B%86%E7%BE%A4Cluster/</guid>
       <description>&lt;p&gt;Redis提供的分布式解决方案：Redis Cluster集群，使用分片sharding来进行数据共享，还提供了复制和故障转移功能。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis哨兵Sentinel</title>
-      <link>http://cxis.me/2019/04/10/Redis%E5%93%A8%E5%85%B5Sentinel/</link>
+      <link>https://cxis.me/2019/04/10/Redis%E5%93%A8%E5%85%B5Sentinel/</link>
       <pubDate>Wed, 10 Apr 2019 20:37:25 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/10/Redis%E5%93%A8%E5%85%B5Sentinel/</guid>
+      <guid>https://cxis.me/2019/04/10/Redis%E5%93%A8%E5%85%B5Sentinel/</guid>
       <description>&lt;p&gt;Sentinel哨兵，是Redis的高可用解决方案，由一个或多个Sentinel实例组成Sentinel系统，监控任意多个主服务器和从服务器，主服务器下线时自动将其下的从服务器升级成新的主服务器。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis主从复制</title>
-      <link>http://cxis.me/2019/04/05/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</link>
+      <link>https://cxis.me/2019/04/05/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</link>
       <pubDate>Fri, 05 Apr 2019 21:03:55 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/05/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</guid>
+      <guid>https://cxis.me/2019/04/05/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</guid>
       <description>&lt;p&gt;主从复制，用户可以执行SLAVEOF命令或者设置slaveof选项，让一个服务器（从服务器slave）去复制replicate另外一个服务器（主服务器master）。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis线程模型及事件</title>
-      <link>http://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8F%8A%E4%BA%8B%E4%BB%B6/</link>
+      <link>https://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8F%8A%E4%BA%8B%E4%BB%B6/</link>
       <pubDate>Wed, 03 Apr 2019 22:10:00 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8F%8A%E4%BA%8B%E4%BB%B6/</guid>
+      <guid>https://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8F%8A%E4%BA%8B%E4%BB%B6/</guid>
       <description>&lt;p&gt;Redis使用事件驱动模型，主要处理：文件事件，也就是和客户端的网络通信等等；以及时间事件，也就是一些定时任务之类的抽象。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis持久化</title>
-      <link>http://cxis.me/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/</link>
+      <link>https://cxis.me/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/</link>
       <pubDate>Tue, 02 Apr 2019 20:01:00 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/</guid>
+      <guid>https://cxis.me/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/</guid>
       <description>&lt;p&gt;Redis可以将内存中的数据库状态持久化到磁盘中去，提供了两种持久化方法：RDB持久化和AOF持久化。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis过期键的删除策略</title>
-      <link>http://cxis.me/2019/03/26/Redis%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5/</link>
+      <link>https://cxis.me/2019/03/26/Redis%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5/</link>
       <pubDate>Tue, 26 Mar 2019 00:27:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/03/26/Redis%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5/</guid>
+      <guid>https://cxis.me/2019/03/26/Redis%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5/</guid>
       <description>&lt;p&gt;Redis过期时间保存在过期字典中，键的过期策略有三种：定时删除、惰性删除、定期删除。Redis采用了惰性删除和定期删除两种策略配合。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis数据库实现以及各种操作实现</title>
-      <link>http://cxis.me/2019/03/25/Redis%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C%E5%AE%9E%E7%8E%B0/</link>
+      <link>https://cxis.me/2019/03/25/Redis%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C%E5%AE%9E%E7%8E%B0/</link>
       <pubDate>Mon, 25 Mar 2019 22:10:07 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/03/25/Redis%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C%E5%AE%9E%E7%8E%B0/</guid>
+      <guid>https://cxis.me/2019/03/25/Redis%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C%E5%AE%9E%E7%8E%B0/</guid>
       <description>&lt;p&gt;Redis数据库实现，保存键值对的方法，针对数据库添加、删除、更新、查询等方法的实现，设置生存时间和过期时间操作。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis对象</title>
-      <link>http://cxis.me/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/</link>
+      <link>https://cxis.me/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/</link>
       <pubDate>Wed, 20 Mar 2019 20:30:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/</guid>
+      <guid>https://cxis.me/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/</guid>
       <description>&lt;p&gt;Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis压缩列表</title>
-      <link>http://cxis.me/2019/03/19/Redis%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8/</link>
+      <link>https://cxis.me/2019/03/19/Redis%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8/</link>
       <pubDate>Tue, 19 Mar 2019 23:20:04 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/03/19/Redis%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8/</guid>
+      <guid>https://cxis.me/2019/03/19/Redis%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Redis整数集合</title>
-      <link>http://cxis.me/2019/03/19/Redis%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88/</link>
+      <link>https://cxis.me/2019/03/19/Redis%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88/</link>
       <pubDate>Tue, 19 Mar 2019 22:33:32 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/03/19/Redis%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88/</guid>
+      <guid>https://cxis.me/2019/03/19/Redis%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88/</guid>
       <description>&lt;p&gt;当一个集合只包含整数值元素，并且集合的元素数不多时，Redis使用整数集合intset作为集合键的底层实现。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Redis字典</title>
-      <link>http://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8/</link>
+      <link>https://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8/</link>
       <pubDate>Fri, 15 Mar 2019 22:05:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8/</guid>
+      <guid>https://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8/</guid>
       <description>Redis字典使用哈希表作为底层实现，一个哈希表可以有多个哈希节点，每个哈希表节点就保存了字典中的一个键值对。 哈希表 Redis字典使用哈希表</description>
     </item>
     
     <item>
       <title>Redis简单动态字符串SDS</title>
-      <link>http://cxis.me/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/</link>
+      <link>https://cxis.me/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/</link>
       <pubDate>Wed, 13 Mar 2019 20:05:32 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/</guid>
+      <guid>https://cxis.me/2019/03/13/Redis%E7%AE%80%E5%8D%95%E5%8A%A8%E6%80%81%E5%AD%97%E7%AC%A6%E4%B8%B2SDS/</guid>
       <description>Redis中的字符串使用的是Redis自定义的抽象类型，而不是直接使用C语言的字符串表示。Redis的字符串叫做：简单动态字符串Simple</description>
     </item>
     
     <item>
       <title>Dubbo中SPI源码解析</title>
-      <link>http://cxis.me/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 20 Feb 2019 20:15:34 +0000</pubDate>
       
-      <guid>http://cxis.me/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;从两个示例代码，介绍dubbo的SPI的使用以及相关源码分析，分析了获取扩展实现和获取自适应扩展点实现的源码，最后简单说了下ExtensionFactory的流程，看完就可以理解为什么dubbo是自包含的了。从上往下看，再回头看，应该能看明白，文章比较长，希望能耐心读下去。如果有错误的地方希望能指出来，我也理解不是太完整或者表述不是太明白。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>ArrayList的初始容量现在为0，不再是10了</title>
-      <link>http://cxis.me/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/</link>
+      <link>https://cxis.me/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/</link>
       <pubDate>Fri, 19 Oct 2018 21:19:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/</guid>
+      <guid>https://cxis.me/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/</guid>
       <description>&lt;h1 id=&#34;前言&#34;&gt;前言&lt;/h1&gt;
 &lt;p&gt;一直记得ArrayList的初始容量大小是10，今天再次看ArrayList的源码（版本：Jdk 7u80）时发现在构造函数的注释上写着初始化容量是10，但是构造函数中却没有指定初始容量，仅仅初始化了一个空的数组。应该是不知道在哪个版本中已经修改了，我却还记着之前从别人口里得来的一句话：初始容量是10。实际上初始容量已经是0了，写出来分享下，有错的地方烦请指出来，说的不一定对。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的索引结构</title>
-      <link>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/</link>
+      <link>https://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/</link>
       <pubDate>Mon, 18 Jun 2018 14:08:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/</guid>
+      <guid>https://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/</guid>
       <description>&lt;p&gt;Lucene中的索引结构学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的Query</title>
-      <link>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/</link>
+      <link>https://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/</link>
       <pubDate>Mon, 18 Jun 2018 11:25:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/</guid>
+      <guid>https://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Query/</guid>
       <description>&lt;p&gt;Lucene中的各种Query学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的Segment合并</title>
-      <link>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Segment%E5%90%88%E5%B9%B6/</link>
+      <link>https://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Segment%E5%90%88%E5%B9%B6/</link>
       <pubDate>Mon, 18 Jun 2018 09:51:10 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Segment%E5%90%88%E5%B9%B6/</guid>
+      <guid>https://cxis.me/2018/06/18/Lucene%E4%B8%AD%E7%9A%84Segment%E5%90%88%E5%B9%B6/</guid>
       <description>&lt;p&gt;Lucene中的Segment合并学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的文档删除</title>
-      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4/</link>
+      <link>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4/</link>
       <pubDate>Sun, 17 Jun 2018 19:43:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4/</guid>
+      <guid>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E5%88%A0%E9%99%A4/</guid>
       <description>&lt;p&gt;Lucene中文档删除的更深入学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的索引缓冲、刷新和提交</title>
-      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4/</link>
+      <link>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4/</link>
       <pubDate>Sun, 17 Jun 2018 19:43:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4/</guid>
+      <guid>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E7%BC%93%E5%86%B2%E5%88%B7%E6%96%B0%E5%92%8C%E6%8F%90%E4%BA%A4/</guid>
       <description>&lt;p&gt;Lucene中的索引缓冲、刷新和提交学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的Directory</title>
-      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Directory/</link>
+      <link>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Directory/</link>
       <pubDate>Sun, 17 Jun 2018 16:28:23 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Directory/</guid>
+      <guid>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Directory/</guid>
       <description>&lt;p&gt;Lucene的Directory学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的并发、线程安全及锁机制</title>
-      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sun, 17 Jun 2018 16:28:23 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E5%8F%8A%E9%94%81%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;Lucene中的并发、线程安全及锁机制学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的Field</title>
-      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Field/</link>
+      <link>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Field/</link>
       <pubDate>Sun, 17 Jun 2018 15:10:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Field/</guid>
+      <guid>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84Field/</guid>
       <description>&lt;p&gt;Lucene的Field学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的索引过程和基本操作</title>
-      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</link>
+      <link>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</link>
       <pubDate>Sun, 17 Jun 2018 13:25:05 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</guid>
+      <guid>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E5%92%8C%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</guid>
       <description>&lt;p&gt;Lucene索引过程学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene中的基础核心类</title>
-      <link>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/</link>
+      <link>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/</link>
       <pubDate>Sun, 17 Jun 2018 11:33:26 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/</guid>
+      <guid>https://cxis.me/2018/06/17/Lucene%E4%B8%AD%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A0%B8%E5%BF%83%E7%B1%BB/</guid>
       <description>&lt;p&gt;Lucene索引创建和搜索索引的核心类学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Elasticsearch的基础概念</title>
-      <link>http://cxis.me/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
+      <link>https://cxis.me/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
       <pubDate>Sat, 16 Jun 2018 23:34:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
+      <guid>https://cxis.me/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
       <description>&lt;p&gt;Elasticsearch基础概念学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Lucene总体架构</title>
-      <link>http://cxis.me/2018/06/16/Lucene%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/</link>
+      <link>https://cxis.me/2018/06/16/Lucene%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/</link>
       <pubDate>Sat, 16 Jun 2018 16:01:30 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/16/Lucene%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/</guid>
+      <guid>https://cxis.me/2018/06/16/Lucene%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84/</guid>
       <description>&lt;p&gt;Lucene基础学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Elasticsearc之信息检索基础概念</title>
-      <link>http://cxis.me/2018/06/16/Elasticsearc%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
+      <link>https://cxis.me/2018/06/16/Elasticsearc%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
       <pubDate>Sat, 16 Jun 2018 13:56:43 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/06/16/Elasticsearc%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
+      <guid>https://cxis.me/2018/06/16/Elasticsearc%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
       <description>&lt;p&gt;信息检索基础概念学习，包括分词算法、倒排索引等等。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的事务</title>
-      <link>http://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</link>
+      <link>https://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</link>
       <pubDate>Fri, 25 May 2018 21:44:30 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</guid>
+      <guid>https://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</guid>
       <description>&lt;p&gt;Kafka的事务学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka为什么这么快</title>
-      <link>http://cxis.me/2018/05/25/Kafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB/</link>
+      <link>https://cxis.me/2018/05/25/Kafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB/</link>
       <pubDate>Fri, 25 May 2018 20:07:11 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/25/Kafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB/</guid>
+      <guid>https://cxis.me/2018/05/25/Kafka%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%99%E4%B9%88%E5%BF%AB/</guid>
       <description>&lt;p&gt;Kafka的高吞吐量和低延迟，速度快，原因大概是：顺序写盘、内存映射、页缓存、零拷贝、批量发送。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的副本</title>
-      <link>http://cxis.me/2018/05/23/Kafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC/</link>
+      <link>https://cxis.me/2018/05/23/Kafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC/</link>
       <pubDate>Wed, 23 May 2018 20:14:08 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/23/Kafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC/</guid>
+      <guid>https://cxis.me/2018/05/23/Kafka%E4%B8%AD%E7%9A%84%E5%89%AF%E6%9C%AC/</guid>
       <description>&lt;p&gt;Kafka的副本学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的负载均衡</title>
-      <link>http://cxis.me/2018/05/20/Kafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</link>
+      <link>https://cxis.me/2018/05/20/Kafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</link>
       <pubDate>Sun, 20 May 2018 10:39:27 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/20/Kafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</guid>
+      <guid>https://cxis.me/2018/05/20/Kafka%E4%B8%AD%E7%9A%84%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</guid>
       <description>&lt;p&gt;Kafka的负载均衡学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的日志存储</title>
-      <link>http://cxis.me/2018/05/19/Kafka%E4%B8%AD%E7%9A%84%E6%97%A5%E5%BF%97%E5%AD%98%E5%82%A8/</link>
+      <link>https://cxis.me/2018/05/19/Kafka%E4%B8%AD%E7%9A%84%E6%97%A5%E5%BF%97%E5%AD%98%E5%82%A8/</link>
       <pubDate>Sat, 19 May 2018 19:28:00 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/19/Kafka%E4%B8%AD%E7%9A%84%E6%97%A5%E5%BF%97%E5%AD%98%E5%82%A8/</guid>
+      <guid>https://cxis.me/2018/05/19/Kafka%E4%B8%AD%E7%9A%84%E6%97%A5%E5%BF%97%E5%AD%98%E5%82%A8/</guid>
       <description>&lt;p&gt;Kafka的日志存储学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的主题和分区</title>
-      <link>http://cxis.me/2018/05/15/Kafka%E4%B8%AD%E7%9A%84%E4%B8%BB%E9%A2%98%E5%92%8C%E5%88%86%E5%8C%BA/</link>
+      <link>https://cxis.me/2018/05/15/Kafka%E4%B8%AD%E7%9A%84%E4%B8%BB%E9%A2%98%E5%92%8C%E5%88%86%E5%8C%BA/</link>
       <pubDate>Tue, 15 May 2018 20:56:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/15/Kafka%E4%B8%AD%E7%9A%84%E4%B8%BB%E9%A2%98%E5%92%8C%E5%88%86%E5%8C%BA/</guid>
+      <guid>https://cxis.me/2018/05/15/Kafka%E4%B8%AD%E7%9A%84%E4%B8%BB%E9%A2%98%E5%92%8C%E5%88%86%E5%8C%BA/</guid>
       <description>&lt;p&gt;Kafka的主题和分区学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的Consumer</title>
-      <link>http://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Consumer/</link>
+      <link>https://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Consumer/</link>
       <pubDate>Sun, 13 May 2018 15:30:22 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Consumer/</guid>
+      <guid>https://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Consumer/</guid>
       <description>&lt;p&gt;Kafka的Consumer学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的Producer</title>
-      <link>http://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Producer/</link>
+      <link>https://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Producer/</link>
       <pubDate>Sun, 13 May 2018 11:54:28 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Producer/</guid>
+      <guid>https://cxis.me/2018/05/13/Kafka%E4%B8%AD%E7%9A%84Producer/</guid>
       <description>&lt;p&gt;Kafka的Producer学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka中的Broker</title>
-      <link>http://cxis.me/2018/05/03/Kafka%E4%B8%AD%E7%9A%84Broker/</link>
+      <link>https://cxis.me/2018/05/03/Kafka%E4%B8%AD%E7%9A%84Broker/</link>
       <pubDate>Thu, 03 May 2018 21:54:12 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/03/Kafka%E4%B8%AD%E7%9A%84Broker/</guid>
+      <guid>https://cxis.me/2018/05/03/Kafka%E4%B8%AD%E7%9A%84Broker/</guid>
       <description>&lt;p&gt;Kafka的Broker学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Kafka概要</title>
-      <link>http://cxis.me/2018/05/01/Kafka%E6%A6%82%E8%A6%81/</link>
+      <link>https://cxis.me/2018/05/01/Kafka%E6%A6%82%E8%A6%81/</link>
       <pubDate>Tue, 01 May 2018 20:49:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/05/01/Kafka%E6%A6%82%E8%A6%81/</guid>
+      <guid>https://cxis.me/2018/05/01/Kafka%E6%A6%82%E8%A6%81/</guid>
       <description>&lt;p&gt;初识Kafka。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL的覆盖索引</title>
-      <link>http://cxis.me/2018/04/20/MySQL%E7%9A%84%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95/</link>
+      <link>https://cxis.me/2018/04/20/MySQL%E7%9A%84%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95/</link>
       <pubDate>Fri, 20 Apr 2018 19:02:49 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/20/MySQL%E7%9A%84%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95/</guid>
+      <guid>https://cxis.me/2018/04/20/MySQL%E7%9A%84%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95/</guid>
       <description>&lt;p&gt;MySQL的覆盖索引学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL的事务和实现</title>
-      <link>http://cxis.me/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/</link>
+      <link>https://cxis.me/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/</link>
       <pubDate>Thu, 19 Apr 2018 21:50:28 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/</guid>
+      <guid>https://cxis.me/2018/04/19/MySQL%E7%9A%84%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%AE%9E%E7%8E%B0/</guid>
       <description>&lt;p&gt;MySQL的事务和实现学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL的一致性读、快照读、锁定读、当前读</title>
-      <link>http://cxis.me/2018/04/18/MySQL%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%E5%BF%AB%E7%85%A7%E8%AF%BB%E9%94%81%E5%AE%9A%E8%AF%BB%E5%BD%93%E5%89%8D%E8%AF%BB/</link>
+      <link>https://cxis.me/2018/04/18/MySQL%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%E5%BF%AB%E7%85%A7%E8%AF%BB%E9%94%81%E5%AE%9A%E8%AF%BB%E5%BD%93%E5%89%8D%E8%AF%BB/</link>
       <pubDate>Wed, 18 Apr 2018 23:34:32 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/18/MySQL%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%E5%BF%AB%E7%85%A7%E8%AF%BB%E9%94%81%E5%AE%9A%E8%AF%BB%E5%BD%93%E5%89%8D%E8%AF%BB/</guid>
+      <guid>https://cxis.me/2018/04/18/MySQL%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%E5%BF%AB%E7%85%A7%E8%AF%BB%E9%94%81%E5%AE%9A%E8%AF%BB%E5%BD%93%E5%89%8D%E8%AF%BB/</guid>
       <description>&lt;p&gt;MySQL的一致性读、快照读、锁定读、当前读学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL的undo log和redo log</title>
-      <link>http://cxis.me/2018/04/18/MySQL%E7%9A%84undo-log%E5%92%8Credo-log/</link>
+      <link>https://cxis.me/2018/04/18/MySQL%E7%9A%84undo-log%E5%92%8Credo-log/</link>
       <pubDate>Wed, 18 Apr 2018 20:32:05 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/18/MySQL%E7%9A%84undo-log%E5%92%8Credo-log/</guid>
+      <guid>https://cxis.me/2018/04/18/MySQL%E7%9A%84undo-log%E5%92%8Credo-log/</guid>
       <description>&lt;p&gt;MySQL的undo log和redo log学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL的行锁、间隙锁和next-key lock</title>
-      <link>http://cxis.me/2018/04/18/MySQL%E7%9A%84%E8%A1%8C%E9%94%81%E9%97%B4%E9%9A%99%E9%94%81%E5%92%8Cnext-key-lock/</link>
+      <link>https://cxis.me/2018/04/18/MySQL%E7%9A%84%E8%A1%8C%E9%94%81%E9%97%B4%E9%9A%99%E9%94%81%E5%92%8Cnext-key-lock/</link>
       <pubDate>Wed, 18 Apr 2018 19:29:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/18/MySQL%E7%9A%84%E8%A1%8C%E9%94%81%E9%97%B4%E9%9A%99%E9%94%81%E5%92%8Cnext-key-lock/</guid>
+      <guid>https://cxis.me/2018/04/18/MySQL%E7%9A%84%E8%A1%8C%E9%94%81%E9%97%B4%E9%9A%99%E9%94%81%E5%92%8Cnext-key-lock/</guid>
       <description>&lt;p&gt;MySQL的行锁、间隙锁和next-key lock学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL的四种隔离级别</title>
-      <link>http://cxis.me/2018/04/17/MySQL%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</link>
+      <link>https://cxis.me/2018/04/17/MySQL%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</link>
       <pubDate>Tue, 17 Apr 2018 20:00:36 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/17/MySQL%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</guid>
+      <guid>https://cxis.me/2018/04/17/MySQL%E7%9A%84%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</guid>
       <description>&lt;p&gt;MySQL的四种隔离级别学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL中InnoDB的MVCC</title>
-      <link>http://cxis.me/2018/04/16/MySQL%E4%B8%ADInnoDB%E7%9A%84MVCC/</link>
+      <link>https://cxis.me/2018/04/16/MySQL%E4%B8%ADInnoDB%E7%9A%84MVCC/</link>
       <pubDate>Mon, 16 Apr 2018 22:59:10 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/16/MySQL%E4%B8%ADInnoDB%E7%9A%84MVCC/</guid>
+      <guid>https://cxis.me/2018/04/16/MySQL%E4%B8%ADInnoDB%E7%9A%84MVCC/</guid>
       <description>&lt;p&gt;MySQL的InnoDB引擎的MVCC学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL中InnoDB的意向锁</title>
-      <link>http://cxis.me/2018/04/16/MySQL%E4%B8%ADInnoDB%E7%9A%84%E6%84%8F%E5%90%91%E9%94%81/</link>
+      <link>https://cxis.me/2018/04/16/MySQL%E4%B8%ADInnoDB%E7%9A%84%E6%84%8F%E5%90%91%E9%94%81/</link>
       <pubDate>Mon, 16 Apr 2018 22:19:43 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/16/MySQL%E4%B8%ADInnoDB%E7%9A%84%E6%84%8F%E5%90%91%E9%94%81/</guid>
+      <guid>https://cxis.me/2018/04/16/MySQL%E4%B8%ADInnoDB%E7%9A%84%E6%84%8F%E5%90%91%E9%94%81/</guid>
       <description>&lt;p&gt;MySQL的InnoDB引擎的意向锁学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL中的锁</title>
-      <link>http://cxis.me/2018/04/16/MySQL%E4%B8%AD%E7%9A%84%E9%94%81/</link>
+      <link>https://cxis.me/2018/04/16/MySQL%E4%B8%AD%E7%9A%84%E9%94%81/</link>
       <pubDate>Mon, 16 Apr 2018 20:42:41 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/16/MySQL%E4%B8%AD%E7%9A%84%E9%94%81/</guid>
+      <guid>https://cxis.me/2018/04/16/MySQL%E4%B8%AD%E7%9A%84%E9%94%81/</guid>
       <description>&lt;p&gt;MySQL锁学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL索引及实现原理</title>
-      <link>http://cxis.me/2018/04/15/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <link>https://cxis.me/2018/04/15/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
       <pubDate>Sun, 15 Apr 2018 14:42:41 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/15/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <guid>https://cxis.me/2018/04/15/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
       <description>&lt;p&gt;MySQL索引、数据结构、算法等学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL中InnoDB存储引擎索引简介</title>
-      <link>http://cxis.me/2018/04/14/MySQL%E4%B8%ADInnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2018/04/14/MySQL%E4%B8%ADInnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sat, 14 Apr 2018 22:21:03 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/14/MySQL%E4%B8%ADInnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2018/04/14/MySQL%E4%B8%ADInnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;InnoDB存储引擎支持以下几种常见的索引：B+树索引、全文索引、哈希索引。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL存储引擎简介</title>
-      <link>http://cxis.me/2018/04/08/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2018/04/08/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sun, 08 Apr 2018 17:20:52 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/08/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2018/04/08/MySQL%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;MySQL提供插件式的表存储引擎，常用的存储引擎有：InnoDB、MyISAM。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MySQL体系架构简介</title>
-      <link>http://cxis.me/2018/04/07/MySQL%E4%BD%93%E7%B3%BB%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2018/04/07/MySQL%E4%BD%93%E7%B3%BB%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sat, 07 Apr 2018 22:12:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/04/07/MySQL%E4%BD%93%E7%B3%BB%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2018/04/07/MySQL%E4%BD%93%E7%B3%BB%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;MySQL逻辑架构可以分为三层：应用层、MySQL服务层、存储引擎层。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>上传Zip文件不解压读取文件内容时ZipEntry的size为-1的问题</title>
-      <link>http://cxis.me/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/</link>
+      <link>https://cxis.me/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/</link>
       <pubDate>Sat, 03 Mar 2018 21:27:51 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
+      <guid>https://cxis.me/2018/03/03/%E4%B8%8A%E4%BC%A0Zip%E6%96%87%E4%BB%B6%E4%B8%8D%E8%A7%A3%E5%8E%8B%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%97%B6ZipEntry%E7%9A%84size%E4%B8%BA-1%E7%9A%84%E9%97%AE%E9%A2%98/</guid>
       <description>简介 这几天在做通过流下载zip文件以及上传zip文件不解压读取zip文件内容的功能，在读取zip文件内容的时候遇到了size为-1的情况，在</description>
     </item>
     
     <item>
       <title>RocketMQ中Consumer的rebalance</title>
-      <link>http://cxis.me/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84rebalance/</link>
+      <link>https://cxis.me/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84rebalance/</link>
       <pubDate>Tue, 23 Jan 2018 15:39:27 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84rebalance/</guid>
+      <guid>https://cxis.me/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84rebalance/</guid>
       <description>&lt;p&gt;RocketMQ的rebalance学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中Consumer的心跳发送</title>
-      <link>http://cxis.me/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84%E5%BF%83%E8%B7%B3%E5%8F%91%E9%80%81/</link>
+      <link>https://cxis.me/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84%E5%BF%83%E8%B7%B3%E5%8F%91%E9%80%81/</link>
       <pubDate>Tue, 23 Jan 2018 11:58:22 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84%E5%BF%83%E8%B7%B3%E5%8F%91%E9%80%81/</guid>
+      <guid>https://cxis.me/2018/01/23/RocketMQ%E4%B8%ADConsumer%E7%9A%84%E5%BF%83%E8%B7%B3%E5%8F%91%E9%80%81/</guid>
       <description>&lt;p&gt;RocketMQ Consumer的心跳发送学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中的订阅关系一致</title>
-      <link>http://cxis.me/2018/01/22/RocketMQ%E4%B8%AD%E7%9A%84%E8%AE%A2%E9%98%85%E5%85%B3%E7%B3%BB%E4%B8%80%E8%87%B4/</link>
+      <link>https://cxis.me/2018/01/22/RocketMQ%E4%B8%AD%E7%9A%84%E8%AE%A2%E9%98%85%E5%85%B3%E7%B3%BB%E4%B8%80%E8%87%B4/</link>
       <pubDate>Mon, 22 Jan 2018 20:58:04 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/22/RocketMQ%E4%B8%AD%E7%9A%84%E8%AE%A2%E9%98%85%E5%85%B3%E7%B3%BB%E4%B8%80%E8%87%B4/</guid>
+      <guid>https://cxis.me/2018/01/22/RocketMQ%E4%B8%AD%E7%9A%84%E8%AE%A2%E9%98%85%E5%85%B3%E7%B3%BB%E4%B8%80%E8%87%B4/</guid>
       <description>&lt;p&gt;RocketMQ的订阅关系一致学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中Consumer启动流程</title>
-      <link>http://cxis.me/2018/01/22/RocketMQ%E4%B8%ADConsumer%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/</link>
+      <link>https://cxis.me/2018/01/22/RocketMQ%E4%B8%ADConsumer%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/</link>
       <pubDate>Mon, 22 Jan 2018 17:43:12 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/22/RocketMQ%E4%B8%ADConsumer%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/</guid>
+      <guid>https://cxis.me/2018/01/22/RocketMQ%E4%B8%ADConsumer%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/</guid>
       <description>&lt;p&gt;RocketMQ Consumer启动流程学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中的事务消息</title>
-      <link>http://cxis.me/2018/01/21/RocketMQ%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/</link>
+      <link>https://cxis.me/2018/01/21/RocketMQ%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/</link>
       <pubDate>Sun, 21 Jan 2018 20:16:12 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/21/RocketMQ%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/</guid>
+      <guid>https://cxis.me/2018/01/21/RocketMQ%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/</guid>
       <description>&lt;p&gt;RocketMQ的事务消息学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中的主从复制</title>
-      <link>http://cxis.me/2018/01/20/RocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</link>
+      <link>https://cxis.me/2018/01/20/RocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</link>
       <pubDate>Sat, 20 Jan 2018 15:30:51 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/20/RocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</guid>
+      <guid>https://cxis.me/2018/01/20/RocketMQ%E4%B8%AD%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</guid>
       <description>&lt;p&gt;RocketMQ的主从复制学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中的顺序消息</title>
-      <link>http://cxis.me/2018/01/20/RocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF/</link>
+      <link>https://cxis.me/2018/01/20/RocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF/</link>
       <pubDate>Sat, 20 Jan 2018 15:30:51 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/20/RocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF/</guid>
+      <guid>https://cxis.me/2018/01/20/RocketMQ%E4%B8%AD%E7%9A%84%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF/</guid>
       <description>&lt;p&gt;RocketMQ的顺序消息学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中的消息消费</title>
-      <link>http://cxis.me/2018/01/11/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E6%B6%88%E8%B4%B9/</link>
+      <link>https://cxis.me/2018/01/11/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E6%B6%88%E8%B4%B9/</link>
       <pubDate>Thu, 11 Jan 2018 21:46:55 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/11/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E6%B6%88%E8%B4%B9/</guid>
+      <guid>https://cxis.me/2018/01/11/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E6%B6%88%E8%B4%B9/</guid>
       <description>&lt;p&gt;RocketMQ的消息消费学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中的消息存储</title>
-      <link>http://cxis.me/2018/01/06/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8/</link>
+      <link>https://cxis.me/2018/01/06/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8/</link>
       <pubDate>Sat, 06 Jan 2018 10:31:59 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/06/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8/</guid>
+      <guid>https://cxis.me/2018/01/06/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8/</guid>
       <description>&lt;p&gt;RocketMQ的消息存储学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中的消息发送</title>
-      <link>http://cxis.me/2018/01/04/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81/</link>
+      <link>https://cxis.me/2018/01/04/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81/</link>
       <pubDate>Thu, 04 Jan 2018 20:16:27 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/04/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81/</guid>
+      <guid>https://cxis.me/2018/01/04/RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81/</guid>
       <description>&lt;p&gt;RocketMQ的消息发送过程学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ中的NameServer</title>
-      <link>http://cxis.me/2018/01/01/RocketMQ%E4%B8%AD%E7%9A%84NameServer/</link>
+      <link>https://cxis.me/2018/01/01/RocketMQ%E4%B8%AD%E7%9A%84NameServer/</link>
       <pubDate>Mon, 01 Jan 2018 17:39:10 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/01/RocketMQ%E4%B8%AD%E7%9A%84NameServer/</guid>
+      <guid>https://cxis.me/2018/01/01/RocketMQ%E4%B8%AD%E7%9A%84NameServer/</guid>
       <description>&lt;p&gt;RocketMQ的NameServer学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>RocketMQ架构</title>
-      <link>http://cxis.me/2018/01/01/RocketMQ%E6%9E%B6%E6%9E%84/</link>
+      <link>https://cxis.me/2018/01/01/RocketMQ%E6%9E%B6%E6%9E%84/</link>
       <pubDate>Mon, 01 Jan 2018 14:05:21 +0000</pubDate>
       
-      <guid>http://cxis.me/2018/01/01/RocketMQ%E6%9E%B6%E6%9E%84/</guid>
+      <guid>https://cxis.me/2018/01/01/RocketMQ%E6%9E%B6%E6%9E%84/</guid>
       <description>&lt;p&gt;RocketMQ包括：NameServer、Broker、Producer、Consumer。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的垃圾收集器</title>
-      <link>http://cxis.me/2017/09/17/JVM%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
+      <link>https://cxis.me/2017/09/17/JVM%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
       <pubDate>Sun, 17 Sep 2017 19:03:34 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/09/17/JVM%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
+      <guid>https://cxis.me/2017/09/17/JVM%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
       <description>&lt;p&gt;JVM中的垃圾收集器学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的即时编译</title>
-      <link>http://cxis.me/2017/09/09/JVM%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91/</link>
+      <link>https://cxis.me/2017/09/09/JVM%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91/</link>
       <pubDate>Sat, 09 Sep 2017 09:19:51 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/09/09/JVM%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91/</guid>
+      <guid>https://cxis.me/2017/09/09/JVM%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91/</guid>
       <description>&lt;p&gt;JVM中的即时编译学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中方法的分派</title>
-      <link>http://cxis.me/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/</link>
+      <link>https://cxis.me/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/</link>
       <pubDate>Sat, 02 Sep 2017 16:17:40 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/</guid>
+      <guid>https://cxis.me/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/</guid>
       <description>&lt;p&gt;JVM中方法分派和方法调用学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中类的生命周期</title>
-      <link>http://cxis.me/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</link>
+      <link>https://cxis.me/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</link>
       <pubDate>Sat, 26 Aug 2017 19:53:29 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</guid>
+      <guid>https://cxis.me/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</guid>
       <description>&lt;p&gt;JVM中类的生命周期学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的TLAB</title>
-      <link>http://cxis.me/2017/08/21/JVM%E4%B8%AD%E7%9A%84TLAB/</link>
+      <link>https://cxis.me/2017/08/21/JVM%E4%B8%AD%E7%9A%84TLAB/</link>
       <pubDate>Mon, 21 Aug 2017 16:24:21 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/08/21/JVM%E4%B8%AD%E7%9A%84TLAB/</guid>
+      <guid>https://cxis.me/2017/08/21/JVM%E4%B8%AD%E7%9A%84TLAB/</guid>
       <description>&lt;p&gt;JVM中的TLAB学习&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中对象的栈上分配</title>
-      <link>http://cxis.me/2017/08/21/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D/</link>
+      <link>https://cxis.me/2017/08/21/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D/</link>
       <pubDate>Mon, 21 Aug 2017 14:30:45 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/08/21/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D/</guid>
+      <guid>https://cxis.me/2017/08/21/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D/</guid>
       <description>&lt;p&gt;JVM中的栈上分配学习&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中类文件结构和字节码指令示例</title>
-      <link>http://cxis.me/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/</link>
+      <link>https://cxis.me/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/</link>
       <pubDate>Sun, 20 Aug 2017 20:31:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/</guid>
+      <guid>https://cxis.me/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/</guid>
       <description>&lt;p&gt;JVM中类文件结构和字节码指令示例。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的字节码指令</title>
-      <link>http://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/</link>
+      <link>https://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/</link>
       <pubDate>Sat, 19 Aug 2017 21:29:52 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/</guid>
+      <guid>https://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/</guid>
       <description>&lt;p&gt;JVM中的字节码指令学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的Class类文件结构</title>
-      <link>http://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</link>
+      <link>https://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</link>
       <pubDate>Sat, 19 Aug 2017 17:48:33 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</guid>
+      <guid>https://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</guid>
       <description>&lt;p&gt;JVM中的Class类文件结构学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的锁使用过程</title>
-      <link>http://cxis.me/2017/07/31/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B/</link>
+      <link>https://cxis.me/2017/07/31/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Mon, 31 Jul 2017 15:02:04 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/31/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B/</guid>
+      <guid>https://cxis.me/2017/07/31/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;JVM中的锁使用过程，从偏向锁到轻量级锁到重量级锁的过程。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的锁以及锁优化</title>
-      <link>http://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/</link>
+      <link>https://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/</link>
       <pubDate>Sun, 30 Jul 2017 23:50:58 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/</guid>
+      <guid>https://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/</guid>
       <description>&lt;p&gt;JVM中的锁优化学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的对象头</title>
-      <link>http://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%A4%B4/</link>
+      <link>https://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%A4%B4/</link>
       <pubDate>Sun, 30 Jul 2017 21:14:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%A4%B4/</guid>
+      <guid>https://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%A4%B4/</guid>
       <description>&lt;p&gt;JVM中的对象和对象头学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的Java虚拟机栈</title>
-      <link>http://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/</link>
+      <link>https://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/</link>
       <pubDate>Sun, 16 Jul 2017 19:59:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/</guid>
+      <guid>https://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/</guid>
       <description>&lt;p&gt;JVM中的Java虚拟机栈学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的程序计数器</title>
-      <link>http://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/</link>
+      <link>https://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/</link>
       <pubDate>Sun, 16 Jul 2017 15:40:55 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/</guid>
+      <guid>https://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/</guid>
       <description>&lt;p&gt;JVM中的程序计数器学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的方法区、永久代以及Metaspace</title>
-      <link>http://cxis.me/2017/07/14/JVM%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95%E5%8C%BA%E6%B0%B8%E4%B9%85%E4%BB%A3%E4%BB%A5%E5%8F%8AMetaspace/</link>
+      <link>https://cxis.me/2017/07/14/JVM%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95%E5%8C%BA%E6%B0%B8%E4%B9%85%E4%BB%A3%E4%BB%A5%E5%8F%8AMetaspace/</link>
       <pubDate>Fri, 14 Jul 2017 22:29:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/14/JVM%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95%E5%8C%BA%E6%B0%B8%E4%B9%85%E4%BB%A3%E4%BB%A5%E5%8F%8AMetaspace/</guid>
+      <guid>https://cxis.me/2017/07/14/JVM%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95%E5%8C%BA%E6%B0%B8%E4%B9%85%E4%BB%A3%E4%BB%A5%E5%8F%8AMetaspace/</guid>
       <description>&lt;p&gt;JVM中的方法区、永久代、元空间学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的常量池</title>
-      <link>http://cxis.me/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/</link>
+      <link>https://cxis.me/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/</link>
       <pubDate>Sat, 08 Jul 2017 11:42:10 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/</guid>
+      <guid>https://cxis.me/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/</guid>
       <description>&lt;p&gt;JVM中的常量池有：运行时常量池、Class文件常量池、字符串常量池、包装类常量池。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM空间分配担保</title>
-      <link>http://cxis.me/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/</link>
+      <link>https://cxis.me/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/</link>
       <pubDate>Sat, 01 Jul 2017 23:12:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/</guid>
+      <guid>https://cxis.me/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/</guid>
       <description>&lt;p&gt;当发生YGC时，JVM先检查老年代最大的可用连续空间是否大于新生代所有对象总和，如果大于，这次YGC是安全的；如果不大于则会看HandlePromotionFailure参数配置的值。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的CMS垃圾收集器</title>
-      <link>http://cxis.me/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
+      <link>https://cxis.me/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
       <pubDate>Sat, 01 Jul 2017 17:04:04 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
+      <guid>https://cxis.me/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
       <description>&lt;p&gt;CMS是老年代的垃圾收集器，使用标记-清除算法，是并发的收集器。可与Serial收集器和Parallel New收集器配合使用。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中FullGC耗时过高</title>
-      <link>http://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</link>
+      <link>https://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</link>
       <pubDate>Sat, 24 Jun 2017 23:49:09 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</guid>
+      <guid>https://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</guid>
       <description>&lt;p&gt;分析一下FullGC耗时过高的原因&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中FullGC频繁</title>
-      <link>http://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E9%A2%91%E7%B9%81/</link>
+      <link>https://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E9%A2%91%E7%B9%81/</link>
       <pubDate>Sat, 24 Jun 2017 23:48:28 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E9%A2%91%E7%B9%81/</guid>
+      <guid>https://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E9%A2%91%E7%B9%81/</guid>
       <description>&lt;p&gt;分析一下FullGC频繁的原因&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中YoungGC耗时过高</title>
-      <link>http://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</link>
+      <link>https://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</link>
       <pubDate>Sat, 24 Jun 2017 23:47:49 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</guid>
+      <guid>https://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</guid>
       <description>&lt;p&gt;分析一下YGC耗时过高的原因&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中YoungGC频繁</title>
-      <link>http://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E9%A2%91%E7%B9%81/</link>
+      <link>https://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E9%A2%91%E7%B9%81/</link>
       <pubDate>Sat, 24 Jun 2017 23:47:36 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E9%A2%91%E7%B9%81/</guid>
+      <guid>https://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E9%A2%91%E7%B9%81/</guid>
       <description>&lt;p&gt;分析一下YGC频繁的原因。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM四种引用类型</title>
-      <link>http://cxis.me/2017/06/18/JVM%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B/</link>
+      <link>https://cxis.me/2017/06/18/JVM%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B/</link>
       <pubDate>Sun, 18 Jun 2017 22:01:48 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/18/JVM%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B/</guid>
+      <guid>https://cxis.me/2017/06/18/JVM%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B/</guid>
       <description>&lt;p&gt;Java提供了四种引用类型：强引用、软引用、弱引用、虚引用，这几种不同引用类型主要体现在GC上。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM动态对象年龄判断</title>
-      <link>http://cxis.me/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/</link>
+      <link>https://cxis.me/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/</link>
       <pubDate>Sat, 17 Jun 2017 22:26:30 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/</guid>
+      <guid>https://cxis.me/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/</guid>
       <description>&lt;p&gt;JVM中新生代对象晋升到老年代的时候，对象会有个年龄最大阈值，但是除了这个年龄最大阈值外，JVM还会对对象年龄进行动态判断，不等到年龄最大阈值就可以晋升到老年代。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM中的MinorGC-MajorGC-FullGC</title>
-      <link>http://cxis.me/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/</link>
+      <link>https://cxis.me/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/</link>
       <pubDate>Sat, 17 Jun 2017 16:02:05 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/</guid>
+      <guid>https://cxis.me/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/</guid>
       <description>&lt;p&gt;Minor GC、Major GC、Full GC&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM垃圾收集算法和垃圾收集器</title>
-      <link>http://cxis.me/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
+      <link>https://cxis.me/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
       <pubDate>Sun, 11 Jun 2017 00:16:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
+      <guid>https://cxis.me/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
       <description>&lt;p&gt;JVM的垃圾收集算法和垃圾收集器学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM类加载器</title>
-      <link>http://cxis.me/2017/06/04/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</link>
+      <link>https://cxis.me/2017/06/04/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</link>
       <pubDate>Sun, 04 Jun 2017 22:26:33 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/04/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</guid>
+      <guid>https://cxis.me/2017/06/04/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</guid>
       <description>&lt;p&gt;JVM类加载器有三种：启动类加载器、扩展类加载器、应用类加载器。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM类加载机制</title>
-      <link>http://cxis.me/2017/06/03/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2017/06/03/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Sat, 03 Jun 2017 21:44:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/03/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2017/06/03/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;JVM中类的生命周期有加载、连接（验证、准备、解析）初始化、使用、卸载。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM创建对象的过程简介</title>
-      <link>http://cxis.me/2017/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2017/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Thu, 01 Jun 2017 23:45:51 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2017/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;记录一下JVM创建对象的过程，就是new一个对象的时候发生了哪些事情。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JVM运行时数据区域介绍</title>
-      <link>http://cxis.me/2017/05/20/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2017/05/20/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Sat, 20 May 2017 23:28:39 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/20/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2017/05/20/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;此处的内容是根据Java虚拟机规范（Java SE 7）相关内容以及深入理解Java虚拟机等做的总结。可能有不对的地方。了解这些区域，可以从总体上看下虚拟机内部是怎么构造的，网上也有相关的图片介绍，可以适当的记下图片内容，这样可以有一个立体的感受，更容易记忆。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7中Digester的使用以及对server.xml的解析过程分析</title>
-      <link>http://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</link>
       <pubDate>Wed, 17 May 2017 00:16:15 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/17/tomcat7%E4%B8%ADDigester%E7%9A%84%E4%BD%BF%E7%94%A8%E4%BB%A5%E5%8F%8A%E5%AF%B9server.xml%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</guid>
       <description>&lt;p&gt;tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7的server.xml解析</title>
-      <link>http://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Tue, 16 May 2017 00:04:07 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;这里对tomcat7的server.xml文件进行解释一下，方便在分析启动源码的时候理解Digester做的事情。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7启动流程源码分析</title>
-      <link>http://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
       <pubDate>Wed, 10 May 2017 17:58:39 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
       <description>&lt;p&gt;主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7类加载器解析</title>
-      <link>http://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 10 May 2017 11:12:56 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;tomcat中也有很多的自定义的类加载器，保证容器的不同部分，以及运行在容器中的web应用可以访问不同的保存着类和资源的仓库。tomcat的类加载器机制跟jdk的类加载器机制基本类似，但是web应用类加载器处理请求的时候会稍微有些不同，jdk的类加载机制不再重复。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>关于UTF-8的BOM标识以及非法字符65279错误的一些记录</title>
-      <link>http://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</link>
+      <link>https://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Tue, 09 May 2017 21:33:28 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</guid>
+      <guid>https://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</guid>
       <description>&lt;p&gt;关于UTF-8的BOM标识和非法字符&lt;code&gt;\65279&lt;/code&gt;的错误，已经遇到过好几次了，在这里记录一下。关于UTF-8带BOM和UTF-8不带BOM的区别，网上有很多解释。我遇到的最多的就是文件在Windows上被别人修改后，在我的电脑上会出错（我一直使用linux和macos），一般都是导入项目的时候，进行编译就会有问题。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7中对http请求的处理过程</title>
-      <link>http://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</link>
+      <link>https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Fri, 05 May 2017 23:44:31 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</guid>
+      <guid>https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;每个Server可以代表Tomcat，每个Server下面有多个Service，每个Service中包含多个Connector和一个Container，Connector用来处理和客户端的通信，然后把请求交给Container进行处理。这里就简单看下处理http请求的流程。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>tomcat7架构简介</title>
-      <link>http://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 05 May 2017 23:41:35 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;这里仅仅是对Tomcat7中主要组件进行简单说明，详细的可以查看下tomcat的相关文档。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>设计模式中的责任链模式解析</title>
-      <link>http://cxis.me/2017/05/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Fri, 05 May 2017 18:09:56 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;这篇主要是在看Tomcat源码的时候，遇到了责任链模式相关的东西，做一下简单记录，可以和Tomcat源码中责任链的应用对比学习下，会更有效果。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>http协议简单解析</title>
-      <link>http://cxis.me/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Thu, 04 May 2017 15:13:44 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/05/04/http%E5%8D%8F%E8%AE%AE%E7%AE%80%E5%8D%95%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;主要记录一下http协议的一些简单的知识，主要包括请求消息，响应消息的组成，以及get和post的‘对比’，对于更详细的信息可以看下http RFC。https也没有做说明。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>跨域以及CORS相关知识简介</title>
-      <link>http://cxis.me/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 03 May 2017 16:28:21 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;html同源策略是不允许JavaScript的跨域请求的，而使用CORS（Cross-origin resource sharing）可以实现跨域请求，当然也有其他的办法，常用的有JSONP方式来实现跨域，这里就简单的列举一下实现跨域的几种办法，对于CROS和JSONP详细的了解一下。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring定时器的配置从1.0到5.0的演进</title>
-      <link>http://cxis.me/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
+      <link>https://cxis.me/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
       <pubDate>Wed, 19 Apr 2017 16:20:43 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
+      <guid>https://cxis.me/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
       <description>&lt;p&gt;这里主要是记录下从Spring1.0到现在的5.0中定时器的配置方式，关于源码，暂先不解释。主要用作自己记录用，如果有错误的还请指出一起改正学习，免得误导别人，谢谢。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java中SPI机制深入及源码解析</title>
-      <link>http://cxis.me/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Mon, 17 Apr 2017 15:18:47 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;SPI，Service Provider Interface，主要是被框架的开发人员使用，比如&lt;code&gt;java.sql.Driver&lt;/code&gt;接口，其他不同厂商可以针对同一接口做出不同的实现，mysql和postgresql都有不同的实现提供给用户，而Java的SPI机制可以为某个接口寻找服务实现。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>从头开始写一个迷你dubbo</title>
-      <link>http://cxis.me/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/</link>
+      <link>https://cxis.me/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/</link>
       <pubDate>Fri, 14 Apr 2017 19:14:24 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/</guid>
+      <guid>https://cxis.me/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/</guid>
       <description>&lt;p&gt;从头开始写一个迷你的dubbo，仅用作学习用，学习的过程中更深入的了解下dubbo，同时也补充下其他的知识。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>关于Servlet线程安全性和DispatcherServlet的线程安全性的解析</title>
-      <link>http://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Thu, 13 Apr 2017 16:33:01 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java Servlet工作流程以及源码解析</title>
-      <link>http://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Thu, 13 Apr 2017 12:11:02 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;关于Servlet的学习还是在上学的时候，自学Java，也就是只是了解了Servlet是什么以及怎么使用，现在慢慢的明白很多很多的框架等等都是在Servlet上做的扩展，也开始明白自己的基础不好。现在回头来学习一下Servlet的相关知识。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP源码深入解析</title>
-      <link>http://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 12 Apr 2017 22:39:24 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;有关AOP相关概念以及Spring AOP相关概念和Spring AOP的使用不再重复。关于AOP在Spring中的地位，不用说相信我们都知道，也都会用，但是对于更深入的东西，还未接触过，这里就对Spring AOP的相关源码进行说明一下，看看到底Spring中AOP是怎么实现的。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java动态代理机制解析</title>
-      <link>http://cxis.me/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 12 Apr 2017 21:09:20 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;动态代理是指在运行时动态生成代理类。不需要我们像静态代理那个去手动写一个个的代理类。生成动态代理类有很多方式：Java动态代理，CGLIB，Javassist，ASM库等。这里主要说一下Java动态代理的实现。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>设计模式中的代理模式解析</title>
-      <link>http://cxis.me/2017/04/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 12 Apr 2017 16:35:57 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;很多地方都用到了代理模式，比如AOP就是代理模式的一种应用，还有dubbo中消费者在初始化的时候，并没有真正的去调用服务提供者执行真正业务逻辑，而是返回一个代理，等到使用的时候，再去调用调用实际业务逻辑。代理模式还有很多其他的应用，比如资源懒加载等。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP概念，原理，应用介绍</title>
-      <link>http://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Wed, 12 Apr 2017 14:12:55 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%A6%82%E5%BF%B5%E5%8E%9F%E7%90%86%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;心情没法不沉重，被问到AOP是什么？AOP原理是什么？我竟然张大了嘴巴，说不出来！对于一个程序员的打击，还能有比这更大的吗？我没脸说我是个写代码的，我也没脸说我是程序员。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>自己写的，自己说不出来？</title>
-      <link>http://cxis.me/2017/04/11/%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E8%87%AA%E5%B7%B1%E8%AF%B4%E4%B8%8D%E5%87%BA%E6%9D%A5/</link>
+      <link>https://cxis.me/2017/04/11/%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E8%87%AA%E5%B7%B1%E8%AF%B4%E4%B8%8D%E5%87%BA%E6%9D%A5/</link>
       <pubDate>Tue, 11 Apr 2017 21:35:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/11/%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E8%87%AA%E5%B7%B1%E8%AF%B4%E4%B8%8D%E5%87%BA%E6%9D%A5/</guid>
+      <guid>https://cxis.me/2017/04/11/%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E8%87%AA%E5%B7%B1%E8%AF%B4%E4%B8%8D%E5%87%BA%E6%9D%A5/</guid>
       <description>&lt;p&gt;自己写的文章，被问到，自己却说不出来！一塌糊涂！真想抽大嘴巴子抽到不能停～开始怀疑，我是不是不适合做技术？经历一塌糊涂，技术一塌糊涂。还能做啥？&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP的配置从1.0到5.0的演进</title>
-      <link>http://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
+      <link>https://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
       <pubDate>Mon, 10 Apr 2017 16:17:35 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
+      <guid>https://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
       <description>&lt;p&gt;最近在学习Spring稍微深入一点的东西，在这过程中发现虽然有很多关于各种AOP，IOC原理配置等的文章，但是都只是针对某一版本或者压根儿就没有标明版本的解析配置等。或许是我理解力不够，为了方便自己以后快速找到这些东西去看，还是自己记录下。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JUC中Lock和ReentrantLock介绍及源码解析</title>
-      <link>http://cxis.me/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>SpringMVC执行流程及源码解析</title>
-      <link>http://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Thu, 06 Apr 2017 22:47:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;在SpringMVC中主要是围绕着DispatcherServlet来设计，可以把它当做指挥中心。这里先说明一下SpringMVC文档给出的执行流程，然后是我们稍微具体的执行流程，最后是流程大致的源码跟踪。关于很很很详细的源码解析，这里暂先不做。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Ubuntu，请告诉我这不是真的！</title>
-      <link>http://cxis.me/2017/04/06/Ubuntu%E8%AF%B7%E5%91%8A%E8%AF%89%E6%88%91%E8%BF%99%E4%B8%8D%E6%98%AF%E7%9C%9F%E7%9A%84/</link>
+      <link>https://cxis.me/2017/04/06/Ubuntu%E8%AF%B7%E5%91%8A%E8%AF%89%E6%88%91%E8%BF%99%E4%B8%8D%E6%98%AF%E7%9C%9F%E7%9A%84/</link>
       <pubDate>Thu, 06 Apr 2017 09:29:09 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/06/Ubuntu%E8%AF%B7%E5%91%8A%E8%AF%89%E6%88%91%E8%BF%99%E4%B8%8D%E6%98%AF%E7%9C%9F%E7%9A%84/</guid>
+      <guid>https://cxis.me/2017/04/06/Ubuntu%E8%AF%B7%E5%91%8A%E8%AF%89%E6%88%91%E8%BF%99%E4%B8%8D%E6%98%AF%E7%9C%9F%E7%9A%84/</guid>
       <description>&lt;p&gt;Ubuntu别闹，请告诉我这是愚人节的过期玩笑。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;We are wrapping up an excellent quarter and an excellent year for the company, with performance in many teams and products that we can be proud of. As we head into the new fiscal year, it’s appropriate to reassess each of our initiatives. I’m writing to let you know that we will end our investment in Unity8, the phone and convergence shell. We will shift our default Ubuntu desktop back to GNOME for Ubuntu 18.04 LTS.&lt;/p&gt;
@@ -1539,19 +1539,19 @@
     
     <item>
       <title>使用gogs搭建git服务器记录</title>
-      <link>http://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/</link>
+      <link>https://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Mon, 03 Apr 2017 12:07:44 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/</guid>
+      <guid>https://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/</guid>
       <description>&lt;p&gt;昨晚半夜网上一个朋友找到我，说是使用gogs搭建git服务器，使用ssh操作要免密啥啥啥的～也没描述清楚。就是要ssh的方式，提交时候不要账号密码，心想这不就三下的事情吗？结果折腾到晚上一点，没好～敢肯定的是他按照网上的毒教程，被坑了！还是自己本地虚拟机配置一下吧～&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中Directory解析</title>
-      <link>http://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 02 Apr 2017 23:38:55 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Directory代表多个Invoker，可以把它看成List&lt;!-- raw HTML omitted --&gt;，但与List不同的是，它的值可能是动态变化的，比如注册中心推送变更。Cluster将Directory中的多个Invoker伪装成一个Invoker，对上层透明，伪装过程包含了容错逻辑，调用失败后，重试另一个。&lt;/p&gt;
 &lt;/blockquote&gt;</description>
@@ -1559,76 +1559,76 @@
     
     <item>
       <title>Dubbo中订阅和通知解析</title>
-      <link>http://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 02 Apr 2017 20:02:46 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;Dubbo中关于服务的订阅和通知主要发生在服务提供方暴露服务的过程和服务消费方初始化时候引用服务的过程中。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中集群Cluster，负载均衡，容错，路由解析</title>
-      <link>http://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 26 Mar 2017 12:12:49 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>JUC中AQS简介</title>
-      <link>http://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Thu, 23 Mar 2017 16:25:44 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中服务消费者和服务提供者之间的请求和响应过程</title>
-      <link>http://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/</link>
+      <link>https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Tue, 21 Mar 2017 23:58:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/</guid>
+      <guid>https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;服务提供者初始化完成之后，对外暴露Exporter。服务消费者初始化完成之后，得到的是Proxy代理，方法调用的时候就是调用代理。&lt;/p&gt;
 &lt;p&gt;服务消费者经过初始化之后，得到的是一个动态代理类，InvokerInvocationHandler，包含MockClusterInvoker，MockClusterInvoker包含一个RegistryDirectory和FailoverClusterInvoker。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中消费者初始化的过程解析</title>
-      <link>http://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Tue, 21 Mar 2017 20:30:29 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;首先还是Spring碰到dubbo的标签之后，会使用parseCustomElement解析dubbo标签，使用的解析器是dubbo的DubboBeanDefinitionParser，解析完成之后返回BeanDefinition给Spring管理。&lt;/p&gt;
 &lt;p&gt;服务消费者端对应的是ReferenceBean，实现了ApplicationContextAware接口，Spring会在Bean的实例化那一步回调setApplicationContext方法。也实现了InitializingBean接口，接着会回调afterPropertySet方法。还实现了FactoryBean接口，实现FactoryBean可以在后期获取bean的时候做一些操作，dubbo在这个时候做初始化。另外ReferenceBean还实现了DisposableBean，会在bean销毁的时候调用destory方法。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中编码和解码的解析</title>
-      <link>http://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 19 Mar 2017 23:25:51 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
       <description>（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2</description>
     </item>
     
     <item>
       <title>Netty3服务端流程简介</title>
-      <link>http://cxis.me/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sun, 19 Mar 2017 20:27:39 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;在学习Dubbo的时候需要学习Netty的流程等，在此做一个简单的入门学习。Dubbo中使用的是Netty3，所以这里说的都是Netty3。&lt;/p&gt;
 &lt;p&gt;Netty3可以看成是对Reactor的实现，所以先简单看下Reactor模式。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中暴露服务的过程解析</title>
-      <link>http://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 19 Feb 2017 00:46:14 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;dubbo暴露服务有两种情况，一种是设置了延迟暴露（比如delay=&amp;quot;5000&amp;rdquo;），另外一种是没有设置延迟暴露或者延迟设置为-1（delay=&amp;rdquo;-1&amp;rdquo;）：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;设置了延迟暴露，dubbo在Spring实例化bean（initializeBean）的时候会对实现了InitializingBean的类进行回调，回调方法是afterPropertySet()，如果设置了延迟暴露，dubbo在这个方法中进行服务的发布。&lt;/li&gt;
@@ -1639,356 +1639,356 @@
     
     <item>
       <title>Dubbo中SPI扩展机制详解</title>
-      <link>http://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</link>
+      <link>https://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</link>
       <pubDate>Sat, 18 Feb 2017 23:13:34 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</guid>
+      <guid>https://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</guid>
       <description>&lt;p&gt;前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring的ApplicationContext事件机制</title>
-      <link>http://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/</link>
+      <link>https://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Wed, 15 Feb 2017 19:04:30 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;ApplicationContext中事件处理是由ApplicationEvent类和ApplicationListener接口来提供的。如果一个Bean实现了ApplicationListener接口，并且已经发布到容器中去，每次ApplicationContext发布一个ApplicationEvent事件，这个Bean就会接到通知。Spring事件机制是观察者模式的实现。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中Bean的生命周期</title>
-      <link>http://cxis.me/2017/02/12/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</link>
+      <link>https://cxis.me/2017/02/12/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</link>
       <pubDate>Sun, 12 Feb 2017 22:02:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/12/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</guid>
+      <guid>https://cxis.me/2017/02/12/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</guid>
       <description>&lt;p&gt;BeanFactory和ApplicationContext是Spring中两种很重要的容器，前者提供了最基本的依赖注入的支持，后者在继承前者的基础上进行了功能的拓展，增加了事件传播，资源访问，国际化的支持等功能。同时两者的生命周期也稍微有些不同。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中IOC容器的初始化过程</title>
-      <link>http://cxis.me/2017/02/10/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/</link>
+      <link>https://cxis.me/2017/02/10/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Fri, 10 Feb 2017 23:59:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/10/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/</guid>
+      <guid>https://cxis.me/2017/02/10/Spring%E4%B8%ADIOC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;Spring IOC容器初始化过程分为Resource定位，载入解析，注册。IOC容器初始化过程中不包含Bean的依赖注入。Bean的依赖注入一般会发生在第一次通过getBean向容器索取Bean的时候。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>SNMP-MIB-SNMP4J简介</title>
-      <link>http://cxis.me/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Tue, 27 Dec 2016 15:15:15 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;SNMP全称Simple Network Management Protocol，简单网络管理协议。是TCP/IP协议的一部分，属于应用层协议。SNMP协议主要用来解决网络设备的管理，大多数的网络管理系统都是基于SNMP协议。通过该协议可以实现在被管理的设备上获取各种参数，还可以设置修改这些参数。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>volatile简介</title>
-      <link>http://cxis.me/2016/12/15/volatile%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/12/15/volatile%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Thu, 15 Dec 2016 16:55:57 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/12/15/volatile%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/12/15/volatile%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;Java允许线程访问共享变量。作为规则，为了确保共享变量被一致的和可靠的更新，线程应该确保它获得一个排它锁单独的获取这个变量。Java提供了第二种机制即volatile关键字，在某些情况下比锁更加方便。一个字段可以被声明为volatile，在这种情况下，Java内存模型确保所有线程看到的变量值都一样。（&lt;a href=&#34;https://docs.oracle.com/javase/specs/jls/se7/html/jls-8.html#jls-8.3.1.4&#34;&gt;Java语言规范&lt;/a&gt;）&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>ThreadLocal简介</title>
-      <link>http://cxis.me/2016/12/05/ThreadLocal%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/12/05/ThreadLocal%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 05 Dec 2016 20:55:59 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/12/05/ThreadLocal%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/12/05/ThreadLocal%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;h1 id=&#34;threadlocal简介&#34;&gt;ThreadLocal简介&lt;/h1&gt;
 &lt;p&gt;Java中的ThreadLocal类给每个线程分配一个只属于该线程的变量副本，可以用来实现线程间的数据隔离，当前线程的变量不能被其他线程访问。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java同步简介</title>
-      <link>http://cxis.me/2016/11/30/Java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/11/30/Java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 30 Nov 2016 20:17:41 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/11/30/Java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/11/30/Java%E5%90%8C%E6%AD%A5%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;h1 id=&#34;java同步&#34;&gt;Java同步&lt;/h1&gt;
 &lt;p&gt;Java中同步一直都是很重要的问题，对于初学者来说也是不太容易能理解的问题。特在此记录一下有关Java中同步和锁的知识。主要涉及到同步的概念以及Java中解决的办法和简单的例子。有关锁Lock中的内容不在此做说明。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java多线程简介</title>
-      <link>http://cxis.me/2016/11/29/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/11/29/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Tue, 29 Nov 2016 21:40:15 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/11/29/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/11/29/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;h1 id=&#34;java多线程简介&#34;&gt;Java多线程简介&lt;/h1&gt;
 &lt;p&gt;Java中内置了对多线程的支持，让多线程的开发方便很多，但同时也带来了另外的复杂，线程间的交互以及很多的不确定性让多线程又显得很复杂。在此只是针对Java中多线程的基础做些说明，有关线程和进程的区别，以及多线程的好处和更深层的暂不多说。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>MVC简介</title>
-      <link>http://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 28 Nov 2016 21:34:00 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;h1 id=&#34;mvc简介&#34;&gt;MVC简介&lt;/h1&gt;
 &lt;p&gt;面试的时候被问到关于MVC相关的知识，才发现自己只会说出来什么叫MVC，但是其详细的东西自己却无法顺利的表述出来，特在此记录下。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Executor框架简介</title>
-      <link>http://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Thu, 11 Aug 2016 15:16:11 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</guid>
       <description>Executor框架是在Java5中引入的，可以通过该框架来控制线程的启动，执行，关闭，简化并发编程。Executor框架把任务提交和执行解</description>
     </item>
     
     <item>
       <title>ConcurrentLinkedQueue简介</title>
-      <link>http://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 05 Aug 2016 22:06:52 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</guid>
       <description>ConcurrentLinkedQueue是一个基于链表的无界线程安全队列，非阻塞实现方式，先进先出，适合高并发的场景。 非阻塞的性能较好，采</description>
     </item>
     
     <item>
       <title>LinkedBlockingQueue简介</title>
-      <link>http://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 05 Aug 2016 10:17:46 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
       <description>LinkedBlockingQueue是一个单向链表实现的阻塞队列，先进先出的顺序。支持多线程并发操作。 相比于数组实现的ArrayBlock</description>
     </item>
     
     <item>
       <title>我的计算机之路</title>
-      <link>http://cxis.me/2016/07/29/%E6%88%91%E7%9A%84%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B9%8B%E8%B7%AF/</link>
+      <link>https://cxis.me/2016/07/29/%E6%88%91%E7%9A%84%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B9%8B%E8%B7%AF/</link>
       <pubDate>Fri, 29 Jul 2016 17:40:21 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/07/29/%E6%88%91%E7%9A%84%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B9%8B%E8%B7%AF/</guid>
+      <guid>https://cxis.me/2016/07/29/%E6%88%91%E7%9A%84%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B9%8B%E8%B7%AF/</guid>
       <description>从03年接触第一本计算机相关的书，到第一次接触计算机申请第一个qq，到第一台手机，第一台智能机，在手机上做开发学习，到第二次高考报志愿的毫不</description>
     </item>
     
     <item>
       <title>SpringBoot简易教程</title>
-      <link>http://cxis.me/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/</link>
+      <link>https://cxis.me/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/</link>
       <pubDate>Fri, 08 Jul 2016 14:36:41 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/</guid>
+      <guid>https://cxis.me/2016/07/08/SpringBoot%E7%AE%80%E6%98%93%E6%95%99%E7%A8%8B/</guid>
       <description>此为个人学习所用,从pom文件配置,datasource,log配置,到集成druid以及dubbo等都只做了简单的介绍.顺序按照个人习惯,</description>
     </item>
     
     <item>
       <title>tomcat与memcached-session-manager共享session测试</title>
-      <link>http://cxis.me/2016/07/01/tomcat%E4%B8%8Ememcached-session-manager%E5%85%B1%E4%BA%ABsession%E6%B5%8B%E8%AF%95/</link>
+      <link>https://cxis.me/2016/07/01/tomcat%E4%B8%8Ememcached-session-manager%E5%85%B1%E4%BA%ABsession%E6%B5%8B%E8%AF%95/</link>
       <pubDate>Fri, 01 Jul 2016 15:09:23 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/07/01/tomcat%E4%B8%8Ememcached-session-manager%E5%85%B1%E4%BA%ABsession%E6%B5%8B%E8%AF%95/</guid>
+      <guid>https://cxis.me/2016/07/01/tomcat%E4%B8%8Ememcached-session-manager%E5%85%B1%E4%BA%ABsession%E6%B5%8B%E8%AF%95/</guid>
       <description>简介 看书刚好看到集群session共享,总觉得只看不做,不能确定这到底是怎么运行的.所以就做了这个测试.有关Memcached-Sessio</description>
     </item>
     
     <item>
       <title>一次简单的持久带内存溢出java.lang.OutOfMemoryError: PermGen space</title>
-      <link>http://cxis.me/2016/06/28/%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BAjava.lang.OutOfMemoryError-PermGen-space/</link>
+      <link>https://cxis.me/2016/06/28/%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BAjava.lang.OutOfMemoryError-PermGen-space/</link>
       <pubDate>Tue, 28 Jun 2016 13:51:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/28/%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BAjava.lang.OutOfMemoryError-PermGen-space/</guid>
+      <guid>https://cxis.me/2016/06/28/%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BAjava.lang.OutOfMemoryError-PermGen-space/</guid>
       <description>简介 昨天拿到服务器之后,便部署新开发的项目上去.顺带测试,运行不久,发现程序运行缓慢,随即提示java.lang.OutOfMemoryEr</description>
     </item>
     
     <item>
       <title>Spring事务简介</title>
-      <link>http://cxis.me/2016/06/13/Spring%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/06/13/Spring%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 13 Jun 2016 17:16:37 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/13/Spring%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/06/13/Spring%E4%BA%8B%E5%8A%A1%E7%AE%80%E4%BB%8B/</guid>
       <description>事务的传播行为 Spring事务有7种传播行为: PROPAGATION_REQUIRED 支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。 PROPAGATION_SUPPORTS 支持当前事务，如果当前没</description>
     </item>
     
     <item>
       <title>synchronized和volatile简介</title>
-      <link>http://cxis.me/2016/06/08/synchronized%E5%92%8Cvolatile%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/06/08/synchronized%E5%92%8Cvolatile%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 08 Jun 2016 15:03:46 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/08/synchronized%E5%92%8Cvolatile%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/06/08/synchronized%E5%92%8Cvolatile%E7%AE%80%E4%BB%8B/</guid>
       <description>简介 (转)这个可能是最好的对比volatile和synchronized作用的文章了。 volatile是一个变量修饰符，而synchroni</description>
     </item>
     
     <item>
       <title>乐观锁与悲观锁简介</title>
-      <link>http://cxis.me/2016/06/03/%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/06/03/%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 03 Jun 2016 14:45:07 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/03/%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/06/03/%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81%E7%AE%80%E4%BB%8B/</guid>
       <description>悲观锁 在关系数据库管理系统里，悲观并发控制（又名“悲观锁”，Pessimistic Concurrency Control，缩写“PCC”）是一种并发控制的方法。它</description>
     </item>
     
     <item>
       <title>CyclicBarrier简介</title>
-      <link>http://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 01 Jun 2016 14:38:32 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</guid>
       <description>CyclicBarrier简介 CyclicBarrier和CountDownLatch不同,是当await的数量达到了设定的数量之后,才继续</description>
     </item>
     
     <item>
       <title>CountDownLatch简介</title>
-      <link>http://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 01 Jun 2016 14:26:33 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</guid>
       <description>CountDownLatch是并发包中提供的一个可用于控制多个线程同时开始某动作的类，可以看做是一个计数器，计数器操作是院子操作，同时只能有</description>
     </item>
     
     <item>
       <title>Semaphore简介</title>
-      <link>http://cxis.me/2016/06/01/Semaphore%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/06/01/Semaphore%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 01 Jun 2016 13:25:04 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/01/Semaphore%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/06/01/Semaphore%E7%AE%80%E4%BB%8B/</guid>
       <description>Semaphore简介 Semaphore是并发包中提供的用于控制某资源同时被访问的个数 操作系统的信号量是个很重要的概念，在进程控制方面都有应</description>
     </item>
     
     <item>
       <title>Java中的ScheduledThreadPoolExecutor</title>
-      <link>http://cxis.me/2016/05/30/Java%E4%B8%AD%E7%9A%84ScheduledThreadPoolExecutor/</link>
+      <link>https://cxis.me/2016/05/30/Java%E4%B8%AD%E7%9A%84ScheduledThreadPoolExecutor/</link>
       <pubDate>Mon, 30 May 2016 17:57:06 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/30/Java%E4%B8%AD%E7%9A%84ScheduledThreadPoolExecutor/</guid>
+      <guid>https://cxis.me/2016/05/30/Java%E4%B8%AD%E7%9A%84ScheduledThreadPoolExecutor/</guid>
       <description>ScheduledThreadPoolExecutor使用和原理学习。 原理 ScheduledThreadPoolExecutor提供了延迟和</description>
     </item>
     
     <item>
       <title>ThreadPoolExecutor简介</title>
-      <link>http://cxis.me/2016/05/30/ThreadPoolExecutor%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/30/ThreadPoolExecutor%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 30 May 2016 14:04:19 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/30/ThreadPoolExecutor%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/30/ThreadPoolExecutor%E7%AE%80%E4%BB%8B/</guid>
       <description>ThreadPoolExecutor简介 并发包中提供的一个线程池服务 线程池的工作过程 线程池刚创建,里面没有线程.任务队列是作为参数传进来的.</description>
     </item>
     
     <item>
       <title>AtomicInteger简介</title>
-      <link>http://cxis.me/2016/05/30/AtomicInteger%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/30/AtomicInteger%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 30 May 2016 13:30:52 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/30/AtomicInteger%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/30/AtomicInteger%E7%AE%80%E4%BB%8B/</guid>
       <description>AtomicInteger简介 支持原子操作的Integer类 主要用于在高并发环境下的高效程序处理。使用非阻塞算法来实现并发控制。 源码分析 jdk1.7.0_71 /</description>
     </item>
     
     <item>
       <title>Java中的DelayQueue延时队列</title>
-      <link>http://cxis.me/2016/05/29/Java%E4%B8%AD%E7%9A%84DelayQueue%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/</link>
+      <link>https://cxis.me/2016/05/29/Java%E4%B8%AD%E7%9A%84DelayQueue%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/</link>
       <pubDate>Sun, 29 May 2016 22:15:25 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/29/Java%E4%B8%AD%E7%9A%84DelayQueue%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/</guid>
+      <guid>https://cxis.me/2016/05/29/Java%E4%B8%AD%E7%9A%84DelayQueue%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97/</guid>
       <description>DelayQueue使用和原理学习。 简介 DelayQueue是一个无界阻塞队列，支持延时获取元素。内部使用PriorityQueue优先级队</description>
     </item>
     
     <item>
       <title>ArrayBlockingQueue简介</title>
-      <link>http://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sun, 29 May 2016 18:46:59 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
       <description>ArrayBlockingQueue基于数组，先进先出，从尾部插入到队列，从头部开始返回。 线程安全的有序阻塞队列，内部通过“互斥锁”保护竞争</description>
     </item>
     
     <item>
       <title>CopyOnWriteArraySet简介</title>
-      <link>http://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 27 May 2016 17:20:34 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</guid>
       <description>基于CopyOnWriteArrayList实现，线程安全无需集合。 add调用的是CopyOnWriteArraylist的addIfAbs</description>
     </item>
     
     <item>
       <title>TreeSet简介</title>
-      <link>http://cxis.me/2016/05/27/TreeSet%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/27/TreeSet%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 27 May 2016 16:50:50 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/27/TreeSet%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/27/TreeSet%E7%AE%80%E4%BB%8B/</guid>
       <description>TreeSet简介 TreeSet支持排序 基于TreeMap实现 非线程安全的 不支持get(int)来获取指定位置的元素 源码分析 jdk1.7.0_71 //基于Tre</description>
     </item>
     
     <item>
       <title>HashSet简介</title>
-      <link>http://cxis.me/2016/05/27/HashSet%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/27/HashSet%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 27 May 2016 16:35:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/27/HashSet%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/27/HashSet%E7%AE%80%E4%BB%8B/</guid>
       <description>HashSet简介 HashSet是Set接口的实现,不允许元素重复 元素不重复是基于HashMap实现 非线程安全的 不支持通过get(int)获</description>
     </item>
     
     <item>
       <title>TreeMap简介</title>
-      <link>http://cxis.me/2016/05/27/TreeMap%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/27/TreeMap%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 27 May 2016 13:58:00 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/27/TreeMap%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/27/TreeMap%E7%AE%80%E4%BB%8B/</guid>
       <description>TreeMap是支持排序的map，基于红黑树，无容量限制，TreeMap非线程安全。 TreeMap继承AbstractMap，实现Navig</description>
     </item>
     
     <item>
       <title>ConcurrentHashMap简介</title>
-      <link>http://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Thu, 26 May 2016 11:00:23 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</guid>
       <description>ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程</description>
     </item>
     
     <item>
       <title>HashTable简介</title>
-      <link>http://cxis.me/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Thu, 26 May 2016 10:35:01 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/</guid>
       <description>HashTable继承Dictionary类，实现Map接口。其中Dictionary类是任何可将键映射到相应值的类（如 Hashtable）</description>
     </item>
     
     <item>
       <title>HashMap简介</title>
-      <link>http://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 25 May 2016 15:47:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</guid>
       <description>HashMap基于哈希表的Map接口实现，是以key-value存储形式存在。 系统会根据hash算法来计算key-value的存储位置，可以</description>
     </item>
     
     <item>
       <title>CopyOnWriteArrayList简介</title>
-      <link>http://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 25 May 2016 10:30:09 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</guid>
       <description>CopyOnWriteArrayList，写数组的拷贝，支持高效率并发且是线程安全的,读操作无锁的ArrayList。所有可变操作都是通过对</description>
     </item>
     
     <item>
       <title>Stack简介</title>
-      <link>http://cxis.me/2016/05/25/Stack%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/25/Stack%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 25 May 2016 10:20:44 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/25/Stack%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/25/Stack%E7%AE%80%E4%BB%8B/</guid>
       <description>Stack简介 Stack基于Vector实现,支持LIFO 后进先出 源码分析 jdk1.7.0_71 默认构造 public Stack() { } push(E item)将元素压入顶端 public E push(E item) { addElement(item); return item; } pop() 删</description>
     </item>
     
     <item>
       <title>Vector简介</title>
-      <link>http://cxis.me/2016/05/24/Vector%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/24/Vector%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Tue, 24 May 2016 17:24:10 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/24/Vector%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/24/Vector%E7%AE%80%E4%BB%8B/</guid>
       <description>Vector简介 Vector和ArrayList类似,基于Object数组方式实现 Vector是同步访问的,操作是线程安全的 源码分析 jdk1.7.0_71 //保</description>
     </item>
     
     <item>
       <title>LinkedList简介</title>
-      <link>http://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 23 May 2016 23:20:51 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;h1 id=&#34;linkedlist简介&#34;&gt;LinkedList简介&lt;/h1&gt;
 &lt;ol&gt;
 &lt;li&gt;LinkedList基于双向链表实现&lt;/li&gt;
@@ -2000,10 +2000,10 @@
     
     <item>
       <title>ArrayList简介</title>
-      <link>http://cxis.me/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 20 May 2016 16:47:46 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;h1 id=&#34;arraylist简介&#34;&gt;ArrayList简介&lt;/h1&gt;
 &lt;p&gt;ArrayList实现了List接口，内部以数组存储数据，允许重复的值。由于内部是数组实现，所以ArrayList具有数组所有的特性，通过索引支持随机访问，查询速度快，但是插入和删除的效率比较低。&lt;/p&gt;
 &lt;p&gt;ArrayList默认初始容量为10，每次添加新元素时都会检查是否需要扩容操作。扩容操作需要重新拷贝数组，比较耗时，所以如果预先能知道数组的大小，在初始化时候可以指定一个初始容量。&lt;/p&gt;
@@ -2012,10 +2012,10 @@
     
     <item>
       <title>使用Hexo在GitHub上搭建个人博客</title>
-      <link>http://cxis.me/2016/05/03/%E4%BD%BF%E7%94%A8Hexo%E5%9C%A8GitHub%E4%B8%8A%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</link>
+      <link>https://cxis.me/2016/05/03/%E4%BD%BF%E7%94%A8Hexo%E5%9C%A8GitHub%E4%B8%8A%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</link>
       <pubDate>Tue, 03 May 2016 09:26:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/03/%E4%BD%BF%E7%94%A8Hexo%E5%9C%A8GitHub%E4%B8%8A%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</guid>
+      <guid>https://cxis.me/2016/05/03/%E4%BD%BF%E7%94%A8Hexo%E5%9C%A8GitHub%E4%B8%8A%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</guid>
       <description>&lt;h1 id=&#34;本机环境&#34;&gt;本机环境&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;系统：Ubuntu 16.04 LTS&lt;/li&gt;
@@ -2034,64 +2034,64 @@
     
     <item>
       <title>数据库索引简介</title>
-      <link>http://cxis.me/2015/06/07/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2015/06/07/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sun, 07 Jun 2015 16:44:04 +0000</pubDate>
       
-      <guid>http://cxis.me/2015/06/07/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2015/06/07/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E7%AE%80%E4%BB%8B/</guid>
       <description>数据库索引的定义 数据库索引，是数据库管理系统中一个排序的数据结构，以协助快速查询、更新数据库表中数据。提高数据库表数据访问速度的数据库对象.</description>
     </item>
     
     <item>
       <title>分库分表简介</title>
-      <link>http://cxis.me/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 03 Jun 2015 15:27:15 +0000</pubDate>
       
-      <guid>http://cxis.me/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2015/06/03/%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%E7%AE%80%E4%BB%8B/</guid>
       <description>分库分表简介 此部分简介都是参考别人已经有的文章,目前还没在实际中使用分库分表,对此部分知识的理解还不够透彻.以后会添加自己的经验. 基于业务垂</description>
     </item>
     
     <item>
       <title>Hello World</title>
-      <link>http://cxis.me/2014/05/02/Hello-World/</link>
+      <link>https://cxis.me/2014/05/02/Hello-World/</link>
       <pubDate>Fri, 02 May 2014 09:26:17 +0000</pubDate>
       
-      <guid>http://cxis.me/2014/05/02/Hello-World/</guid>
+      <guid>https://cxis.me/2014/05/02/Hello-World/</guid>
       <description>&lt;p&gt;Welcome to &lt;a href=&#34;https://hexo.io/&#34;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&#34;https://hexo.io/docs/&#34;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&#34;https://hexo.io/docs/troubleshooting.html&#34;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&#34;https://github.com/hexojs/hexo/issues&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>LogCollector中JMX的应用</title>
-      <link>http://cxis.me/2010/05/24/LogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <link>https://cxis.me/2010/05/24/LogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8/</link>
       <pubDate>Mon, 24 May 2010 15:32:57 +0000</pubDate>
       
-      <guid>http://cxis.me/2010/05/24/LogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <guid>https://cxis.me/2010/05/24/LogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
       <description>&lt;p&gt;LogCollector中JMX的使用学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>LogCollector中ScheduledExecutorService的应用</title>
-      <link>http://cxis.me/2010/05/21/LogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <link>https://cxis.me/2010/05/21/LogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8/</link>
       <pubDate>Fri, 21 May 2010 22:39:34 +0000</pubDate>
       
-      <guid>http://cxis.me/2010/05/21/LogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <guid>https://cxis.me/2010/05/21/LogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
       <description>&lt;p&gt;LogCollector中ScheduledExecutorService的使用学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>LogCollector设计文档</title>
-      <link>http://cxis.me/2010/05/20/LogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
+      <link>https://cxis.me/2010/05/20/LogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
       <pubDate>Thu, 20 May 2010 17:30:52 +0000</pubDate>
       
-      <guid>http://cxis.me/2010/05/20/LogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
+      <guid>https://cxis.me/2010/05/20/LogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
       <description>&lt;p&gt;LogCollector的模块和整体架构。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>LogCollector的设计思路</title>
-      <link>http://cxis.me/2010/05/20/LogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</link>
+      <link>https://cxis.me/2010/05/20/LogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</link>
       <pubDate>Thu, 20 May 2010 16:44:11 +0000</pubDate>
       
-      <guid>http://cxis.me/2010/05/20/LogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</guid>
+      <guid>https://cxis.me/2010/05/20/LogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</guid>
       <description>&lt;p&gt;大概列一下日志收集系统需要实现的功能。&lt;/p&gt;</description>
     </item>
     

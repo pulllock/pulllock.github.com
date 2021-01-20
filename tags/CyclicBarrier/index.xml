@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CyclicBarrier on Time Stream</title>
-    <link>http://cxis.me/tags/CyclicBarrier/</link>
+    <link>https://cxis.me/tags/CyclicBarrier/</link>
     <description>Recent content in CyclicBarrier on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Wed, 01 Jun 2016 14:38:32 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/CyclicBarrier/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/CyclicBarrier/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>CyclicBarrier简介</title>
-      <link>http://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 01 Jun 2016 14:38:32 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</guid>
       <description>CyclicBarrier简介 CyclicBarrier和CountDownLatch不同,是当await的数量达到了设定的数量之后,才继续</description>
     </item>
     

@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>dubbo服务暴露 on Time Stream</title>
-    <link>http://cxis.me/tags/dubbo%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2/</link>
+    <link>https://cxis.me/tags/dubbo%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2/</link>
     <description>Recent content in dubbo服务暴露 on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Sun, 19 Feb 2017 00:46:14 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/dubbo%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/dubbo%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Dubbo中暴露服务的过程解析</title>
-      <link>http://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 19 Feb 2017 00:46:14 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;dubbo暴露服务有两种情况，一种是设置了延迟暴露（比如delay=&amp;quot;5000&amp;rdquo;），另外一种是没有设置延迟暴露或者延迟设置为-1（delay=&amp;rdquo;-1&amp;rdquo;）：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;设置了延迟暴露，dubbo在Spring实例化bean（initializeBean）的时候会对实现了InitializingBean的类进行回调，回调方法是afterPropertySet()，如果设置了延迟暴露，dubbo在这个方法中进行服务的发布。&lt;/li&gt;

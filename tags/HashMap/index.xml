@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>HashMap on Time Stream</title>
-    <link>http://cxis.me/tags/HashMap/</link>
+    <link>https://cxis.me/tags/HashMap/</link>
     <description>Recent content in HashMap on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Wed, 25 May 2016 15:47:13 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/HashMap/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/HashMap/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>HashMap简介</title>
-      <link>http://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 25 May 2016 15:47:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</guid>
       <description>HashMap基于哈希表的Map接口实现，是以key-value存储形式存在。 系统会根据hash算法来计算key-value的存储位置，可以</description>
     </item>
     

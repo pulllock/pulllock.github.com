@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>dubbo集群 on Time Stream</title>
-    <link>http://cxis.me/tags/dubbo%E9%9B%86%E7%BE%A4/</link>
+    <link>https://cxis.me/tags/dubbo%E9%9B%86%E7%BE%A4/</link>
     <description>Recent content in dubbo集群 on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Sun, 26 Mar 2017 12:12:49 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/dubbo%E9%9B%86%E7%BE%A4/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/dubbo%E9%9B%86%E7%BE%A4/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Dubbo中集群Cluster，负载均衡，容错，路由解析</title>
-      <link>http://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</link>
+      <link>https://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 26 Mar 2017 12:12:49 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）&lt;/p&gt;</description>
     </item>
     

@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>java.lang.OutOfMemoryError:-PermGen-space on Time Stream</title>
-    <link>http://cxis.me/tags/java.lang.OutOfMemoryError-PermGen-space/</link>
+    <link>https://cxis.me/tags/java.lang.OutOfMemoryError-PermGen-space/</link>
     <description>Recent content in java.lang.OutOfMemoryError:-PermGen-space on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Tue, 28 Jun 2016 13:51:13 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/java.lang.OutOfMemoryError-PermGen-space/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/java.lang.OutOfMemoryError-PermGen-space/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>一次简单的持久带内存溢出java.lang.OutOfMemoryError: PermGen space</title>
-      <link>http://cxis.me/2016/06/28/%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BAjava.lang.OutOfMemoryError-PermGen-space/</link>
+      <link>https://cxis.me/2016/06/28/%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BAjava.lang.OutOfMemoryError-PermGen-space/</link>
       <pubDate>Tue, 28 Jun 2016 13:51:13 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/06/28/%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BAjava.lang.OutOfMemoryError-PermGen-space/</guid>
+      <guid>https://cxis.me/2016/06/28/%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E7%9A%84%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BAjava.lang.OutOfMemoryError-PermGen-space/</guid>
       <description>简介 昨天拿到服务器之后,便部署新开发的项目上去.顺带测试,运行不久,发现程序运行缓慢,随即提示java.lang.OutOfMemoryEr</description>
     </item>
     

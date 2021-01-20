@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Executor on Time Stream</title>
-    <link>http://cxis.me/tags/Executor/</link>
+    <link>https://cxis.me/tags/Executor/</link>
     <description>Recent content in Executor on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Thu, 11 Aug 2016 15:16:11 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/tags/Executor/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/tags/Executor/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Executor框架简介</title>
-      <link>http://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Thu, 11 Aug 2016 15:16:11 +0000</pubDate>
       
-      <guid>http://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</guid>
       <description>Executor框架是在Java5中引入的，可以通过该框架来控制线程的启动，执行，关闭，简化并发编程。Executor框架把任务提交和执行解</description>
     </item>
     

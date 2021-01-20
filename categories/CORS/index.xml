@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>CORS on Time Stream</title>
-    <link>http://cxis.me/categories/CORS/</link>
+    <link>https://cxis.me/categories/CORS/</link>
     <description>Recent content in CORS on Time Stream</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
     <lastBuildDate>Wed, 03 May 2017 16:28:21 +0000</lastBuildDate>
     
-	<atom:link href="http://cxis.me/categories/CORS/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://cxis.me/categories/CORS/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>跨域以及CORS相关知识简介</title>
-      <link>http://cxis.me/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/</link>
+      <link>https://cxis.me/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 03 May 2017 16:28:21 +0000</pubDate>
       
-      <guid>http://cxis.me/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/</guid>
+      <guid>https://cxis.me/2017/05/03/%E8%B7%A8%E5%9F%9F%E4%BB%A5%E5%8F%8ACORS%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;html同源策略是不允许JavaScript的跨域请求的，而使用CORS（Cross-origin resource sharing）可以实现跨域请求，当然也有其他的办法，常用的有JSONP方式来实现跨域，这里就简单的列举一下实现跨域的几种办法，对于CROS和JSONP详细的了解一下。&lt;/p&gt;</description>
     </item>
     
