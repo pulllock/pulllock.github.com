@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM垃圾收集算法和垃圾收集器</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>JVM垃圾收集算法和垃圾收集器</h1>
+			<b><time>2017-06-11 00:16:17</time></b>
+		       
+		           <a href="/tags/JVM">JVM</a>
+        	       
+
+			<div>
+				<p>JVM的垃圾收集算法和垃圾收集器学习。</p>
+<h1 id="判断对象存活算法">判断对象存活算法</h1>
+<h2 id="引用计数法">引用计数法</h2>
+<p>引用计数法是给每个对象设置一个计数器，当有地方引用这个对象的时候，就将这个计数器加一，当引用时效的时候就将这个计数器减一。当计数器为0的时候，就代表这个对象不再被使用，可以回收。</p>
+<p>引用计数算法实现简单，效率高，但是无法解决循环引用的问题。</p>
+<h2 id="可达性分析算法">可达性分析算法</h2>
+<p>可达性分析算法使用一系列的“GC Roots”对象作为起始点，从这些起始点开始向下搜索，搜索通过的路径称为引用链。当一个对象到GC Roots没有任何引用链相连，说明这个对象是不可用的。</p>
+<p>可以作为GC Roots对象有：</p>
+<ul>
+<li>虚拟机栈（栈帧中的局部变量表）中引用的对象。</li>
+<li>方法区中静态属性引用的对象。</li>
+<li>方法区中常量引用的对象。</li>
+<li>本地方法栈中JNI引用的对象。</li>
+</ul>
+<h1 id="jvm垃圾收集算法">JVM垃圾收集算法</h1>
+<h2 id="标记-清除算法">标记-清除算法</h2>
+<p>标记-清除算法（Mark-Sweep），分为两个阶段：标记阶段和清除阶段。在标记阶段，首先根据根节点标记所有的可达对象，未被标记的对象就是可以回收的对象。在标记完成之后，清除阶段就可以清除掉所有的垃圾对象。</p>
+<p>缺点：</p>
+<ul>
+<li>效率问题，标记和清除阶段的效率都不高。</li>
+<li>空间问题，清除后会产生大量的不连续的内存碎片，如果需要分配大的对象，可能由于找不到足够的连续内存而提前触发另一次垃圾收集动作。</li>
+</ul>
+<h2 id="标记-整理算法">标记-整理算法</h2>
+<p>标记整理算法与标记清除算法类似，只不过在标记完成后，不是对可回收对象进行清除，而是将所有存活对象移向一端，然后清理掉边界以外的内存。</p>
+<p>缺点：</p>
+<ul>
+<li>效率问题，标记和整理的过程效率都不高。</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>相对于标记-清除算法，解决了内存碎片问题。</li>
+</ul>
+<h2 id="复制算法">复制算法</h2>
+<p>复制算法可以解决效率问题，它将可用内存按照容量划分成大小相等的两块，每次只使用其中的一块，当一块内存用完了，就将还存活着的对象移到另外一块上，然后把已经使用过的内存空间一次清理掉。这样使得每次都是对整个半区进行内存回收，内存分配不用考虑内存碎片的问题。</p>
+<p>优点：</p>
+<ul>
+<li>效率高，没有内存碎片。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>需要浪费一半的内存空间。</li>
+<li>如果对象的存活率较高，需要进行较多的复制，效率会变的很低。</li>
+</ul>
+<h2 id="分代收集算法">分代收集算法</h2>
+<p>根据对象存活周期的不同，将内存划分为几块，一般把Java堆分为新生代和老年代，然后根据各个年代的特点采用不同的垃圾收集算法。在新生代中，每次垃圾回收都会有大批的对象死去，只有少量对象存活，可以选用复制算法；在老年代中对象存活率较高，没有额外空间进行担保，就必须使用标记-清除或者标记-清理来进行回收。</p>
+<h2 id="对象分配策略">对象分配策略</h2>
+<ul>
+<li>对象优先在Eden区域分配，如果对象过大直接分配到老年代。</li>
+<li>长期存活对象进入老年代。</li>
+</ul>
+<h1 id="垃圾收集器">垃圾收集器</h1>
+<ul>
+<li>Serial收集器</li>
+<li>ParNew收集器</li>
+<li>Parallel Scavenge收集器</li>
+<li>Serial Old收集器</li>
+<li>Parallel Old收集器</li>
+<li>CMS收集器</li>
+<li>G1收集器</li>
+</ul>
+<h2 id="serial收集器">Serial收集器</h2>
+<p>Serial收集器是单线程收集器，进行垃圾收集时必须暂停其他所有的工作线程，直到收集结束。是Client模式下的默认<strong>新生代</strong>收集器。</p>
+<p>特点：</p>
+<ul>
+<li>单线程，简单高效，Serial收集器由于没有线程交互的开销，专心做垃圾收集自然可以获得最高的单线程效率。</li>
+<li>复制算法</li>
+<li>stop the world</li>
+</ul>
+<h2 id="parnew收集器">ParNew收集器</h2>
+<p>ParNew收集器其实是Serial收集器的多线程版本，Server模式下的首选的<strong>新生代</strong>收集器。ParNew收集器默认开启收集线程数与CPU数量相同。</p>
+<p>特点：</p>
+<ul>
+<li>多线程</li>
+<li>复制算法</li>
+<li>stop the world</li>
+</ul>
+<h2 id="parallel-scavenge收集器">Parallel Scavenge收集器</h2>
+<p>Parallel Scavenge收集器是一个<strong>新生代</strong>收集器，使用复制算法，是并行的多线程收集器，目标是达到一个可控制的吞吐量。</p>
+<p>特点：</p>
+<ul>
+<li>多线程</li>
+<li>复制算法</li>
+<li>可控制吞吐量</li>
+<li>自适应调节策略</li>
+</ul>
+<h2 id="serial-old收集器">Serial Old收集器</h2>
+<p>Serial Old收集器是Serial收集器的<strong>老年代</strong>版本，是一个单线程收集器，使用标记-整理算法。主要给Client模式下使用。如果用在Server模式下，有两种用途：</p>
+<ol>
+<li>与Parallel Scavenge收集器搭配</li>
+<li>作为CMS的后备方案，在并发收集发生Concurrent Mode Failure时使用</li>
+</ol>
+<p>特点：</p>
+<ul>
+<li>单线程</li>
+<li>标记-整理算法</li>
+<li>stop the world</li>
+</ul>
+<h2 id="parallel-old收集器">Parallel Old收集器</h2>
+<p>Parallel Old收集器是Parallel Scavenge收集器的<strong>老年代</strong>版本，使用多线程和标记-整理算法。在注重吞吐量和CPU敏感的场合，优先考虑Parallel Scavenge + Parallel Old组合。</p>
+<p>特点：</p>
+<ul>
+<li>多线程</li>
+<li>标记-整理算法</li>
+</ul>
+<h2 id="cms收集器">CMS收集器</h2>
+<p>CMS收集器是真正意义上的并发收集器，实现了让垃圾收集线程和用户线程同时工作。尽可能的缩短垃圾收集时用户线程的停顿时间。CMS收集器是基于标记-清除算法实现的，总共分四个步骤：</p>
+<ul>
+<li>初始标记</li>
+<li>并发标记</li>
+<li>重新标记</li>
+<li>并发清除</li>
+</ul>
+<p>初始标记和重新标记需要Stop The World，初始标记仅仅是标记一下GC Roots能关联到的对象，速度很快。并发标记就是进行GC Roots Tracing的过程。重新标记是为了修正并发标记期间因用户程序继续运行而导致的变动的对象，这个阶段停顿时间一般会比初始标记阶段稍长，但远比并发标记时间段。</p>
+<p>整个过程耗时最长的是并发标记和并发清除，但这两个过程可以合用户线程一起工作。</p>
+<p>优点：</p>
+<ul>
+<li>并发收集</li>
+<li>低停顿</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>CMS收集器对CPU非常敏感，并发阶段会占用一部分线程，导致应用变慢，吞吐量降低。</li>
+<li>CMS无法处理浮动垃圾，可能出现Concurrent Mode Failure失败而导致另一次Full GC产生。</li>
+<li>CMS是基于标记-清除算法实现的，会有大量内存空间碎片问题。</li>
+</ul>
+<h2 id="g1收集器">G1收集器</h2>
+<p>G1是面向服务端应用的垃圾收集器。特点如下：</p>
+<ul>
+<li>并行与并发，能充分利用CPU，多核环境下的硬件优势，缩短Stop-The-World停顿时间，同时可以通过并发的方式让Java程序继续执行。</li>
+<li>分代收集，可以不需要其他收集器的配合管理整个堆，但是仍采用不同的方式去处理分代对象。</li>
+<li>空间整合，从整体上看是基于标记-整理算法，从局部看是采用复制算法实现。</li>
+<li>可预测停顿，G1将整个Java堆划分为多个大小相等的独立区域，跟踪各个Region里面的垃圾堆积的价值大小，在后台维护一个优先列表，每次根据允许的收集时间，优先回收价值最大的Region。</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://blog.jamesdbloom.com/JVMInternals.html">https://blog.jamesdbloom.com/JVMInternals.html</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

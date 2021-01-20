@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JVM on Time Stream</title>
+    <link>http://cxis.me/tags/JVM/</link>
+    <description>Recent content in JVM on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Sun, 17 Sep 2017 19:03:34 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/JVM/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>JVM中的垃圾收集器</title>
+      <link>http://cxis.me/2017/09/17/JVM%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
+      <pubDate>Sun, 17 Sep 2017 19:03:34 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/09/17/JVM%E4%B8%AD%E7%9A%84%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
+      <description>&lt;p&gt;JVM中的垃圾收集器学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的即时编译</title>
+      <link>http://cxis.me/2017/09/09/JVM%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91/</link>
+      <pubDate>Sat, 09 Sep 2017 09:19:51 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/09/09/JVM%E4%B8%AD%E7%9A%84%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91/</guid>
+      <description>&lt;p&gt;JVM中的即时编译学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中方法的分派</title>
+      <link>http://cxis.me/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/</link>
+      <pubDate>Sat, 02 Sep 2017 16:17:40 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/09/02/JVM%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E5%88%86%E6%B4%BE/</guid>
+      <description>&lt;p&gt;JVM中方法分派和方法调用学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中类的生命周期</title>
+      <link>http://cxis.me/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</link>
+      <pubDate>Sat, 26 Aug 2017 19:53:29 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/08/26/JVM%E4%B8%AD%E7%B1%BB%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</guid>
+      <description>&lt;p&gt;JVM中类的生命周期学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的TLAB</title>
+      <link>http://cxis.me/2017/08/21/JVM%E4%B8%AD%E7%9A%84TLAB/</link>
+      <pubDate>Mon, 21 Aug 2017 16:24:21 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/08/21/JVM%E4%B8%AD%E7%9A%84TLAB/</guid>
+      <description>&lt;p&gt;JVM中的TLAB学习&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中对象的栈上分配</title>
+      <link>http://cxis.me/2017/08/21/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D/</link>
+      <pubDate>Mon, 21 Aug 2017 14:30:45 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/08/21/JVM%E4%B8%AD%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D/</guid>
+      <description>&lt;p&gt;JVM中的栈上分配学习&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中类文件结构和字节码指令示例</title>
+      <link>http://cxis.me/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/</link>
+      <pubDate>Sun, 20 Aug 2017 20:31:37 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/08/20/JVM%E4%B8%AD%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84%E5%92%8C%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4%E7%A4%BA%E4%BE%8B/</guid>
+      <description>&lt;p&gt;JVM中类文件结构和字节码指令示例。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的字节码指令</title>
+      <link>http://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/</link>
+      <pubDate>Sat, 19 Aug 2017 21:29:52 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/</guid>
+      <description>&lt;p&gt;JVM中的字节码指令学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的Class类文件结构</title>
+      <link>http://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Sat, 19 Aug 2017 17:48:33 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/08/19/JVM%E4%B8%AD%E7%9A%84Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/</guid>
+      <description>&lt;p&gt;JVM中的Class类文件结构学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的锁使用过程</title>
+      <link>http://cxis.me/2017/07/31/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B/</link>
+      <pubDate>Mon, 31 Jul 2017 15:02:04 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/31/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BD%BF%E7%94%A8%E8%BF%87%E7%A8%8B/</guid>
+      <description>&lt;p&gt;JVM中的锁使用过程，从偏向锁到轻量级锁到重量级锁的过程。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的锁以及锁优化</title>
+      <link>http://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Sun, 30 Jul 2017 23:50:58 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E9%94%81%E4%BB%A5%E5%8F%8A%E9%94%81%E4%BC%98%E5%8C%96/</guid>
+      <description>&lt;p&gt;JVM中的锁优化学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的对象头</title>
+      <link>http://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%A4%B4/</link>
+      <pubDate>Sun, 30 Jul 2017 21:14:17 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/30/JVM%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%A4%B4/</guid>
+      <description>&lt;p&gt;JVM中的对象和对象头学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的Java虚拟机栈</title>
+      <link>http://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/</link>
+      <pubDate>Sun, 16 Jul 2017 19:59:31 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/</guid>
+      <description>&lt;p&gt;JVM中的Java虚拟机栈学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的程序计数器</title>
+      <link>http://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/</link>
+      <pubDate>Sun, 16 Jul 2017 15:40:55 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/16/JVM%E4%B8%AD%E7%9A%84%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/</guid>
+      <description>&lt;p&gt;JVM中的程序计数器学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的方法区、永久代以及Metaspace</title>
+      <link>http://cxis.me/2017/07/14/JVM%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95%E5%8C%BA%E6%B0%B8%E4%B9%85%E4%BB%A3%E4%BB%A5%E5%8F%8AMetaspace/</link>
+      <pubDate>Fri, 14 Jul 2017 22:29:31 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/14/JVM%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95%E5%8C%BA%E6%B0%B8%E4%B9%85%E4%BB%A3%E4%BB%A5%E5%8F%8AMetaspace/</guid>
+      <description>&lt;p&gt;JVM中的方法区、永久代、元空间学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的常量池</title>
+      <link>http://cxis.me/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/</link>
+      <pubDate>Sat, 08 Jul 2017 11:42:10 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/08/JVM%E4%B8%AD%E7%9A%84%E5%B8%B8%E9%87%8F%E6%B1%A0/</guid>
+      <description>&lt;p&gt;JVM中的常量池有：运行时常量池、Class文件常量池、字符串常量池、包装类常量池。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM空间分配担保</title>
+      <link>http://cxis.me/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/</link>
+      <pubDate>Sat, 01 Jul 2017 23:12:17 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/01/JVM%E7%A9%BA%E9%97%B4%E5%88%86%E9%85%8D%E6%8B%85%E4%BF%9D/</guid>
+      <description>&lt;p&gt;当发生YGC时，JVM先检查老年代最大的可用连续空间是否大于新生代所有对象总和，如果大于，这次YGC是安全的；如果不大于则会看HandlePromotionFailure参数配置的值。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的CMS垃圾收集器</title>
+      <link>http://cxis.me/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
+      <pubDate>Sat, 01 Jul 2017 17:04:04 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/07/01/JVM%E4%B8%AD%E7%9A%84CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
+      <description>&lt;p&gt;CMS是老年代的垃圾收集器，使用标记-清除算法，是并发的收集器。可与Serial收集器和Parallel New收集器配合使用。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中FullGC耗时过高</title>
+      <link>http://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</link>
+      <pubDate>Sat, 24 Jun 2017 23:49:09 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</guid>
+      <description>&lt;p&gt;分析一下FullGC耗时过高的原因&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中FullGC频繁</title>
+      <link>http://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E9%A2%91%E7%B9%81/</link>
+      <pubDate>Sat, 24 Jun 2017 23:48:28 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/24/JVM%E4%B8%ADFullGC%E9%A2%91%E7%B9%81/</guid>
+      <description>&lt;p&gt;分析一下FullGC频繁的原因&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中YoungGC耗时过高</title>
+      <link>http://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</link>
+      <pubDate>Sat, 24 Jun 2017 23:47:49 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E8%80%97%E6%97%B6%E8%BF%87%E9%AB%98/</guid>
+      <description>&lt;p&gt;分析一下YGC耗时过高的原因&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中YoungGC频繁</title>
+      <link>http://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E9%A2%91%E7%B9%81/</link>
+      <pubDate>Sat, 24 Jun 2017 23:47:36 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/24/JVM%E4%B8%ADYoungGC%E9%A2%91%E7%B9%81/</guid>
+      <description>&lt;p&gt;分析一下YGC频繁的原因。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM四种引用类型</title>
+      <link>http://cxis.me/2017/06/18/JVM%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Sun, 18 Jun 2017 22:01:48 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/18/JVM%E5%9B%9B%E7%A7%8D%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B/</guid>
+      <description>&lt;p&gt;Java提供了四种引用类型：强引用、软引用、弱引用、虚引用，这几种不同引用类型主要体现在GC上。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM动态对象年龄判断</title>
+      <link>http://cxis.me/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/</link>
+      <pubDate>Sat, 17 Jun 2017 22:26:30 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/</guid>
+      <description>&lt;p&gt;JVM中新生代对象晋升到老年代的时候，对象会有个年龄最大阈值，但是除了这个年龄最大阈值外，JVM还会对对象年龄进行动态判断，不等到年龄最大阈值就可以晋升到老年代。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM中的MinorGC-MajorGC-FullGC</title>
+      <link>http://cxis.me/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/</link>
+      <pubDate>Sat, 17 Jun 2017 16:02:05 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/</guid>
+      <description>&lt;p&gt;Minor GC、Major GC、Full GC&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM垃圾收集算法和垃圾收集器</title>
+      <link>http://cxis.me/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</link>
+      <pubDate>Sun, 11 Jun 2017 00:16:17 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/</guid>
+      <description>&lt;p&gt;JVM的垃圾收集算法和垃圾收集器学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM类加载器</title>
+      <link>http://cxis.me/2017/06/04/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</link>
+      <pubDate>Sun, 04 Jun 2017 22:26:33 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/04/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/</guid>
+      <description>&lt;p&gt;JVM类加载器有三种：启动类加载器、扩展类加载器、应用类加载器。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM类加载机制</title>
+      <link>http://cxis.me/2017/06/03/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</link>
+      <pubDate>Sat, 03 Jun 2017 21:44:17 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/03/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/</guid>
+      <description>&lt;p&gt;JVM中类的生命周期有加载、连接（验证、准备、解析）初始化、使用、卸载。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM创建对象的过程简介</title>
+      <link>http://cxis.me/2017/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Thu, 01 Jun 2017 23:45:51 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/06/01/JVM%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;记录一下JVM创建对象的过程，就是new一个对象的时候发生了哪些事情。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JVM运行时数据区域介绍</title>
+      <link>http://cxis.me/2017/05/20/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Sat, 20 May 2017 23:28:39 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/05/20/JVM%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA%E5%9F%9F%E4%BB%8B%E7%BB%8D/</guid>
+      <description>&lt;p&gt;此处的内容是根据Java虚拟机规范（Java SE 7）相关内容以及深入理解Java虚拟机等做的总结。可能有不对的地方。了解这些区域，可以从总体上看下虚拟机内部是怎么构造的，网上也有相关的图片介绍，可以适当的记下图片内容，这样可以有一个立体的感受，更容易记忆。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

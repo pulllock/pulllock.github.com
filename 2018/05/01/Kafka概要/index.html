@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Kafka概要</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Kafka概要</h1>
+			<b><time>2018-05-01 20:49:13</time></b>
+		       
+		           <a href="/tags/Kafka">Kafka</a>
+        	       
+
+			<div>
+				<p>初识Kafka。</p>
+<p>Kafka设计初衷是为了解决互联网公司超大量级数据的实时传输，需要考虑以下问题：</p>
+<ul>
+<li>吞吐量、延时，每次写操作会把数据写到OS的页缓存中，OS负责刷盘，Kafka采用追加方式，避免磁盘随机写操作；消费的时候读取消息会尝试从OS的页缓存中读取，命中缓存后直接发送到Socket上，就是零拷贝技术。</li>
+<li>消息持久化</li>
+<li>负载均衡、故障转移</li>
+<li>伸缩性</li>
+</ul>
+<h1 id="基本概念">基本概念</h1>
+<ul>
+<li>Zookeeper集群，kafka用Zookeeper来负责集群元数据管理、控制器的选举等操作</li>
+<li>Producer，生产者，负责创建消息，投递到Kafka中</li>
+<li>Consumer，消费者，消费消息，连接到Kafka接收消息</li>
+<li>Broker，服务代理节点，负责存储消息</li>
+<li>Topic，消息以主题为单位归类，是一个逻辑概念，代表一类消息，通常可使用topic来区分实际业务。 topic通常会被多个消费者订阅。</li>
+<li>Partition，分区，主题是逻辑概念，可以细分为多个分区，一个分区只属于单个主题。同一主题下的不同分区包含消息是不同的，partition是不可修改的有序消息序列。用户对partition唯一能做的操作就是在消息序列尾部追加写入消息。partition上的每条消息都会被分配一个唯一的序列号，叫做位移offset</li>
+<li>Offset，topic的partition下每条消息都被分配一个唯一的offset，消费端也有offset概念，用来表示消费partition的消费进度。</li>
+<li>Replica，Kafka的备份日志称为副本replica，防止数据丢失。副本分为两类：领导者副本leader replica和追随者副本follower replica。follower replica不负责响应客户端发来的消息写入和消费者请求，只是被动的向leader replica获取数据。leader replica所在broker宕机时，Kafka会从剩余的replica中选举新的leader继续提供服务</li>
+<li>Leader，leader对外提供服务</li>
+<li>Follower，follower被动追随leader状态，保持与leader同步，当做leader后备。leader挂掉后就会有一个follower备选举成新的leader。</li>
+<li>ISR，ISR是in-sync replica，与leader replica保持同步的replica集合。Kafka为partition动态维护一个replica，该集合中所有replica保存的消息日志都与leader replica保持同步，只有这个集合中的replica才能被选举为leader，只有该集合中所有replica都接到了同一条消息，Kafka才会认为消息是已提交状态，也就是消息发送成功。如果replica落后于leader replica的进度，当达到一定程度时，Kaffka会将这些replica踢出ISR，当这些replica追上了leader进度时，Kafka会将他们加入到ISR中。</li>
+<li>HW，Hight Watermark，高水位，标识了一个特定的消息偏移量，消费者只能拉取到这个offset之前的消息</li>
+<li>LEO，Log End Offset，标识当前日志文件中下一条待写入消息的offset</li>
+</ul>
+<h2 id="消息">消息</h2>
+<p>消息由消息头部、key、value组成：</p>
+<ul>
+<li>CRC，4字节</li>
+<li>版本号，1字节</li>
+<li>属性，1字节</li>
+<li>时间戳，8字节</li>
+<li>key长度，4字节</li>
+<li>key，k个字节，消息键，对消息做partition时使用，决定消息保存在某个topic下的哪个partition</li>
+<li>value长度，4字节</li>
+<li>value，v个字节，消息体，保存实际的消息数据</li>
+</ul>
+<p>Kafka使用紧凑的二进制字节数组来保存消息，没有多余的比特位浪费。</p>
+<h1 id="使用场景">使用场景</h1>
+<p>适合处理生产环境中流式数据：</p>
+<ul>
+<li>消息传输</li>
+<li>网站行为日志追踪</li>
+<li>审计数据收集</li>
+<li>日志收集</li>
+<li>Event Sourcing</li>
+<li>流式处理</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li>Apache kafka实战</li>
+<li>深入理解Kafka：核心设计与实践原理</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

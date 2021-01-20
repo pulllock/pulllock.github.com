@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LinkedBlockingQueue on Time Stream</title>
+    <link>http://cxis.me/tags/LinkedBlockingQueue/</link>
+    <description>Recent content in LinkedBlockingQueue on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Fri, 05 Aug 2016 10:17:46 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/LinkedBlockingQueue/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>LinkedBlockingQueue简介</title>
+      <link>http://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 05 Aug 2016 10:17:46 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
+      <description>LinkedBlockingQueue是一个单向链表实现的阻塞队列，先进先出的顺序。支持多线程并发操作。 相比于数组实现的ArrayBlock</description>
+    </item>
+    
+  </channel>
+</rss>

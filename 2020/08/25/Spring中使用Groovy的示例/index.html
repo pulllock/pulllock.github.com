@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Spring中使用Groovy的示例</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Spring中使用Groovy的示例</h1>
+			<b><time>2020-08-25 22:17:07</time></b>
+		       
+		           <a href="/tags/Spring">Spring</a>
+        	       
+
+			<div>
+				<p>Spring对动态语言提供了支持，最近准备在项目中使用Groovy实现功能的热插拔，这里记录下Spring中使用Groovy的示例。</p>
+<p>先定义一个接口，用来处理消息的接口：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 处理器接口，提供给groovy脚本来实现
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Processor</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 处理消息，不同的处理方式，可使用不同的groovy脚本实现
+</span><span style="color:#75715e">     * @param message
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     */</span>
+    String <span style="color:#a6e22e">process</span><span style="color:#f92672">(</span>String message<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>接口的实现都是使用Groovy脚本，这样就可以利用Groovy脚本来动态实现功能替换了。</p>
+<p>这里通过Groovy脚本文件、xml中内嵌脚本、从数据库中获取脚本等三种方式来说明。</p>
+<h1 id="使用groovy脚本文件">使用Groovy脚本文件</h1>
+<p>定义消息处理的具体实现，ClasspathMessageProcessor.groovy：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"><span style="color:#f92672">import</span> me.cxis.spring.groovy.Processor
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ClasspathMessageProcessor</span> <span style="color:#66d9ef">implements</span> Processor <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    String <span style="color:#a6e22e">process</span><span style="color:#f92672">(</span>String message<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        println<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;classpath 的groovy文件处理消息：&#39;</span><span style="color:#f92672">+</span> message<span style="color:#f92672">)</span>
+
+        <span style="color:#66d9ef">def</span>  result <span style="color:#f92672">=</span> message<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>message<span style="color:#f92672">.</span><span style="color:#a6e22e">contains</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;error&#34;</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            result <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;消息里有错误信息&#39;</span>
+        <span style="color:#f92672">}</span>
+        result <span style="color:#f92672">=</span> result <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;，经过了classpath的groovy文件处理&#34;</span>
+        <span style="color:#66d9ef">return</span> result
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>接下来定义spring的配置文件，目前还不支持使用注解或者Java Config的方式来配置动态语言，只能使用xml的配置方式，spring-groovy.xml：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span style="color:#f92672">&lt;beans</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
+       <span style="color:#a6e22e">xmlns:xsi=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+       <span style="color:#a6e22e">xmlns:lang=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/lang&#34;</span>
+       <span style="color:#a6e22e">xsi:schemaLocation=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+</span><span style="color:#e6db74">                           http://www.springframework.org/schema/lang
+</span><span style="color:#e6db74">                           http://www.springframework.org/schema/lang/spring-lang.xsd&#34;</span><span style="color:#f92672">&gt;</span>
+
+    <span style="color:#75715e">&lt;!--&lt;lang:defaults refresh-check-delay=&#34;1000&#34;/&gt;--&gt;</span>
+
+    <span style="color:#f92672">&lt;lang:groovy</span> <span style="color:#a6e22e">id =</span> <span style="color:#e6db74">&#34;processorFromClasspathFile&#34;</span> <span style="color:#a6e22e">script-source =</span> <span style="color:#e6db74">&#34;classpath:groovy/ClasspathMessageProcessor.groovy&#34;</span><span style="color:#f92672">/&gt;</span>
+
+<span style="color:#f92672">&lt;/beans&gt;</span>
+</code></pre></div><p>xml配置文件中指定了id和groovy文件的位置，可以理解成是一个Bean，接下来就是代码中使用，可以像普通的Bean进行注入：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> org.slf4j.Logger<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.slf4j.LoggerFactory<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.stereotype.Component<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> javax.annotation.Resource<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 消息处理
+</span><span style="color:#75715e"> */</span>
+<span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MessageProcessManager</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Logger LOGGER <span style="color:#f92672">=</span> LoggerFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">getLogger</span><span style="color:#f92672">(</span>MessageProcessManager<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+
+    <span style="color:#a6e22e">@Resource</span>
+    <span style="color:#66d9ef">private</span> Processor processorFromClasspathFile<span style="color:#f92672">;</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 使用classpath中的groovy脚本
+</span><span style="color:#75715e">     * @param message
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">processMessageFromClasspathFile</span><span style="color:#f92672">(</span>String message<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        LOGGER<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;origin message: {}&#34;</span><span style="color:#f92672">,</span> message<span style="color:#f92672">);</span>
+        String result <span style="color:#f92672">=</span> processorFromClasspathFile<span style="color:#f92672">.</span><span style="color:#a6e22e">process</span><span style="color:#f92672">(</span>message<span style="color:#f92672">);</span>
+        LOGGER<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;process result: {}&#34;</span><span style="color:#f92672">,</span> result<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p>这样就可以使用了。</p>
+<h1 id="xml中内嵌脚本">xml中内嵌脚本</h1>
+<p>这种方式和上面的方式差不多，区别就是把Groovy脚本内容直接内嵌到了xml配置文件中，配置文件如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span style="color:#f92672">&lt;beans</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
+       <span style="color:#a6e22e">xmlns:xsi=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+       <span style="color:#a6e22e">xmlns:lang=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/lang&#34;</span>
+       <span style="color:#a6e22e">xsi:schemaLocation=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+</span><span style="color:#e6db74">                           http://www.springframework.org/schema/lang
+</span><span style="color:#e6db74">                           http://www.springframework.org/schema/lang/spring-lang.xsd&#34;</span><span style="color:#f92672">&gt;</span>
+
+    <span style="color:#75715e">&lt;!--&lt;lang:defaults refresh-check-delay=&#34;1000&#34;/&gt;--&gt;</span>
+
+    <span style="color:#f92672">&lt;lang:groovy</span> <span style="color:#a6e22e">id =</span> <span style="color:#e6db74">&#34;processorFromInline&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;lang:inline-script&gt;</span>
+            import me.cxis.spring.groovy.Processor
+
+            class ClasspathMessageProcessor implements Processor {
+
+                @Override
+                String process(String message) {
+                    println(&#39;inline处理消息：&#39;+ message)
+
+                    def  result = message;
+                    if (message.contains(&#34;error&#34;)) {
+                        result = &#39;消息里有错误信息&#39;
+                    }
+                    result = result + &#34;，经过了inline处理&#34;
+                    return result
+                }
+            }
+        <span style="color:#f92672">&lt;/lang:inline-script&gt;</span>
+    <span style="color:#f92672">&lt;/lang:groovy&gt;</span>
+<span style="color:#f92672">&lt;/beans&gt;</span>
+</code></pre></div><p>接下来的使用方式和上面的使用方式一样，可以直接当成一个Bean注入到代码中。</p>
+<h1 id="从数据库中获取脚本">从数据库中获取脚本</h1>
+<p>这种方式需要自定义获取脚本方式，下面是具体的实现步骤。</p>
+<h2 id="自定义scriptsource">自定义ScriptSource</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> com.google.common.io.Resources<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.scripting.ScriptSource<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.util.StringUtils<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> java.io.IOException<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.net.URL<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> java.nio.charset.StandardCharsets<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 从数据库中读取groovy脚本内容
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DatabaseScriptSource</span> <span style="color:#66d9ef">implements</span> ScriptSource <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> String scriptName<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">DatabaseScriptSource</span><span style="color:#f92672">(</span>String scriptName<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">scriptName</span> <span style="color:#f92672">=</span> scriptName<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getScriptAsString</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// TODO 假装从数据库中根据scriptName读取
+</span><span style="color:#75715e"></span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;xxxxxxxx:&#34;</span> <span style="color:#f92672">+</span> scriptName<span style="color:#f92672">);</span>
+        URL url <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getResource</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/groovy/&#34;</span> <span style="color:#f92672">+</span> scriptName<span style="color:#f92672">);</span>
+        String groovyContent <span style="color:#f92672">=</span> Resources<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span>url<span style="color:#f92672">,</span> StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>groovyContent<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> groovyContent<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isModified</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">suggestedClassName</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">stripFilenameExtension</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">scriptName</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p>这里就是自定义脚本获取的逻辑，是从数据库中根据脚本名字获取脚本内容，这里假装从数据库中获取。想要真从数据库中获取，需要自己实现。</p>
+<h2 id="重写scriptfactorypostprocessor的获取脚本来源的方法">重写ScriptFactoryPostProcessor的获取脚本来源的方法</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
+
+<span style="color:#f92672">import</span> org.springframework.core.io.ResourceLoader<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.scripting.ScriptSource<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.scripting.support.ResourceScriptSource<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.scripting.support.ScriptFactoryPostProcessor<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.scripting.support.StaticScriptSource<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.stereotype.Component<span style="color:#f92672">;</span>
+
+<span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 自定义ScriptFactoryPostProcessor，支持从数据中读取groovy脚本
+</span><span style="color:#75715e"> */</span>
+<span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CustomScriptFactoryPostProcessor</span> <span style="color:#66d9ef">extends</span> ScriptFactoryPostProcessor <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String LANG_PREFIX_DATABASE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;database:&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">protected</span> ScriptSource <span style="color:#a6e22e">convertToScriptSource</span><span style="color:#f92672">(</span>String beanName<span style="color:#f92672">,</span> String scriptSourceLocator<span style="color:#f92672">,</span> ResourceLoader resourceLoader<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>scriptSourceLocator<span style="color:#f92672">.</span><span style="color:#a6e22e">startsWith</span><span style="color:#f92672">(</span>INLINE_SCRIPT_PREFIX<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> StaticScriptSource<span style="color:#f92672">(</span>scriptSourceLocator<span style="color:#f92672">.</span><span style="color:#a6e22e">substring</span><span style="color:#f92672">(</span>INLINE_SCRIPT_PREFIX<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()),</span> beanName<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>scriptSourceLocator<span style="color:#f92672">.</span><span style="color:#a6e22e">startsWith</span><span style="color:#f92672">(</span>LANG_PREFIX_DATABASE<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> DatabaseScriptSource<span style="color:#f92672">(</span>scriptSourceLocator<span style="color:#f92672">.</span><span style="color:#a6e22e">substring</span><span style="color:#f92672">(</span>LANG_PREFIX_DATABASE<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()));</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ResourceScriptSource<span style="color:#f92672">(</span>resourceLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getResource</span><span style="color:#f92672">(</span>scriptSourceLocator<span style="color:#f92672">));</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p>这里其实就是根据xml配置文件中配置的脚本路径来使用不同加载器来加载脚本内容，我们定义了一个新的方式database，这个会在下面的xml中使用到。</p>
+<h2 id="定义xml配置文件">定义xml配置文件</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span style="color:#f92672">&lt;beans</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
+       <span style="color:#a6e22e">xmlns:xsi=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+       <span style="color:#a6e22e">xmlns:lang=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/lang&#34;</span>
+       <span style="color:#a6e22e">xsi:schemaLocation=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+</span><span style="color:#e6db74">                           http://www.springframework.org/schema/lang
+</span><span style="color:#e6db74">                           http://www.springframework.org/schema/lang/spring-lang.xsd&#34;</span><span style="color:#f92672">&gt;</span>
+
+    <span style="color:#75715e">&lt;!--&lt;lang:defaults refresh-check-delay=&#34;1000&#34;/&gt;--&gt;</span>
+
+    <span style="color:#75715e">&lt;!--这里指定了一个脚本名称，实际使用的时候可以动态生成此xml文件--&gt;</span>
+    <span style="color:#f92672">&lt;lang:groovy</span> <span style="color:#a6e22e">id =</span> <span style="color:#e6db74">&#34;processorFromDB&#34;</span> <span style="color:#a6e22e">script-source =</span> <span style="color:#e6db74">&#34;database:DBMessageProcessor.groovy&#34;</span><span style="color:#f92672">/&gt;</span>
+
+<span style="color:#f92672">&lt;/beans&gt;</span>
+</code></pre></div><p>这里就是用到了我们定义的<code>database:</code>，后面紧跟的是Groovy脚本名称，可以根据这个名称从数据库中获取具体内容。当然这里是写死在配置文件中的一个Groovy，实际使用的时候可根据情况使用代码生成这个xml，然后加载进Spring容器中。举个例子，大概步骤可以如下：</p>
+<ul>
+<li>数据库中有若干条名字不同的Groovy脚本数据</li>
+<li>项目启动的时候加载这些数据库中的Groovy数据的名称</li>
+<li>根据这些Groovy数据中的脚本名称，使用代码在内存中生成上面的xml文件</li>
+<li>使用XmlBeanDefinitionReader来加载这个内存中的xml文件资源，这样就会按照上面我们自定义的方式根据脚本名字从数据库中加载脚本数据，并变成了Spring容器中的Bean</li>
+<li>具体业务逻辑中就可以根据不同的名字从Spring容器中获取对应的Bean来使用</li>
+<li>Groovy有增删改的时候，可以使用消息等机制来通知应用有变动，应用根据实际情况来销毁和刷新容器的中Bean，这样可以实现了热插拔功能</li>
+</ul>
+<p>这种方式稍微有点复杂，需要根据实际的情况来使用。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

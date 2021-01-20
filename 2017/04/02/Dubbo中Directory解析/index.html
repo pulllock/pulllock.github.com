@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Dubbo中Directory解析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Dubbo中Directory解析</h1>
+			<b><time>2017-04-02 23:38:55</time></b>
+		       
+		           <a href="/tags/dubbo-Directory">dubbo Directory</a>
+        	       
+		           <a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
+        	       
+
+			<div>
+				<blockquote>
+<p>Directory代表多个Invoker，可以把它看成List<!-- raw HTML omitted -->，但与List不同的是，它的值可能是动态变化的，比如注册中心推送变更。Cluster将Directory中的多个Invoker伪装成一个Invoker，对上层透明，伪装过程包含了容错逻辑，调用失败后，重试另一个。</p>
+</blockquote>
+<p>上面是文档上对Directory的解释。</p>
+<h1 id="directory接口">Directory接口</h1>
+<p>Directory接口继承了Node接口：</p>
+<pre><code>public interface Directory&lt;T&gt; extends Node {
+    //获取服务类型
+    Class&lt;T&gt; getInterface();
+
+    //invoker列表，服务的列表
+    List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException;
+}
+</code></pre><h1 id="abstractdirectory">AbstractDirectory</h1>
+<p>默认实现为AbstractDirectory：</p>
+<pre><code>public abstract class AbstractDirectory&lt;T&gt; implements Directory&lt;T&gt; {
+
+    // 日志输出
+    private static final Logger logger = LoggerFactory.getLogger(AbstractDirectory.class);
+	//服务url
+    private final URL url ;
+    private volatile boolean destroyed = false;
+	//消费者url
+    private volatile URL consumerUrl ;
+    //路由
+	private volatile List&lt;Router&gt; routers;
+    
+    public AbstractDirectory(URL url) {
+        this(url, null);
+    }
+    
+    public AbstractDirectory(URL url, List&lt;Router&gt; routers) {
+    	this(url, url, routers);
+    }
+    
+    public AbstractDirectory(URL url, URL consumerUrl, List&lt;Router&gt; routers) {
+        if (url == null)
+            throw new IllegalArgumentException(&quot;url == null&quot;);
+        this.url = url;
+        this.consumerUrl = consumerUrl;
+        setRouters(routers);
+    }
+    //对list方法的默认实现
+    public List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException {
+        if (destroyed){
+            throw new RpcException(&quot;Directory already destroyed .url: &quot;+ getUrl());
+        }
+        //获取Invoker列表的具体实现由具体子类实现
+        List&lt;Invoker&lt;T&gt;&gt; invokers = doList(invocation);
+        //路由
+        List&lt;Router&gt; localRouters = this.routers; // local reference
+        if (localRouters != null &amp;&amp; localRouters.size() &gt; 0) {
+            for (Router router: localRouters){
+                try {
+                    if (router.getUrl() == null || router.getUrl().getParameter(Constants.RUNTIME_KEY, true)) {
+                    	//路由
+                        invokers = router.route(invokers, getConsumerUrl(), invocation);
+                    }
+                } catch (Throwable t) {
+                    logger.error(&quot;Failed to execute router: &quot; + getUrl() + &quot;, cause: &quot; + t.getMessage(), t);
+                }
+            }
+        }
+        return invokers;
+    }
+    
+    public URL getUrl() {
+        return url;
+    }
+    
+    public List&lt;Router&gt; getRouters(){
+        return routers;
+    }
+
+	public URL getConsumerUrl() {
+		return consumerUrl;
+	}
+
+	public void setConsumerUrl(URL consumerUrl) {
+		this.consumerUrl = consumerUrl;
+	}
+	//构造中调用的设置路由的方法
+    protected void setRouters(List&lt;Router&gt; routers){
+        // copy list
+        routers = routers == null ? new  ArrayList&lt;Router&gt;() : new ArrayList&lt;Router&gt;(routers);
+        // append url router
+    	String routerkey = url.getParameter(Constants.ROUTER_KEY);
+        //指定了router，就使用制定的router来获取扩展实现
+        if (routerkey != null &amp;&amp; routerkey.length() &gt; 0) {
+            RouterFactory routerFactory = ExtensionLoader.getExtensionLoader(RouterFactory.class).getExtension(routerkey);
+            routers.add(routerFactory.getRouter(url));
+        }
+        // append mock invoker selector
+        routers.add(new MockInvokersSelector());
+        Collections.sort(routers);
+    	this.routers = routers;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void destroy(){
+        destroyed = true;
+    }
+	//子类实现具体的获取invoker列表
+    protected abstract List&lt;Invoker&lt;T&gt;&gt; doList(Invocation invocation) throws RpcException ;
+
+}
+</code></pre><p>Directory具体的实现有两个RegistryDirectory注册目录服务和StaticDirectory静态目录服务。</p>
+<h1 id="registrydirectory">RegistryDirectory</h1>
+<p>RegistryDirectory实现了NotifyListener接口，因此他本身也是一个监听器，可以在服务变更时接受通知，消费方要调用远程服务，会向注册中心订阅这个服务的所有的服务提供方，订阅的时候会调用notify方法，进行invoker实例的重新生成，也就是服务的重新引用。在服务提供方有变动时，也会调用notify方法，有关notify方法在Dubbo中订阅和通知解析那篇文章中已经解释，不做重复。subscribe方法也不做重复解释。</p>
+<h1 id="staticdirectory">StaticDirectory</h1>
+<p>静态目录服务。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

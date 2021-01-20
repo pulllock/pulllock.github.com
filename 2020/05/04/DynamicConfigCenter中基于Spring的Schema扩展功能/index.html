@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>DynamicConfigCenter中基于Spring的Schema扩展功能</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>DynamicConfigCenter中基于Spring的Schema扩展功能</h1>
+			<b><time>2020-05-04 10:22:12</time></b>
+		       
+		           <a href="/tags/DynamicConfigCenter">DynamicConfigCenter</a>
+        	       
+
+			<div>
+				<p>集成Spring，使用Spring的scheme扩展机制。</p>
+<h1 id="spring的schema扩展机制介绍">Spring的Schema扩展机制介绍</h1>
+<p>可以自定义xml标签，将我们自定义的功能集成到Spring中去，大概步骤如下：</p>
+<ul>
+<li>classpath下的META-INF中定义文件：spring.handlers、spring.schemas，用来识别配置</li>
+<li>编写xml的xsd文件描述自定义元素</li>
+<li>编写NamespaceHandler实现类，来注册自定义标签的解析器</li>
+<li>编写BeanDefinitionParser实现类，具体解析标签</li>
+</ul>
+<h1 id="dynamicconfigcenter中对schema扩展机制的使用和实现">DynamicConfigCenter中对Schema扩展机制的使用和实现</h1>
+<h2 id="实际使用">实际使用</h2>
+<ul>
+<li>在xml配置文件中定义<code>&lt;dcc:config .../&gt;</code>用来启用自己写的解析placeholder的方法</li>
+<li>在代码中使用<code>@Value(&quot;${TestProject.user.prefix}&quot;)</code>注入配置</li>
+<li>如果本地配置文件有要使用的配置，优先使用本地配置文件中的配置</li>
+</ul>
+<h2 id="具体实现">具体实现</h2>
+<p>定义spring.schemas文件：</p>
+<pre><code class="language-properties" data-lang="properties">https\://www.cxis.me/schema/dcc/dcc-config-1.0.xsd=me/cxis/dcc/spring/config/dcc-config.xsd
+</code></pre><p>定义spring.handlers文件：</p>
+<pre><code class="language-properties" data-lang="properties">https\://www.cxis.me/schema/dcc=me.cxis.dcc.spring.DccConfigNamespaceHandler
+</code></pre><p>定义dcc-config.xsd文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+
+<span style="color:#f92672">&lt;xsd:schema</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;https://www.cxis.me/schema/dcc&#34;</span>
+		<span style="color:#a6e22e">xmlns:xsd=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema&#34;</span>
+		<span style="color:#a6e22e">xmlns:beans=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
+		<span style="color:#a6e22e">targetNamespace=</span><span style="color:#e6db74">&#34;https://www.cxis.me/schema/dcc&#34;</span>
+		<span style="color:#a6e22e">elementFormDefault=</span><span style="color:#e6db74">&#34;qualified&#34;</span>
+		<span style="color:#a6e22e">attributeFormDefault=</span><span style="color:#e6db74">&#34;unqualified&#34;</span><span style="color:#f92672">&gt;</span>
+
+	<span style="color:#f92672">&lt;xsd:import</span> <span style="color:#a6e22e">namespace=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span> <span style="color:#a6e22e">schemaLocation=</span><span style="color:#e6db74">&#34;https://www.springframework.org/schema/beans/spring-beans.xsd&#34;</span><span style="color:#f92672">/&gt;</span>
+
+	<span style="color:#f92672">&lt;xsd:element</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;config&#34;</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;xsd:complexType&gt;</span>
+			<span style="color:#f92672">&lt;xsd:complexContent&gt;</span>
+				<span style="color:#f92672">&lt;xsd:extension</span> <span style="color:#a6e22e">base=</span><span style="color:#e6db74">&#34;beans:identifiedType&#34;</span><span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;/xsd:extension&gt;</span>
+			<span style="color:#f92672">&lt;/xsd:complexContent&gt;</span>
+		<span style="color:#f92672">&lt;/xsd:complexType&gt;</span>
+	<span style="color:#f92672">&lt;/xsd:element&gt;</span>
+
+<span style="color:#f92672">&lt;/xsd:schema&gt;</span>
+
+</code></pre></div><p>定义DccConfigNamespaceHandler：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DccConfigNamespaceHandler</span> <span style="color:#66d9ef">extends</span> NamespaceHandlerSupport <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        registerBeanDefinitionParser<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;config&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> DccConfigDefinitionParser<span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>定义DccConfigDefinitionParser：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DccConfigDefinitionParser</span> <span style="color:#66d9ef">implements</span> BeanDefinitionParser <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> BeanDefinition <span style="color:#a6e22e">parse</span><span style="color:#f92672">(</span>Element element<span style="color:#f92672">,</span> ParserContext parserContext<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>运行时监听zookeeper的变更，使用反射更新@Value注解的字段值。</p>
+<p>具体代码参照https://github.com/dachengxi/DynamicConfigCenter中DynamicConfigCenter-client下的<code>me.cxis.dcc.spring.DccConfigPlaceholderConfigurer</code>。</p>
+<p>源码：<a href="https://github.com/dachengxi/DynamicConfigCenter">https://github.com/dachengxi/DynamicConfigCenter</a></p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

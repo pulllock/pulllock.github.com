@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>volatile简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>volatile简介</h1>
+			<b><time>2016-12-15 16:55:57</time></b>
+		       
+		           <a href="/tags/volatile%E7%AE%80%E4%BB%8B">volatile简介</a>
+        	       
+
+			<div>
+				<p>Java允许线程访问共享变量。作为规则，为了确保共享变量被一致的和可靠的更新，线程应该确保它获得一个排它锁单独的获取这个变量。Java提供了第二种机制即volatile关键字，在某些情况下比锁更加方便。一个字段可以被声明为volatile，在这种情况下，Java内存模型确保所有线程看到的变量值都一样。（<a href="https://docs.oracle.com/javase/specs/jls/se7/html/jls-8.html#jls-8.3.1.4">Java语言规范</a>）</p>
+<p>一个变量被volatile修饰后，这个变量就具备了可见性和禁止指令重排序的特性。</p>
+<h2 id="可见性">可见性</h2>
+<p>Java内存模型中分为主存和线程的工作内存，线程的工作内存是私有的，其他线程无法看到。变量都存储在主存中，当线程需要一个变量的时候，首先会从主存中复制变量的副本到工作内存中，所以每个线程都拥有同一个变量得副本，他们对该变量副本的修改并不会影响到其他线程，修改后的变量副本需要写回主内存，这样就会导致有可能写回的值不一样，造成错误。此时可用volatile关键字修饰变量，保证每个线程对变量的修改，其他线程都是立即可见的。</p>
+<h2 id="禁止指令重排序">禁止指令重排序</h2>
+<p>Java执行语句的顺序可能和代码中写的顺序不同，使用volatile关键字，能保证它的执行顺序不会改变。</p>
+<h2 id="volatile和synchronized">Volatile和Synchronized</h2>
+<p>volatile修饰的变量具有可见性和禁止指令重排序特性，只能修饰变量。不具有原子性，使用在类似i++这种操作上是无效的。</p>
+<p>synchronized修饰方法和代码块，具有互斥性，内存可见性，原子性。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

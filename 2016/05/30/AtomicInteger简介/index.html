@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>AtomicInteger简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>AtomicInteger简介</h1>
+			<b><time>2016-05-30 13:30:52</time></b>
+		       
+		           <a href="/tags/AtomicInteger">AtomicInteger</a>
+        	       
+
+			<div>
+				<h1 id="atomicinteger简介">AtomicInteger简介</h1>
+<ol>
+<li>支持原子操作的Integer类</li>
+<li>主要用于在高并发环境下的高效程序处理。使用非阻塞算法来实现并发控制。</li>
+</ol>
+<!-- raw HTML omitted -->
+<h1 id="源码分析">源码分析</h1>
+<blockquote>
+<p>jdk1.7.0_71</p>
+</blockquote>
+<pre><code>//在更新操作时提供“比较并替换”的作用
+private static final Unsafe unsafe = Unsafe.getUnsafe();
+//用来记录value本身在内存的偏移地址
+private static final long valueOffset;
+//用来存储整数的时间变量，这里被声明为volatile，就是为了保证在更新操作时，当前线程可以拿到value最新的值
+private volatile int value;
+</code></pre><h2 id="atomicintegerint-initialvalue-初始化">AtomicInteger(int initialValue) 初始化</h2>
+<pre><code>public AtomicInteger(int initialValue){}
+</code></pre><h2 id="atomicinteger">AtomicInteger()</h2>
+<pre><code>public AtomicInteger(){}
+</code></pre><h2 id="get获取当前值">get()获取当前值</h2>
+<pre><code>public final int get() {
+        return value;
+    }
+</code></pre><h2 id="setint-value设置值">set(int value)设置值</h2>
+<pre><code>public final void set(int newValue) {
+        value = newValue;
+    }
+</code></pre><h2 id="lazysetint-newvalue">lazySet(int newValue)</h2>
+<pre><code>//lazySet延时设置变量值，这个等价于set()方法，但是由于字段是
+//volatile类型的，因此次字段的修改会比普通字段（非volatile
+//字段）有稍微的性能延时（尽管可以忽略），所以如果不是
+//想立即读取设置的新值，允许在“后台”修改值，那么此方法就很有用。
+public final void lazySet(int newValue) {
+        unsafe.putOrderedInt(this, valueOffset, newValue);
+    }
+</code></pre><h2 id="getandsetint-newvalue设定新数据返回旧数据">getAndSet(int newValue)设定新数据,返回旧数据</h2>
+<pre><code>public final int getAndSet(int newValue) {}
+</code></pre><h2 id="compareandsetint-expectint-update比较并设置">compareAndSet(int expect,int update)比较并设置</h2>
+<pre><code>public final boolean compareAndSet(int expect, int update) {
+//使用unsafe的native方法，实现高效的硬件级别CAS
+//native方法
+return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+    }
+</code></pre><h2 id="weakcompareandsetint-expectint-update比较并设置">weakCompareAndSet(int expect,int update)比较并设置</h2>
+<pre><code>public final boolean weakCompareAndSet(int expect, int update) {
+        return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+    }
+</code></pre><h2 id="getandincrement以原子方式将当前值加-1相当于线程安全的i操作">getAndIncrement()以原子方式将当前值加 1，相当于线程安全的i++操作</h2>
+<pre><code>public final int getAndIncrement() {
+        for (;;) {
+            int current = get();
+            int next = current + 1;
+            if (compareAndSet(current, next))
+                return current;
+        }
+    }
+</code></pre><h2 id="incrementandget-以原子方式将当前值加-1-相当于线程安全的i操作">incrementAndGet( )以原子方式将当前值加 1， 相当于线程安全的++i操作。</h2>
+<pre><code>public final int incrementAndGet() {}
+</code></pre><h2 id="getanddecrement-以原子方式将当前值减-1-相当于线程安全的i--操作">getAndDecrement( )以原子方式将当前值减 1， 相当于线程安全的i&ndash;操作。</h2>
+<pre><code>public final int getAndDecrement() {}
+</code></pre><h2 id="decrementandget--以原子方式将当前值减-1相当于线程安全的--i操作">decrementAndGet ( )以原子方式将当前值减 1，相当于线程安全的&ndash;i操作。</h2>
+<pre><code>public final int decrementAndGet() {}
+</code></pre><h2 id="addandget--以原子方式将给定值与当前值相加-实际上就是等于线程安全的i-idelta操作">addAndGet( )： 以原子方式将给定值与当前值相加， 实际上就是等于线程安全的i =i+delta操作。</h2>
+<pre><code>public final int addAndGet(int delta) {}
+</code></pre><h2 id="getandadd-以原子方式将给定值与当前值相加-相当于线程安全的tiideltareturn-t操作">getAndAdd( )：以原子方式将给定值与当前值相加， 相当于线程安全的t=i;i+=delta;return t;操作</h2>
+<pre><code>public final int getAndAdd(int delta) {}
+</code></pre><h1 id="参考">参考</h1>
+<p><a href="http://www.itzhai.com/the-introduction-and-use-of-atomicinteger.html#read-more">http://www.itzhai.com/the-introduction-and-use-of-atomicinteger.html#read-more</a></p>
+<p><a href="http://hittyt.iteye.com/blog/1130990">http://hittyt.iteye.com/blog/1130990</a></p>
+<p><a href="http://chenzehe.iteye.com/blog/1759884">http://chenzehe.iteye.com/blog/1759884</a></p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>RocketMQ中的消息存储</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>RocketMQ中的消息存储</h1>
+			<b><time>2018-01-06 10:31:59</time></b>
+		       
+		           <a href="/tags/RocketMQ">RocketMQ</a>
+        	       
+
+			<div>
+				<p>RocketMQ的消息存储学习。</p>
+<p>RocketMQ存储主要文件有：</p>
+<ul>
+<li>Commitlog，存储消息，顺序写文件，所有Topic的消息都存储在Commitlog文件中</li>
+<li>ConsumeQueue，消息消费队列文件，每个Topic包含多个消息消费队列，每个消息队列有一个消息文件，消息写入Commitlog文件后，异步转发到消息队列中</li>
+<li>IndexFile，索引文件，为了加速消息的检索性能，根据消息属性快速从Commitlog文件中检索消息，主要存储key和offset对应关系</li>
+</ul>
+<p>事务状态服务，存储每条消息的事务状态。</p>
+<p>定时消息服务，每个延迟级别对应一个消息消费队列，存储延迟队列的消息拉取进度。</p>
+<h1 id="消息存储流程">消息存储流程</h1>
+<ul>
+<li>如果当前Broker不可用、Broker为SLAVE角色、当前不支持写入、消息Topic长度超过256个字符、属性长度超过65536字符，则拒绝写入</li>
+<li>如果消息延迟级别大于0，将消息原来Topic名称和原来消息ID存入消息属性中，用延迟消息主题SCHEDULE_TOPIC、消息队列ID更新原来主题和队列</li>
+<li>获取当前可写入的Commitlog文件</li>
+<li>写入Commitlog之前先申请putMessageLock锁</li>
+<li>设置消息存储时间，如果mappedFile为空，说明本次消息是第一次发送，使用偏移量0创建第一个commit文件</li>
+<li>将消息追加到MappedFile中</li>
+<li>创建全局唯一消息ID，消息ID组成：4字节ip，4字节端口号，8字节消息偏移量</li>
+<li>获取该消息在消息队列的偏移量</li>
+<li>根据消息体长度、主题长度、属性长度计算消息总长度</li>
+<li>如果消息长度+END_FILE_MIN_BLANK_LENGTH大于Commitlog文件空闲空间，返回END_OF_FILE，Broker会重新创建一个新的Commitlog文件来存储该消息</li>
+<li>消息内容存储到ByteBuffer中，然后创建AppendMessageResult，这里只是将消息存储在MappedFile对应的内存Buffer中，没有刷盘。</li>
+<li>根据同步刷盘还是异步刷盘，将内存中数据持久化到磁盘</li>
+</ul>
+<h1 id="commitlog文件">Commitlog文件</h1>
+<p>Commitlog文件存储在<code>${ROCKET_HOME}/store/commitlog/</code>，每个文件默认1G。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

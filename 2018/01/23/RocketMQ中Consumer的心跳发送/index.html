@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>RocketMQ中Consumer的心跳发送</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>RocketMQ中Consumer的心跳发送</h1>
+			<b><time>2018-01-23 11:58:22</time></b>
+		       
+		           <a href="/tags/RocketMQ">RocketMQ</a>
+        	       
+
+			<div>
+				<p>RocketMQ Consumer的心跳发送学习。</p>
+<p>Consumer和Broker保持长连接，Consumer会向Broker发送心跳信息，心跳信息中包含了当前消费者的订阅信息。</p>
+<h1 id="发送心跳的场景">发送心跳的场景</h1>
+<ul>
+<li>在DefaultMQPushConsumerImpl#start启动后会发送心跳</li>
+<li>在DefaultMQPushConsumerImpl#subscribe订阅topic和tag的时候会发送心跳</li>
+<li>在RebalancePushImpl#messageQueueChanged消息队列有变化后会发送心跳</li>
+<li>在MQClientInstance#startScheduledTask启动定时任务时会启动一个定时任务发送心跳</li>
+<li>在DefaultMQProducerImpl#start启动后会发送心跳</li>
+</ul>
+<h1 id="发送和处理过程">发送和处理过程</h1>
+<ul>
+<li>Consumer向每个Broker发送心跳，包含消费者订阅信息</li>
+<li>Broker处理心跳请求</li>
+<li>获取消费组订阅配置信息，不存在就新建，并持久化</li>
+<li>注册重试队列，新注册后会向Nameserver广播请求更新路由信息</li>
+<li>注册消费者到消费者表中，没有则新增消费者，新增完消费者后需要通知所有消费者进行rebalance</li>
+<li>注册生产者</li>
+</ul>
+<h1 id="订阅关系一致性">订阅关系一致性</h1>
+<p>一个消费组中的所有消费者订阅的信息必须完全一致，如果不一致的话回产生消费混乱，丢失消息。因为在Broker中消费者订阅信息是以消费组为维度存放的，如果一个消费组中的的消费者订阅不一样，后面的消费者会覆盖前面消费者在消费组中的订阅信息。</p>
+<h1 id="draw-io源文件和图片">draw io源文件和图片</h1>
+<p>draw io源文件：<a href="/RocketMQ%E4%B8%ADConsumer%E7%9A%84%E5%BF%83%E8%B7%B3%E5%8F%91%E9%80%81/RocketMQ%E4%B8%ADConsumer%E7%9A%84%E5%BF%83%E8%B7%B3%E5%8F%91%E9%80%81.drawio">RocketMQ中Consumer的心跳发送.drawio</a></p>
+<p>
+<figure>
+  <img src="/RocketMQ%e4%b8%adConsumer%e7%9a%84%e5%bf%83%e8%b7%b3%e5%8f%91%e9%80%81/RocketMQ%e4%b8%adConsumer%e7%9a%84%e5%bf%83%e8%b7%b3%e5%8f%91%e9%80%81.png" alt="RocketMQ中Consumer的心跳发送" />
+</figure>
+
+
+</p>
+<h1 id="参考">参考</h1>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM中的对象头</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>JVM中的对象头</h1>
+			<b><time>2017-07-30 21:14:17</time></b>
+		       
+		           <a href="/tags/JVM">JVM</a>
+        	       
+
+			<div>
+				<p>JVM中的对象和对象头学习。</p>
+<p>Hotspot虚拟机对象在堆内存中可划分为三部分：</p>
+<ul>
+<li>对象头Header</li>
+<li>实例数据Instance Data</li>
+<li>对齐填充Padding</li>
+</ul>
+<h1 id="对象头">对象头</h1>
+<p>32位Hotspot虚拟机的对象头：</p>
+<p>
+<figure>
+  <img src="/JVM%e4%b8%ad%e7%9a%84%e5%af%b9%e8%b1%a1%e5%a4%b4/Hotspot%e8%99%9a%e6%8b%9f%e6%9c%ba%e5%af%b9%e8%b1%a1%e5%a4%b4.png" alt="Hotspot虚拟机对象头" />
+</figure>
+
+
+</p>
+<p>图片来自《深入理解Java虚拟机》</p>
+<p>对象头也叫Mark Word，包括两类信息：</p>
+<ul>
+<li>第一部分：用于存储对象自身的运行时数据</li>
+<li>第二部分：是类型指针，对象指向它的类型元数据的指针</li>
+</ul>
+<h2 id="存储对象自身的运行时数据">存储对象自身的运行时数据</h2>
+<p>对象头第一部分是用来存储对象自身的运行时数据，包括：哈希码、GC分代年龄、锁状态标志、线程持有的锁、偏向线程ID、偏向时间戳等。这部分长度在32位和64位虚拟机分别是32bit和64bit，不同状态下存储的内容不同：</p>
+<ul>
+<li>无锁状态：25位存储对象的哈希码，4位存储对象分代年龄，1位固定为0，2位用来存储锁标志位01</li>
+<li>轻量级锁：30位指向调用栈中锁记录的指针，2位用来存储锁标志位00</li>
+<li>重量级锁：30位指向重量级锁的指针，2位用来存储锁标志位10</li>
+<li>GC标记：30位为空，2位用来存储锁标志位11</li>
+<li>可偏向锁：23位偏向线程ID，2位偏向时间戳，4位对象分代年龄，1位固定为1，2位用来存储锁标志01</li>
+</ul>
+<h2 id="类型指针">类型指针</h2>
+<p>类型指针是对象指向它的类型元数据的指针，通过这个指针来确定对象是哪个类的实例。如果对象是数组，对象头还有一块用来记录数组长度的数据</p>
+<h1 id="实例数据">实例数据</h1>
+<p>实例数据存储的就是我们程序代码里定义的各种类型的字段内容，从父类继承下来的、自己定义的字段都必须记录起来。</p>
+<h1 id="对齐填充">对齐填充</h1>
+<p>Hotspot要求对象起始地址必须是8字节的整数倍，如果对象实例数据没有对齐的话，需要用填充来补全对齐。</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li>《实战Java虚拟机 JVM故障诊断与性能优化》</li>
+<li>《HotSpot实战》</li>
+<li>《深入理解Java虚拟机：JVM高级特性与最佳实践》</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

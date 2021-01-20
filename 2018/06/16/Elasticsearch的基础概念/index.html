@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Elasticsearch的基础概念</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Elasticsearch的基础概念</h1>
+			<b><time>2018-06-16 23:34:40</time></b>
+		       
+		           <a href="/tags/Elasticsearch">Elasticsearch</a>
+        	       
+
+			<div>
+				<p>Elasticsearch基础概念学习。</p>
+<h1 id="核心概念">核心概念</h1>
+<ul>
+<li>集群，一个或多个ES服务器节点组成集群，一个集群由一个唯一的名字标识，成为cluster name，默认名elasticsearch。具有相同集群名称的节点才会组成一个集群</li>
+<li>节点，是一个集群中的一个服务器，可以通过配置集群名称的方式来加入一个指定的集群，有三类：数据data节点，持有数据，提供对数据的搜索功能；主节点master，负责控制其他结点工作，一个集群只有一个主节点；部落结点tribe，可以像桥梁一样连接起多个集群，允许在多个集群上执行类似在单个集群上的功能</li>
+<li>索引，文档集合，数据结构是倒排索引。一个索引由一个名字来标识，必须全部小写字母，集群中可定义任意多的索引，ES内部使用Lucene写入或搜索数据</li>
+<li>类型，在一个索引中，可以定义一种或多种类型，类型是索引的一个逻辑上的分类或分区，通常会为具有一组共同字段的文档定义一个类型</li>
+<li>文档，是一个可被索引的基础信息单元，文档由字段构成。</li>
+<li>分片，创建索引的时候可指定分片数量，分片本身是一个功能完善且独立的索引。分片允许水平分割扩展，分片上可进行分布式并行的操作提高性能和吞吐量</li>
+<li>副本，分片的一份或多份拷贝，副本不和主分片在同一个节点，保证高可用。</li>
+<li>映射，mapping，存储分析链所需要的信息，写入索引的时候可按照映射来存储。</li>
+</ul>
+<h1 id="对比rdms">对比RDMS</h1>
+<table>
+<thead>
+<tr>
+<th>RDMS</th>
+<th>Elasticsearch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据库database</td>
+<td>索引index</td>
+</tr>
+<tr>
+<td>表table</td>
+<td>类型type</td>
+</tr>
+<tr>
+<td>行row</td>
+<td>文档document</td>
+</tr>
+<tr>
+<td>列column</td>
+<td>字段field</td>
+</tr>
+<tr>
+<td>表结构schema</td>
+<td>映射Mapping</td>
+</tr>
+<tr>
+<td>索引</td>
+<td>全文索引</td>
+</tr>
+<tr>
+<td>sql</td>
+<td>查询DSL</td>
+</tr>
+<tr>
+<td>select * from table</td>
+<td>GET http://&hellip;</td>
+</tr>
+<tr>
+<td>update table set</td>
+<td>PUT http://&hellip;</td>
+</tr>
+<tr>
+<td>delete</td>
+<td>DELETE http://&hellip;</td>
+</tr>
+</tbody>
+</table>
+<h1 id="字段类型">字段类型</h1>
+<h2 id="核心类型">核心类型</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>具体类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>字符串类型</td>
+<td>string、text、keyword</td>
+</tr>
+<tr>
+<td>数字类型</td>
+<td>long、integer、short、byte、double、float、half_float、scaled_float</td>
+</tr>
+<tr>
+<td>日期类型</td>
+<td>date</td>
+</tr>
+<tr>
+<td>布尔类型</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>二进制类型</td>
+<td>binary</td>
+</tr>
+<tr>
+<td>范围类型</td>
+<td>range</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>string，es5.x之后不再支持string，由text或keyword取代</li>
+<li>text，要被全文搜索，字段内容会被分析，被分词器分成词项，生成倒排索引；text类型字段不用于排序，很少用于聚合</li>
+<li>keyword，适用于索引结构化的字段，通常用于过滤、排序、聚合，keyword类型字段只能通过精确值搜索到</li>
+<li>数字类型，尽可能选择范围小的数据类型，字段长度越短，索引和搜索的效率越高</li>
+<li>date，es内部使用长整型毫秒数存储</li>
+<li>boolean，true、false</li>
+<li>binary，接受base64编码的字符串</li>
+</ul>
+<h2 id="复合类型">复合类型</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>具体类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数组类型</td>
+<td>array</td>
+</tr>
+<tr>
+<td>对象类型</td>
+<td>object</td>
+</tr>
+<tr>
+<td>嵌套类型</td>
+<td>nested</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>array，es没有专用数组类型，一个数组中值必须是同一种类型</li>
+<li>object，JSON具有层级关系，文档内部包含对象，内部对象还包含内部对象，但是写入到es后文档就会被索引成简单的扁平key-value对</li>
+<li>nested，是object类型的一个特例，当对象数组独立索引和查询，Lucene没有内部对象概念，es将对象层次扁平化，转化成字段名字和值构成的简单列表</li>
+</ul>
+<h2 id="地理类型">地理类型</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>具体类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>地理坐标</td>
+<td>geo_point</td>
+</tr>
+<tr>
+<td>地理图形</td>
+<td>geo_shape</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>geo_point，存储地理位置信息的经纬度，可查找一定范围内的地理位置；通过地理位置或相对中心点距离来聚合文档；把距离因素整合到文档评分中；通过距离对文档排序</li>
+<li>geo_shape，可以存储一块区域，比如矩形、三角形等，GeoJSON是一种对各种地理数据结构进行编码的格式</li>
+</ul>
+<h2 id="特殊类型">特殊类型</h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>具体类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IP类型</td>
+<td>ip</td>
+</tr>
+<tr>
+<td>范围类型</td>
+<td>completion</td>
+</tr>
+<tr>
+<td>令牌计数类型</td>
+<td>token_count</td>
+</tr>
+<tr>
+<td>附件类型</td>
+<td>attachment</td>
+</tr>
+<tr>
+<td>抽取类型</td>
+<td>precolator</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>ip，存储IPv4或IPv6的地址</li>
+<li>range，range类型使用场景包括时间选择表单、年龄范围选择表单等</li>
+<li>token_count，用于统计字符串分词后的词项个数，本质上是一个整形字段</li>
+</ul>
+<h1 id="元字段">元字段</h1>
+<p>元字段是映射中描述文档本身的字段。</p>
+<h2 id="文档属性的元字段">文档属性的元字段</h2>
+<table>
+<thead>
+<tr>
+<th>具体属性</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_index</td>
+<td>文档所属索引</td>
+</tr>
+<tr>
+<td>_uid</td>
+<td>包含<code>_type</code>和<code>_id</code>的复合字段</td>
+</tr>
+<tr>
+<td>_type</td>
+<td>文档的类型</td>
+</tr>
+<tr>
+<td>_id</td>
+<td>文档id</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>_index，多索引查询时，支持对索引名进行term、terms查询、聚合分析、使用脚本和排序。是一个虚拟字段</li>
+<li>_type，可根据该元字段进行查询、聚合、脚本和排序</li>
+<li>_id，可用于term查询、terms查询、match查询、query_string查询、simple_query_string查询，但不能用于聚合、脚本、排序</li>
+<li><code>_uid</code>，是<code>_type</code>和<code>_id</code>的组合，取值为<code>{type}#{id}</code></li>
+</ul>
+<h2 id="源文档的元字段">源文档的元字段</h2>
+<table>
+<thead>
+<tr>
+<th>具体属性</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_source</td>
+<td>文档的原始JSON字符串</td>
+</tr>
+<tr>
+<td>_size</td>
+<td>_source字段的大小</td>
+</tr>
+</tbody>
+</table>
+<h2 id="索引的元字段">索引的元字段</h2>
+<table>
+<thead>
+<tr>
+<th>具体属性</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_all</td>
+<td>包含索引全部字段的超级字段</td>
+</tr>
+<tr>
+<td>_field_names</td>
+<td>文档中包含非空值的所有字段</td>
+</tr>
+</tbody>
+</table>
+<h2 id="路由的元字段">路由的元字段</h2>
+<table>
+<thead>
+<tr>
+<th>具体属性</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_parent</td>
+<td>指定文档间的父子关系</td>
+</tr>
+<tr>
+<td>_routing</td>
+<td>将文档路由到特定分片的自定义路由值</td>
+</tr>
+</tbody>
+</table>
+<h2 id="自定义元字段">自定义元字段</h2>
+<table>
+<thead>
+<tr>
+<th>具体属性</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_meta</td>
+<td>用于自定义元数据</td>
+</tr>
+</tbody>
+</table>
+<h1 id="映射参数">映射参数</h1>
+<ul>
+<li>analyzer，用于指定文本段的分词器，对索引和查询都有效</li>
+<li>search_analyzer</li>
+<li>normalizer，用于解析前标准化配置，比如把所有字符转化为小写</li>
+<li>boost，用于设置字段的权重</li>
+<li>coerce，用于清除脏数据</li>
+<li>copy_to，用于自定义_all字段，可以把多个字段的值复制到一个超级字段</li>
+<li>doc_values，为了加快排序、聚合操作，在建立倒排索引的时候，额外增加一个列式存储映射，是一种空间换时间的做法</li>
+<li>dynamic，用于检测新发现的字段</li>
+<li>enabled，ES默认会索引所有字段，有些字段只需要存储，没有查询和聚合的需求，可以使用该参数来控制</li>
+<li>fielddata，text字段在查询时会生成一个fielddata数据结构，在字段首次被聚合、排序或者使用脚本的时候生成</li>
+<li>format，用于指定日期格式</li>
+<li>ignore_above，用于指定字段分词和索引的字符串最大长度，超过最大长度会被忽略，只用于keyword类型</li>
+<li>ignore_malformed，可忽略不规则数据</li>
+<li>include_in_all，用指定字段的值是否包含在_all字段中</li>
+<li>index，指定字段是否索引，不索引就不可搜索</li>
+<li>index_options，控制索引时存储哪些信息到倒排索引中</li>
+<li>fields，可让同一字段有多种不同的索引方式</li>
+<li>norms，用于标准化文档，以便查询时计算文档的相关性</li>
+<li>null_value，可让值为null的字段显式的可索引可搜索</li>
+<li>position_increment_gap，为支持近似或短语查询，text类型字段被解析的时候会考虑词项的位置信息</li>
+<li>properties，类型的映射、普通字段、object类型和nested类型字段都称为properties</li>
+<li>similarity，用于指定文档评分模型</li>
+<li>store，可设置不存储</li>
+<li>term_vector，词向量</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li>从Lucene到Elasticsearch全文检索实战</li>
+<li>深入理解ElasticSearch</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

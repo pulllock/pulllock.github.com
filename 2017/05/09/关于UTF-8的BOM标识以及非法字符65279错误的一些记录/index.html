@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>关于UTF-8的BOM标识以及非法字符65279错误的一些记录</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>关于UTF-8的BOM标识以及非法字符65279错误的一些记录</h1>
+			<b><time>2017-05-09 21:33:28</time></b>
+		       
+		           <a href="/tags/UTF-8-BOM">UTF-8 BOM</a>
+        	       
+		           <a href="/tags/%5C65279">\65279</a>
+        	       
+
+			<div>
+				<p>关于UTF-8的BOM标识和非法字符<code>\65279</code>的错误，已经遇到过好几次了，在这里记录一下。关于UTF-8带BOM和UTF-8不带BOM的区别，网上有很多解释。我遇到的最多的就是文件在Windows上被别人修改后，在我的电脑上会出错（我一直使用linux和macos），一般都是导入项目的时候，进行编译就会有问题。</p>
+<h1 id="idea导入项目出现65279非法字符">IDEA导入项目出现<code>\65279</code>非法字符</h1>
+<p>这个问题也是由于带BOM的UTF-8格式引起的，至少我遇到都是这样，一般在linux上和macos上导入项目会发生，可能是由于在windows上用一些软件编辑过文件导致的。解决办法也很简单，下面就说一下解决办法。</p>
+<p>比如说我将一个项目导入到idea发现报错了，可以使用命令行，首先进入src目录的同级目录：</p>
+<ol>
+<li>输入：<code>vi</code></li>
+<li>输入：<code>:args ./src/**</code> 这里的<code>**</code>表示循环src下的所有文件夹</li>
+<li>输入：<code>:ar</code> 这一步可选，目的是查看当前添加了哪些目标文件</li>
+<li>输入：<code>:argdo set nobomb | update!</code> 这句意思是对args列表中的文件分别执行 set nobomb 然后强制保存</li>
+</ol>
+<p>以上就是步骤，这样就可以了。</p>
+<h1 id="utf-8中bom标志导致项目读取配置文件为空">UTF-8中BOM标志导致项目读取配置文件为空</h1>
+<p>最近公司部署项目到刀片服务器上时候，发现项目可以正常运行，读取配置文件也可以在指定位置找到配置文件，但是就是读取配置文件内容的时候，一直是null。若干人各种调试无果。我想应该是配置文件被人在windows上编辑过或者windows上新建的文本文件，然后放进服务器上的。于是就将服务器配置文件拿下来和我本地的文件对比下，果然是由于UTF-8带有BOM的原因。</p>
+<p>重新在服务器上新建配置文件，把内容重新复制进去，完成！</p>
+<p>一般properties和xml文件可能会遇到这个问题。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

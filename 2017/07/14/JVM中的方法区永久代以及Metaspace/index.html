@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM中的方法区、永久代以及Metaspace</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>JVM中的方法区、永久代以及Metaspace</h1>
+			<b><time>2017-07-14 22:29:31</time></b>
+		       
+		           <a href="/tags/JVM">JVM</a>
+        	       
+
+			<div>
+				<p>JVM中的方法区、永久代、元空间学习。</p>
+<p>JVM运行时数据区域：</p>
+<p>
+<figure>
+  <img src="/JVM%e4%b8%ad%e7%9a%84%e6%96%b9%e6%b3%95%e5%8c%ba%e3%80%81%e6%b0%b8%e4%b9%85%e4%bb%a3%e4%bb%a5%e5%8f%8aMetaspace/java-memory-architecture.jpg" alt="JVM运行时数据区域" />
+</figure>
+
+
+</p>
+<p>图片来自：https://blog.codecentric.de/en/2010/01/the-java-memory-architecture-1-act/</p>
+<p>
+<figure>
+  <img src="/JVM%e4%b8%ad%e7%9a%84%e6%96%b9%e6%b3%95%e5%8c%ba%e3%80%81%e6%b0%b8%e4%b9%85%e4%bb%a3%e4%bb%a5%e5%8f%8aMetaspace/JVM_Internal_Architecture.png" alt="JVM内部结构" />
+</figure>
+
+
+</p>
+<p>图片来自：https://blog.jamesdbloom.com/JVMInternals.html</p>
+<p>Sun HotSopt的实现：</p>
+<p>
+<figure>
+  <img src="/JVM%e4%b8%ad%e7%9a%84%e6%96%b9%e6%b3%95%e5%8c%ba%e3%80%81%e6%b0%b8%e4%b9%85%e4%bb%a3%e4%bb%a5%e5%8f%8aMetaspace/sun-hotspot-memory-1.jpg" alt="HotsSpot实现" />
+</figure>
+
+
+</p>
+<p>图片来自：https://blog.codecentric.de/en/2010/01/the-java-memory-architecture-1-act/</p>
+<p>方法区定义的实现是永久代。</p>
+<ul>
+<li>方法区：Java虚拟机规范中有方法区的概念，线程共享，存储每一个类的结构信息，比如运行时常量池、字段、方法数据、构造函数、和普通方法的字节码内容、还包括一些在类、实例、接口初始化时用到的特殊方法。虽然方法区是堆的逻辑组成部分，但是简单虚拟机实现可以选择在这个区域不实现垃圾收集。</li>
+<li>永久代：是对方法区定义的实现，永久代是Hotspot中定义的，其他的虚拟机是没有永久代的。</li>
+<li>运行时常量池：是一个类或接口的常量池的运行时表示形式，包括编译器可知的字面量、运行期解析后才能获得的方法或字段引用。每个运行时常量池都分配在JVM的方法区中。</li>
+<li>字符串常量池：在永久代中。</li>
+</ul>
+<p>永久代中包含了：字符串常量池和方法区规范中定义的具体实现。</p>
+<ul>
+<li>在JDK1.6以及之前存在永久代，永久代包含字符串常量池和方法区具体实现</li>
+<li>在JDK1.7版本中仍然存在永久代，但是字符串常量池被移到了堆中，符号引用移到了本地内存、类的静态变量移到了堆中。</li>
+<li>在JDK1.8版本移除了永久代，使用与堆不相连的Metaspace元空间来代替永久代，并且元空间不在虚拟机内存中，是用的是本地内存。元空间也是对Java虚拟机规范中的方法区定义的具体实现。</li>
+</ul>
+<h1 id="为什么移除永久代">为什么移除永久代</h1>
+<ol>
+<li>字符串常量池存在永久代中，容易出现性能问题和内存溢出</li>
+<li>永久代大小不容易确定，PermSize指定太小容易造成永久代OOM</li>
+<li>永久代会为GC带来不必要的复杂度，并且回收效率偏低</li>
+<li>Oracle 可能会将HotSpot 与 JRockit 合二为一</li>
+</ol>
+<h1 id="方法区中存储了什么">方法区中存储了什么</h1>
+<blockquote>
+<p>存储每一个类的结构信息，比如运行时常量池、字段、方法数据、构造函数、和普通方法的字节码内容、还包括一些在类、实例、接口初始化时用到的特殊方法。</p>
+<p>《Java虚拟机规范》</p>
+</blockquote>
+<blockquote>
+<p>已被虚拟机加载的类型信息、常量、静态变量、即时编译器编译后的代码缓存等数据</p>
+<p>《深入理解Java虚拟机》</p>
+</blockquote>
+<h2 id="class文件信息">Class文件信息</h2>
+<p>存储着加载的Class文件信息，Class文件信息中包含了Class文件常量池，文件常量池中存放着字面量和符号引用。</p>
+<h2 id="运行时常量池">运行时常量池</h2>
+<p>类加载完后，JVM会将Class文件中的文件常量池转移到运行时常量池中，还会把一部分的符号引用转换为直接引用。</p>
+<h2 id="初始化时的特殊方法">初始化时的特殊方法</h2>
+<ul>
+<li><code>&lt;init&gt;</code>，是实例的初始化方法，表示的是Java语言中的构造方法，这个名称由编译器命名，实例初始化方法只能在实例的初始化期间，通过JVM的invokespecial指令来调用，只有实例正在构造的时候，实例化初始化方法才可以被调用访问。</li>
+<li><code>&lt;clinit&gt;</code>，表示的是类或者接口的初始化方法，这个是一个不包含参数的静态方法，名字是由编译器命名。类或接口的初始化方法由JVM自身隐式调用，在类的初始化阶段中被虚拟机自身调用。</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

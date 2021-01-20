@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Spring中AOP源码深入解析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Spring中AOP源码深入解析</h1>
+			<b><time>2017-04-12 22:39:24</time></b>
+		       
+		           <a href="/tags/Spring">Spring</a>
+        	       
+
+			<div>
+				<p>有关AOP相关概念以及Spring AOP相关概念和Spring AOP的使用不再重复。关于AOP在Spring中的地位，不用说相信我们都知道，也都会用，但是对于更深入的东西，还未接触过，这里就对Spring AOP的相关源码进行说明一下，看看到底Spring中AOP是怎么实现的。</p>
+<p>有关AOP的概念和Spring AOP相关配置，请参考其他两篇文章：<a href="http://cxis.me/2017/04/12/AOP%E6%A6%82%E5%BF%B5%EF%BC%8C%E5%8E%9F%E7%90%86%EF%BC%8C%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/">AOP概念，原理，应用介绍</a> 和 <a href="http://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/">Spring中AOP的配置从1.0到5.0的演进</a></p>
+<p>另外，本文使用的源码是Spring1.1.1版本的，之所以使用这么老的版本，是觉得相对来说简单一些，并且无关的东西更少，这样更容易去理解。对于后续版本新增功能可以在此基础上进行对比，理解的效果会更好。</p>
+<h1 id="示例程序">示例程序</h1>
+<p>首先我们还是先使用一个实例来看一下怎么使用，再从实例中一步一步跟进到源码中。</p>
+<p>先定义业务接口和实现：</p>
+<p>LoginService：</p>
+<pre><code>package me.cxis.spring.aop;
+
+/**
+ * Created by cheng.xi on 2017-03-29 12:02.
+ */
+public interface LoginService {
+    String login(String userName);
+}
+</code></pre><p>LoginServiceImpl：</p>
+<pre><code>package me.cxis.spring.aop;
+
+/**
+ * Created by cheng.xi on 2017-03-29 10:36.
+ */
+public class LoginServiceImpl implements LoginService {
+
+    public String login(String userName){
+        System.out.println(&quot;正在登录&quot;);
+        return &quot;success&quot;;
+    }
+}
+</code></pre><p>接着是三个通知类：</p>
+<pre><code>//这里只是在登录方法调用之前打印一句话
+public class LogBeforeLogin implements MethodBeforeAdvice {
+    public void before(Method method, Object[] objects, Object o) throws Throwable {
+        System.out.println(&quot;有人要登录了。。。&quot;);
+    }
+}
+
+package me.cxis.spring.aop.proxyfactory;
+
+import org.springframework.aop.AfterReturningAdvice;
+import org.springframework.aop.MethodBeforeAdvice;
+
+import java.lang.reflect.Method;
+
+/**
+ * Created by cheng.xi on 2017-03-29 10:56.
+ */
+public class LogAfterLogin implements AfterReturningAdvice {
+
+    public void afterReturning(Object o, Method method, Object[] objects, Object o1) throws Throwable {
+        System.out.println(&quot;有人已经登录了。。。&quot;);
+    }
+}
+
+package me.cxis.spring.aop.proxyfactory;
+
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+
+/**
+ * Created by cheng.xi on 2017-03-30 23:36.
+ */
+public class LogAroundLogin implements MethodInterceptor {
+    public Object invoke(MethodInvocation invocation) throws Throwable {
+        System.out.println(&quot;有人要登录。。。&quot;);
+        Object result = invocation.proceed();
+        System.out.println(&quot;登录完了&quot;);
+        return result;
+    }
+}
+
+</code></pre><p>测试方法：</p>
+<pre><code>package me.cxis.spring.aop.proxyfactory;
+
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+/**
+ * Created by cheng.xi on 2017-03-29 10:34.
+ */
+public class Main {
+
+
+    public static void main(String[] args) {
+        ProxyFactory proxyFactory = new ProxyFactory();//创建代理工厂
+        proxyFactory.setTarget(new LoginServiceImpl());//设置目标对象
+        proxyFactory.addAdvice(new LogBeforeLogin());//前置增强
+        proxyFactory.addAdvice(new LogAfterLogin());//后置增强
+        //proxyFactory.addAdvice(new LogAroundLogin());//环绕增强
+
+        LoginService loginService = (LoginService) proxyFactory.getProxy();//从代理工厂中获取代理
+        loginService.login(&quot;x&quot;);
+    }
+}
+
+</code></pre><p>关于实例中要说明的：我们看到在使用的时候，直接获取的是一个代理，不是要使用的实现类，这也很好懂，之前文章都说过AOP其实就是代理模式，在编译期或者运行期，给我们原来的代码增加一些功能，变成一个代理。当我们调用的时候，实际就是调用的代理类。</p>
+<h1 id="源码解析">源码解析</h1>
+<p>对于源码的解析，我们这里使用的是代码的方式，没有选择xml配置文件的方式。关于xml配置的方式，后面再讲解。</p>
+<h2 id="创建aop代理">创建AOP代理</h2>
+<p>首先我们要明白，Spring中实现AOP，就是生成一个代理，然后在使用的时候调用代理。</p>
+<h3 id="创建代理工厂">创建代理工厂</h3>
+<p>代码中首先创建一个代理工厂实例<code>ProxyFactory proxyFactory = new ProxyFactory();</code>代理工厂的作用就是使用编程的方式创建AOP代理。ProxyFactory继承自AdvisedSupport，AdvicedSupport是AOP代理的配置管理器。</p>
+<h3 id="设置目标对象">设置目标对象</h3>
+<p>然后是设置要代理的目标对象<code>proxyFactory.setTarget(new LoginServiceImpl());</code>，看下setTarget方法：</p>
+<pre><code>public void setTarget(Object target) {
+	//先根据给定的目标实现类，创建一个单例的TargetSource
+    //然后设置TargetSource
+    setTargetSource(new SingletonTargetSource(target));
+}
+</code></pre><h4 id="targetsource">TargetSource</h4>
+<p>TargetSource用来获取当前的Target，也就是TargetSource中会保存着我们的的实现类。</p>
+<pre><code>public interface TargetSource {
+
+	//返回目标类的类型
+	Class getTargetClass();
+	
+	//查看TargetSource是否是static的
+    //静态的TargetSource每次都返回同一个Target
+	boolean isStatic();
+	
+	//获取目标类的实例
+	Object getTarget() throws Exception;
+	
+	//释放目标类
+	void releaseTarget(Object target) throws Exception;
+
+}
+</code></pre><h4 id="singletontargetsource">SingletonTargetSource</h4>
+<p>TargetSource的默认实现，是一个单例的TargetSource，isStatic方法直接返回true。</p>
+<pre><code>public final class SingletonTargetSource implements TargetSource, Serializable {
+
+	//用来保存目标类	
+	private final Object target;
+	//构造方法
+	public SingletonTargetSource(Object target) {
+		this.target = target;
+	}
+	//直接返回目标类的类型
+	public Class getTargetClass() {
+		return target.getClass();
+	}
+	//返回目标类
+	public Object getTarget() {
+		return this.target;
+	}
+	//释放目标类，这里啥也没做
+	public void releaseTarget(Object o) {
+		// Nothing to do
+	}
+	//直接返回true
+	public boolean isStatic() {
+		return true;
+	}
+
+	//equals方法
+	public boolean equals(Object other) {
+    	//相等，返回true
+		if (this == other) {
+			return true;
+		}
+        //不是SingletonTargetSource类型的返回false
+		if (!(other instanceof SingletonTargetSource)) {
+			return false;
+		}
+		SingletonTargetSource otherTargetSource = (SingletonTargetSource) other;
+        //判断目标类是否相等
+		return ObjectUtils.nullSafeEquals(this.target, otherTargetSource.target);
+	}
+	
+	//toString方法
+	public String toString() {
+		return &quot;SingletonTargetSource: target=(&quot; + target + &quot;)&quot;;
+	}
+}
+</code></pre><p>上面是有关TargetSource和SingletonTargetSource的说明，接着往下一步就是设置目标类setTargetSource方法，在AdvisedSupport类中：</p>
+<pre><code>public void setTargetSource(TargetSource targetSource) {
+    if (isActive() &amp;&amp; getOptimize()) {
+        throw new AopConfigException(&quot;Can't change target with an optimized CGLIB proxy: it has its own target&quot;);
+    }
+    //么有做什么处理，只是将我们构建的TargetSource缓存起来
+    this.targetSource = targetSource;
+}
+</code></pre><h3 id="添加通知">添加通知</h3>
+<p>上面设置了要代理的目标类之后，接着是添加通知，也就是添加增强类，<code>proxyFactory.addAdvice()</code>方法是添加增强类的方法。我们在例子中是这么使用的：</p>
+<pre><code>proxyFactory.addAdvice(new LogBeforeLogin());//前置增强
+proxyFactory.addAdvice(new LogAfterLogin());//后置增强
+//proxyFactory.addAdvice(new LogAroundLogin());//环绕增强
+</code></pre><p>addAdvice方法的参数是一个Advice类型的类，也就是通知或者叫增强，可以去我们的增强类中查看，我们都继承了各种Advice，比如<code>MethodBeforeAdvice</code>，<code>AfterReturningAdvice</code>，<code>MethodInterceptor</code>，这里先讲一下有关通知Advice的代码，然后再继续说明addAdvice方法。</p>
+<h4 id="advice接口">Advice接口</h4>
+<p>Advice不属于Spring，是AOP联盟定义的接口。Advice接口并没有定义任何方法，是一个空的接口，用来做标记，实现了此接口的的类是一个通知类。Advice有几个子接口：</p>
+<ul>
+<li>BeforeAdvice，前置增强，意思是在我们的目标类之前调用的增强。这个接口也没有定义任何方法。</li>
+<li>AfterReturningAdvice，方法正常返回前的增强，该增强可以看到方法的返回值，但是不能更改返回值，该接口有一个方法afterReturning</li>
+<li>ThrowsAdvice，抛出异常时候的增强，也是一个标志接口，没有定义任何方法。</li>
+<li>Interceptor，拦截器，也没有定义任何方法，表示一个通用的拦截器。不属于Spring，是AOP联盟定义的接口</li>
+<li>DynamicIntroductionAdvice，动态引介增强，有一个方法implementsInterface。</li>
+</ul>
+<h5 id="methodbeforeadvice">MethodBeforeAdvice</h5>
+<p>MethodBeforeAdvice接口，是BeforeAdvice的子接口，表示在方法前调用的增强，方法前置增强不能阻止方法的调用，但是能抛异常来使目标方法不继续执行。</p>
+<pre><code>public interface MethodBeforeAdvice extends BeforeAdvice {
+	
+	//在给定的方法调用前，调用该方法
+    //参数method是被代理的方法
+    //参数args是被代理方法的参数
+    //参数target是方法调用的目标，可能为null
+	void before(Method m, Object[] args, Object target) throws Throwable;
+}
+</code></pre><h5 id="methodinterceptor">MethodInterceptor</h5>
+<p>MethodInterceptor不属于Spring，是AOP联盟定义的接口，是Interceptor的子接口，我们通常叫做环绕增强。</p>
+<pre><code>public interface MethodInterceptor extends Interceptor {
+	
+    //在目标方法调用前后做一些事情
+    //返回的是invocation.proceed()方法的返回值
+    Object invoke(MethodInvocation invocation) throws Throwable;
+}
+</code></pre><p>参数MethodInvocation是一个方法调用的连接点，接下来先看看MethodInvocation相关的代码。</p>
+<h5 id="joinpoint连接点">Joinpoint连接点</h5>
+<p>JointPoint接口，是一个通用的运行时连接点，运行时连接点是在一个静态连接点发生的事件。</p>
+<pre><code>public interface Joinpoint {
+
+   //开始调用拦截器链中的下一个拦截器
+   Object proceed() throws Throwable;
+
+   //
+   Object getThis();
+
+   //
+   AccessibleObject getStaticPart();   
+
+}
+</code></pre><h5 id="invocation接口">Invocation接口</h5>
+<p>Invocation接口是Joinpoint的子接口，表示程序的调用，一个Invocation就是一个连接点，可以被拦截器拦截。</p>
+<pre><code>public interface Invocation extends Joinpoint {
+   
+   //获取参数
+   Object[] getArguments();
+
+}
+</code></pre><h5 id="methodinvocation接口">MethodInvocation接口</h5>
+<p>MethodInvocation接口是Invocation的子接口，用来描述一个方法的调用。</p>
+<pre><code>public interface MethodInvocation extends Invocation
+{
+
+    //获取被调用的方法
+    Method getMethod();
+
+}
+</code></pre><p>另外还有一个ConstructorInvocation接口，也是Invocation的子接口，描述的是构造器的调用。</p>
+<p>上面介绍完了Advice的相关定义，接着看往代理工厂中添加增强的addAdvice方法，addAdvice方法在AdvisedSupport类中：</p>
+<pre><code>public void addAdvice(Advice advice) throws AopConfigException {
+	//advisors是Advice列表，是一个LinkedList
+    //如果被添加进来的是一个Interceptor，会先被包装成一个Advice
+    //添加之前现获取advisor的大小，当做添加的Advice的位置
+    int pos = (this.advisors != null) ? this.advisors.size() : 0;
+    //添加Advice
+    addAdvice(pos, advice);
+}
+</code></pre><p>接着看addAdvice(pos, advice)方法：</p>
+<pre><code>public void addAdvice(int pos, Advice advice) throws AopConfigException {
+	//只能处理实现了AOP联盟的接口的拦截器
+    if (advice instanceof Interceptor &amp;&amp; !(advice instanceof MethodInterceptor)) {
+        throw new AopConfigException(getClass().getName() + &quot; only handles AOP Alliance MethodInterceptors&quot;);
+    }
+	//IntroductionInfo接口类型，表示引介信息
+    if (advice instanceof IntroductionInfo) {
+    	//不需要IntroductionAdvisor
+        addAdvisor(pos, new DefaultIntroductionAdvisor(advice, (IntroductionInfo) advice));
+    }
+    //动态引介增强的处理
+    else if (advice instanceof DynamicIntroductionAdvice) {
+        //需要IntroductionAdvisor
+        throw new AopConfigException(&quot;DynamicIntroductionAdvice may only be added as part of IntroductionAdvisor&quot;);
+    }
+    else {
+    	//添加增强器，需要先把我们的增强包装成增强器，然后添加
+        addAdvisor(pos, new DefaultPointcutAdvisor(advice));
+    }
+}
+</code></pre><p>我们看到添加增强的时候，实际调用添加增强器这个方法，首先需要把我们的Advice包装成一个PointCutAdvisor，然后在添加增强器。这里先了解一下有关PointCutAdvisor的相关信息。</p>
+<h4 id="advisor接口">Advisor接口</h4>
+<p>Advisor，增强器，它持有一个增强Advice，还持有一个过滤器，来决定Advice可以用在哪里。</p>
+<pre><code>public interface Advisor {
+	
+	//判断Advice是不是每个实例中都有
+	boolean isPerInstance();
+	
+	//返回持有的Advice
+	Advice getAdvice();
+
+}
+</code></pre><h4 id="pointcutadvisor">PointcutAdvisor</h4>
+<p>是一个持有Pointcut切点的增强器，PointcutAdvisor现在就会持有一个Advice和一个Pointcut。</p>
+<pre><code>public interface PointcutAdvisor extends Advisor {
+
+	//获取Pointcut
+	Pointcut getPointcut();
+
+}
+</code></pre><h4 id="pointcut接口">Pointcut接口</h4>
+<p>切入点，定义了哪些连接点需要被织入横切逻辑。可以</p>
+<pre><code>public interface Pointcut {
+	//类过滤器，可以知道哪些类需要拦截
+	ClassFilter getClassFilter();
+	//方法匹配器，可以知道哪些方法需要拦截
+	MethodMatcher getMethodMatcher();
+	
+	// could add getFieldMatcher() without breaking most existing code
+	Pointcut TRUE = TruePointcut.INSTANCE; 
+
+}
+</code></pre><h4 id="classfilter接口">ClassFilter接口</h4>
+<pre><code>public interface ClassFilter {
+	
+	//判断给定的类是不是要拦截
+	boolean matches(Class clazz);
+
+	ClassFilter TRUE = TrueClassFilter.INSTANCE;
+
+}
+</code></pre><h4 id="methodmatcher接口">MethodMatcher接口</h4>
+<pre><code>public interface MethodMatcher {
+	
+	/ 静态方法匹配
+	boolean matches(Method m, Class targetClass);
+	
+	//是否是运行时动态匹配
+	boolean isRuntime();
+	
+	//运行是动态匹配
+	boolean matches(Method m, Class targetClass, Object[] args);
+	
+	MethodMatcher TRUE = TrueMethodMatcher.INSTANCE;
+
+}
+</code></pre><p>看完相关的定义之后，接着看方法new DefaultPointcutAdvisor(advice)，将Advice包装成一个DefaultPointcutAdvisor。其实就是将advice和默认的Pointcut包装进DefaultPointcutAdvisor。</p>
+<p>DefaultPointcutAdvisor是Advisor的最常用的一个实现，可以使用任意类型的Pointcut和Advice，但是不能使用Introduction。</p>
+<p>构造完成了DefaultPointcutAdvisor只有，接着就是添加增强器方法addAdvisor：</p>
+<pre><code>public void addAdvisor(int pos, Advisor advisor) throws AopConfigException {
+	//引介增强器处理
+    if (advisor instanceof IntroductionAdvisor) {
+        addAdvisor(pos, (IntroductionAdvisor) advisor);
+    }
+    else {
+    	//其他的增强器处理
+        addAdvisorInternal(pos, advisor);
+    }
+}
+</code></pre><p>首先看下非引介增强器的添加方法addAdvisorInternal：</p>
+<pre><code>private void addAdvisorInternal(int pos, Advisor advice) throws AopConfigException {
+    if (isFrozen()) {
+        throw new AopConfigException(&quot;Cannot add advisor: config is frozen&quot;);
+    }
+    //把Advice添加到LinkedList中指定位置
+    this.advisors.add(pos, advice);
+    //同时更新一下Advisors数组
+    updateAdvisorArray();
+    //通知监听器
+    adviceChanged();
+}
+</code></pre><p>然后看下关于引介增强器的添加addAdvisor，我们知道引介就是对目标类增加新的接口，所以引介增强，也就是对接口的处理：</p>
+<pre><code>public void addAdvisor(int pos, IntroductionAdvisor advisor) throws AopConfigException {
+	//对接口进行校验
+    advisor.validateInterfaces();
+
+    // 遍历要添加的接口，添加
+    for (int i = 0; i &lt; advisor.getInterfaces().length; i++) {
+    	//就是添加到interfaces集合中，interfaces是一个HashSet
+        addInterface(advisor.getInterfaces()[i]);
+    }
+    //然后添加到advisors中
+    addAdvisorInternal(pos, advisor);
+}
+</code></pre><p>对于添加增强的步骤，就是把我们的增强器添加进代理工厂中，保存在一个LinkedList中，顺序是添加进来的顺序。</p>
+<h2 id="获取代理">获取代理</h2>
+<p>到目前为止，我们看到的都还是在组装代理工厂，并没有看到代理的生成，接下来<code>proxyFactory.getProxy()</code>这一步就是获取代理的过程，我们继续看ProxyFactory的getProxy方法：</p>
+<pre><code>public Object getProxy() {
+	//创建一个AOP代理
+    AopProxy proxy = createAopProxy();
+    //返回代理
+    return proxy.getProxy();
+}
+</code></pre><p>我们知道一般创建代理会有两种方式，一种是JDK动态代理，另外一种是CGLIB动态代理，而这里的创建AOP代理就是生成这两种代理中的一种。先看createAopProxy()方法，在AdvisedSupport类中：</p>
+<pre><code>protected synchronized AopProxy createAopProxy() {
+    if (!this.isActive) {
+        activate();
+    }
+    //获取AOP代理工厂，然后创建代理
+    return getAopProxyFactory().createAopProxy(this);
+}
+</code></pre><p>获取代理工厂这一步，这里就是默认获取一个DefaultAopProxyFactory实例，然后调用createAopProxy创建AOP代理：</p>
+<pre><code>public AopProxy createAopProxy(AdvisedSupport advisedSupport) throws AopConfigException {
+	//对于指定了使用CGLIB方式，或者代理的是类，或者代理的不是接口，就使用CGLIB的方式来创建代理
+    boolean useCglib = advisedSupport.getOptimize() || advisedSupport.getProxyTargetClass() || advisedSupport.getProxiedInterfaces().length == 0;
+    if (useCglib) {
+        return CglibProxyFactory.createCglibProxy(advisedSupport);
+    }
+    else {
+        //使用JDK动态代理来创建代理
+        return new JdkDynamicAopProxy(advisedSupport);
+    }
+}
+</code></pre><p>获取完AOP代理之后返回，然后就是调用getProxy方法获取代理，这里分为CGLIB的获取方式和JDK动态代理的获取方式两种。</p>
+<h3 id="jdk动态代理方式获取代理">JDK动态代理方式获取代理</h3>
+<p>JDK动态代理方式获取代理，实现在JdkDynamicAopProxy中：</p>
+<pre><code>public Object getProxy() {
+    return getProxy(Thread.currentThread().getContextClassLoader());
+}
+</code></pre><pre><code>public Object getProxy(ClassLoader cl) {
+	//JDK动态代理只能代理接口类型，先获取接口
+    //就是从AdvisedSupport中获取保存在interfaces中的接口
+    Class[] proxiedInterfaces = AopProxyUtils.completeProxiedInterfaces(this.advisedSupport);
+    //使用Java的反射机制创建一个代理实例
+    return Proxy.newProxyInstance(cl, proxiedInterfaces, this);
+}
+</code></pre><p>关于JDK反射创建代理之类的，这里不做解析。</p>
+<h3 id="cglib方式获取代理">CGLIB方式获取代理</h3>
+<p>CGLIB获取方式，实现在Cglib2AopProxy中：</p>
+<pre><code>public Object getProxy() {
+	//使用CGLIB的方式来获取，CGLIB这里不做解析
+    return getProxy(Thread.currentThread().getContextClassLoader());
+}
+</code></pre><h2 id="使用代理">使用代理</h2>
+<p>上面获取代理之后，就剩最后一步，使用，当我们调用业务方法的时候，实际上是调用代理中的方法，对于CGLIB生成的代理，调用的是DynamicAdvisedInterceptor的intercept方法；JDK动态代理生成的代理是调用invoke方法。</p>
+<h3 id="jdk动态代理">JDK动态代理</h3>
+<p>看下JDK动态代理的方式，对于方法的调用，实际上调用的是代理类的invoke方法，在JdkDynamicAopProxy中：</p>
+<pre><code>public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    MethodInvocation invocation = null;
+    Object oldProxy = null;
+    boolean setProxyContext = false;
+	//代理的目标对象
+    TargetSource targetSource = advisedSupport.targetSource;
+    Class targetClass = null;
+    Object target = null;		
+
+    try {
+        //equals方法
+        if (method.getDeclaringClass() == Object.class &amp;&amp; &quot;equals&quot;.equals(method.getName())) {
+            return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
+        }
+        else if (Advised.class == method.getDeclaringClass()) {
+            //？？？
+            return AopProxyUtils.invokeJoinpointUsingReflection(this.advisedSupport, method, args);
+        }
+
+        Object retVal = null;
+
+        //代理目标对象
+        target = targetSource.getTarget();
+        if (target != null) {
+            targetClass = target.getClass();
+        }
+		//？？？
+        if (this.advisedSupport.exposeProxy) {
+            // Make invocation available if necessary
+            oldProxy = AopContext.setCurrentProxy(proxy);
+            setProxyContext = true;
+        }
+
+        //获取配置的通知Advicelian
+        List chain = this.advisedSupport.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice(
+                this.advisedSupport, proxy, method, targetClass);
+
+        //没有配置通知
+        if (chain.isEmpty()) {
+            //直接调用目标对象的方法
+            retVal = AopProxyUtils.invokeJoinpointUsingReflection(target, method, args);
+        }
+        else {
+            //配置了通知，创建一个MethodInvocation
+            invocation = new ReflectiveMethodInvocation(proxy, target,
+                                method, args, targetClass, chain);
+
+            //执行通知链，沿着通知器链调用所有的通知
+            retVal = invocation.proceed();
+        }
+
+        //返回值
+        if (retVal != null &amp;&amp; retVal == target) {
+            //返回值为自己
+            retVal = proxy;
+        }
+        //返回
+        return retVal;
+    }
+    finally {
+        if (target != null &amp;&amp; !targetSource.isStatic()) {
+            targetSource.releaseTarget(target);
+        }
+
+        if (setProxyContext) {
+            AopContext.setCurrentProxy(oldProxy);
+        }
+    }
+}
+</code></pre><h3 id="cglib动态代理">CGLIB动态代理</h3>
+<p>CGLIB的是调用DynamicAdvisedInterceptor的intercept方法对目标对象进行处理，具体暂先不解析。</p>
+<h1 id="使用proxyfactorybean创建aop代理">使用ProxyFactoryBean创建AOP代理</h1>
+<p>ProxyFactoryBean对Pointcut和Advice提供了完全的控制，还包括应用的顺序。ProxyFactoryBean的getObject方法会返回一个AOP代理，包装了目标对象。</p>
+<p>Spring在初始化的过程中，createBean的时候，如果是FactoryBean的话，会调用<code> ((BeanFactoryAware)bean).setBeanFactory(this);</code>：</p>
+<pre><code>public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    this.beanFactory = beanFactory;
+    //创建通知器链
+    this.createAdvisorChain();
+    if(this.singleton) {
+    	//刷新目标对象
+        this.targetSource = this.freshTargetSource();
+        //获取单例实例
+        this.getSingletonInstance();
+        this.addListener(this);
+    }
+
+}
+</code></pre><p>看下获取单例实例的方法：</p>
+<pre><code>private Object getSingletonInstance() {
+    if(this.singletonInstance == null) {
+        this.singletonInstance = this.createAopProxy().getProxy();
+    }
+
+    return this.singletonInstance;
+}
+</code></pre><p>createAopProxy方法在AdvisedSupport类中，下面创建的流程跟上面解析的都一样了。</p>
+<p>到这里AOP的一个流程的源码算是走完了，这只是其中一小部分，还有很多的没有涉及到，包括AOP标签的解析，CGLIB生成代理以及调用代理等等。其中有些还没明白的已经画上了问号，慢慢的在研究下。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

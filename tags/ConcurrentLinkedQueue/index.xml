@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ConcurrentLinkedQueue on Time Stream</title>
+    <link>http://cxis.me/tags/ConcurrentLinkedQueue/</link>
+    <description>Recent content in ConcurrentLinkedQueue on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Fri, 05 Aug 2016 22:06:52 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/ConcurrentLinkedQueue/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ConcurrentLinkedQueue简介</title>
+      <link>http://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 05 Aug 2016 22:06:52 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</guid>
+      <description>ConcurrentLinkedQueue是一个基于链表的无界线程安全队列，非阻塞实现方式，先进先出，适合高并发的场景。 非阻塞的性能较好，采</description>
+    </item>
+    
+  </channel>
+</rss>

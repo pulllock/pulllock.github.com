@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>dubbo编解码 on Time Stream</title>
+    <link>http://cxis.me/tags/dubbo%E7%BC%96%E8%A7%A3%E7%A0%81/</link>
+    <description>Recent content in dubbo编解码 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Sun, 19 Mar 2017 23:25:51 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/dubbo%E7%BC%96%E8%A7%A3%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Dubbo中编码和解码的解析</title>
+      <link>http://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Sun, 19 Mar 2017 23:25:51 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
+      <description>（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2</description>
+    </item>
+    
+  </channel>
+</rss>

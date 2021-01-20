@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>数据库索引简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>数据库索引简介</h1>
+			<b><time>2015-06-07 16:44:04</time></b>
+		       
+		           <a href="/tags/%E7%B4%A2%E5%BC%95">索引</a>
+        	       
+		           <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95">数据库索引</a>
+        	       
+
+			<div>
+				<h1 id="数据库索引的定义">数据库索引的定义</h1>
+<p>数据库索引，是数据库管理系统中一个排序的数据结构，以协助快速查询、更新数据库表中数据。提高数据库表数据访问速度的数据库对象.</p>
+<!-- raw HTML omitted -->
+<h1 id="索引简介">索引简介</h1>
+<p>索引可以避免全表扫描，多数查询可以仅扫描少量索引页及数据页,而不是遍历所有数据页，可以大大加快数据的检索速度，这也是创建索引的最主要的原因。索引还可以用于避免排序操作。通过创建唯一性索引，可以保证数据库表中每一行数据的唯一性。</p>
+<h1 id="索引分类">索引分类</h1>
+<ul>
+<li>聚集索引</li>
+<li>非聚集索引</li>
+</ul>
+<h2 id="聚集索引">聚集索引</h2>
+<blockquote>
+<p>索引键值的逻辑顺序与索引所服务的表中相应行的物理顺序相同。</p>
+</blockquote>
+<ul>
+<li>一个表只能包含一个聚集索引。</li>
+<li>聚集索引对经常要搜索范围值的列特别有效。</li>
+</ul>
+<p>聚集索引表记录的排列顺序与索引的排列顺序一样，查询速度快，但是对表进行修改速度较慢。</p>
+<p>聚集索引</p>
+<h2 id="非聚集索引">非聚集索引</h2>
+<blockquote>
+<p>该索引中索引的逻辑顺序与磁盘上行的物理存储顺序不同。</p>
+</blockquote>
+<ul>
+<li>一个表中可以存在多个非聚集索引。</li>
+</ul>
+<p>非聚集索引的顺序和表中记录的顺序不一致。</p>
+<h1 id="参考">参考</h1>
+<p><a href="https://zh.wikipedia.org/wiki/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95">https://zh.wikipedia.org/wiki/数据库索引</a></p>
+<p><a href="http://blog.csdn.net/kennyrose/article/details/7532032">http://blog.csdn.net/kennyrose/article/details/7532032</a></p>
+<p><a href="http://www.cnblogs.com/aspnethot/articles/1504082.html">http://www.cnblogs.com/aspnethot/articles/1504082.html</a></p>
+<p><a href="http://www.cnblogs.com/morvenhuang/archive/2009/03/30/1425534.html">http://www.cnblogs.com/morvenhuang/archive/2009/03/30/1425534.html</a></p>
+<p><a href="http://blog.csdn.net/pang040328/article/details/4164874">http://blog.csdn.net/pang040328/article/details/4164874</a></p>
+<p><a href="http://www.ituring.com.cn/article/986">http://www.ituring.com.cn/article/986</a></p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

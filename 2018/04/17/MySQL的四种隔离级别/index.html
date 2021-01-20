@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>MySQL的四种隔离级别</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>MySQL的四种隔离级别</h1>
+			<b><time>2018-04-17 20:00:36</time></b>
+		       
+		           <a href="/tags/MySQL">MySQL</a>
+        	       
+
+			<div>
+				<p>MySQL的四种隔离级别学习。</p>
+<p>SQL标准定义了四类隔离级别，用来限定事务内外的哪些改变是可见的，哪些改变是不可见的。低的隔离级别一般支持更高的并发处理，拥有更低的系统开销。</p>
+<h1 id="四种隔离级别">四种隔离级别</h1>
+<ul>
+<li>Read Uncommitted，未提交读，所有事务可看到其他未提交事务的执行结果。读取未提交的数据，称为脏读Dirty Read。会导致脏读、不可重复读、幻读</li>
+<li>Read Committed，提交读，一个事务只能看见已经提交事务所做的改变。会导致不可重复读，同一事务的其他实例在当前实例处理期间可能会有新的提交，可能导致同一select返回不同结果。会导致不可重复读、幻读</li>
+<li>Repeatable Read，可重复读，可保证同一事务的多个实例在并发读数据时，会看到同样的数据。该级别只允许读取已提交记录，而且在一个事务两次读取一个记录期间，其他事务包含自己，不更新该记录。但是会导致幻读。当用户读取某一范围数据时，另外一个事务又在该范围内插入新行，当用户再读取该范围数据时，会发现有新的幻影行。会导致幻读。InnoDB使用MVCC解决幻读</li>
+<li>Serializable，串行化，通过强制事务排序，解决幻读问题。在每个读的数据行上加上共享锁，可能会导致大量超时现象和锁竞争</li>
+</ul>
+<h1 id="脏读不可重复读幻读">脏读、不可重复读、幻读</h1>
+<ul>
+<li>脏读，第一个事务已更新一份数据，另外一个事务在此时读取了这份数据，第一个事务回滚了更新，第二个事务目前读取到的数据就是不正确的</li>
+<li>不可重复读，同一个事务里，两次查询的结果不一致，可能是两次查询过程中插入了一个事务更新导致原有数据改变了</li>
+<li>幻读，在一个事务中，两次查询的数据数量不一致，第一个事务第一次查询了几行数据，另外一个事务此时插入了新的数据行，第一个事务再次查询会发现多了几行数据</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://www.jianshu.com/p/8d735db9c2c0">https://www.jianshu.com/p/8d735db9c2c0</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

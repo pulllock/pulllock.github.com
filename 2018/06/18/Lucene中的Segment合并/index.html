@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Lucene中的Segment合并</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Lucene中的Segment合并</h1>
+			<b><time>2018-06-18 09:51:10</time></b>
+		       
+		           <a href="/tags/Lucene">Lucene</a>
+        	       
+
+			<div>
+				<p>Lucene中的Segment合并学习。</p>
+<p>如果索引包含Segment太多，IndexWriter会选择其中的一些，将它们合并成一个Segment：</p>
+<ul>
+<li>合并后会减少索引中Segment的数量，完成合并后，旧的Segment会被删除。搜索的Segment减少，能加快搜索速度；避免达到操作系统的文件描述打开过多的限制</li>
+<li>合并还会减小索引尺寸，如果被合并的Segment中包含挂起的删除操作，合并会释放删除数据占用的空间</li>
+</ul>
+<h1 id="segment合并策略">Segment合并策略</h1>
+<p>MergePolicy，合并策略的抽象。IndexWriter依赖MergePolicy具体的子类实现来完成合并：</p>
+<ul>
+<li>LogByteSizeMergePolicy，默认策略，会测量Segment的尺寸，就是Segment包含的所有文件总字节数</li>
+<li>LogDocMergePolicy，测量是通过Segment中文档数量来表示</li>
+</ul>
+<p>一旦索引级别数达到或超过mergeFactor设定的尺寸，Segment将被合并。</p>
+<h1 id="mergescheduler">MergeScheduler</h1>
+<p>选取好了需要合并的Segment后，接下来就是真正的合并操作，IndexWriter使用MergeScheduler的子类实现来完成。默认使用ConcurrentMergeScheduler进行，利用后台线程完成合并。SerialMergeScheduler由调用它的线程来完成合并。</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li>Lucene实战</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

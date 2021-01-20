@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>APIGateway on Time Stream</title>
+    <link>http://cxis.me/tags/APIGateway/</link>
+    <description>Recent content in APIGateway on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Mon, 13 Apr 2020 21:42:13 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/APIGateway/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>APIGateway总结</title>
+      <link>http://cxis.me/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Mon, 13 Apr 2020 21:42:13 +0000</pubDate>
+      
+      <guid>http://cxis.me/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</guid>
+      <description>&lt;p&gt;用了几天时间来设计和实现一个APIGateway，这里进行一下文档和代码的汇总。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APIGateway中获取客户端IP的方法</title>
+      <link>http://cxis.me/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Sun, 12 Apr 2020 21:35:24 +0000</pubDate>
+      
+      <guid>http://cxis.me/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</guid>
+      <description>&lt;p&gt;在使用ServletRequest获取客户端ip的时候，不仅仅只使用getRemoteHost来获取，还要使用XFF（X-Forwarded-For）。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APIGateway中使用Dubbo泛化调用</title>
+      <link>http://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</link>
+      <pubDate>Thu, 09 Apr 2020 22:52:28 +0000</pubDate>
+      
+      <guid>http://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</guid>
+      <description>&lt;p&gt;APIGateway需要调用各个业务系统的接口，但是不可能作为消费者依赖所有系统的接口jar包，可以使用Dubbo的泛化调用功能来实现。APIGateway作为消费者，连接到注册中心，拿到相应接口后可以使用泛化调用。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APIGateway中流控介绍</title>
+      <link>http://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Thu, 09 Apr 2020 21:29:14 +0000</pubDate>
+      
+      <guid>http://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</guid>
+      <description>&lt;p&gt;流控或者叫限流，可以通过控制流量来保护我们的系统不被大流量或者异常流量冲垮，常用的限流算法有：计数器算法、令牌桶算法、漏桶算法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APIGateway中加密验签介绍</title>
+      <link>http://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Wed, 08 Apr 2020 21:57:10 +0000</pubDate>
+      
+      <guid>http://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</guid>
+      <description>&lt;p&gt;需要提供给接口调用方一个用来加密的key，调用方根据key、一些其他参数以及业务参数进行加密，还需要对报文进行签名，使用加密的参数请求接口。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APIGateway中责任链模式的使用</title>
+      <link>http://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Wed, 08 Apr 2020 20:49:22 +0000</pubDate>
+      
+      <guid>http://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>&lt;p&gt;重新看一下责任链模式，在APIGateway设计中要用到责任链模式。简单写了代码测试下Spring中使用以及Apache CommonsChain使用。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APIGateway设计文档</title>
+      <link>http://cxis.me/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
+      <pubDate>Tue, 07 Apr 2020 23:49:05 +0000</pubDate>
+      
+      <guid>http://cxis.me/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
+      <description>&lt;p&gt;APIGateway的设计文档，包括整体架构和数据库设计。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>APIGateway设计的思路</title>
+      <link>http://cxis.me/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
+      <pubDate>Mon, 06 Apr 2020 21:53:08 +0000</pubDate>
+      
+      <guid>http://cxis.me/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
+      <description>&lt;p&gt;简述一下APIGateway的设计思路，准备从头写一个网关。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linkedList on Time Stream</title>
+    <link>http://cxis.me/tags/linkedList/</link>
+    <description>Recent content in linkedList on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Mon, 23 May 2016 23:20:51 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/linkedList/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>LinkedList简介</title>
+      <link>http://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 23 May 2016 23:20:51 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;h1 id=&#34;linkedlist简介&#34;&gt;LinkedList简介&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;LinkedList基于双向链表实现&lt;/li&gt;
+&lt;li&gt;LinkedList相对于Arraylist来说,get和set等随机访问会比较慢,LinkedList需要移动指针；add和remove会比较快。&lt;/li&gt;
+&lt;li&gt;LinkedList类还为在列表开头和结尾的get，remove，insert元素提供统一的命名方法，这些操作允许将链表用做堆栈、队列或者双端队列。此类实现 Deque 接口，为 add、poll 提供先进先出队列操作，以及其他堆栈和双端队列操作。&lt;/li&gt;
+&lt;li&gt;非线程安全，不同步。&lt;/li&gt;
+&lt;/ol&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

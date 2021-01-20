@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Java中的DelayQueue延时队列</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Java中的DelayQueue延时队列</h1>
+			<b><time>2016-05-29 22:15:25</time></b>
+		       
+		           <a href="/tags/Java">Java</a>
+        	       
+
+			<div>
+				<p>DelayQueue使用和原理学习。</p>
+<!-- raw HTML omitted -->
+<h1 id="简介">简介</h1>
+<p>DelayQueue是一个无界阻塞队列，支持延时获取元素。内部使用PriorityQueue优先级队列来存储元素，存储的元素需要实现Delayed接口。</p>
+<p>也就是在往DelayQueue中放元素的时候，该元素必须实现Delayed接口，并且可以指定一个需要延迟的时间，等过了一段时间到了我们指定的延迟时间后，可以获取到该元素，继续针对该元素处理。</p>
+<h1 id="示例">示例</h1>
+<p>模拟延迟发送短信功能，发短信的时候可以指定延时多久进行发送。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 延迟短信
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DelayedSms</span> <span style="color:#66d9ef">implements</span> Delayed <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 短信内容
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> String sms<span style="color:#f92672">;</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 短信创建时间
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">long</span> createTime<span style="color:#f92672">;</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 短信发送时间
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">long</span> sendTime<span style="color:#f92672">;</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 返回剩余的时间
+</span><span style="color:#75715e">     * @param unit
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">getDelay</span><span style="color:#f92672">(</span>TimeUnit unit<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">long</span> remaining <span style="color:#f92672">=</span> unit<span style="color:#f92672">.</span><span style="color:#a6e22e">convert</span><span style="color:#f92672">(</span>sendTime <span style="color:#f92672">-</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">currentTimeMillis</span><span style="color:#f92672">(),</span> TimeUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">MILLISECONDS</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;剩余时间：&#34;</span> <span style="color:#f92672">+</span> remaining <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;ms&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> remaining<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 延时队列内部比较排序
+</span><span style="color:#75715e">     * @param other
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>Delayed other<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> Long<span style="color:#f92672">.</span><span style="color:#a6e22e">compare</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDelay</span><span style="color:#f92672">(</span>TimeUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">MILLISECONDS</span><span style="color:#f92672">),</span> other<span style="color:#f92672">.</span><span style="color:#a6e22e">getDelay</span><span style="color:#f92672">(</span>TimeUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">MILLISECONDS</span><span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">// ... getter and setter...
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span> <span style="color:#f92672">{...}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmsSender</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> DelayQueue<span style="color:#f92672">&lt;</span>DelayedSms<span style="color:#f92672">&gt;</span> queue <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DelayQueue<span style="color:#f92672">&lt;&gt;();</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">SmsSender</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">new</span> Thread<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> SmsSendTask<span style="color:#f92672">()).</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 发送延时短信
+</span><span style="color:#75715e">     * @param sms 短信内容
+</span><span style="color:#75715e">     * @param createTime 短信创建时间
+</span><span style="color:#75715e">     * @param delay 要延长的时间，毫秒
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sendDelaySms</span><span style="color:#f92672">(</span>String sms<span style="color:#f92672">,</span> <span style="color:#66d9ef">long</span> createTime<span style="color:#f92672">,</span> <span style="color:#66d9ef">long</span> delay<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        DelayedSms delayedSms <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DelayedSms<span style="color:#f92672">();</span>
+        delayedSms<span style="color:#f92672">.</span><span style="color:#a6e22e">setSms</span><span style="color:#f92672">(</span>sms<span style="color:#f92672">);</span>
+        delayedSms<span style="color:#f92672">.</span><span style="color:#a6e22e">setCreateTime</span><span style="color:#f92672">(</span>createTime<span style="color:#f92672">);</span>
+        delayedSms<span style="color:#f92672">.</span><span style="color:#a6e22e">setSendTime</span><span style="color:#f92672">(</span>createTime <span style="color:#f92672">+</span> delay<span style="color:#f92672">);</span>
+
+        queue<span style="color:#f92672">.</span><span style="color:#a6e22e">offer</span><span style="color:#f92672">(</span>delayedSms<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmsSendTask</span> <span style="color:#66d9ef">implements</span> Runnable <span style="color:#f92672">{</span>
+
+        <span style="color:#a6e22e">@Override</span>
+        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">run</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                    DelayedSms sms <span style="color:#f92672">=</span> queue<span style="color:#f92672">.</span><span style="color:#a6e22e">take</span><span style="color:#f92672">();</span>
+                    sendSms<span style="color:#f92672">(</span>sms<span style="color:#f92672">);</span>
+                <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>InterruptedException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                    e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sendSms</span><span style="color:#f92672">(</span>DelayedSms sms<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;发送短信：&#34;</span> <span style="color:#f92672">+</span> sms<span style="color:#f92672">.</span><span style="color:#a6e22e">getSms</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;，createTime：&#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">new</span> Date<span style="color:#f92672">(</span>sms<span style="color:#f92672">.</span><span style="color:#a6e22e">getCreateTime</span><span style="color:#f92672">())</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;，sendTime: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">new</span> Date<span style="color:#f92672">(</span>sms<span style="color:#f92672">.</span><span style="color:#a6e22e">getSendTime</span><span style="color:#f92672">())</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;，发送时间：&#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">new</span> Date<span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">currentTimeMillis</span><span style="color:#f92672">()));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Client</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> InterruptedException <span style="color:#f92672">{</span>
+        SmsSender smsSender <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SmsSender<span style="color:#f92672">();</span>
+
+        <span style="color:#66d9ef">long</span> createTime <span style="color:#f92672">=</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">currentTimeMillis</span><span style="color:#f92672">();</span>
+        <span style="color:#75715e">// 延时20s发送
+</span><span style="color:#75715e"></span>        smsSender<span style="color:#f92672">.</span><span style="color:#a6e22e">sendDelaySms</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;短信1&#34;</span><span style="color:#f92672">,</span> createTime<span style="color:#f92672">,</span> 20 <span style="color:#f92672">*</span> 1000<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 延时30秒发送
+</span><span style="color:#75715e"></span>        smsSender<span style="color:#f92672">.</span><span style="color:#a6e22e">sendDelaySms</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;短信2&#34;</span><span style="color:#f92672">,</span> createTime<span style="color:#f92672">,</span> 30 <span style="color:#f92672">*</span> 1000<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 延时10秒发送
+</span><span style="color:#75715e"></span>        smsSender<span style="color:#f92672">.</span><span style="color:#a6e22e">sendDelaySms</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;短信3&#34;</span><span style="color:#f92672">,</span> createTime<span style="color:#f92672">,</span> 10 <span style="color:#f92672">*</span> 1000<span style="color:#f92672">);</span>
+
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h1 id="解析">解析</h1>
+<p>延时队列重点：阻塞队列、PriorityQueue、Delayed。延时队列是使用优先级队列来实现的一个阻塞队列，队列中存放的是实现接口Delayed的元素，优先队列比较是根据指定的延时时间。</p>
+<h2 id="阻塞队列">阻塞队列</h2>
+<p>延时队列是阻塞队列，获取元素的时候如果没有元素到期，获取元素的线程会被阻塞。</p>
+<h2 id="delayed">Delayed</h2>
+<p>延时队列中存放的元素必须实现Delayed接口，该接口定义了一个getDelay方法，是我们必须要实现的方法，该方法用来返回元素到过期时间还剩余多少时间。</p>
+<p>Delayed还继承了接口Comparable，compareTo方法也是我们必须要实现的，该方法用来确定元素在PriorityQueue中的顺序。</p>
+<h2 id="priorityqueue">PriorityQueue</h2>
+<p>延时队列内部使用PriorityQueue实现，PriorityQueue中存放的元素必须实现Delayed接口，根据元素的compareTo方法来确定元素顺序</p>
+<h1 id="源码">源码</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DelayQueue</span><span style="color:#f92672">&lt;</span>E <span style="color:#66d9ef">extends</span> Delayed<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> AbstractQueue<span style="color:#f92672">&lt;</span>E<span style="color:#f92672">&gt;</span>
+    <span style="color:#66d9ef">implements</span> BlockingQueue<span style="color:#f92672">&lt;</span>E<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 重入锁，保证队列操作的安全
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">transient</span> ReentrantLock lock <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ReentrantLock<span style="color:#f92672">();</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 优先级队列，用来存储元素，可以根据我们在compareTo方法中指定的算法来排序我们的元素
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> PriorityQueue<span style="color:#f92672">&lt;</span>E<span style="color:#f92672">&gt;</span> q <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> PriorityQueue<span style="color:#f92672">&lt;</span>E<span style="color:#f92672">&gt;();</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * leader指向第一个从队列获取元素时阻塞等待的线程，用来优化内部阻塞通知，
+</span><span style="color:#75715e">     * 减少其他线程不必要的等待时间
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * 采用的是Leader-Follower模式
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> Thread leader <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 队列头部有可用新元素或者新线程需要成为新的leader时需要被通知
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Condition available <span style="color:#f92672">=</span> lock<span style="color:#f92672">.</span><span style="color:#a6e22e">newCondition</span><span style="color:#f92672">();</span>
+
+   
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">offer</span><span style="color:#f92672">(</span>E e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// 添加元素进队列，先加锁
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">final</span> ReentrantLock lock <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">lock</span><span style="color:#f92672">;</span>
+        lock<span style="color:#f92672">.</span><span style="color:#a6e22e">lock</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// 使用优先级队列，添加元素进队列，优先级队列会对元素按照指定规则排序
+</span><span style="color:#75715e"></span>            q<span style="color:#f92672">.</span><span style="color:#a6e22e">offer</span><span style="color:#f92672">(</span>e<span style="color:#f92672">);</span>
+            <span style="color:#75715e">// 添加完元素后，获取优先级队列的队头元素
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// 如果刚添加的元素在队列头部，说明刚添加的元素就是要到期的元素
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>q<span style="color:#f92672">.</span><span style="color:#a6e22e">peek</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#75715e">// leader置为null
+</span><span style="color:#75715e"></span>                leader <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+                <span style="color:#75715e">// 唤醒阻塞在等待队列的线程
+</span><span style="color:#75715e"></span>                available<span style="color:#f92672">.</span><span style="color:#a6e22e">signal</span><span style="color:#f92672">();</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+            lock<span style="color:#f92672">.</span><span style="color:#a6e22e">unlock</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> E <span style="color:#a6e22e">take</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> InterruptedException <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// 出队列前先加锁
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">final</span> ReentrantLock lock <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">lock</span><span style="color:#f92672">;</span>
+        lock<span style="color:#f92672">.</span><span style="color:#a6e22e">lockInterruptibly</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">for</span> <span style="color:#f92672">(;;)</span> <span style="color:#f92672">{</span>
+                <span style="color:#75715e">// 获取队列头的元素
+</span><span style="color:#75715e"></span>                E first <span style="color:#f92672">=</span> q<span style="color:#f92672">.</span><span style="color:#a6e22e">peek</span><span style="color:#f92672">();</span>
+                <span style="color:#75715e">//队列中没有元素，
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>first <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                    <span style="color:#75715e">// 当前线程等待
+</span><span style="color:#75715e"></span>                    available<span style="color:#f92672">.</span><span style="color:#a6e22e">await</span><span style="color:#f92672">();</span>
+                <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                    <span style="color:#75715e">// 获取到了队列头元素
+</span><span style="color:#75715e"></span>                    <span style="color:#75715e">// 查看下我们定义元素时设置的延时时间规则，看是否到期
+</span><span style="color:#75715e"></span>                    <span style="color:#66d9ef">long</span> delay <span style="color:#f92672">=</span> first<span style="color:#f92672">.</span><span style="color:#a6e22e">getDelay</span><span style="color:#f92672">(</span>NANOSECONDS<span style="color:#f92672">);</span>
+                    <span style="color:#75715e">// 队列头元素已经过期，直接返回队列头元素
+</span><span style="color:#75715e"></span>                    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>delay <span style="color:#f92672">&lt;=</span> 0<span style="color:#f92672">)</span>
+                        <span style="color:#66d9ef">return</span> q<span style="color:#f92672">.</span><span style="color:#a6e22e">poll</span><span style="color:#f92672">();</span>
+                    first <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span> <span style="color:#75715e">// don&#39;t retain ref while waiting
+</span><span style="color:#75715e"></span>                    <span style="color:#75715e">// 走到这里说明队列中有元素，但都还没到过期时间
+</span><span style="color:#75715e"></span>                    <span style="color:#75715e">// 如果leader存在，说明有其他的线程已经调用了take获取
+</span><span style="color:#75715e"></span>                    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>leader <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                        <span style="color:#75715e">// 当前线程挂起等待
+</span><span style="color:#75715e"></span>                        available<span style="color:#f92672">.</span><span style="color:#a6e22e">await</span><span style="color:#f92672">();</span>
+                    <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                        <span style="color:#75715e">// leader为空，将当前线程变成leader
+</span><span style="color:#75715e"></span>                        Thread thisThread <span style="color:#f92672">=</span> Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">();</span>
+                        leader <span style="color:#f92672">=</span> thisThread<span style="color:#f92672">;</span>
+                        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+                            <span style="color:#75715e">// 上面已经有了剩余的时间，当前线程就可以直接挂起等待这剩余的一段时间
+</span><span style="color:#75715e"></span>                            available<span style="color:#f92672">.</span><span style="color:#a6e22e">awaitNanos</span><span style="color:#f92672">(</span>delay<span style="color:#f92672">);</span>
+                        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+                            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>leader <span style="color:#f92672">==</span> thisThread<span style="color:#f92672">)</span>
+                                leader <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+                        <span style="color:#f92672">}</span>
+                    <span style="color:#f92672">}</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// leader处理完，返回了需要的元素，这里要唤醒其他的follower
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>leader <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> q<span style="color:#f92672">.</span><span style="color:#a6e22e">peek</span><span style="color:#f92672">()</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                available<span style="color:#f92672">.</span><span style="color:#a6e22e">signal</span><span style="color:#f92672">();</span>
+            lock<span style="color:#f92672">.</span><span style="color:#a6e22e">unlock</span><span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+</code></pre></div>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

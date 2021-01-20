@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM中的CMS垃圾收集器</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>JVM中的CMS垃圾收集器</h1>
+			<b><time>2017-07-01 17:04:04</time></b>
+		       
+		           <a href="/tags/JVM">JVM</a>
+        	       
+
+			<div>
+				<p>CMS是老年代的垃圾收集器，使用标记-清除算法，是并发的收集器。可与Serial收集器和Parallel New收集器配合使用。</p>
+<p>CMS尽可能的缩短垃圾收集时用户线程的停顿时间。分为四个阶段：</p>
+<ul>
+<li>初始标记</li>
+<li>并发标记</li>
+<li>重新标记</li>
+<li>并发清除</li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>并发收集器</li>
+<li>GC过程中暂停时间短。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>对CPU资源敏感，并发阶段不会停顿，但是占用一部分县城，总吞吐量降低。</li>
+<li>无法处理浮动垃圾，并发清理阶段，程序运行还会产生新的垃圾。</li>
+<li>CMS基于标记-清除算法，收集结束后会产生空间碎片。</li>
+</ul>
+<h1 id="触发cms垃圾收集的条件">触发CMS垃圾收集的条件</h1>
+<p>周期性的，JVM默认2秒触发一次CMS的GC；主动触发，YGC发生了Promotion Failed，会触发对老年代进行回收，或者System.gc()触发。</p>
+<p>如果触发了主动的GC，周期性的GC会被夺取掉执行权，并记录 concurrent mode failure 或者 concurrent mode interrupted。</p>
+<p>触发的条件：</p>
+<ul>
+<li>如果没有设置<code>UseCMSInitiatingOccupancyOnly</code>参数，CMS默认会根据JVM运行时统计数据来判断是否触发CMS GC。</li>
+<li>如果设置了<code>UseCMSInitiatingOccupancyOnly</code>参数，并且配置了<code>-XX:CMSInitiatingOccupancyFraction</code>参数，会根据这个配置的参数来判断老年代使用率是否超过阈值来决定是否开启CMS GC。</li>
+<li>如果设置了<code>UseCMSInitiatingOccupancyOnly</code>参数，但没有配置<code>-XX:CMSInitiatingOccupancyFraction</code>参数，默认在使用率到92%的时候触发CMS GC。</li>
+<li>CMS默认不会对永久代进行垃圾收集，如果需要对永久代收集，需要设置参数<code>-XX:+CMSClassUnloadingEnabled</code>，CMS就会根据永久代内存使用率，默认92%，来判断是否开启CMS GC。</li>
+<li>新生代晋升担保失败，会触发CMS GC。</li>
+</ul>
+<h1 id="gc过程">GC过程</h1>
+<p>可分为四个大的阶段：</p>
+<ul>
+<li>初始标记</li>
+<li>并发标记</li>
+<li>重新标记</li>
+<li>并发清除</li>
+</ul>
+<p>按照GC日志中显示的，可以细分为7个阶段：</p>
+<ul>
+<li>初始标记（CMS Initial Mark），会Stop The World</li>
+<li>并发标记（CMS-concurrent-mark）</li>
+<li>预清理（CMS-concurrent-preclean）</li>
+<li>可被终止的预清理（CMS-concurrent-abortable-preclean）</li>
+<li>重新标记（CMS Final Remark），会Stop The World</li>
+<li>并发清除（CMS-concurrent-sweep）</li>
+<li>重置状态（CMS-concurrent-reset），重置CMS实现的内部数据结构</li>
+</ul>
+<h2 id="初始标记">初始标记</h2>
+<p>初始标记会Stop The World，标记GC Root能直接关联到的对象，速度很快。包含两部分：</p>
+<ul>
+<li>标记GC Roots直接可达的老年代对象。</li>
+<li>标记新生代中活着的对象引用到的老年代对象。</li>
+</ul>
+<h2 id="并发标记">并发标记</h2>
+<p>并发标记阶段和应用线程兵法执行。遍历初始标记阶段的被标记的对象，继续递归标记这些对象的可达对象。</p>
+<p>由于该阶运行的过程中用户线程也在运行，这就可能会发生这样的情况，已经被遍历过的对象的引用被用户线程改变等，如果发生了这样的情况，JVM就会标记这个区域为Dirty Card。后续只需要扫描这些Dirty Card，可以避免扫描整个老年代。</p>
+<p>这个阶段是和用户线程并发的，可能会导致concurrent mode failure。</p>
+<h2 id="预清理">预清理</h2>
+<p>用来处理并发标记阶段的Dirty Card，遍历这些对象重新标记。</p>
+<h2 id="可终止的预清理">可终止的预清理</h2>
+<p>在预清理完成后，会判断Eden的占用量是否大于CMSScheduleRemarkEdenSizeThreshold(默认为2M)，如果大于就会启动当前可终止的预清理阶段，直到Eden区占用量达到CMSScheduleRemarkEdenPenetration(默认50%)，或达到5秒钟。但是如果ygc在这个阶段中没有发生的话，是达不到理想效果的。此时可以指定CMSMaxAbortablePrecleanTime，但是，等待一般都不是什么好的策略，可以采用CMSScavengeBeforeRemark，使remark之前发生一次YGC，从而减少remark阶段暂停的时间。</p>
+<h2 id="重新标记">重新标记</h2>
+<p>重新标记阶段会Stop The World，该阶段的任务是完成标记整个年老代的所有的存活对象，尽管先前的pre clean阶段尽量应对处理了并发运行时用户线程改变的对象应用的标记，但是不可能跟上对象改变的速度，只是为final remark阶段尽量减少了负担。</p>
+<h2 id="并发清除">并发清除</h2>
+<p>清除那些没有被标记的可以回收的对象，由于这一阶段应用程序线程也在运行，这时候产生的浮动垃圾就不能被处理，只能等到下一次GC时在清理。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

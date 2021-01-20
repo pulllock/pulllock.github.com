@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Redis过期键的删除策略</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Redis过期键的删除策略</h1>
+			<b><time>2019-03-26 00:27:31</time></b>
+		       
+		           <a href="/tags/redis">redis</a>
+        	       
+
+			<div>
+				<p>Redis过期时间保存在过期字典中，键的过期策略有三种：定时删除、惰性删除、定期删除。Redis采用了惰性删除和定期删除两种策略配合。</p>
+<h1 id="过期键删除策略">过期键删除策略</h1>
+<ul>
+<li>定时删除，设置过期键同时设置一个定时器，可保证过期键尽快删除，内存友好，CPU不友好，占用CPU。主动删除策略。</li>
+<li>惰性删除，每次从键空间获取键时，如果过期就删除，没过期就返回该键，CPU友好，内存不友好，不能及时删除过期键。被动删除策略。</li>
+<li>定期删除，每隔一段时间检查一次，删除过期键。主动删除策略。</li>
+</ul>
+<h1 id="redis过期键删除策略">Redis过期键删除策略</h1>
+<p>Redis使用惰性删除和定期删除配合，在CPU时间和内存之间取得平衡。</p>
+<ol>
+<li>在访问key的时候判断key是否过期。</li>
+<li>在定期的serverCorn任务中，逐出部分过期key。默认在CPU空闲时每秒执行10次。</li>
+</ol>
+<h2 id="rdb功能对过期键的处理">RDB功能对过期键的处理</h2>
+<ul>
+<li>生成RDB文件，使用SAVE或者BGSAVE新建RDB文件时，会对键检查，过期的键不会保存到RDB中。</li>
+<li>载入RDB文件，主服务器载入RDB文件，过期键会被忽略。</li>
+<li>载入RDB文件，从服务载入RDB文件，不会检查过期键，全部载入数据库中。主从服务器同步的时候，从服务器数据库会被清空。</li>
+</ul>
+<h2 id="aof功能对过期键的处理">AOF功能对过期键的处理</h2>
+<ul>
+<li>服务器AOF持久化模式运行时，如果键过期，还没被惰性删除或定期删除，AOF文件不会做处理。</li>
+<li>当键被惰性删除或定期删除，程序会向AOF文件追加一条DEL命令，显式记录删除该键。</li>
+<li>AOF重写时，会对键校验，已过期的键不会保存到重写后的AOF文件中。</li>
+</ul>
+<h2 id="复制功能对过期键的处理">复制功能对过期键的处理</h2>
+<ul>
+<li>从服务器的过期键删除动作由主服务器控制。</li>
+<li>主服务器删除一个过期键后，会显式向所有从服务器发送一个DEL命令，告知删除过期键。</li>
+<li>从服务器执行客户端发送的读命令时，碰到过期键也不会删除。</li>
+<li>从服务器只有在接收到主服务器发来的DEL命令才会删除过期键。</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li>《redis设计与实现》（第二版）</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

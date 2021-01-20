@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Spring的@Configuration注解实现机制</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Spring的@Configuration注解实现机制</h1>
+			<b><time>2019-05-30 15:26:17</time></b>
+		       
+		           <a href="/tags/Spring">Spring</a>
+        	       
+
+			<div>
+				<p>记录下Spring中@Configuration注解的实现原理。</p>
+<p>@Configuration注解其实是@Component注解，容器启动过程中会在AnnotationConfigBeanDefinitionParser或者ComponentScanBeanDefinitionParser中注册ConfigurationClassPostProcessor，这个Processor就是用来处理@Configuration注解的。</p>
+<p>ConfigurationClassPostProcessor实现了BeanDefinitionRegistryPostProcessor接口，并且优先级是最高的，容器刷新的时候会有一步是invokeBeanFactoryPostProcessor，这里面会调用ConfigurationClassPostProcessor的postProcessBeanDefinitionRegistry方法。这里会将@Configuration标注的类中的Bean扫描进容器中，注册成BeanDefinition。被@Configuration注解的类在ComponentScanBeanDefinitionParser扫描注解的时候已经被注册到容器中。这一步还会处理@Import、@ImportResource等等注解，将这些要导入的Bean注册到容器中。</p>
+<p>// TODO</p>
+<p>在postProcessBeanDefinitionRegistry方法处理完后，invokeBeanFactoryPostProcessor这一步会继续执行postProcessBeanFactory方法，这里会把@Configuration注解的类使用CGLIB进行增强。增强的作用主要是用来处理一个被@Bean注解的方法调用另外一个@Bean注解的方法的逻辑，如果被调用方法是@Bean注解的，则可以根据情况从容器中获取对应Bean。</p>
+<p>增强处理完后，对于@Configuration和@Bean等注解的处理就完成了，后面就是Bean的实例化，实例化的时候会根据实际调用来使用增强中的方法进行处理。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

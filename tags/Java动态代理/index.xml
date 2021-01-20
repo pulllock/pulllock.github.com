@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java动态代理 on Time Stream</title>
+    <link>http://cxis.me/tags/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/</link>
+    <description>Recent content in Java动态代理 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Wed, 12 Apr 2017 21:09:20 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java动态代理机制解析</title>
+      <link>http://cxis.me/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Wed, 12 Apr 2017 21:09:20 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;动态代理是指在运行时动态生成代理类。不需要我们像静态代理那个去手动写一个个的代理类。生成动态代理类有很多方式：Java动态代理，CGLIB，Javassist，ASM库等。这里主要说一下Java动态代理的实现。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

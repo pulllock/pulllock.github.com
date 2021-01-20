@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>tomcat7中Digester的使用以及对server.xml的解析过程分析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>tomcat7中Digester的使用以及对server.xml的解析过程分析</h1>
+			<b><time>2017-05-17 00:16:15</time></b>
+		       
+		           <a href="/tags/Digester">Digester</a>
+        	       
+
+			<div>
+				<p>tomcat在启动的时候，会调用Catalina的load的方法启动一个新的Server实例，在这里会有关于Digester的使用，以及对server.xml的解析过程。</p>
+<p>load方法的代码如下：</p>
+<pre><code>public void load() {
+
+    ...
+
+    // Create and execute our Digester
+    Digester digester = createStartDigester();
+
+    ...
+
+        try {
+            inputSource.setByteStream(inputStream);
+            digester.push(this);
+            digester.parse(inputSource);
+        }
+        ...
+
+}
+</code></pre><p>代码做了精简，只保留了Digester的最重要部分。首先是创建并配置要用来启动的Digester实例，然后获取到server.xml文件的输入流之后，使用digester进行解析。</p>
+<h1 id="digester介绍">Digester介绍</h1>
+<p>在进行具体步骤的解析之前，首先看一下Digester的简单介绍，Digester用来处理xml，是对SAX的包装，所以也是基于文件流来解析xml的。Digester使用的步骤也很简单：</p>
+<ul>
+<li>创建一个Digester实例</li>
+<li>设置相关属性</li>
+<li>设置具体的规则</li>
+<li>调用parse方法进行解析</li>
+</ul>
+<h1 id="createstartdigester">createStartDigester</h1>
+<p>此方法用来创建和配置Digester，对应着上面的前三个步骤，具体代码如下：</p>
+<pre><code>protected Digester createStartDigester() {
+    long t1=System.currentTimeMillis();
+    //创建一个digester实例
+    Digester digester = new Digester();
+    //是否需要验证xml文档的合法性，false表示不需要进行DTD规则校验
+    digester.setValidating(false);
+    //是否需要进行节点设置规则校验
+    digester.setRulesValidation(true);
+    //将xml节点中的className作为假属性，不用调用默认的setter方法
+    //在解析时，调用相应对象的setter方法来设置属性值，setter的参数就是节点属性，
+    //而有className的话，则直接使用className来直接实例化对象
+    HashMap&lt;Class&lt;?&gt;, List&lt;String&gt;&gt; fakeAttributes = new HashMap&lt;Class&lt;?&gt;, List&lt;String&gt;&gt;();
+    ArrayList&lt;String&gt; attrs = new ArrayList&lt;String&gt;();
+    attrs.add(&quot;className&quot;);
+    fakeAttributes.put(Object.class, attrs);
+    digester.setFakeAttributes(fakeAttributes);
+    digester.setUseContextClassLoader(true);
+
+    //下面添加各种规则
+    //遇到xml中Server节点，就创建一个StandardServer对象
+    digester.addObjectCreate(&quot;Server&quot;, &quot;org.apache.catalina.core.StandardServer&quot;,  &quot;className&quot;);
+    //根据Server节点中的属性信息，调用属性的setter方法，比如说server节点中会有port=“8080”属性，则会调用setPort方法
+    digester.addSetProperties(&quot;Server&quot;);
+    //在上面的load方法中有个digester.push(this)，this对象就是栈顶了
+    //这里将Server节点对应的对象作为参数，调用this对象，也就是Catalina对象的setServer方法
+    digester.addSetNext(&quot;Server&quot;, &quot;setServer&quot;, &quot;org.apache.catalina.Server&quot;);
+    //Server节点下的GlobalNamingResources节点，创建一个NamingResource对象
+    digester.addObjectCreate(&quot;Server/GlobalNamingResources&quot;, &quot;org.apache.catalina.deploy.NamingResources&quot;);
+    digester.addSetProperties(&quot;Server/GlobalNamingResources&quot;);
+    digester.addSetNext(&quot;Server/GlobalNamingResources&quot;, &quot;setGlobalNamingResources&quot;, &quot;org.apache.catalina.deploy.NamingResources&quot;);
+    //Server下的Listener节点
+    digester.addObjectCreate(&quot;Server/Listener&quot;,  null, // MUST be specified in the element &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Listener&quot;);
+    digester.addSetNext(&quot;Server/Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);
+    //Server下的Service节点
+    digester.addObjectCreate(&quot;Server/Service&quot;,  &quot;org.apache.catalina.core.StandardService&quot;, &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Service&quot;);
+    digester.addSetNext(&quot;Server/Service&quot;, &quot;addService&quot;, &quot;org.apache.catalina.Service&quot;);
+    //Service节点下的Listener节点
+    digester.addObjectCreate(&quot;Server/Service/Listener&quot;, null,  &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Service/Listener&quot;);
+    digester.addSetNext(&quot;Server/Service/Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);
+
+    //Executor节点
+    digester.addObjectCreate(&quot;Server/Service/Executor&quot;,  &quot;org.apache.catalina.core.StandardThreadExecutor&quot;,  &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Service/Executor&quot;);
+
+    digester.addSetNext(&quot;Server/Service/Executor&quot;, &quot;addExecutor&quot;, &quot;org.apache.catalina.Executor&quot;);
+
+    //给Connector添加规则，就是当遇到Connector的时候，会调用ConnectorCreateRule里面定义的规则
+    //跟上面的作用是一样的，只不过该节点的规则比较多，就创建一个规则类
+    digester.addRule(&quot;Server/Service/Connector&quot;, new ConnectorCreateRule());
+    digester.addRule(&quot;Server/Service/Connector&quot;,  new SetAllPropertiesRule(new String[]{&quot;executor&quot;}));
+    digester.addSetNext(&quot;Server/Service/Connector&quot;, &quot;addConnector&quot;, &quot;org.apache.catalina.connector.Connector&quot;);
+
+
+    digester.addObjectCreate(&quot;Server/Service/Connector/Listener&quot;, null,  &quot;className&quot;);
+    digester.addSetProperties(&quot;Server/Service/Connector/Listener&quot;);
+    digester.addSetNext(&quot;Server/Service/Connector/Listener&quot;, &quot;addLifecycleListener&quot;, &quot;org.apache.catalina.LifecycleListener&quot;);
+
+    //给嵌入元素添加RuleSet自定义规则
+    //每个rule规则，都会有tomcat对自身业务逻辑的判断和处理
+    digester.addRuleSet(new NamingRuleSet(&quot;Server/GlobalNamingResources/&quot;));
+    digester.addRuleSet(new EngineRuleSet(&quot;Server/Service/&quot;));
+    digester.addRuleSet(new HostRuleSet(&quot;Server/Service/Engine/&quot;));
+    digester.addRuleSet(new ContextRuleSet(&quot;Server/Service/Engine/Host/&quot;));
+    addClusterRuleSet(digester, &quot;Server/Service/Engine/Host/Cluster/&quot;);
+    digester.addRuleSet(new NamingRuleSet(&quot;Server/Service/Engine/Host/Context/&quot;));
+
+    // When the 'engine' is found, set the parentClassLoader.
+    digester.addRule(&quot;Server/Service/Engine&quot;, new SetParentClassLoaderRule(parentClassLoader));
+    addClusterRuleSet(digester, &quot;Server/Service/Engine/Cluster/&quot;);
+
+    return (digester);
+
+}
+</code></pre><p>上面创建完Digester对象，并设置了属性和各种规则之后，接下来主要的就是解析工作。</p>
+<h1 id="parse解析">parse解析</h1>
+<p>parse方法代码如下：</p>
+<pre><code>public Object parse(InputSource input) throws IOException, SAXException {
+    //解析前的配置，默认什么也没做，需要子类去实现
+    configure();
+    //获取解析器去解析
+    getXMLReader().parse(input);
+    return (root);
+
+}
+</code></pre><p>解析完成之后，Server,Service等等在server.xml中存在的节点，就会有对应的对象存在，后续就可以使用这些对象进行初始化和启动了。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM中方法的分派</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>JVM中方法的分派</h1>
+			<b><time>2017-09-02 16:17:40</time></b>
+		       
+		           <a href="/tags/JVM">JVM</a>
+        	       
+
+			<div>
+				<p>JVM中方法分派和方法调用学习。</p>
+<h1 id="方法调用">方法调用</h1>
+<p>方法调用指令：</p>
+<ul>
+<li>invokevirtual，用于调用对象的实例方法，根据对象的实际类型分派，是虚方法分派</li>
+<li>invokeinterface，用于调用接口方法，在运行时搜索一个实现了这个接口方法对象，找出合适的方法进行调用</li>
+<li>invokespecial，用于调用一些需要特殊处理的实例方法，包括：实例初始化方法<code>&lt;init&gt;</code>、私有方法、父类方法</li>
+<li>invokestatic，用于调用类方法，就是static方法</li>
+<li>invokedynamic，先在运行时动态解析出调用点限定符所引用的方法，然后再执行该方法。该指令的分派逻辑是由用户设定的引导方法来决定的</li>
+</ul>
+<p>目标方法在class文件中是一个常量池中的符号引用，在类的加载解析阶段，有一部分确定的方法的符号引用会转化为直接引用，另外的方法会在运行期才能转化为直接引用。</p>
+<p>类加载阶段能直接将符号引用转换为直接引用的方法，在运行之前就已经确定了调用的版本，并且这个方法的调用版本在运行期是不可以改变的。这类方法的调用称为解析Resolution。静态方法和私有方法都可以在类加载的解析阶段将符号引用转换为直接引用，因为静态方法和私有方法都不可能通过继承或别的方式重写其版本。</p>
+<p>能在解析阶段唯一确定调用版本的方法有：</p>
+<ul>
+<li>invokestatic指令调用的方法：静态方法</li>
+<li>invokespecial指令调用的方法：私有方法、实例构造器、父类方法</li>
+<li>被final修饰的方法（invokevirtual指令调用）</li>
+</ul>
+<h1 id="分派">分派</h1>
+<p>多态具体体现是在运行期能根据对象实例的不同而执行不同的接口方法。实现多态的技术称为动态绑定，是指在执行期间判断所引用对象的实际类型，根据其实际的类型调用其相应的方法。动态绑定也叫晚绑定。</p>
+<h2 id="静态分派">静态分派</h2>
+<p>静态分派的体现：重载。</p>
+<p>我们如果new一个对象，并将对象赋值给一个变量，那么这个变量的类型就是静态类型，也就是变量的类型是事先确定的。变量指向的对象的类型是是实际类型，这个对象的类型是可以变化的，也就是变量指向的对象类型是不确定的。</p>
+<p>静态类型在编译期可知，实际类型只有在运行期才可知。</p>
+<p>方法重载：方法名称相同，但是方法的参数不同。使用重载的时候，方法的接收者是确定的，而要调用哪个方法，是需要根据参数来确定的，这里包括参数的个数和参数的类型，类型是静态类型而不是实际类型。编译器在决定使用重载的哪个方法时，是根据参数的静态类型而不是实际类型来作为判断依据的，是在编译期可知的。</p>
+<p>依赖静态类型来决定方法执行版本的分派，就叫做静态分派，重载就是静态分派的典型应用，发生在编译阶段。</p>
+<h2 id="动态分派">动态分派</h2>
+<p>动态分派的体现：重写。</p>
+<p>假设一个父类有多个子类，在new各个子类的对象的时候，把new的对象赋值给父类类型的变量。此时变量的静态类型是父类，变量指向的对象是实际类型。使用静态类型的变量调用同一个方法的时候，执行的却是各个子类中的方法。</p>
+<p>虽然在声明的时候都是静态类型，但是实际执行的时候却是选择的实际类型，这种在运行期根据实际类型确定方法执行版本的分派过程就是动态分派。</p>
+<p>多态重写的实现是和invokevirtual字节码指令的实现逻辑有关的，invokevirtual指令后面跟着一个指向常量池的索引项，该常量池项是一个方法的符号引用，也就是invokevirtual要调用的方法是确定的，但是具体调用哪个对象的方法，字节码指令里是没有的。确定要调用哪个对象的方法是跟invokevirtual执行的逻辑有关的，invokevirtual执行时，需要操作数栈上的数据，操作数栈栈顶是指向对象的实际类型的指针，如果方法有参数的话，则栈中实际类型往下的栈是参数。</p>
+<ul>
+<li>第一步就是先找到栈顶的对象的实际类型</li>
+<li>如果在实际类型中找到了invokevirtual指向的常量池项的方法，就进行权限的验证，如果可以访问就返回方法的直接引用；如果不可以访问就会抛异常：IllegalAccessError。</li>
+<li>如果在实际类型中没有找到对应方法，则需要从下往上挨个找父类，并进行方法的查找和验证。</li>
+<li>如果之后父类找完也没发现合适方法，就抛异常：AbstractMethodError。</li>
+</ul>
+<h2 id="单分派和多分派">单分派和多分派</h2>
+<p>方法的接收者和方法的参数都称为方法的宗量，根据使用宗量的数量可以划分为单分派和多分派。</p>
+<p>在编译期确定方法的版本叫做静态分派，静态分派的时候选择方法版本需要根据方法接收者和方法参数，也就是根据两个宗量来进行选择，所以Java的静态分派属于多分派。</p>
+<p>在运行期确定方法班班叫做动态分派，动态分派在执行的时候，其实就是invokevirtual指令执行的时候，方法名和参数已经确定了，只需要确定方法的接收者即可，也就是只需要根据单宗量来进行选择，所以Java的动态分派属于单分派。</p>
+<h1 id="vtable">vtable</h1>
+<p>virtual method table</p>
+<p>JVM使用vtable来实现动态绑定，在类加载的过程中，JVM会动态解析类的方法以及对方法父类的重写，然后构建出一个vtable，来支持运行期的方法动态绑定。</p>
+<ul>
+<li>static方法不会有运行期的动态绑定机制</li>
+<li>private方法只能被类内其他方法调用，不会参与到动态绑定</li>
+<li>final方法无法被重写，也不会发生运行期动态绑定</li>
+</ul>
+<p>类初始化的时候，复制父类的虚方法表，然后根据自己的顺序替换或者增加虚方法表的内容：</p>
+<ul>
+<li>如果是重写覆盖了父类的方法，就替换掉虚方法表里对应的方法</li>
+<li>如果是重载了父类的方法或者是自己的新的方法，则顺序添加到虚方法表尾部</li>
+<li>特殊的mirandas方法，顺序添加到虚方法表最后</li>
+</ul>
+<p>vtable由一组变长连续的vtableEntry元素构成的数组，每个vtableEntry用methodOop表示，指向一个方法:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-reStructuredText" data-lang="reStructuredText">------------------------------------------
+| vtableEntry 1 | ...... | vtableEntry n |
+------------------------------------------
+</code></pre></div><h1 id="itable">itable</h1>
+<p>itable由偏移表和方法表两个表组成，都是变长的。offset table entry保存的是类实现的一个接口KlassOop和该接口方法表所在的偏移位置。method table entry保存的是实现的接口方法。</p>
+<p>初始化itable的时候：</p>
+<ul>
+<li>将类实现的接口以及实现的方法填写在上面两个表中</li>
+<li>接口中非public、abstract方法不放入itable中</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-reStructuredText" data-lang="reStructuredText">-------------------------------------------------------------------------------
+| offset table entry of interface 1 | ... | offset table entry of interface n |
+-------------------------------------------------------------------------------
+<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span>-------------------------------------------------------------------------------
+| method table entry of interface 1 | ... | method table entry of interface n |
+-------------------------------------------------------------------------------
+</code></pre></div><h1 id="参考">参考</h1>
+<ul>
+<li>《深入Java虚拟机》</li>
+<li>《实战Java虚拟机 JVM故障诊断与性能优化》</li>
+<li>《HotSpot实战》</li>
+<li>《深入理解Java虚拟机：JVM高级特性与最佳实践》</li>
+<li>《Java虚拟机规范》</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

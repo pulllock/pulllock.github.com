@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>tomcat7类加载器解析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>tomcat7类加载器解析</h1>
+			<b><time>2017-05-10 11:12:56</time></b>
+		       
+		           <a href="/tags/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8">tomcat7类加载器</a>
+        	       
+
+			<div>
+				<p>tomcat中也有很多的自定义的类加载器，保证容器的不同部分，以及运行在容器中的web应用可以访问不同的保存着类和资源的仓库。tomcat的类加载器机制跟jdk的类加载器机制基本类似，但是web应用类加载器处理请求的时候会稍微有些不同，jdk的类加载机制不再重复。</p>
+<h1 id="tomcat类加载器结构">tomcat类加载器结构</h1>
+<p>tomcat的类加载器的结构大概如下：</p>
+<pre><code>        Bootstrap
+             |
+          System
+             |
+          Common
+          /     \
+ Webapp1   Webapp2 ...
+</code></pre><ul>
+<li>Bootstrap，包含JVM的基本运行时类，以及系统扩展目录（<code>$JAVA_HOME/jre/lib/ext</code>）下的jar包。</li>
+<li>System，通常是根据CLASSPATH环境变量内容进行初始化的。这些类对tomcat内部类以及web应用都是可见的。tomcat启动脚本<code>$CATALINA_HOME/bin/catalina.sh</code>忽略了CLASSPATH的内容，会从以下位置中构建类加载器：
+<ul>
+<li><code>$CATALINA_HOME/bin/bootstrap.jar</code>包含用来初始化tomcat服务器的main方法，以及它依赖的类加载器实现类。</li>
+<li><code>$CATALINA_BASE/bin/tomcat-juli.jar</code>或者<code>$CATALINA_HOME/bin/tomcat-juli.jar</code>是日志实现类，优先使用<code>CATALINA_BASE</code>下的<code>tomcat-juli.jar</code>。</li>
+<li><code>$CATALINA_HOME/bin/commons-daemon.jar</code>引用自bootstrap.jar的清单文件中。</li>
+</ul>
+</li>
+<li>Common，这种类加载器包含额外的类，对于tomcat内部以及所有web应用都是可见的。一般情况，应用类不会放在这里，Common类加载器会加载<code>${catalina.base}/lib,${catalina.base}/lib/*.jar,${catalina.home}/lib,${catalina.home}/lib/*.jar</code>这些目录下的资源或者jar包，该配置在<code>$CATALINA_BASE/conf/catalina.properties</code>的<code>common.loader</code>属性中。</li>
+<li>Webapp1，Webapp2等，为每个部署在tomcat中的web应用创建的类加载器，每个web应用只能看到自己的<code>/WEB-INF/classes</code>和<code>/WEB-INF/lib</code>目录，其他应用则不可见。</li>
+</ul>
+<h1 id="web应用加载类顺序">web应用加载类顺序</h1>
+<p>tomcat启动之后，在web应用类加载器处理请求的时候，Web应用类加载器和JVM的类加载器不太一样，不是双亲委派模型。当请求从Web应用的类加载器加载类时，首先查看自己的仓库，而不是委托给父类加载。类加载器会显式的忽略所有包含Servlert API类的Jar文件。tomcat其他的类加载器则使用双亲委派模型。</p>
+<p>Web应用类加载器加载顺序为：</p>
+<ul>
+<li>JVM的BootStrap类</li>
+<li>WEB应用的<code>/WEB-INF/classes</code>下的类</li>
+<li>WEB应用的<code>/WEB-INF/lib/*.jar</code>下的jar</li>
+<li>System类加载器的类</li>
+<li>Common类加载器的类</li>
+</ul>
+<p>但是如果web应用类加载器有配置了<code>&lt;Loader delegate=&quot;true&quot;/&gt;</code>，这时候就会按照双亲委派模型，顺序变为：</p>
+<ul>
+<li>JVM的BootStrap类</li>
+<li>System类加载器的类</li>
+<li>Common类加载器的类</li>
+<li>WEB应用的<code>/WEB-INF/classes</code>下的类</li>
+<li>WEB应用的<code>/WEB-INF/lib/*.jar</code>下的jar</li>
+</ul>
+<h1 id="tomcat启动时类加载器的创建顺序">tomcat启动时类加载器的创建顺序</h1>
+<p>tomcat启动的时候，会创建如下的类加载器：</p>
+<ul>
+<li>Bootstrap类加载器，用来加载JVM启动所需要的类，也会加载JVM的标准扩展类</li>
+<li>System类加载器，加载tomcat启动类，比如bootstrap.ja和tomcat-juli.jar。</li>
+<li>Common类加载器，是tomcat的类加载器，加载tomcat自身使用的类，也加载web应用通用的类。</li>
+<li>WebappClassLoader，web应用类加载器，每个应用都会有一个类加载器，会加载自己的<code>/WEB-INF/classes</code>和<code>/WEB-INF/lib/*.jar</code>下的class和jar文件。</li>
+</ul>
+<h1 id="其他的类加载器">其他的类加载器</h1>
+<p>除了上面说的Common和Webapp类加载器之外，tomcat中还有Server类加载器和Shared类加载器。</p>
+<ul>
+<li>Server类加载器负责加载位于<code>$CATALINE_HOME/server</code>目录下的tomcat的核心类，在启动时创建，其父类加载器是Common类加载器。</li>
+<li>Shared类加载器负责加载webapp公用的类，其父类加载器是Common类加载器，也是在tomcat启动时创建。</li>
+</ul>
+<p>有关更多的内容会在源码分析里面继续解析，这里解析的并不详细，最重要的是还不太熟悉和了解。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

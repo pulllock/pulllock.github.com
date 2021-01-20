@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Spring中对Groovy支持的源码分析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Spring中对Groovy支持的源码分析</h1>
+			<b><time>2020-08-26 20:32:49</time></b>
+		       
+		           <a href="/tags/Spring">Spring</a>
+        	       
+
+			<div>
+				<p>分析一下Spring中对Groovy使用的源码。</p>
+<p>Spring使用Groovy动态语言支持的时候，会使用到xml配置文件进行配置，如下所示：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;lang:groovy</span> <span style="color:#a6e22e">id =</span> <span style="color:#e6db74">&#34;processorFromClasspathFile&#34;</span> <span style="color:#a6e22e">script-source =</span> <span style="color:#e6db74">&#34;classpath:groovy/ClasspathMessageProcessor.groovy&#34;</span><span style="color:#f92672">/&gt;</span>
+</code></pre></div><p>这里是Spring的自定义标签的扩展机制，就是NamespaceHandler的处理机制。Spring遇到lang:groovy自定义标签，会查找对应的NamespaceHandler，这里是LangNamespaceHandler。</p>
+<p>LangNamespaceHandler会直接注册几个BeanDefinitionParser，用来将配置文件解析为BeanDefinition。这里注册的统一都是ScriptBeanDefinitionParser，对于groovy、bsh、std等差别就是使用了不同的ScriptFactory。</p>
+<p>注册完了BeanDefinitionParser之后，紧接着就开始了标签的解析工作，可以直接看到ScriptBeanDefinitionParser的parseInternal方法：</p>
+<ul>
+<li>解析script-source指定的Groovy文件或者是inline-script中指定的Groovy脚本内容</li>
+<li>注册ScriptFactoryPostProcessor，用来在Bean实例化的时候，使用Groovy脚本来实例化Bean</li>
+<li>根据xml中的配置，生成对应的GenericBeanDefinition</li>
+</ul>
+<p>这样解析完成后，Spring容器中就有了我们定义的相关脚本的BeanDefinition，接下来就是Bean的实例化和初始化过程。上面第二步注册了一个ScriptFactoryPostProcessor，继承了InstantiationAwareBeanPostProcessorAdapter，而Adapter这个类实现了SmartInstantiationAwareBeanPostProcessor接口，在Bean实例化的时候，会先调用predictBeanTye方法，该方法用来预测从此处理器的postProcessBeforeInstantiation方法最终返回的Bean的类型。</p>
+<p>ScriptFactoryPostProcessor在predictBeanType方法中会先根据配置生成对应的ScriptSource，inline的生成StaticScriptSource，其他的生成ResourceScriptSource，还可以自定义ScriptSource。ScriptSource按照字面意思理解就行，就是脚本的来源。</p>
+<p>获取完ScriptSource后，会调用GroovyScriptFactory的getScriptedObjectType方法，使用GroovyClassLoader来解析Groovy脚本，解析完后获取到脚本类型，就可以直接返回了。</p>
+<p>另外在postProcessBeforeInstantiation方法中，也会有和上面逻辑基本一致的代码，只不过最后增加了脚本自动刷新的逻辑。</p>
+<p>这样就把Groovy脚本解析，并变成了Spring的Bean，后面的使用就和普通Bean一样了。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

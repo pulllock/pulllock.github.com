@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Lucene中的基础核心类</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Lucene中的基础核心类</h1>
+			<b><time>2018-06-17 11:33:26</time></b>
+		       
+		           <a href="/tags/Lucene">Lucene</a>
+        	       
+
+			<div>
+				<p>Lucene索引创建和搜索索引的核心类学习。</p>
+<h1 id="索引过程中的核心类">索引过程中的核心类</h1>
+<h2 id="indexwriter">IndexWriter</h2>
+<p>IndexWriter负责创建新索引或者打开已有索引，向索引中添加、删除、更新被索引文档的信息。IndexWriter需要开辟一定空间来存储索引，由Directory完成。</p>
+<h2 id="directory">Directory</h2>
+<p>Directory描述了索引的存放位置，子类负责具体指定索引的存储路径。</p>
+<h2 id="analyzer">Analyzer</h2>
+<p>Analyzer负责从被索引文本中提取词汇单元，也就是分词。</p>
+<h2 id="document">Document</h2>
+<p>Document文档，代表一些域Field的集合。包含多个Field对象的容器。</p>
+<h2 id="field">Field</h2>
+<p>索引中的每个文档都包含一个或者多个不同命名的域，这些域包含在Field中，每个域都有域名和对应值</p>
+<h1 id="搜索过程中的核心类">搜索过程中的核心类</h1>
+<h2 id="indexsearcher">IndexSearcher</h2>
+<p>IndexSearcher用来搜索由IndexWriter创建的索引。IndexSearcher可看做一个以只读方式打开索引的类，需要利用Directory来找到索引位置。</p>
+<h2 id="term">Term</h2>
+<p>Term对象是搜索功能的基本单元，包含域名和值</p>
+<h2 id="query">Query</h2>
+<p>Query查询，有很多子类：TermQuery、BooleanQuery、PhraseQuery、PrefixQuery、PhrasePrefixQuery、TermRangeQuery、NumbericRangeQuery、FilteredQuery、SpanQuery</p>
+<h2 id="termquery">TermQuery</h2>
+<p>词项查询，用来匹配指定域中包含特定项的文档。</p>
+<h2 id="topdocs">TopDocs</h2>
+<p>是一个简单的指针容器，指针一般指向前N个排名的搜索结果。</p>
+<h2 id="scoredoc">ScoreDoc</h2>
+<p>提供对TopDocs中每条搜索结果的访问接口</p>
+<h2 id="queryparser">QueryParser</h2>
+<p>将用户输入的查询表达式处理成具体的Query对象</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li>Lucene实战</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

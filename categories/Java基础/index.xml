@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java基础 on Time Stream</title>
+    <link>http://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</link>
+    <description>Recent content in Java基础 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Fri, 19 Oct 2018 21:19:37 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ArrayList的初始容量现在为0，不再是10了</title>
+      <link>http://cxis.me/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/</link>
+      <pubDate>Fri, 19 Oct 2018 21:19:37 +0000</pubDate>
+      
+      <guid>http://cxis.me/2018/10/19/ArrayList%E7%9A%84%E5%88%9D%E5%A7%8B%E5%AE%B9%E9%87%8F%E7%8E%B0%E5%9C%A8%E4%B8%BA0%E4%B8%8D%E5%86%8D%E6%98%AF10%E4%BA%86/</guid>
+      <description>&lt;h1 id=&#34;前言&#34;&gt;前言&lt;/h1&gt;
+&lt;p&gt;一直记得ArrayList的初始容量大小是10，今天再次看ArrayList的源码（版本：Jdk 7u80）时发现在构造函数的注释上写着初始化容量是10，但是构造函数中却没有指定初始容量，仅仅初始化了一个空的数组。应该是不知道在哪个版本中已经修改了，我却还记着之前从别人口里得来的一句话：初始容量是10。实际上初始容量已经是0了，写出来分享下，有错的地方烦请指出来，说的不一定对。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java中SPI机制深入及源码解析</title>
+      <link>http://cxis.me/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Mon, 17 Apr 2017 15:18:47 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;SPI，Service Provider Interface，主要是被框架的开发人员使用，比如&lt;code&gt;java.sql.Driver&lt;/code&gt;接口，其他不同厂商可以针对同一接口做出不同的实现，mysql和postgresql都有不同的实现提供给用户，而Java的SPI机制可以为某个接口寻找服务实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>关于Servlet线程安全性和DispatcherServlet的线程安全性的解析</title>
+      <link>http://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Thu, 13 Apr 2017 16:33:01 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java Servlet工作流程以及源码解析</title>
+      <link>http://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Thu, 13 Apr 2017 12:11:02 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;关于Servlet的学习还是在上学的时候，自学Java，也就是只是了解了Servlet是什么以及怎么使用，现在慢慢的明白很多很多的框架等等都是在Servlet上做的扩展，也开始明白自己的基础不好。现在回头来学习一下Servlet的相关知识。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java动态代理机制解析</title>
+      <link>http://cxis.me/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Wed, 12 Apr 2017 21:09:20 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/12/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;动态代理是指在运行时动态生成代理类。不需要我们像静态代理那个去手动写一个个的代理类。生成动态代理类有很多方式：Java动态代理，CGLIB，Javassist，ASM库等。这里主要说一下Java动态代理的实现。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JUC中Lock和ReentrantLock介绍及源码解析</title>
+      <link>http://cxis.me/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <description>&lt;p&gt;Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>JUC中AQS简介</title>
+      <link>http://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Thu, 23 Mar 2017 16:25:44 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>volatile简介</title>
+      <link>http://cxis.me/2016/12/15/volatile%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Thu, 15 Dec 2016 16:55:57 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/12/15/volatile%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;Java允许线程访问共享变量。作为规则，为了确保共享变量被一致的和可靠的更新，线程应该确保它获得一个排它锁单独的获取这个变量。Java提供了第二种机制即volatile关键字，在某些情况下比锁更加方便。一个字段可以被声明为volatile，在这种情况下，Java内存模型确保所有线程看到的变量值都一样。（&lt;a href=&#34;https://docs.oracle.com/javase/specs/jls/se7/html/jls-8.html#jls-8.3.1.4&#34;&gt;Java语言规范&lt;/a&gt;）&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>ThreadLocal简介</title>
+      <link>http://cxis.me/2016/12/05/ThreadLocal%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 05 Dec 2016 20:55:59 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/12/05/ThreadLocal%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;h1 id=&#34;threadlocal简介&#34;&gt;ThreadLocal简介&lt;/h1&gt;
+&lt;p&gt;Java中的ThreadLocal类给每个线程分配一个只属于该线程的变量副本，可以用来实现线程间的数据隔离，当前线程的变量不能被其他线程访问。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Executor框架简介</title>
+      <link>http://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Thu, 11 Aug 2016 15:16:11 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/</guid>
+      <description>Executor框架是在Java5中引入的，可以通过该框架来控制线程的启动，执行，关闭，简化并发编程。Executor框架把任务提交和执行解</description>
+    </item>
+    
+    <item>
+      <title>ConcurrentLinkedQueue简介</title>
+      <link>http://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 05 Aug 2016 22:06:52 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</guid>
+      <description>ConcurrentLinkedQueue是一个基于链表的无界线程安全队列，非阻塞实现方式，先进先出，适合高并发的场景。 非阻塞的性能较好，采</description>
+    </item>
+    
+    <item>
+      <title>LinkedBlockingQueue简介</title>
+      <link>http://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 05 Aug 2016 10:17:46 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/08/05/LinkedBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
+      <description>LinkedBlockingQueue是一个单向链表实现的阻塞队列，先进先出的顺序。支持多线程并发操作。 相比于数组实现的ArrayBlock</description>
+    </item>
+    
+    <item>
+      <title>synchronized和volatile简介</title>
+      <link>http://cxis.me/2016/06/08/synchronized%E5%92%8Cvolatile%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 08 Jun 2016 15:03:46 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/06/08/synchronized%E5%92%8Cvolatile%E7%AE%80%E4%BB%8B/</guid>
+      <description>简介 (转)这个可能是最好的对比volatile和synchronized作用的文章了。 volatile是一个变量修饰符，而synchroni</description>
+    </item>
+    
+    <item>
+      <title>CyclicBarrier简介</title>
+      <link>http://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 01 Jun 2016 14:38:32 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</guid>
+      <description>CyclicBarrier简介 CyclicBarrier和CountDownLatch不同,是当await的数量达到了设定的数量之后,才继续</description>
+    </item>
+    
+    <item>
+      <title>CountDownLatch简介</title>
+      <link>http://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 01 Jun 2016 14:26:33 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</guid>
+      <description>CountDownLatch是并发包中提供的一个可用于控制多个线程同时开始某动作的类，可以看做是一个计数器，计数器操作是院子操作，同时只能有</description>
+    </item>
+    
+    <item>
+      <title>Semaphore简介</title>
+      <link>http://cxis.me/2016/06/01/Semaphore%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 01 Jun 2016 13:25:04 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/06/01/Semaphore%E7%AE%80%E4%BB%8B/</guid>
+      <description>Semaphore简介 Semaphore是并发包中提供的用于控制某资源同时被访问的个数 操作系统的信号量是个很重要的概念，在进程控制方面都有应</description>
+    </item>
+    
+    <item>
+      <title>ThreadPoolExecutor简介</title>
+      <link>http://cxis.me/2016/05/30/ThreadPoolExecutor%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 30 May 2016 14:04:19 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/30/ThreadPoolExecutor%E7%AE%80%E4%BB%8B/</guid>
+      <description>ThreadPoolExecutor简介 并发包中提供的一个线程池服务 线程池的工作过程 线程池刚创建,里面没有线程.任务队列是作为参数传进来的.</description>
+    </item>
+    
+    <item>
+      <title>AtomicInteger简介</title>
+      <link>http://cxis.me/2016/05/30/AtomicInteger%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 30 May 2016 13:30:52 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/30/AtomicInteger%E7%AE%80%E4%BB%8B/</guid>
+      <description>AtomicInteger简介 支持原子操作的Integer类 主要用于在高并发环境下的高效程序处理。使用非阻塞算法来实现并发控制。 源码分析 jdk1.7.0_71 /</description>
+    </item>
+    
+    <item>
+      <title>ArrayBlockingQueue简介</title>
+      <link>http://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sun, 29 May 2016 18:46:59 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
+      <description>ArrayBlockingQueue基于数组，先进先出，从尾部插入到队列，从头部开始返回。 线程安全的有序阻塞队列，内部通过“互斥锁”保护竞争</description>
+    </item>
+    
+    <item>
+      <title>CopyOnWriteArraySet简介</title>
+      <link>http://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 27 May 2016 17:20:34 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</guid>
+      <description>基于CopyOnWriteArrayList实现，线程安全无需集合。 add调用的是CopyOnWriteArraylist的addIfAbs</description>
+    </item>
+    
+    <item>
+      <title>TreeSet简介</title>
+      <link>http://cxis.me/2016/05/27/TreeSet%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 27 May 2016 16:50:50 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/27/TreeSet%E7%AE%80%E4%BB%8B/</guid>
+      <description>TreeSet简介 TreeSet支持排序 基于TreeMap实现 非线程安全的 不支持get(int)来获取指定位置的元素 源码分析 jdk1.7.0_71 //基于Tre</description>
+    </item>
+    
+    <item>
+      <title>HashSet简介</title>
+      <link>http://cxis.me/2016/05/27/HashSet%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 27 May 2016 16:35:17 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/27/HashSet%E7%AE%80%E4%BB%8B/</guid>
+      <description>HashSet简介 HashSet是Set接口的实现,不允许元素重复 元素不重复是基于HashMap实现 非线程安全的 不支持通过get(int)获</description>
+    </item>
+    
+    <item>
+      <title>TreeMap简介</title>
+      <link>http://cxis.me/2016/05/27/TreeMap%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 27 May 2016 13:58:00 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/27/TreeMap%E7%AE%80%E4%BB%8B/</guid>
+      <description>TreeMap是支持排序的map，基于红黑树，无容量限制，TreeMap非线程安全。 TreeMap继承AbstractMap，实现Navig</description>
+    </item>
+    
+    <item>
+      <title>ConcurrentHashMap简介</title>
+      <link>http://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Thu, 26 May 2016 11:00:23 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</guid>
+      <description>ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程</description>
+    </item>
+    
+    <item>
+      <title>HashTable简介</title>
+      <link>http://cxis.me/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Thu, 26 May 2016 10:35:01 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/</guid>
+      <description>HashTable继承Dictionary类，实现Map接口。其中Dictionary类是任何可将键映射到相应值的类（如 Hashtable）</description>
+    </item>
+    
+    <item>
+      <title>HashMap简介</title>
+      <link>http://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 25 May 2016 15:47:13 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/25/HashMap%E7%AE%80%E4%BB%8B/</guid>
+      <description>HashMap基于哈希表的Map接口实现，是以key-value存储形式存在。 系统会根据hash算法来计算key-value的存储位置，可以</description>
+    </item>
+    
+    <item>
+      <title>CopyOnWriteArrayList简介</title>
+      <link>http://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 25 May 2016 10:30:09 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</guid>
+      <description>CopyOnWriteArrayList，写数组的拷贝，支持高效率并发且是线程安全的,读操作无锁的ArrayList。所有可变操作都是通过对</description>
+    </item>
+    
+    <item>
+      <title>Stack简介</title>
+      <link>http://cxis.me/2016/05/25/Stack%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Wed, 25 May 2016 10:20:44 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/25/Stack%E7%AE%80%E4%BB%8B/</guid>
+      <description>Stack简介 Stack基于Vector实现,支持LIFO 后进先出 源码分析 jdk1.7.0_71 默认构造 public Stack() { } push(E item)将元素压入顶端 public E push(E item) { addElement(item); return item; } pop() 删</description>
+    </item>
+    
+    <item>
+      <title>Vector简介</title>
+      <link>http://cxis.me/2016/05/24/Vector%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Tue, 24 May 2016 17:24:10 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/24/Vector%E7%AE%80%E4%BB%8B/</guid>
+      <description>Vector简介 Vector和ArrayList类似,基于Object数组方式实现 Vector是同步访问的,操作是线程安全的 源码分析 jdk1.7.0_71 //保</description>
+    </item>
+    
+    <item>
+      <title>LinkedList简介</title>
+      <link>http://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 23 May 2016 23:20:51 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/23/LinkedList%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;h1 id=&#34;linkedlist简介&#34;&gt;LinkedList简介&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;LinkedList基于双向链表实现&lt;/li&gt;
+&lt;li&gt;LinkedList相对于Arraylist来说,get和set等随机访问会比较慢,LinkedList需要移动指针；add和remove会比较快。&lt;/li&gt;
+&lt;li&gt;LinkedList类还为在列表开头和结尾的get，remove，insert元素提供统一的命名方法，这些操作允许将链表用做堆栈、队列或者双端队列。此类实现 Deque 接口，为 add、poll 提供先进先出队列操作，以及其他堆栈和双端队列操作。&lt;/li&gt;
+&lt;li&gt;非线程安全，不同步。&lt;/li&gt;
+&lt;/ol&gt;</description>
+    </item>
+    
+    <item>
+      <title>ArrayList简介</title>
+      <link>http://cxis.me/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 20 May 2016 16:47:46 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;h1 id=&#34;arraylist简介&#34;&gt;ArrayList简介&lt;/h1&gt;
+&lt;p&gt;ArrayList实现了List接口，内部以数组存储数据，允许重复的值。由于内部是数组实现，所以ArrayList具有数组所有的特性，通过索引支持随机访问，查询速度快，但是插入和删除的效率比较低。&lt;/p&gt;
+&lt;p&gt;ArrayList默认初始容量为10，每次添加新元素时都会检查是否需要扩容操作。扩容操作需要重新拷贝数组，比较耗时，所以如果预先能知道数组的大小，在初始化时候可以指定一个初始容量。&lt;/p&gt;
+&lt;p&gt;ArrayList不是线程安全的，使用时应注意。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

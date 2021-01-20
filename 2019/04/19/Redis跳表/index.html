@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Redis跳表</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Redis跳表</h1>
+			<b><time>2019-04-19 22:20:37</time></b>
+		       
+		           <a href="/tags/redis">redis</a>
+        	       
+
+			<div>
+				<p>跳表skiplist是一种有序数据结构，在每个节点维持指向其他节点的指针，可以达到快速访问节点的目的。可以认为跳表在原有的有序链表上增加了多级索引，通过索引就可以快速查找。跳表的查找、插入、删除事件复杂度都是O(log n)，还可以实现区间查找。</p>
+<p>Redis的有序集合的底层实现使用了跳表。</p>
+<h1 id="redis为什么使用跳表而不使用红黑树">Redis为什么使用跳表而不使用红黑树</h1>
+<ul>
+<li>在查找、插入、删除、有序输出元素，跳表和红黑树都可以完成，并且时间复杂度都是O(long n)。</li>
+<li>查找区间内的元素红黑树效率没有跳表高。跳表只需要定位两个端点在最低层级的位置，然后遍历元素；红黑树定位到端点后，需要每次从首位置开始查找元素。</li>
+<li>红黑树实现也很复杂，跳表实现简单。</li>
+</ul>
+<h1 id="跳表的实现">跳表的实现</h1>
+<p>Redis跳表由两个结构组成：zskiplistNode表示跳表节点、zskiplist保存跳表节点相关信息：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> zskiplist {
+  <span style="color:#75715e">// 表头节点和表尾节点
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">struct</span> zskiplistNode <span style="color:#f92672">*</span>header<span style="color:#960050;background-color:#1e0010">，</span> <span style="color:#f92672">*</span>tail;
+  
+  <span style="color:#75715e">// 表中节点的数量
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> length;
+  
+  <span style="color:#75715e">// 表中层数最大的节点的层数
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> level;
+}
+
+<span style="color:#66d9ef">struct</span> zskiplistNode {
+  <span style="color:#75715e">// level数组，层
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">struct</span> zskiplistLevel {
+    <span style="color:#75715e">// 前进指针
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> zskiplistNode <span style="color:#f92672">*</span>forward;
+    
+    <span style="color:#75715e">// 跨度
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span> span;
+  } level[];
+  
+  <span style="color:#75715e">// 后退指针
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">struct</span> zskiplistNode <span style="color:#f92672">*</span>backward;
+  
+  <span style="color:#75715e">// 分值
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">double</span> score;
+  
+  <span style="color:#75715e">// 成员对象
+</span><span style="color:#75715e"></span>  robj <span style="color:#f92672">*</span>obj;
+  
+}
+</code></pre></div><p>
+<figure>
+  <img src="/Redis%e8%b7%b3%e8%a1%a8/zskiplist-1.png" alt="1585626630351" />
+</figure>
+
+
+</p>
+<p>zskiplist：</p>
+<ul>
+<li>header指向跳表头节点</li>
+<li>tail指向跳表尾节点</li>
+<li>level表示跳表内层数最大的节点层数，表头节点层数不计算在内</li>
+<li>length表示跳表长度、包含节点的数量，不包含表头节点</li>
+</ul>
+<p>zskiplistNode：</p>
+<ul>
+<li>level，层，每个层有两个属性：前进指针和跨度，前进指针指向表尾方向的其他的节点；跨度记录了前进至真所指向节点和当前结点的距离</li>
+<li>backward，指向当前节点的前一个节点，用于从表尾向表头遍历时使用</li>
+<li>score，分值，各个结点的分值从小到大排列</li>
+<li>obj，成员对象。</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

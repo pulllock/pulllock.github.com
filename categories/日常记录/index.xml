@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>日常记录 on Time Stream</title>
+    <link>http://cxis.me/categories/%E6%97%A5%E5%B8%B8%E8%AE%B0%E5%BD%95/</link>
+    <description>Recent content in 日常记录 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Tue, 09 May 2017 21:33:28 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/categories/%E6%97%A5%E5%B8%B8%E8%AE%B0%E5%BD%95/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>关于UTF-8的BOM标识以及非法字符65279错误的一些记录</title>
+      <link>http://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Tue, 09 May 2017 21:33:28 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</guid>
+      <description>&lt;p&gt;关于UTF-8的BOM标识和非法字符&lt;code&gt;\65279&lt;/code&gt;的错误，已经遇到过好几次了，在这里记录一下。关于UTF-8带BOM和UTF-8不带BOM的区别，网上有很多解释。我遇到的最多的就是文件在Windows上被别人修改后，在我的电脑上会出错（我一直使用linux和macos），一般都是导入项目的时候，进行编译就会有问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>自己写的，自己说不出来？</title>
+      <link>http://cxis.me/2017/04/11/%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E8%87%AA%E5%B7%B1%E8%AF%B4%E4%B8%8D%E5%87%BA%E6%9D%A5/</link>
+      <pubDate>Tue, 11 Apr 2017 21:35:13 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/11/%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E8%87%AA%E5%B7%B1%E8%AF%B4%E4%B8%8D%E5%87%BA%E6%9D%A5/</guid>
+      <description>&lt;p&gt;自己写的文章，被问到，自己却说不出来！一塌糊涂！真想抽大嘴巴子抽到不能停～开始怀疑，我是不是不适合做技术？经历一塌糊涂，技术一塌糊涂。还能做啥？&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>使用gogs搭建git服务器记录</title>
+      <link>http://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Mon, 03 Apr 2017 12:07:44 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/</guid>
+      <description>&lt;p&gt;昨晚半夜网上一个朋友找到我，说是使用gogs搭建git服务器，使用ssh操作要免密啥啥啥的～也没描述清楚。就是要ssh的方式，提交时候不要账号密码，心想这不就三下的事情吗？结果折腾到晚上一点，没好～敢肯定的是他按照网上的毒教程，被坑了！还是自己本地虚拟机配置一下吧～&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

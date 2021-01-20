@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>RocketMQ架构</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>RocketMQ架构</h1>
+			<b><time>2018-01-01 14:05:21</time></b>
+		       
+		           <a href="/tags/RocketMQ">RocketMQ</a>
+        	       
+
+			<div>
+				<p>RocketMQ包括：NameServer、Broker、Producer、Consumer。</p>
+<p>
+<figure>
+  <img src="/RocketMQ%e6%9e%b6%e6%9e%84/rocketmq-architecture.jpg" alt="" />
+</figure>
+
+
+</p>
+<h1 id="nameserver">NameServer</h1>
+<ul>
+<li>NameServer存储Topic、Broker关系信息，NameServer间没有通信，单台宕机不影响其他NameServer和集群，整个NameServer集群宕机，已正常工作的Producer、Consumer、Broker能正常工作，新起来的就无法工作。</li>
+<li>管理brokers，Broker服务启动时，会注册到NameServer上，两者保持心跳检测机制，保证NameServer知道Broker的存活。</li>
+<li>NameServer存有全部Broker集群信息和生产者消费者客户端的请求信息。</li>
+</ul>
+<h1 id="broker">Broker</h1>
+<ul>
+<li>负责存储消息、转发消息。</li>
+<li>Broker节点与所有的NameServer节点保持长连接和心跳，定时将Topic信息注册到NameServer上。</li>
+</ul>
+<h1 id="producer">Producer</h1>
+<ul>
+<li>消息生产者，负责产生消息</li>
+</ul>
+<h1 id="consumer">Consumer</h1>
+<ul>
+<li>消息消费者，消费消息</li>
+<li>支持PUSH和PULL模式，支持集群消费和广播消费</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

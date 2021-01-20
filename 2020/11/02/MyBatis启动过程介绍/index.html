@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>MyBatis启动过程介绍</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>MyBatis启动过程介绍</h1>
+			<b><time>2020-11-02 22:31:10</time></b>
+		       
+		           <a href="/tags/MyBatis">MyBatis</a>
+        	       
+
+			<div>
+				<p>MyBatis启动过程学习。</p>
+<p>平时最常使用MyBatis的方式是跟Spring整合使用，把MyBatis交给Spring来管理。不管怎么交给Spring，都还是使用MyBatis的最基础的方式来启动的。</p>
+<p>一般步骤：</p>
+<ol>
+<li>先定义一个mybatis-config.xml配置文件</li>
+<li>定义具体的mapper.xml文件以及对应Mapper接口</li>
+<li>使用SqlSessionFactoryBuilder读取mybatis-config.xml文件，并得到一个SqlSessionFactory</li>
+<li>使用SqlSessionFactory获取一个SqlSession</li>
+<li>使用SqlSession调用具体的Mapper执行增删改查等等</li>
+</ol>
+<p>这里要学习的就是第三步，使用SqlSessionFactoryBuilder读取配置文件并得到一个SqlSessionFactory。具体使用时候代码是：<code>SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(InputStream inputStream) </code>，这句代码的意思就是使用一个SqlSession工厂构建器，使用配置文件来构建一个SqlSession工厂，这个工厂用来生产SqlSession。</p>
+<h1 id="创建sqlsessionfactory">创建SqlSessionFactory</h1>
+<p>SqlSessionFactoryBuilder在创建一个SqlSessionFactory的时候，需要以mybatis-config.xml配置文件作为标准，它不是直接解析配置文件，而是将工作交给XMLConfigBuilder来进行处理，XMLConfigBuilder就是专门用来解析配置文件的，解析完成后会返回一个Configuration给SqlSessionFactoryBuilder，SqlSessionFactoryBuilder根据这个Configuration对象创建一个SqlSessionFactory返回。创建的默认是DefaultSqlSessionFactory。</p>
+<h1 id="xmlconfigbuilder解析配置文件">XMLConfigBuilder解析配置文件</h1>
+<p>SqlSessionFactory把配置文件解析交给XMLConfigBuilder来进行，工作就是解析xml配置文件中的节点，并将这个配置文件使用一个Configuration对象来表示。</p>
+<p>解析步骤如下：</p>
+<ul>
+<li>解析properties节点</li>
+<li>解析settings节点</li>
+<li>加载自定义VFS实现类</li>
+<li>加载自定义Log实现类</li>
+<li>解析typeAliases节点</li>
+<li>解析plugins节点</li>
+<li>解析objectFactory节点</li>
+<li>解析objectWrapperFactory节点</li>
+<li>解析reflectorFactory节点</li>
+<li>将解析到的settings节点的内容设置到Configuration中去</li>
+<li>解析environments节点</li>
+<li>解析databaseIdProvider节点</li>
+<li>解析typeHandlers节点</li>
+<li>解析mappers节点</li>
+</ul>
+<p>总结一句就是解析xml配置文件，并设置到Configuration对象中去。</p>
+<h2 id="configuration对象的来源">Configuration对象的来源</h2>
+<p>XMLConfigBuilder在创建的时候，会首先创建一个Configuration对象：<code>super(new Configuration())</code>，这就是Configuration的诞生。</p>
+<h3 id="configuration对象创建的时候都做了些什么">Configuration对象创建的时候都做了些什么？</h3>
+<p>简单说，Configuration对象创建的时候，同时创建了很多其他对象。xml配置文件中有很多属性节点等等，这些节点都要一一对应到Configuration对象中，所以Configuration对象中有很多其他对象来表示xml中的节点属性等。</p>
+<p>创建的对象大概如下：</p>
+<ul>
+<li>Properties对象</li>
+<li>DefaultReflectorFactory对象，默认的创建和缓存Reflector的工厂</li>
+<li>DefaultObjectFactory对象，默认对象创建工厂</li>
+<li>DefaultObjectWrapperFactory对象，默认ObjectWrapper创建工厂</li>
+<li>JavassistProxyFactory对象，Javassist代理工厂</li>
+<li>MapperRegistry对象，相当于一个Map，用来保存Mapper接口和对应的MapperProxyFactory之间的关系</li>
+<li>InterceptorChain对象，相当于一个List，用来保存所有的拦截器</li>
+<li>TypeHandlerRegistry对象，相当于一个Map，用来保存TypeHandler、Java类型、JDBC类型之间的关系</li>
+<li>TypeAliasRegistry对象，相当于一个Map，用来保存一些常用的类和其别名之间的关系</li>
+<li>LanguageDriverRegistry对象，相当于一个Map，用来保存类和LanguageDriver之间的关系</li>
+<li>用来保存MappedStatement和对应的id关系的StrictMap对象</li>
+<li>用来保存缓存id和缓存之间关系的StrictMap对象</li>
+<li>用来保存ParameterMap和对应id关系的StrictMap对象</li>
+<li>用来保存ResultMap和对应id关系的StrictMap对象</li>
+<li>用来保存KeyGenerator和对应id关系的StrictMap对象</li>
+<li>用来保存SQL Fragment和对应id关系的StrictMap对象</li>
+<li>同时还向TypeAliasRegistry中注册了很多MyBatis内部的类的一些别名</li>
+<li>还向LanguageRegistry注册了一个默认的驱动类：XMLLanguageDriver，另外还注册了一个RawLanguageDriver</li>
+</ul>
+<h2 id="解析mappers节点mapper文件解析">解析mappers节点/mapper文件解析</h2>
+<p>mapper文件解析工作交给XMLMapperBuilder来完成，XMLMapperBuilder对象初始化的时候会创建一个MapperBuilderAssistant对象。</p>
+<p>XMLMapperBuilder解析mapper文件主要步骤有：</p>
+<ol>
+<li>解析mapper文件</li>
+<li>绑定mapper和namespace关系</li>
+<li>处理步骤1中解析失败的resultMap、cache-ref、sql等</li>
+</ol>
+<h3 id="解析mapper文件">解析mapper文件</h3>
+<ul>
+<li>处理namespace</li>
+<li>解析cache-ref</li>
+<li>解析cache</li>
+<li>解析resultMap</li>
+<li>解析sql</li>
+<li>解析select、insert、update、delete</li>
+</ul>
+<h3 id="绑定mapper和namespace">绑定mapper和namespace</h3>
+<p>mapper文件中有namespace属性，内容是Mappe接口的全限定名，也就是mapper和Mapper接口是一一对应关系，这里绑定，就是将namespace中指定的Mapper接口类加载，并将这个接口保存到MapperRegistry中的knownMappers这个map中去。这个map的key是Mapper接口，value是一个对一个的MapperProxyFactory。</p>
+<p>以后使用一个Mapper的时候，就是从MapperRegistry中进行获取，MapperRegistry中缓存这接口对应的MapperProxyFactory，调用MapperProxyFactory的创建新实例方法就可以获得一个MapperProxy对象。MapperProxy是一个Mapper的代理对象，调用Mapper接口的时候实际上是把逻辑处理交给了MapperProxy，MapperProxy会进行继续的sql执行等等。</p>
+<h3 id="解析selectinsertupdatedelete">解析select、insert、update、delete</h3>
+<p>XMLMapperBuilder在解析select、insert、update、delete等结点的时候，将具体的解析工作交给了XMLStatementBuilder来进行，XMLStatementBuilder会把每个节点解析成一个MappedStatement对象。</p>
+<p>XMLStatementBuilder会解析节点中的各个属性，然后使用上面初始化的的MapperBuilderAssistant对象将构建好的MappedStatement对象添加到Configuration对象的mappedStatements这个map中。</p>
+<p>这样解析完mybatis-config.xml配置文件以及mapper文件后，MyBatis就启动完成了。简单总结下就是：</p>
+<ul>
+<li>解析mybatis-config.xml配置文件</li>
+<li>解析mapper文件</li>
+<li>将Mapper接口和一个MapperProxyFactory绑定起来</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

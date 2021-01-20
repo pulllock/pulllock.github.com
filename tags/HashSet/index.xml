@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>HashSet on Time Stream</title>
+    <link>http://cxis.me/tags/HashSet/</link>
+    <description>Recent content in HashSet on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Fri, 27 May 2016 16:35:17 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/HashSet/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>HashSet简介</title>
+      <link>http://cxis.me/2016/05/27/HashSet%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Fri, 27 May 2016 16:35:17 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/05/27/HashSet%E7%AE%80%E4%BB%8B/</guid>
+      <description>HashSet简介 HashSet是Set接口的实现,不允许元素重复 元素不重复是基于HashMap实现 非线程安全的 不支持通过get(int)获</description>
+    </item>
+    
+  </channel>
+</rss>

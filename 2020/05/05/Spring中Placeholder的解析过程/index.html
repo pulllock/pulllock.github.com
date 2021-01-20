@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Spring中Placeholder的解析过程</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Spring中Placeholder的解析过程</h1>
+			<b><time>2020-05-05 10:46:26</time></b>
+		       
+		           <a href="/tags/Spring">Spring</a>
+        	       
+
+			<div>
+				<p>Spring中Placeholder的解析过程简单梳理。</p>
+<p>Spring版本是3.2.18.RELEASE</p>
+<h1 id="使用">使用</h1>
+<p>定义application.properties文件：</p>
+<pre><code class="language-properties" data-lang="properties">placeholder.user.prefix=UserPrefix_
+</code></pre><p>在applicationContext.xml中引入application.properties文件：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;context:property-placeholder</span> <span style="color:#a6e22e">location=</span><span style="color:#e6db74">&#34;application.properties&#34;</span><span style="color:#f92672">/&gt;</span>
+</code></pre></div><p>在实际使用的地方注入，这里使用@Value注解：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;${placeholder.user.prefix}&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">private</span> String userPrefix<span style="color:#f92672">;</span>
+</code></pre></div><h1 id="解析">解析</h1>
+<ol>
+<li>容器启动，读取xml配置文件，开始加载并解析成BeanDefinition</li>
+<li>在解析成BeanDefinition的时候读取到<code>&lt;context:property-placeholder</code>，发现是自定义标签，使用ContextNamespaceHandler来处理，注册一个针对<code>property-placeholder</code>的处理器：PropertyPlaceholderBeanDefinitionParser</li>
+<li>PropertyPlaceholderBeanDefinitionParser解析<code>&lt;context:property-placeholder location=&quot;application.properties&quot;/&gt;</code>，转换为BeanDefinition，这个BeanDefinition里面持有了location，并且这个BeanDefinition对应的BeanClass是PropertyPlaceholderConfigurer</li>
+<li>PropertyPlaceholderConfigurer查看继承关系，会发现它实现了BeanFactoryPostProcessor接口，在容器启动的invokeBeanFactoryPostProcessors这一步，会调用BeanFactoryPostProcessor的postProcessBeanFactory方法，该方法PropertyResourceConfigurer中有个实现</li>
+<li>PropertyResourceConfigurer的postProcessBeanFactory方法中会把application.properties文件中的属性解析出来：<code>key=placeholder.user.prefix, value=UserPrefix_</code></li>
+<li>接下来会继续调用PropertyPlaceholderConfigurer的processProperties方法，会遍历BeanFactory中的每个BeanDefinition，尝试使用从properties中解析到的key和value来替换BeanDefinition中对应的属性的<code>${}</code>占位符。这一步不是处理我们声明的@Value注解位置的占位符。</li>
+<li>在processProperties解析的最后会添加一个EmbeddedValueResolver到BeanFactory中，具体类型是：PlaceholderResolvingStringValueResolver，这个在Spring3.0新增的功能，用来解析embedded values的占位符，比如：注解的属性。</li>
+<li>接下来在容器启动的finishBeanFactoryInitialization这一步，会初始化所有的非懒加载的单例Bean，在populateBean这一步填充属性，在应用属性值之前，会调用实现了InstantiationAwareBeanPostProcessor接口的实现类的postProcessPropertyValues方法，这一步可以在应用属性值到Bean之前改变属性，比如可以替换我们的@Value中的占位符为真正的值</li>
+<li>AutowiredAnnotationBeanPostProcessor实现了InstantiationAwareBeanPostProcessor接口，用来处理@Autowired、@Value、@Inject注解，这里的postProcessPropertyValues方法就用来处理我们@Value注解</li>
+<li>获取到注解元数据<code>@Value(&quot;${placeholder.user.prefix}&quot;)</code>以及要注入的属性<code>private String userPrefix;</code>，并且使用上面获得的PlaceholderResolvingStringValueResolver来替换占位符。</li>
+<li>替换占位符的过程就是将前缀<code>${</code>和后缀<code>}</code>截取掉，获得真正的<code>placeholder.user.prefix</code>，这样就可以根据这个key在上面解析的属性中找到对应的值了。</li>
+<li>解析出来key：<code>placeholder.user.prefix</code>之后，会调用PropertyPlaceholderConfigurer的resolvePlaceholder方法从上面解析的属性中根据key获取真正的值，这里会返回UserPrefix_</li>
+<li>接下来还有对表达式的解析，我们没使用，直接跳过。</li>
+<li>拿到真正的值<code>UserPrefix_</code>后，使用反射将值赋值给<code>private String userPrefix</code>，这时候就完成了。</li>
+</ol>
+<h1 id="总结">总结</h1>
+<ul>
+<li>在解析xml成BeanDefinition的时候拿到application.properties文件的位置</li>
+<li>在调用BeanFactoryPostProcessor实现类的postProcessBeanFactory方法的时候会把application.properties文件中的内容解析key和value对应关系</li>
+<li>在实例化Bean的时候会调用AutowiredAnnotationBeanPostProcessor来处理@Value注解，将占位符替换为上面解析到的key对应的value，使用反射设置值。</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

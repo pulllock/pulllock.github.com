@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>ArrayList简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>ArrayList简介</h1>
+			<b><time>2016-05-20 16:47:46</time></b>
+		       
+		           <a href="/tags/arrayList">arrayList</a>
+        	       
+
+			<div>
+				<h1 id="arraylist简介">ArrayList简介</h1>
+<p>ArrayList实现了List接口，内部以数组存储数据，允许重复的值。由于内部是数组实现，所以ArrayList具有数组所有的特性，通过索引支持随机访问，查询速度快，但是插入和删除的效率比较低。</p>
+<p>ArrayList默认初始容量为10，每次添加新元素时都会检查是否需要扩容操作。扩容操作需要重新拷贝数组，比较耗时，所以如果预先能知道数组的大小，在初始化时候可以指定一个初始容量。</p>
+<p>ArrayList不是线程安全的，使用时应注意。</p>
+<h1 id="源码分析">源码分析</h1>
+<blockquote>
+<p>jdk1.7.0_71</p>
+</blockquote>
+<pre><code>//默认容量
+private static final int DEFAULT_CAPACITY = 10;
+//默认空的数组,定义空的ArrayList
+private static final Object[] EMPTY_ELEMENTDATA = {};
+//保存ArrayList中元素的数组，以下基本操作都是基于该数组
+private transient Object[] elementData;
+//ArrayList中元素数组的容量
+private int size;
+</code></pre><h2 id="无参构造函数">无参构造函数</h2>
+<pre><code>	//构造一个空的Object数组，初始容量为10
+    public ArrayList() {}
+</code></pre><h2 id="指定容量大小的构造函数">指定容量大小的构造函数</h2>
+<pre><code>//指定初始容量
+public ArrayList(int initialCapacity) {}
+</code></pre><h2 id="指定初始值为继承collection接口的集合的构造函数">指定初始值为继承Collection接口的集合的构造函数</h2>
+<pre><code>public ArrayList(Collection&lt;? extends E&gt; c) {}
+</code></pre><h2 id="trimtosize">trimToSize</h2>
+<pre><code>//ArrayList每次增长会预申请1.5倍+1的空间,
+//举个例子就是当size() = 1000的时候，ArrayList已经申请了1200空间
+//trimToSize 的作用是删除多余的200
+public void trimToSize() {
+        modCount++;
+		...
+    }
+</code></pre><h2 id="关于modcount">关于modCount</h2>
+<blockquote>
+<p>modCount定义在抽象类AbstratList中， 源码的注释基本说明了它的用处:在使用迭代器遍历的时候，用来检查列表中的元素是否发生结构性变化（列表元素数量发生改变的一个计数）了，主要在多线程环境下需要使用，防止一个线程正在迭代遍历，另一个线程修改了这个列表的结构。</p>
+</blockquote>
+<h2 id="ensurecapacity">ensureCapacity</h2>
+<pre><code>//增加此ArrayList实例的容量，如果需要，以确保其能容纳至少由最小容量参数指定的元素数
+public void ensureCapacity(int minCapacity) {}
+</code></pre><h2 id="grow方法实际的扩容方法扩充为原来的15倍">grow()方法,实际的扩容方法,扩充为原来的1.5倍</h2>
+<pre><code>//数组最大值
+private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+
+private void grow(int minCapacity) {
+		// overflow-conscious code
+        int oldCapacity = elementData.length;
+        int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);
+        if (newCapacity - minCapacity &lt; 0)
+            newCapacity = minCapacity;
+        if (newCapacity - MAX_ARRAY_SIZE &gt; 0)
+            newCapacity = hugeCapacity(minCapacity);
+        // minCapacity is usually close to size, so this is a win:
+        elementData = Arrays.copyOf(elementData, newCapacity);
+}
+</code></pre><h2 id="size-arraylist的大小">size() ArrayList的大小</h2>
+<pre><code>public int size() {}
+</code></pre><h2 id="isempty-不包含元素返回true">isEmpty() 不包含元素,返回true</h2>
+<pre><code>public boolean isEmpty() {}
+</code></pre><h2 id="contains包含指定的元素返回true">contains()包含指定的元素,返回true</h2>
+<pre><code>public boolean contains(Object o) {}
+</code></pre><h2 id="indexof">indexOf()</h2>
+<pre><code>public int indexOf(Object o) {}
+</code></pre><h2 id="lastindexof">lastIndexOf()</h2>
+<pre><code>public int lastIndexOf(Object o) {}
+</code></pre><h2 id="clone-浅拷贝">clone() 浅拷贝</h2>
+<pre><code>public Object clone() {}
+</code></pre><h2 id="toarray-返回object数组">toArray() 返回Object数组</h2>
+<pre><code>public Object[] toArray() {}
+</code></pre><h2 id="toarrayt-a">toArray(T[] a)</h2>
+<pre><code>//返回数组的运行时类型是指定数组的。如果列表中指定的数组能容纳，则在其中返回。
+//否则，一个新的数组分配具有指定数组的运行时类型和此列表的大小。
+//如果列表中指定的数组能容纳更加节省空间(即数组的元素比列表元素多)，
+//那么会将紧挨着collection尾部的元素设置为null。
+
+public &lt;T&gt; T[] toArray(T[] a) {}
+</code></pre><h2 id="elementdata-根据索引返回数据">elementData() 根据索引返回数据</h2>
+<pre><code>E elementData(int index) {}
+</code></pre><h2 id="getint-index-根据索引获取">get(int index) 根据索引获取</h2>
+<pre><code>public E get(int index) {
+        rangeCheck(index);//范围检查,看是否给定的index是否超出数组大小
+		...
+    }
+</code></pre><h2 id="setint-index-e-element-根据索引替换">set(int index, E element) 根据索引替换</h2>
+<pre><code>public E set(int index, E element) {
+        rangeCheck(index);
+		...
+    }
+</code></pre><h2 id="adde-e-添加元素到元素末尾">add(E e) 添加元素到元素末尾</h2>
+<pre><code>public boolean add(E e) {
+        ensureCapacityInternal(size + 1);  // Increments modCount!!
+		...
+    }
+</code></pre><h2 id="addint-indexe-element-添加元素到指定位置">add(int index,E element) 添加元素到指定位置</h2>
+<pre><code>public void add(int index, E element) {
+        rangeCheckForAdd(index);
+		...
+    }
+</code></pre><h2 id="removeint-index删除指定位置的元素">remove(int index)删除指定位置的元素</h2>
+<pre><code>public E remove(int index) {
+		...
+		elementData[--size] = null; // clear to let GC do its work
+		...
+}
+</code></pre><h2 id="removeobject-o-删除指定元素">remove(Object o) 删除指定元素</h2>
+<pre><code>public boolean remove(Object o) {
+        ...
+        fastRemove(index);
+        ...
+    }
+</code></pre><h2 id="fastremoveint-index快速删除不检查边界无返回值">fastRemove(int index)快速删除,不检查边界,无返回值</h2>
+<pre><code>private void fastRemove(int index) {}
+</code></pre><h2 id="clear-清空">clear() 清空</h2>
+<pre><code>public void clear() {
+        modCount++;
+
+        // clear to let GC do its work
+        for (int i = 0; i &lt; size; i++)
+            elementData[i] = null;
+
+        size = 0;
+    }
+</code></pre><h2 id="addallcollection-extends-e-c-添加指定的集合到末尾">addAll(Collection&lt;? extends E&gt; c) 添加指定的集合到末尾</h2>
+<pre><code>public boolean addAll(Collection&lt;? extends E&gt; c) {}
+</code></pre><h2 id="addallint-index-collection-extends-e-c-添加指定元素到指定的位置">addAll(int index, Collection&lt;? extends E&gt; c) 添加指定元素到指定的位置</h2>
+<pre><code>public boolean addAll(int index, Collection&lt;? extends E&gt; c) {}
+</code></pre><h2 id="removerangeint-fromindex-int-toindex-删除指定区间的元素">removeRange(int fromIndex, int toIndex) 删除指定区间的元素</h2>
+<pre><code>protected void removeRange(int fromIndex, int toIndex) {}
+</code></pre><h2 id="removeallcollection-c-删除指定的集合元素">removeAll(Collection&lt;?&gt; c) 删除指定的集合元素</h2>
+<pre><code>public boolean removeAll(Collection&lt;?&gt; c) {
+        return batchRemove(c, false);
+    }
+</code></pre><h2 id="retainallcollection-c-保留指定集合元素">retainAll(Collection&lt;?&gt; c) 保留指定集合元素</h2>
+<pre><code>public boolean retainAll(Collection&lt;?&gt; c) {
+        return batchRemove(c, true);
+    }
+</code></pre><h2 id="listiteratorint-index和-listiterator-返回一个迭代器支持向前和向后遍历">listIterator(int index)和 listIterator() 返回一个迭代器,支持向前和向后遍历</h2>
+<pre><code>public ListIterator&lt;E&gt; listIterator(int index) {}
+
+public ListIterator&lt;E&gt; listIterator() {}
+</code></pre><h2 id="iterator-只能向后遍历">iterator() 只能向后遍历</h2>
+<pre><code>public Iterator&lt;E&gt; iterator() {}
+</code></pre><h2 id="sublist-返回部分list">subList() 返回部分list</h2>
+<pre><code>public List&lt;E&gt; subList(int fromIndex, int toIndex) {}
+</code></pre><p><a href="http://blog.csdn.net/crave_shy/article/details/17436773">http://blog.csdn.net/crave_shy/article/details/17436773</a></p>
+<p><a href="http://www.importnew.com/19233.html">http://www.importnew.com/19233.html</a></p>
+<p><a href="https://www.zybuluo.com/pastqing/note/200073">https://www.zybuluo.com/pastqing/note/200073</a></p>
+<p><a href="http://www.cnblogs.com/sipher/articles/2429812.html">http://www.cnblogs.com/sipher/articles/2429812.html</a></p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

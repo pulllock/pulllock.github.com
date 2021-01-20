@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Vector简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Vector简介</h1>
+			<b><time>2016-05-24 17:24:10</time></b>
+		       
+		           <a href="/tags/vector">vector</a>
+        	       
+
+			<div>
+				<h1 id="vector简介">Vector简介</h1>
+<ol>
+<li>Vector和ArrayList类似,基于Object数组方式实现</li>
+<li>Vector是同步访问的,操作是线程安全的</li>
+</ol>
+<!-- raw HTML omitted -->
+<h1 id="源码分析">源码分析</h1>
+<blockquote>
+<p>jdk1.7.0_71</p>
+</blockquote>
+<pre><code>//保存Vector中的元素
+protected Object[] elementData;
+//Vector中存储的元素个数
+protected int elementCount;
+//Vector容量自动增长的大小,此数值小于等于0,容量增长为2倍
+protected int capacityIncrement;
+</code></pre><h2 id="vectorint-initialcapacity-int-capacityincrement-初始容量和初始自动增长-构造">Vector(int initialCapacity, int capacityIncrement) 初始容量和初始自动增长 构造</h2>
+<pre><code>public Vector(int initialCapacity, int capacityIncrement){}
+</code></pre><h2 id="vectorint-initialcapacity-初始容量-自动增长2倍-构造">Vector(int initialCapacity) 初始容量 ,自动增长2倍 构造</h2>
+<pre><code>public Vector(int initialCapacity){}
+</code></pre><h2 id="vector-初始容量10自动增长2倍-构造">Vector() 初始容量10,自动增长2倍 构造</h2>
+<pre><code>public Vector(){}
+</code></pre><h2 id="vectorcollection-extends-e-c-使用集合初始化">Vector(Collection&lt;? extends E&gt; c) 使用集合初始化</h2>
+<pre><code>public Vector(Collection&lt;? extends E&gt; c){}
+</code></pre><h2 id="copyintoobject-anarray-将vector中的元素拷到object数组中">copyInto(Object[] anArray) 将Vector中的元素拷到Object数组中</h2>
+<pre><code>public synchronized void copyInto(Object[] anArray) {}
+</code></pre><h2 id="trimtosize">trimToSize()</h2>
+<pre><code>public synchronized void trimToSize() {} 
+</code></pre><h2 id="ensurecapacityint-mincapacity-增加容量">ensureCapacity(int minCapacity) 增加容量</h2>
+<pre><code>public synchronized void ensureCapacity(int minCapacity) {}
+</code></pre><h2 id="growint-mincapacity-真正增长容量的方法">grow(int minCapacity) 真正增长容量的方法</h2>
+<pre><code>private void grow(int minCapacity) {}
+</code></pre><h2 id="setsizeint-newsize-设置大小">setSize(int newSize) 设置大小</h2>
+<pre><code>public synchronized void setSize(int newSize) {}
+</code></pre><h2 id="capacity-vector的容量">capacity() Vector的容量</h2>
+<pre><code>public synchronized int capacity() {}
+</code></pre><h2 id="size-vector包含元素的数量">size() Vector包含元素的数量</h2>
+<pre><code>public synchronized int size() {}
+</code></pre><h2 id="isempty是否为空">isEmpty()是否为空</h2>
+<pre><code>public synchronized boolean isEmpty() {}
+</code></pre><h2 id="elements返回一个枚举">elements()返回一个枚举</h2>
+<pre><code>public Enumeration&lt;E&gt; elements() {
+			return new Enumeration&lt;E&gt;() {
+            int count = 0;
+
+            public boolean hasMoreElements() {
+                return count &lt; elementCount;
+            }
+
+            public E nextElement() {
+                synchronized (Vector.this) {
+                    if (count &lt; elementCount) {
+                        return elementData(count++);
+                    }
+                }
+                throw new NoSuchElementException(&quot;Vector Enumeration&quot;);
+            }
+        };
+}
+</code></pre><h2 id="containsobject-o-是否包含指定元素">contains(Object o) 是否包含指定元素</h2>
+<pre><code>public boolean contains(Object o) {}
+</code></pre><h2 id="indexofobject-o-返回第一个匹配的索引">indexOf(Object o) 返回第一个匹配的索引</h2>
+<pre><code>public int indexOf(Object o) {}
+</code></pre><h2 id="indexofobject-o-int-index-返回第一个从index开始的匹配的object">indexOf(Object o, int index) 返回第一个从index开始的匹配的Object</h2>
+<pre><code>public synchronized int indexOf(Object o, int index){}
+</code></pre><h2 id="lastindexofobject-o-返回最后一个匹配的索引">lastIndexOf(Object o) 返回最后一个匹配的索引</h2>
+<pre><code>public synchronized int lastIndexOf(Object o) {}
+</code></pre><h2 id="lastindexofobject-o-int-index返回最后一个从index开始的匹配的object">lastIndexOf(Object o, int index)返回最后一个从index开始的匹配的Object</h2>
+<pre><code>public synchronized int lastIndexOf(Object o, int index) {}
+</code></pre><h2 id="elementatint-index-返回指定位置的元素">elementAt(int index) 返回指定位置的元素</h2>
+<pre><code>public synchronized E elementAt(int index) {}
+</code></pre><h2 id="firstelement-第一个元素">firstElement() 第一个元素</h2>
+<pre><code>public synchronized E firstElement(){}
+</code></pre><h2 id="lastelement-最后一个元素">lastElement() 最后一个元素</h2>
+<pre><code>public synchronized E lastElement() {}
+</code></pre><h2 id="setelementate-obj-int-index-设置指定位置的元素">setElementAt(E obj, int index) 设置指定位置的元素</h2>
+<pre><code>public synchronized void setElementAt(E obj, int index) {}
+</code></pre><h2 id="removeelementatint-index-移除指定位置的元素">removeElementAt(int index) 移除指定位置的元素</h2>
+<pre><code>public synchronized void removeElementAt(int index) {}
+</code></pre><h2 id="insertelementate-objint-index指定位置之后插入元素">insertElementAt(E obj,int index)指定位置之后插入元素</h2>
+<pre><code>public synchronized void insertElementAt(E obj, int index) {}
+</code></pre><h2 id="addelemente-obj-添加元素到最后">addElement(E obj) 添加元素到最后</h2>
+<pre><code>public synchronized void addElement(E obj) {}
+</code></pre><h2 id="removeelementobject-obj-删除第一个匹配的元素">removeElement(Object obj) 删除第一个匹配的元素</h2>
+<pre><code>public synchronized boolean removeElement(Object obj) {}
+</code></pre><h2 id="removeallelements-删除所有元素">removeAllElements() 删除所有元素</h2>
+<pre><code>public synchronized void removeAllElements() {}
+</code></pre><h2 id="clone-深拷贝">clone() 深拷贝</h2>
+<pre><code>public synchronized Object clone() {}
+</code></pre><h2 id="toarray-返回object数组">toArray() 返回Object数组</h2>
+<pre><code>public synchronized Object[] toArray() {}
+</code></pre><h2 id="toarrayt-a-返回指定类型的数组">toArray(T[] a) 返回指定类型的数组</h2>
+<pre><code>public synchronized &lt;T&gt; T[] toArray(T[] a) {}
+</code></pre><h2 id="elementdataint-index-返回指定位置的元素">elementData(int index) 返回指定位置的元素</h2>
+<pre><code>E elementData(int index) {}
+</code></pre><h2 id="getint-index-获取指定位置的元素">get(int index) 获取指定位置的元素</h2>
+<pre><code>public synchronized E get(int index) {}
+</code></pre><h2 id="setint-index-e-element-替换指定位置的元素">set(int index, E element) 替换指定位置的元素</h2>
+<pre><code>public synchronized E set(int index, E element) {}
+</code></pre><h2 id="adde-e-添加元素到末尾">add(E e) 添加元素到末尾</h2>
+<pre><code>public synchronized boolean add(E e) {}
+</code></pre><h2 id="removeobject-o-删除第一个匹配的元素">remove(Object o) 删除第一个匹配的元素</h2>
+<pre><code>public boolean remove(Object o) {}
+</code></pre><h2 id="addint-index-e-element-指定位置后面插入元素">add(int index, E element) 指定位置后面插入元素</h2>
+<pre><code>public void add(int index, E element){}
+</code></pre><h2 id="removeint-index-删除指定位置的元素">remove(int index) 删除指定位置的元素</h2>
+<pre><code>public synchronized E remove(int index) {}
+</code></pre><h2 id="clear-清空vector">clear() 清空vector</h2>
+<pre><code>public void clear() {}
+</code></pre><h2 id="containsallcollection-c-是否包含指定的集合">containsAll(Collection&lt;?&gt; c) 是否包含指定的集合</h2>
+<pre><code>public synchronized boolean containsAll(Collection&lt;?&gt; c) {}
+</code></pre><h2 id="addallcollection-extends-e-c-把集合添加到vector的末尾">addAll(Collection&lt;? extends E&gt; c) 把集合添加到vector的末尾</h2>
+<pre><code>public synchronized boolean addAll(Collection&lt;? extends E&gt; c) {}
+</code></pre><h2 id="removeallcollection-c-删除vector中所有的指定集合中的元素">removeAll(Collection&lt;?&gt; c) 删除vector中所有的指定集合中的元素</h2>
+<pre><code>public synchronized boolean removeAll(Collection&lt;?&gt; c) {}
+</code></pre><h2 id="retainallcollection-c保留指定的集合元素其他的删除">retainAll(Collection&lt;?&gt; c)保留指定的集合元素,其他的删除</h2>
+<pre><code> public synchronized boolean retainAll(Collection&lt;?&gt; c) {}
+</code></pre><h2 id="addallint-index-collection-extends-e-c-添加指定的集合元素到指定的位置之后">addAll(int index, Collection&lt;? extends E&gt; c) 添加指定的集合元素到指定的位置之后</h2>
+<pre><code>public synchronized boolean addAll(int index, Collection&lt;? extends E&gt; c) {}
+</code></pre><h2 id="equalsobject-o">equals(Object o)</h2>
+<pre><code>public synchronized boolean equals(Object o) {}
+</code></pre><h2 id="hashcode">hashCode()</h2>
+<pre><code>public synchronized int hashCode() {}
+</code></pre><h2 id="tostring">toString()</h2>
+<pre><code>public synchronized String toString() {}
+</code></pre><h2 id="sublistint-fromindex-int-toindex返回一个子list">subList(int fromIndex, int toIndex)返回一个子list</h2>
+<pre><code>public synchronized List&lt;E&gt; subList(int fromIndex, int toIndex) {}
+</code></pre><h2 id="removerangeint-fromindex-int-toindex-删除指定区间的元素">removeRange(int fromIndex, int toIndex) 删除指定区间的元素</h2>
+<pre><code>protected synchronized void removeRange(int fromIndex, int toIndex) {}
+</code></pre><h2 id="listiteratorint-indexlistiterator-返回一个listiterator">listIterator(int index)/listIterator() 返回一个ListIterator</h2>
+<pre><code>public synchronized ListIterator&lt;E&gt; listIterator(int index) {}
+
+public synchronized ListIterator&lt;E&gt; listIterator() {
+        return new ListItr(0);
+    }
+</code></pre><h2 id="iterator-返回一个iterator">iterator() 返回一个Iterator</h2>
+<pre><code>public synchronized Iterator&lt;E&gt; iterator() {
+        return new Itr();
+    }
+</code></pre><h1 id="参考">参考</h1>
+<p><a href="http://www.cnblogs.com/skywang12345/p/3308833.html">http://www.cnblogs.com/skywang12345/p/3308833.html</a></p>
+<p><a href="http://www.runoob.com/java/java-vector-class.html">http://www.runoob.com/java/java-vector-class.html</a></p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

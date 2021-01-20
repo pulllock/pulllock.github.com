@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>设计模式中的责任链模式解析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>设计模式中的责任链模式解析</h1>
+			<b><time>2017-05-05 18:09:56</time></b>
+		       
+		           <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</a>
+        	       
+		           <a href="/tags/%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F">责任链模式</a>
+        	       
+
+			<div>
+				<p>这篇主要是在看Tomcat源码的时候，遇到了责任链模式相关的东西，做一下简单记录，可以和Tomcat源码中责任链的应用对比学习下，会更有效果。</p>
+<h1 id="责任链模式的定义">责任链模式的定义</h1>
+<blockquote>
+<p>责任链模式（Chain of Responsibility）是一种对象的行为模式。在责任链模式里，很多对象由每一个对象对其下家的引用而连接起来形成一条链。请求在这个链上传递，直到链上的某一个对象决定处理此请求。发出这个请求的客户端并不知道链上的哪一个对象最终处理这个请求，这使得系统可以在不影响客户端的情况下动态地重新组织和分配责任。
+《JAVA与模式》-阎宏</p>
+</blockquote>
+<h1 id="责任链模式的结构">责任链模式的结构</h1>
+<p>责任链模式总共存在两个角色，抽象处理者（Handler）和具体处理者（ConcreteHandler）。</p>
+<p>抽象处理者，定义处理请求的接口，通常也会有包含下一个和上一个处理者的方法，抽象处理者一般是一个接口或者抽象类。</p>
+<p>具体处理者，是对抽象处理者的实现，不同的实现。当前如果能处理请求，就处理，如果不能处理请求就交给下家处理。</p>
+<h1 id="责任链模式的举例">责任链模式的举例</h1>
+<p>Handler：</p>
+<pre><code>package me.cxis.test.gof.chainofresponsibility;
+
+/**
+ * Created by cheng.xi on 2017-05-05 17:46.
+ */
+public abstract class Handler {
+    protected Handler successor;
+
+    public abstract void handleRequest(String condition);
+
+    public Handler getSuccessor() {
+        return successor;
+    }
+
+    public void setSuccessor(Handler successor) {
+        this.successor = successor;
+    }
+}
+</code></pre><p>ConcreteHandler1：</p>
+<pre><code>package me.cxis.test.gof.chainofresponsibility;
+
+/**
+ * Created by cheng.xi on 2017-05-05 17:49.
+ */
+public class ConcreteHandler1 extends Handler {
+    @Override
+    public void handleRequest(String condition) {
+        if(condition.equals(&quot;1&quot;)){
+            System.out.println(&quot;ConcreteHandler1处理&quot;);
+            return;
+        }else {
+            System.out.println(&quot;ConcreteHandler1不处理，由其他的Handler处理&quot;);
+            getSuccessor().handleRequest(condition);
+        }
+    }
+}
+
+</code></pre><p>ConcreteHandler2：</p>
+<pre><code>package me.cxis.test.gof.chainofresponsibility;
+
+/**
+ * Created by cheng.xi on 2017-05-05 17:49.
+ */
+public class ConcreteHandler2 extends Handler {
+    @Override
+    public void handleRequest(String condition) {
+        if(condition.equals(&quot;2&quot;)){
+            System.out.println(&quot;ConcreteHandler2处理&quot;);
+            return;
+        }else {
+            System.out.println(&quot;ConcreteHandler2不处理，由其他的Handler处理&quot;);
+            getSuccessor().handleRequest(condition);
+        }
+    }
+}
+</code></pre><p>ConcreteHandlerX：</p>
+<pre><code>package me.cxis.test.gof.chainofresponsibility;
+
+/**
+ * Created by cheng.xi on 2017-05-05 17:49.
+ */
+public class ConcreteHandlerX extends Handler {
+    @Override
+    public void handleRequest(String condition) {
+        //一般是最后一个处理者
+        System.out.println(&quot;ConcreteHandlerX处理&quot;);
+    }
+}
+
+</code></pre><p>Client：</p>
+<pre><code>package me.cxis.test.gof.chainofresponsibility;
+
+/**
+ * Created by cheng.xi on 2017-05-05 17:53.
+ */
+public class Client {
+    public static void main(String[] args) {
+        Handler handler1 = new ConcreteHandler1();
+        Handler handler2 = new ConcreteHandler2();
+        Handler handlerX = new ConcreteHandlerX();
+
+        handler1.setSuccessor(handler2);
+        handler2.setSuccessor(handlerX);
+
+        handler1.handleRequest(&quot;2&quot;);
+    }
+}
+
+</code></pre><h1 id="责任链模式的优点">责任链模式的优点</h1>
+<p>当然上面的例子我们可以直接在Client中写<code>if-else</code>，不过这样耦合度就太高了，而且如果顺序发生变化会很难弄，而责任链模式可以解耦，将发送者和接受者分开。</p>
+<h1 id="责任链模式的缺点">责任链模式的缺点</h1>
+<p>责任链可能很长，即便某一个点不处理请求，也需要经过这个点，这样会有性能问题。</p>
+<h1 id="责任链模式的应用场景">责任链模式的应用场景</h1>
+<ul>
+<li>Servlet中的过滤器</li>
+<li>Tomcat中的Filter</li>
+<li>Tomcat中容器的设置</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

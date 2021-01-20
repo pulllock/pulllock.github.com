@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>JVM类加载器</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>JVM类加载器</h1>
+			<b><time>2017-06-04 22:26:33</time></b>
+		       
+		           <a href="/tags/JVM">JVM</a>
+        	       
+
+			<div>
+				<p>JVM类加载器有三种：启动类加载器、扩展类加载器、应用类加载器。</p>
+<p>JVM类加载器有三种：</p>
+<ul>
+<li>启动类加载器：Bootstrap ClassLoader，负责加载<code>$JAVA_HOME/jre/lib</code>目录下的或者被<code>-Xbootclasspath</code>参数指定的路径中的类库，C++实现，无法被Java程序直接引用。</li>
+<li>扩展类加载器：Extension ClassLoader，负责加载<code>$JAVA_HOME/jre/lib/ext</code>目录下的或者被<code>java.ext.dirs</code>指定的路径中的类库。</li>
+<li>应用类加载器：Application ClassLoader，（系统类加载器System ClassLoader）负责加载用户类路径（classpath）下的指定的类，可以直接使用该类加载器。</li>
+</ul>
+<h1 id="jvm类加载器加载类的机制">JVM类加载器加载类的机制</h1>
+<ul>
+<li>当一个类加载器负责加载某个类时，该类所依赖的和引用的其他类也由该类加载器负责载入，除非程序中显式使用另一个类加载器来载入。</li>
+<li>加载一个类的时候，先让父类加载器进行尝试，如果父类无法加载类，才从当前类加载器的类路径下加载该类。</li>
+<li>所有加载过的类都会被缓存，类加载器会先从缓存区寻找该类，缓存不存在才会进行加载。</li>
+</ul>
+<h1 id="类加载的三种方式">类加载的三种方式</h1>
+<ul>
+<li>命令行启动应用时候由JVM初始化加载。</li>
+<li>通过<code>Class.forName()</code>方法动态加载。</li>
+<li>通过<code>ClassLoader.loadClass()</code>方法动态加载。</li>
+</ul>
+<p><code>Class.forName()</code>会将class文件加载到JVM中，并且会对类进行解释，执行类中的static块。同时也有个带参数的方法可以控制是否加载static块。只有调用了<code>newInstance()</code>方法才会调用构造方法、创建类的对象。</p>
+<p><code>ClassLoader.loadClass()</code>只是将class文件加载到JVM中，不会执行static块的内容，只有在<code>newInstance()</code>时才会执行static块。</p>
+<h1 id="双亲委派模型">双亲委派模型</h1>
+<ol>
+<li>当AppClassLoader加载一个类时，它会首先把类加载请求委托给父类加载器ExtClassLoader去完成。</li>
+<li>当ExtClassLoader加载一个类时，他会首先把类加载请求委托给父类加载器BootstrapClassLoader去完成。</li>
+<li>如果BootstrapClassLoader加载失败，会使用ExtClassLoader进行类加载。</li>
+<li>如果ExtClassLoader加载失败，会使用AppClassLoader进行类加载。</li>
+<li>如果AppClassLoader加载失败，抛出异常<code>ClassNotFoundException</code>。</li>
+</ol>
+<p>双亲委派模型可以防止内存中出现多份同样的字节码；也可以保证Java的安全。</p>
+<h1 id="怎么打破双亲委派模型">怎么打破双亲委派模型</h1>
+<p>打破双亲委派模型，需要自己定义一个类加载器，重写loadClass方法，重写findClass方法。双亲委派模型是在loadClass方法中实现的，所以自定义类加载器重写这个方法就可以打破双亲委派模型。</p>
+<h2 id="打破双亲委派模型的例子">打破双亲委派模型的例子</h2>
+<ul>
+<li>使用SPI加载的，如JNDI、JDBC、JCE、JAXB、JBI等等，使用线程上下文类加载器来加载第三方厂商的类。SPI的接口属于Java核心库，存在于rt.jar中，由BootstrapClassLoader加载，但是SPI实现是由第三方实现，位于classpath下，BootstrapClassLoader无法直接加载这种实现，委托给ContextClassLoader来加载，实现了Java核心代码内部去调用外部实现类。</li>
+<li>tomcat中的web容器类加载器也打破了双亲委派模型，自定义的WebClassLoader除了核心类库外，都优先加载自己路径下的类，加载不到时再交给CommonClassLoader进行双亲委派机制加载。</li>
+<li>OSGI也打破了双亲委派模型，OSGI是网状结构的。</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://blog.jamesdbloom.com/JVMInternals.html">https://blog.jamesdbloom.com/JVMInternals.html</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

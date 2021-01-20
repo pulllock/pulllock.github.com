@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>APIGateway中加密验签介绍</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>APIGateway中加密验签介绍</h1>
+			<b><time>2020-04-08 21:57:10</time></b>
+		       
+		           <a href="/tags/APIGateway">APIGateway</a>
+        	       
+
+			<div>
+				<p>需要提供给接口调用方一个用来加密的key，调用方根据key、一些其他参数以及业务参数进行加密，还需要对报文进行签名，使用加密的参数请求接口。</p>
+<p>APIGateway接收到请求后进行验签，再进行解密，得到参数后进行处理。</p>
+<p>处理完成需要按照跟请求接口一样的方式将结果进行加密加签，然后将结果返回给调用方，调用方按照同样的方式进行验签解密拿到结果。</p>
+<p>方案：摘要签名、对称加密</p>
+<ol>
+<li>kv参数排序，按照key自然排序，ASCII升序，并将参数值URLEncode一下。</li>
+<li>在参数中加入两个额外参数timestamp和nonce。timestamp表示请求发送时间，APIGateway可以对比当前时间戳，来判断请求是否正常；nonce表示一个随机数，也就是常说的盐值，APIGateway可以通过一定时间段内判断nonce是否重复来判断请求是否正常。</li>
+<li>使用给定的key，将参数进行加密，使用AES或者DES等。</li>
+<li>再将所有参数进行签名，MD5或者SHA1等</li>
+</ol>
+<p>示例代码：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CodecClient</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String HMAC_SHA1 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;HmacSHA1&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String AES <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AES&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String AES_CBC <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AES/CBC/PKCS5Padding&#34;</span><span style="color:#f92672">;</span>
+
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">encrypt</span><span style="color:#f92672">(</span>String key<span style="color:#f92672">,</span> String content<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            SecretKeySpec secretKeySpec <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SecretKeySpec<span style="color:#f92672">(</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">),</span> AES<span style="color:#f92672">);</span>
+            Cipher cipher <span style="color:#f92672">=</span> Cipher<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span>AES_CBC<span style="color:#f92672">);</span>
+            IvParameterSpec iv <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> IvParameterSpec<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>16<span style="color:#f92672">]);</span>
+            cipher<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">(</span>Cipher<span style="color:#f92672">.</span><span style="color:#a6e22e">ENCRYPT_MODE</span><span style="color:#f92672">,</span> secretKeySpec<span style="color:#f92672">,</span> iv<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">return</span> bytesToHexString<span style="color:#f92672">(</span>cipher<span style="color:#f92672">.</span><span style="color:#a6e22e">doFinal</span><span style="color:#f92672">(</span>content<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">)));</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>NoSuchPaddingException <span style="color:#f92672">|</span> NoSuchAlgorithmException <span style="color:#f92672">|</span> InvalidKeyException <span style="color:#f92672">|</span> BadPaddingException <span style="color:#f92672">|</span> IllegalBlockSizeException <span style="color:#f92672">|</span> InvalidAlgorithmParameterException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Encrypt data error!&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">decrypt</span><span style="color:#f92672">(</span>String key<span style="color:#f92672">,</span> String content<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            SecretKeySpec secretKeySpec <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SecretKeySpec<span style="color:#f92672">(</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">),</span> AES<span style="color:#f92672">);</span>
+            Cipher cipher <span style="color:#f92672">=</span> Cipher<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span>AES_CBC<span style="color:#f92672">);</span>
+            IvParameterSpec iv <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> IvParameterSpec<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>16<span style="color:#f92672">]);</span>
+            cipher<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">(</span>Cipher<span style="color:#f92672">.</span><span style="color:#a6e22e">DECRYPT_MODE</span><span style="color:#f92672">,</span> secretKeySpec<span style="color:#f92672">,</span> iv<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">(</span>cipher<span style="color:#f92672">.</span><span style="color:#a6e22e">doFinal</span><span style="color:#f92672">(</span>hexStringToBytes<span style="color:#f92672">(</span>content<span style="color:#f92672">)));</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>NoSuchAlgorithmException <span style="color:#f92672">|</span> InvalidKeyException <span style="color:#f92672">|</span> InvalidAlgorithmParameterException <span style="color:#f92672">|</span> NoSuchPaddingException <span style="color:#f92672">|</span> BadPaddingException <span style="color:#f92672">|</span> IllegalBlockSizeException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Decrypt data error!&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">sign</span><span style="color:#f92672">(</span>String key<span style="color:#f92672">,</span> String data<span style="color:#f92672">,</span> String nonce<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            SecretKeySpec secretKeySpec <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SecretKeySpec<span style="color:#f92672">(</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">),</span> HMAC_SHA1<span style="color:#f92672">);</span>
+            Mac mac <span style="color:#f92672">=</span> Mac<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span>HMAC_SHA1<span style="color:#f92672">);</span>
+            mac<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">(</span>secretKeySpec<span style="color:#f92672">);</span>
+            mac<span style="color:#f92672">.</span><span style="color:#a6e22e">update</span><span style="color:#f92672">(</span>data<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">));</span>
+            <span style="color:#66d9ef">return</span> bytesToHexString<span style="color:#f92672">(</span>mac<span style="color:#f92672">.</span><span style="color:#a6e22e">doFinal</span><span style="color:#f92672">(</span>nonce<span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">(</span>StandardCharsets<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">)));</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>NoSuchAlgorithmException <span style="color:#f92672">|</span> InvalidKeyException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Sign error!&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">bytesToHexString</span><span style="color:#f92672">(</span><span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> bytes<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        StringBuilder builder <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuilder<span style="color:#f92672">(</span>bytes<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">*</span> 2<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">byte</span> data <span style="color:#f92672">:</span> bytes<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            builder<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>String<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;%02x&#34;</span><span style="color:#f92672">,</span> data <span style="color:#f92672">&amp;</span> 0xff<span style="color:#f92672">));</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> builder<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> <span style="color:#a6e22e">hexStringToBytes</span><span style="color:#f92672">(</span>String str<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> bytes <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>str<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()</span> <span style="color:#f92672">/</span> 2<span style="color:#f92672">];</span>
+        <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> str<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()</span> <span style="color:#f92672">/</span> 2<span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+            String subStr <span style="color:#f92672">=</span> str<span style="color:#f92672">.</span><span style="color:#a6e22e">substring</span><span style="color:#f92672">(</span>i <span style="color:#f92672">*</span> 2<span style="color:#f92672">,</span> i <span style="color:#f92672">*</span> 2 <span style="color:#f92672">+</span> 2<span style="color:#f92672">);</span>
+            bytes<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">byte</span><span style="color:#f92672">)</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">parseInt</span><span style="color:#f92672">(</span>subStr<span style="color:#f92672">,</span> 16<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#66d9ef">return</span> bytes<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> UnsupportedEncodingException <span style="color:#f92672">{</span>
+        String key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;xxxhhhsshkjkkddd&#34;</span><span style="color:#f92672">;</span>
+        JSONObject jsonObject <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JSONObject<span style="color:#f92672">();</span>
+        jsonObject<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;id&#34;</span><span style="color:#f92672">,</span> 123<span style="color:#f92672">);</span>
+        jsonObject<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;name&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;测试姓名&#34;</span><span style="color:#f92672">);</span>
+        jsonObject<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;alias&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;tom&#34;</span><span style="color:#f92672">);</span>
+
+        String param <span style="color:#f92672">=</span> URLEncoder<span style="color:#f92672">.</span><span style="color:#a6e22e">encode</span><span style="color:#f92672">(</span>jsonObject<span style="color:#f92672">.</span><span style="color:#a6e22e">toJSONString</span><span style="color:#f92672">(),</span> <span style="color:#e6db74">&#34;utf-8&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;param: &#34;</span> <span style="color:#f92672">+</span> param<span style="color:#f92672">);</span>
+
+        <span style="color:#66d9ef">int</span> nonce <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SecureRandom<span style="color:#f92672">().</span><span style="color:#a6e22e">nextInt</span><span style="color:#f92672">();</span>
+        String data <span style="color:#f92672">=</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;apiCode=%s&amp;data=%s&amp;nonce=%d&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;createUser#XDFFDDD&#34;</span><span style="color:#f92672">,</span> param<span style="color:#f92672">,</span> nonce<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;data: &#34;</span> <span style="color:#f92672">+</span> data<span style="color:#f92672">);</span>
+
+        data <span style="color:#f92672">=</span> encrypt<span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> data<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;encrypt data: &#34;</span> <span style="color:#f92672">+</span> data<span style="color:#f92672">);</span>
+
+        String sign <span style="color:#f92672">=</span> sign<span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> data<span style="color:#f92672">,</span> nonce <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sign: &#34;</span> <span style="color:#f92672">+</span> sign<span style="color:#f92672">);</span>
+
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;key: &#34;</span> <span style="color:#f92672">+</span> key<span style="color:#f92672">);</span>
+        String decryptData <span style="color:#f92672">=</span> decrypt<span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> data<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;DecryptData: &#34;</span> <span style="color:#f92672">+</span> decryptData<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>源码：<a href="https://github.com/dachengxi/APIGateway">https://github.com/dachengxi/APIGateway</a></p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

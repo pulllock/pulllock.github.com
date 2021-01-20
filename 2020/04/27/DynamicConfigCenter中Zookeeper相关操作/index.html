@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>DynamicConfigCenter中Zookeeper相关操作</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>DynamicConfigCenter中Zookeeper相关操作</h1>
+			<b><time>2020-04-27 21:13:46</time></b>
+		       
+		           <a href="/tags/DynamicConfigCenter">DynamicConfigCenter</a>
+        	       
+
+			<div>
+				<p>重新温习一下操作Zookeeper的一些方法。</p>
+<p>创建节点、删除节点、修改节点数据、监听事件等等，代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CuratorBasicOperation</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String SERVER_ADDR <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;127.0.0.1:2181&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * 会话超时时间5s
+</span><span style="color:#75715e">         * 连接超时时间5s
+</span><span style="color:#75715e">         * 重试策略：最多重试3次，每次重试间隔1s
+</span><span style="color:#75715e">         */</span>
+        CuratorFramework curatorClient <span style="color:#f92672">=</span> CuratorFrameworkFactory
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">builder</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">connectString</span><span style="color:#f92672">(</span>SERVER_ADDR<span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">sessionTimeoutMs</span><span style="color:#f92672">(</span>5000<span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">connectionTimeoutMs</span><span style="color:#f92672">(</span>5000<span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">retryPolicy</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> RetryNTimes<span style="color:#f92672">(</span>3<span style="color:#f92672">,</span> 1000<span style="color:#f92672">))</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">();</span>
+
+        <span style="color:#75715e">// 连接状态监听
+</span><span style="color:#75715e"></span>        curatorClient
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">getConnectionStateListenable</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">addListener</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> ConnectionStateListener<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+                <span style="color:#a6e22e">@Override</span>
+                <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">stateChanged</span><span style="color:#f92672">(</span>CuratorFramework curatorFramework<span style="color:#f92672">,</span> ConnectionState connectionState<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;连接状态监听ConnectionState: &#34;</span> <span style="color:#f92672">+</span> connectionState<span style="color:#f92672">);</span>
+                    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>connectionState <span style="color:#f92672">==</span> ConnectionState<span style="color:#f92672">.</span><span style="color:#a6e22e">RECONNECTED</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;连接状态监听reconnect, redo something&#34;</span><span style="color:#f92672">);</span>
+                    <span style="color:#f92672">}</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">});</span>
+
+        <span style="color:#75715e">/**
+</span><span style="color:#75715e">         * 主要针对background通知和错误通知，
+</span><span style="color:#75715e">         * 对于节点的创建或修改则不会触发监听事件
+</span><span style="color:#75715e">         */</span>
+        curatorClient
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">getCuratorListenable</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">addListener</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> CuratorListener<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+                <span style="color:#a6e22e">@Override</span>
+                <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eventReceived</span><span style="color:#f92672">(</span>CuratorFramework curatorFramework<span style="color:#f92672">,</span> CuratorEvent curatorEvent<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+                    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;监听CuratorEvent: &#34;</span> <span style="color:#f92672">+</span> curatorEvent<span style="color:#f92672">);</span>
+                    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>curatorEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">getType</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> CuratorEventType<span style="color:#f92672">.</span><span style="color:#a6e22e">WATCHED</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;监听watched, do something&#34;</span><span style="color:#f92672">);</span>
+                    <span style="color:#f92672">}</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">});</span>
+
+        curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+
+        <span style="color:#75715e">// 节点事件监听
+</span><span style="color:#75715e"></span>        NodeCache nodeCache <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> NodeCache<span style="color:#f92672">(</span>curatorClient<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;/my_root/cxis_2/config&#34;</span><span style="color:#f92672">);</span>
+        nodeCache<span style="color:#f92672">.</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+        nodeCache
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">getListenable</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">addListener</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> NodeCacheListener<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+                <span style="color:#a6e22e">@Override</span>
+                <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">nodeChanged</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+                    String result <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">(</span>nodeCache<span style="color:#f92672">.</span><span style="color:#a6e22e">getCurrentData</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getData</span><span style="color:#f92672">());</span>
+                    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;节点事件监听nodeChanged: &#34;</span> <span style="color:#f92672">+</span> result<span style="color:#f92672">);</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">});</span>
+
+        <span style="color:#75715e">// 子节点事件监听
+</span><span style="color:#75715e"></span>        PathChildrenCache childrenCache <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> PathChildrenCache<span style="color:#f92672">(</span>curatorClient<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;/my_root&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+        childrenCache<span style="color:#f92672">.</span><span style="color:#a6e22e">start</span><span style="color:#f92672">();</span>
+        childrenCache
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">getListenable</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">addListener</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> PathChildrenCacheListener<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+                <span style="color:#a6e22e">@Override</span>
+                <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">childEvent</span><span style="color:#f92672">(</span>CuratorFramework curatorFramework<span style="color:#f92672">,</span> PathChildrenCacheEvent pathChildrenCacheEvent<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+                    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;子节点事件监听PathChildrenCacheEvent: &#34;</span> <span style="color:#f92672">+</span> pathChildrenCacheEvent<span style="color:#f92672">);</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">});</span>
+
+        <span style="color:#75715e">// 创建节点
+</span><span style="color:#75715e"></span>        String result1 <span style="color:#f92672">=</span> curatorClient
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">create</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">creatingParentsIfNeeded</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">withMode</span><span style="color:#f92672">(</span>CreateMode<span style="color:#f92672">.</span><span style="color:#a6e22e">PERSISTENT</span><span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_1/config&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;this is value for cxis_1&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">());</span>
+
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;创建节点result1: &#34;</span> <span style="color:#f92672">+</span> result1<span style="color:#f92672">);</span>
+
+        String result2 <span style="color:#f92672">=</span> curatorClient
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">create</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">creatingParentsIfNeeded</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">withMode</span><span style="color:#f92672">(</span>CreateMode<span style="color:#f92672">.</span><span style="color:#a6e22e">PERSISTENT</span><span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_2/config&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;this is value for cxis_2&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">());</span>
+
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;创建节点result2: &#34;</span> <span style="color:#f92672">+</span> result2<span style="color:#f92672">);</span>
+
+        String result3 <span style="color:#f92672">=</span> curatorClient
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">create</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">creatingParentsIfNeeded</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">withMode</span><span style="color:#f92672">(</span>CreateMode<span style="color:#f92672">.</span><span style="color:#a6e22e">PERSISTENT</span><span style="color:#f92672">)</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_3/config&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;this is value for cxis_3&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">());</span>
+
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;创建节点result3: &#34;</span> <span style="color:#f92672">+</span> result3<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 获取子节点
+</span><span style="color:#75715e"></span>        List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> children <span style="color:#f92672">=</span> curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">getChildren</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;获取子节点children: &#34;</span> <span style="color:#f92672">+</span> children<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 获取节点数据
+</span><span style="color:#75715e"></span>        String value3 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">(</span>curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">getData</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_3/config&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;获取节点数据value3: &#34;</span> <span style="color:#f92672">+</span> value3<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 获取节点数据和状态
+</span><span style="color:#75715e"></span>        Stat stat <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Stat<span style="color:#f92672">();</span>
+        String value3WithStat <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">(</span>curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">getData</span><span style="color:#f92672">().</span><span style="color:#a6e22e">storingStatIn</span><span style="color:#f92672">(</span>stat<span style="color:#f92672">).</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_3/config&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;获取节点数据和状态value3WithStat: &#34;</span> <span style="color:#f92672">+</span> value3WithStat <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;, stat: &#34;</span> <span style="color:#f92672">+</span> stat<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 获取节点数据
+</span><span style="color:#75715e"></span>        String value1 <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">(</span>curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">getData</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_1/config&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;获取节点数据value1: &#34;</span> <span style="color:#f92672">+</span> value1<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 判断结点是否存在
+</span><span style="color:#75715e"></span>        Stat stat1 <span style="color:#f92672">=</span> curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">checkExists</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_1/config&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;判断结点是否存在stat1: &#34;</span> <span style="color:#f92672">+</span> stat1<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 删除节点和子节点
+</span><span style="color:#75715e"></span>        curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">().</span><span style="color:#a6e22e">guaranteed</span><span style="color:#f92672">().</span><span style="color:#a6e22e">deletingChildrenIfNeeded</span><span style="color:#f92672">().</span><span style="color:#a6e22e">withVersion</span><span style="color:#f92672">(-</span>1<span style="color:#f92672">).</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_1&#34;</span><span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 判断结点是否存在
+</span><span style="color:#75715e"></span>        Stat stat2 <span style="color:#f92672">=</span> curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">checkExists</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_1/config&#34;</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;判断结点是否存在stat2: &#34;</span> <span style="color:#f92672">+</span> stat2<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 修改节点数据
+</span><span style="color:#75715e"></span>        Stat stat3 <span style="color:#f92672">=</span> curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">setData</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_2/config&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;this is value for cxis_2_new&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">());</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;修改节点数据stat3: &#34;</span> <span style="color:#f92672">+</span> stat3<span style="color:#f92672">);</span>
+
+        <span style="color:#75715e">// 获取节点数据
+</span><span style="color:#75715e"></span>        String value2AfterUpdate <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">(</span>curatorClient<span style="color:#f92672">.</span><span style="color:#a6e22e">getData</span><span style="color:#f92672">().</span><span style="color:#a6e22e">forPath</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/my_root/cxis_2/config&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;获取节点数据value2AfterUpdate: &#34;</span> <span style="color:#f92672">+</span> value2AfterUpdate<span style="color:#f92672">);</span>
+
+        Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">sleep</span><span style="color:#f92672">(</span>1000<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>
+</code></pre></div><p>源码：<a href="https://github.com/dachengxi/DynamicConfigCenter">https://github.com/dachengxi/DynamicConfigCenter</a></p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

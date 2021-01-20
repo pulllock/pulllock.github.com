@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>APIGateway设计的思路</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>APIGateway设计的思路</h1>
+			<b><time>2020-04-06 21:53:08</time></b>
+		       
+		           <a href="/tags/APIGateway">APIGateway</a>
+        	       
+
+			<div>
+				<p>简述一下APIGateway的设计思路，准备从头写一个网关。</p>
+<h1 id="api网关的职能">API网关的职能</h1>
+<ul>
+<li>请求接入，承接所有外部请求。</li>
+<li>中介策略，承担了外部请求和实际服务中间的功能，比如：鉴权、验签、路由、流控、缓存、黑白名单过滤等等。</li>
+<li>业务聚合，所有后端业务服务都可以在这里聚合，通过某种方式将业务服务都聚集到这里。</li>
+<li>统一管理，提供管理工具、后台服务等等，可以对服务进行注册、修改以及各种配置。</li>
+</ul>
+<h1 id="api网关需要实现的功能">API网关需要实现的功能</h1>
+<ul>
+<li>流控，控制流量，针对同一个ip在指定的时间段内访问次数做限制</li>
+<li>验签解密，校验参数、验证签名信息、将加密的信息解密</li>
+<li>接口验证，验证接口是否存在、接口信息是否是当前调用者的接口</li>
+<li>接口权限验证，调用的ip是否在白名单内</li>
+<li>业务参数验证，校验业务接口参数是否正确</li>
+<li>调用业务接口，可以使用dubbo泛化调用</li>
+<li>熔断降级，业务方接口不可用的时候或者业务方处理速度变慢，考虑进行熔断降级</li>
+<li>加密返回，将调用结果封装、加密、返回</li>
+<li>管理控制台，负责接口服务注册、配置等</li>
+</ul>
+<h1 id="实现要点">实现要点</h1>
+<ul>
+<li>实现方式使用责任链模式，链中每个模块负责一个功能</li>
+<li>本地缓存和分布式缓存配合，需要考虑本地缓存的更新，可以使用zookeeper通知或者MQ通知</li>
+<li>异步处理请求，使用Jetty容器部署应用</li>
+<li>线程池隔离，请求接收、请求处理、服务调用可以使用不同线程池进行隔离</li>
+<li>日志记录，请求以及处理等日志记录，方便问题查询</li>
+<li>数据统计，接口的调用信息统计，方便直观查看接口调用情况</li>
+<li>报警监控，针对异常或者其他错误选择报警</li>
+</ul>
+<p>源码：<a href="https://github.com/dachengxi/APIGateway">https://github.com/dachengxi/APIGateway</a></p>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://www.infoq.cn/article/EeE1xZeic4UdpbmR">https://www.infoq.cn/article/EeE1xZeic4UdpbmR</a>*03t</li>
+<li><a href="https://tech.youzan.com/api-gateway-in-practice/">https://tech.youzan.com/api-gateway-in-practice/</a></li>
+<li><a href="http://www.zhikestreet.com/content/p/22.html">http://www.zhikestreet.com/content/p/22.html</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

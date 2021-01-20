@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>MySQL中的锁</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>MySQL中的锁</h1>
+			<b><time>2018-04-16 20:42:41</time></b>
+		       
+		           <a href="/tags/MySQL">MySQL</a>
+        	       
+
+			<div>
+				<p>MySQL锁学习。</p>
+<h1 id="共享锁和排它锁">共享锁和排它锁</h1>
+<ul>
+<li>共享锁（读锁），读取数据时的锁，其他事务可以并发读数据，但不能写</li>
+<li>排它锁（写锁），写数据时的锁，其他事务既不能读，也不能写</li>
+</ul>
+<h1 id="myisam和innodb的锁粒度">MyISAM和InnoDB的锁粒度</h1>
+<h2 id="锁粒度">锁粒度</h2>
+<ul>
+<li>表级锁，table-level locking</li>
+<li>页面锁，page-level locking</li>
+<li>行级锁，row-level locking</li>
+</ul>
+<h2 id="myisam的锁粒度表级锁">MyISAM的锁粒度：表级锁</h2>
+<p>MyISAM引擎使用的是表级锁，可以设置读锁和写锁的优先级来避免线程一直得不到执行。</p>
+<p>MyISAM会自动给select操作和update、delete、insert操作涉及的表添加读锁和写锁。</p>
+<h2 id="innodb的锁粒度表级锁和行级锁">InnoDB的锁粒度：表级锁和行级锁</h2>
+<p>InnoDB引擎支持行级锁和表级锁，默认是用的是行级锁。</p>
+<h3 id="innodb行级锁">InnoDB行级锁</h3>
+<ul>
+<li>共享锁（S），允许当前事务和其他事务读取同一行数据，但其他事务不能修改数据</li>
+<li>排它锁（X），允许获得排它锁的事务更新数据，其他事务不能读和写该数据</li>
+</ul>
+<p>InnoDB行锁是针对索引加的锁，不是针对记录加锁，只有在通过索引检索数据的时候才使用行级锁，如果不通过索引检索数据则使用表级锁。</p>
+<h3 id="innodb意向锁">InnoDB意向锁</h3>
+<p>意向锁是一种不与行级锁冲突的表级锁。InnoDB支持多粒度锁，允许行级锁和表级锁共存。</p>
+<ul>
+<li>意向共享锁（IS），事务给数据行加行共享锁前，必须先取得该表的意向共享锁</li>
+<li>意向排它锁（IX），事务给数据行加行排它锁前，必须先取得该表的意向排它锁</li>
+</ul>
+<p>InnoDB意向锁是InnoDB引擎自动加的，不需要用户显式指定。update、delete、insert操作InnoDB会自动添加排它锁。select操作InnoDB不会加锁，需要用户显式加锁：</p>
+<ul>
+<li>给select添加共享锁：<code>select * from table_name where ... lock in share mode;</code></li>
+<li>给select添加排它锁：<code>select * frome table_name where ... for update; </code></li>
+</ul>
+<h2 id="表级锁页面锁行级锁">表级锁、页面锁、行级锁</h2>
+<ul>
+<li>表级锁，开销小、加锁快、锁粒度大，不会出现死锁，并发度比较低</li>
+<li>行级锁，开销大、加锁慢、锁粒度小，会出现死锁，并发度高</li>
+<li>页面锁，开销和加锁时间界于表锁和行锁之间，会出现死锁，并发度一般</li>
+</ul>
+<h1 id="innodb间隙锁">InnoDB间隙锁</h1>
+<p>使用范围条件检索数据，而不是使用相等条件检索数据，如果要请求共享锁或排它锁时，InnoDB会给符合条件的并且是已存在的数据记录索引项加锁。而键值在条件范围内但不存在的记录叫做间隙GAP，InnoDB会对这个间隙加锁，这种就是间隙锁（Next-Key锁）</p>
+<p>使用间隙锁目的：</p>
+<ul>
+<li>防止幻读</li>
+<li>满足恢复和复制需要</li>
+</ul>
+<p>MySQL通过binlog记录更新的sql语句，slave机器基于binlog进行同步，重新执行binlog中的sql语句，binlog中的sql语句是按照事务提交的先后顺序记录，恢复的时候也是按照这个顺序进行，在一个事务未提交之前，其他并发事务不能插入满足其锁定条件的任何记录，不允许出现幻读。</p>
+<h1 id="锁算法">锁算法</h1>
+<ul>
+<li>Record Lock，记录锁，锁定一个行记录</li>
+<li>Gap Lock，间隙锁，锁定一个区间</li>
+<li>Next-key Lock，记录锁+间隙锁，锁定区间和行记录</li>
+</ul>
+<p>InnoDB的Repeatable Read隔离级别下的等值查询锁算法示例：</p>
+<ul>
+<li>主键索引（聚簇索引），对主键索引记录加记录锁</li>
+<li>唯一索引，对辅助索引加记录锁，对主键索引也加记录锁</li>
+<li>普通索引，对相关的辅助索引加Next-key Lock，对对应的主键索引加记录锁</li>
+<li>不使用索引，对全表加Next-key Lock</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/29150809">https://zhuanlan.zhihu.com/p/29150809</a></li>
+<li><a href="https://juejin.im/post/5b85124f5188253010326360">https://juejin.im/post/5b85124f5188253010326360</a></li>
+<li><a href="https://segmentfault.com/a/1190000014133576">https://segmentfault.com/a/1190000014133576</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

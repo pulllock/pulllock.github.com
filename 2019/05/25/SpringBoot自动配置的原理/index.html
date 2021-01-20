@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>SpringBoot自动配置的原理</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>SpringBoot自动配置的原理</h1>
+			<b><time>2019-05-25 21:09:31</time></b>
+		       
+		           <a href="/tags/Spring">Spring</a>
+        	       
+		           <a href="/tags/SpringBoot">SpringBoot</a>
+        	       
+
+			<div>
+				<p>需要先了解一下Spring的@Import注解和@Enable注解的实现原理，以及SpringFactoriesLoader的实现，再来看SpringBoot的自动配置原理就基本上会明白了。</p>
+<p>SpringBoot应用一般都会在主类上注解@SpringBootApplication，这个注解上有@EnableAutoConfiguration注解，一般@Enable注解上都会有@Import注解，这里也不例外，有个@Import(EnableAutoConfigurationImportSelector.class)。</p>
+<p>EnableAutoConfigurationImportSelector是一个ImportSelector，Spring在初始化的时候会调用invokeBeanFactoryPostProcessor，这里会调用实现了接口BeanDefinitionRegistryPostProcessor的postProcessBeanDefinitionRegistry方法，ConfigurationClassPostProcessor也实现了此接口，在该方法postProcessBeanDefinitionRegistry中会处理@Configuration相关注解，这里就进行了@Import注解的处理。对于ImportSelector，会调用它的selectImports方法进行处理。</p>
+<p>EnableAutoConfigurationImportSelector的selectImports方法中会先使用SpringFactoriesLoader在classpath下的spring.factories文件中来加载@EnableAutoConfiguration类型的各种实现类，也包括各种starter中和我们自定义的starter中的对应实现类。SpringBoot中预先配置的EnableAutoConfiguration可以在<code>spring-boot-project/spring-boot-autoconfigure/src/main/resources/META-INF/spring.factories</code>中查询，配置了很多很多个自动配置类。</p>
+<p>加载完这些配置类的名字后，经过一系列的校验等操作，就会把所有的EnableAutoConfiguration实现类的名字都返回给Spring，Spring会继续的处理这些配置类，也就是处理这些配置类中的@Configuration、@Import这些注解，继续递归处理这些注解，最后把相关的Bean都注册到容器中。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

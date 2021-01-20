@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Spring中AOP流程的总结</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Spring中AOP流程的总结</h1>
+			<b><time>2020-03-23 21:45:18</time></b>
+		       
+		           <a href="/tags/Spring">Spring</a>
+        	       
+
+			<div>
+				<p>总结一下Spring中AOP的流程，对于具体的源码分析以前写过文档，网上也有很多类似的文章，这里不做重复。</p>
+<p>Spring AOP流程大致上可以分为三个阶段：标签解析和AutoProxyCreator的注册、AOP代理的创建、代理的使用。</p>
+<h1 id="标签解析和autoproxycreator的注册">标签解析和AutoProxyCreator的注册</h1>
+<p>在Spring的扩展点中，最早期的扩展点是NamespaceHandler，这个阶段是在解析成BeanDefinition的阶段。Spring在这里完成自定义标签的解析工作，比如aop、tx等等。AOP功能在这里注册了自己的NamespaceHandler以及BeanDefinitionParser，用来将AOP标签转换成BeanDefinition交给IOC容器管理。</p>
+<h2 id="关于autoproxycreator的理解">关于AutoProxyCreator的理解</h2>
+<p>同时在这里也会注册一个AutoProxyCreator，这个组件是用来在后面Bean的初始化过程中生成代理的。这个AutoProxtCreator实现了一个接口是：SmartInstantiationAwareBeanPostProcessor，看起来很眼熟，SmartInstantiationAwareBeanPostProcessor这个接口的父接口是：InstantiationAwareBeanPostProcessor，而InstantiationAwareBeanPostProcessor的父接口是BeanPostProcessor，到这里我们可能就大概明白了。</p>
+<p>我们知道实现了BeanPostProcessor接口的类会在Bean初始化过程中的填充属性之后这一步被调用，调用的方法是postProcessBeforeInitialization和postProcessAfterInitialization。但是Spring干嘛还要衍生出那么多子接口呢？通过接口的名字我们可以看到不同，那些接口名字都含有一个关键词：Instantiation实例化，并不是初始化Initialization，也就是说这些接口中的方法调用是要在Bean实例化的时候进行处理。在Bean的生命周期中，我们知道Bean的实例化是Bean初始化步骤中最早的一步，所以对于Instantiation等方法的处理会比Initialization要早。</p>
+<p>试想一下，我们自己写这些逻辑的时候，会在什么时候去创建AOP代理？第一个时间点：在Bean实例化之前，我就通过创建代理的逻辑直接返回一个代理好的实例，就不用继续走Bean初始化的后面的步骤了；第二个时间点：在Bean初始化之后，也就是走完了所有的Bean初始化过程后生成了一个完整的Bean，我再进行代理的创建。Spring就是这么处理的，要么我就不用Spring创建Bean，我直接返回一个代理，要么我就等Spring创建完成一个Bean再返回一个代理。Spring还有会另外一个触发点创建代理：getEarlyBeanReference，用来在解决循环依赖时提前曝光的Bean的代理生成，暂时不做说明。</p>
+<h1 id="aop代理创建">AOP代理创建</h1>
+<p>明确了代理创建的时间点，就可以继续看AOP代理的创建过程了。</p>
+<ol>
+<li>筛选出所有适合当前Bean的通知器，也就是所有的Advisor、Advise、Interceptor。</li>
+<li>选择使用JDK还是CGLIB来进行创建代理。</li>
+<li>使用具体的代理实现来创建代理。</li>
+</ol>
+<p>过程简单，但是实际的细节和实现还很复杂。</p>
+<h1 id="代理的使用">代理的使用</h1>
+<ol>
+<li>获取当前调用方法的拦截器链，包含了所有将要执行的advice。</li>
+<li>如果没有任何拦截器，直接执行目标方法。</li>
+<li>如果有拦截器存在，则将拦截器和目标方法封装成一个MethodInvocation，递归调用proceed方法进行调用。</li>
+<li>上面的处理中还有对目标对象的自我方法调用实施增强的处理，比如平时遇到的问题：在同一个类中一个方法调用另外一个带事务注解的方法，事务不会生效；在同一个类中一个方法调用另外一个带缓存注解的方法，缓存不会生效。</li>
+</ol>
+<p>以上就是大概的流程，总结一下就是：AOP实现使用的是动态代理和拦截器连。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gogs on Time Stream</title>
+    <link>http://cxis.me/tags/gogs/</link>
+    <description>Recent content in gogs on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Mon, 03 Apr 2017 12:07:44 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/gogs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>使用gogs搭建git服务器记录</title>
+      <link>http://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Mon, 03 Apr 2017 12:07:44 +0000</pubDate>
+      
+      <guid>http://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/</guid>
+      <description>&lt;p&gt;昨晚半夜网上一个朋友找到我，说是使用gogs搭建git服务器，使用ssh操作要免密啥啥啥的～也没描述清楚。就是要ssh的方式，提交时候不要账号密码，心想这不就三下的事情吗？结果折腾到晚上一点，没好～敢肯定的是他按照网上的毒教程，被坑了！还是自己本地虚拟机配置一下吧～&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

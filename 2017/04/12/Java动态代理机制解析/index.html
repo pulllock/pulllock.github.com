@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Java动态代理机制解析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Java动态代理机制解析</h1>
+			<b><time>2017-04-12 21:09:20</time></b>
+		       
+		           <a href="/tags/Java%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86">Java动态代理</a>
+        	       
+
+			<div>
+				<p>动态代理是指在运行时动态生成代理类。不需要我们像静态代理那个去手动写一个个的代理类。生成动态代理类有很多方式：Java动态代理，CGLIB，Javassist，ASM库等。这里主要说一下Java动态代理的实现。</p>
+<h1 id="java动态代理">Java动态代理</h1>
+<h2 id="invocationhandler接口">InvocationHandler接口</h2>
+<p>Java动态代理中，每一个动态代理类都必须要实现InvocationHandler接口，当我们通过代理对象调用一个方法的时候，这个方法就会被转发给代理类的invoke方法来调用，InvocationHandler接口只有一个方法：</p>
+<pre><code>public Object invoke(Object proxy, Method method, Object[] args) throws Throwable;
+</code></pre><p>proxy，真实对象。method，我们调用的真实对象的方法。args，要调用真实对象的方法时接受的参数。</p>
+<h2 id="proxy类">Proxy类</h2>
+<p>实现了InvocationHandler的类是动态代理类，而Proxy就是用来动态创建代理类对象的工具，通常情况下我们只使用newProxyInstance这个方法，newProxyInstance定义：</p>
+<pre><code>public static Object newProxyInstance(ClassLoader loader, Class&lt;?&gt;[] interfaces, InvocationHandler h) throws IllegalArgumentException {}
+</code></pre><p>loader，对生成的代理类对象进行加载的ClassLoader。interfaces，代理对象会实现这些接口。h，动态代理对象调用方法的时候，要发送到哪个InvocationHandler上。</p>
+<h1 id="例子">例子</h1>
+<p>我们知道，在之前的静态代理中，每个代理类都实现了特定接口，针对每一个事情都需要去定义一个代理类，会迅速的使类变多，重复也会多。而使用动态代理可以避免这一点，还是使用之前的找人还钱的例子。</p>
+<p>Subject：</p>
+<pre><code>package me.cxis.test.gof.proxy.dynamicproxy;
+
+/**
+ * Created by cheng.xi on 2017-04-12 19:58.
+ * 代理模式的主题类，这里代表的是欠钱的人
+ */
+public interface Subject {
+    /**
+     * 还给我的钱
+     * @param moneyCount 欠钱数
+     * @return 还给我的钱数
+     */
+    int giveMeMyMoney(int moneyCount);
+}
+</code></pre><p>RealSubject：</p>
+<pre><code>package me.cxis.test.gof.proxy.dynamicproxy;
+
+/**
+ * Created by cheng.xi on 2017-04-12 19:58.
+ * 真实主题，这里代表的是欠我钱的人
+ */
+public class RealSubject implements Subject {
+    @Override
+    public int giveMeMyMoney(int moneyCount) {
+        return moneyCount;
+    }
+}
+</code></pre><p>DynamicProxy：</p>
+<pre><code>package me.cxis.test.gof.proxy.dynamicproxy;
+
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+/**
+ * Created by cheng.xi on 2017-04-12 19:59.
+ * 代理
+ */
+public class DynamicProxy implements InvocationHandler{
+
+    private Object target;
+
+    public DynamicProxy(Object target){
+        this.target = target;
+    }
+
+    public &lt;T&gt; T getProxy(){
+        return (T) Proxy.newProxyInstance(
+                target.getClass().getClassLoader(),
+                target.getClass().getInterfaces(),
+                this);
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println(&quot;办事之前先收取点费用&quot;);
+        System.out.println(&quot;开始办事&quot;);
+        Object result = method.invoke(target,args);
+        System.out.println(&quot;办完了&quot;);
+        return result;
+    }
+}
+</code></pre><p>测试方法：</p>
+<pre><code>package me.cxis.test.gof.proxy.dynamicproxy;
+
+/**
+ * Created by cheng.xi on 2017-04-12 20:06.
+ */
+public class Main {
+
+    public static void main(String[] args) {
+        Subject zhangsan = new RealSubject();
+        Subject proxy = new DynamicProxy(zhangsan).getProxy();
+        int money = proxy.giveMeMyMoney(1000);
+        System.out.println(money);
+    }
+}
+</code></pre><p>可以看到我们把之前的代理类，换成了现在的动态代理类，调用方法也有所改变，看起来没什么大的区别，但是当我们在需要一个类似的业务的时候，就有差别了，我们无需在定义第二个动态代理类，只需要有新的Subject1接口和RealSubject1实现即可，在我们测试方法中直接调用就可以了，动态代理类完全不需要改变。</p>
+<h2 id="java动态代理的优缺点">Java动态代理的优缺点</h2>
+<p>优点：Java动态代理可以避免静态代理带来的代码冗余的问题。</p>
+<p>缺点：Java动态代理只能针对接口创建代理，不能针对类创建代理。</p>
+<h1 id="java动态代理到底做了什么">Java动态代理到底做了什么？</h1>
+<p>其实动态代理是在运行时候为我们生成了一个代理类，大概如下：</p>
+<pre><code>public final class $Proxy1 extends Proxy implements Subject{
+    private InvocationHandler h;
+    private $Proxy1(){}
+    public $Proxy1(InvocationHandler h){
+        this.h = h;
+    }
+    public int giveMeMyMoney(int i){
+    	////创建method对象
+        Method method = Subject.class.getMethod(&quot;giveMeMyMoney&quot;, new Class[]{int.class});
+        //调用了invoke方法
+        return (Integer)h.invoke(this, method, new Object[]{new Integer(i)}); 
+    }
+}
+</code></pre><p>从中可以看到，InvocationHandler是我们实现的那个类，我们实现了invoke方法，这里就是调用了invoke方法。</p>
+<p>同时我们看到这个类实际上实现了我们的主题类Subject，看着和静态代理差不多了把。另外着重看下这个类继承了Proxy类，看到这里，对于JDK动态代理为什么不能代理类只能代理接口，就明了了，因为他已经继承了Proxy类。</p>
+<h1 id="动态代理的用处">动态代理的用处</h1>
+<ul>
+<li>Spring AOP就是使用的动态代理方式。</li>
+<li>dubbo消费者初始化的时候生成代理，也是使用的动态代理。</li>
+<li>hibernate的懒加载。</li>
+</ul>
+<h1 id="其他例子">其他例子</h1>
+<p>延迟加载代理举例：</p>
+<p>接口类：</p>
+<pre><code>public interface ILoadFile{
+	String load();
+}
+</code></pre><p>真实实现类：</p>
+<pre><code>public class LoadFile implements ILoadFile{
+	String fileContent = &quot;&quot;;
+    
+    public LoadFile(){
+    	try{
+        	//这里模拟加载一个大文件，需要时间很长
+        	Thread.sleep(10000);
+            //加载完之后
+            fileContent = &quot;file contents...&quot;;
+        }catch(Exception e){
+        
+        }
+    }
+    
+    public String load(){
+    	return fileContent;
+    }
+    
+}
+</code></pre><p>代理类：</p>
+<pre><code>public LoadFileHandler implements InvocationHandler{
+	ILoadFile loadFile = null;
+    
+    public Object invoke(Object proxy,Method method,Object[] args) throws Throwable{
+    	if( loadFile == null){
+        	loadFile = new LoadFile();
+        }
+        
+        return loadFile.load();
+    }
+}
+</code></pre><p>生成动态代理对象并使用：</p>
+<pre><code>public static void main(String[] args){
+	ILoadFile loadFile = (ILoadFile)Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(),new Class[]{ILoadFile.class},new LoadFileHandler());
+    loadFile.load();
+}
+</code></pre>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Redis分布式锁及其他分布式锁实现方式</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Redis分布式锁及其他分布式锁实现方式</h1>
+			<b><time>2019-04-20 21:10:02</time></b>
+		       
+		           <a href="/tags/redis">redis</a>
+        	       
+
+			<div>
+				<p>Redis实现分布式锁大概有几种方案：使用set命令同时指定过期时间和NX、使用lua脚本和setnx加过期时间配合、基于Redlock算法的Redisson实现。分布式锁除了可以使用Redis实现外，还可以使用其他的实现，比如：mysql数据库方式、Tair实现、Zookeeper等等。</p>
+<h1 id="set命令加过期时间加nx">set命令加过期时间加nx</h1>
+<p>Redis的set命令有一系列的选项：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">set key value <span style="color:#f92672">[</span>EX seconds<span style="color:#f92672">][</span>PX milliseconds<span style="color:#f92672">][</span>NX|XX<span style="color:#f92672">]</span>
+</code></pre></div><ul>
+<li>EX 设置过期时间，单位秒</li>
+<li>PX 设置过期时间，单位毫秒</li>
+<li>NX 仅当key不存在时设置值</li>
+<li>XX 仅当key存在时设置值</li>
+</ul>
+<h1 id="lua脚本加setnx加过期时间">lua脚本加setnx加过期时间</h1>
+<p>Redis中可以执行lua脚本，脚本执行是原子性的，可以使用lua脚本中执行多个命令：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lua" data-lang="lua"><span style="color:#66d9ef">if</span> redis.call(<span style="color:#e6db74">&#39;setnx&#39;</span>,KEYS[<span style="color:#ae81ff">1</span>],ARGV[<span style="color:#ae81ff">1</span>]) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">then</span> redis.call(<span style="color:#e6db74">&#39;expire&#39;</span>,KEYS[<span style="color:#ae81ff">1</span>],ARGV[<span style="color:#ae81ff">2</span>]) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">end</span>
+</code></pre></div><h1 id="锁的释放">锁的释放</h1>
+<p>分布式锁的value需要每个获取锁的线程都设置对应唯一的值，防止不同线程误删锁，设置唯一的值后就可以在删除的时候验证下锁是不是属于当前线程。不能使用del命令直接删除，否则所有的线程都可以进行删除。</p>
+<p>锁释放可以使用lua脚本保证原子性，先判断value是否是当前线程设置的，如果是就删除：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-lua" data-lang="lua"><span style="color:#66d9ef">if</span> redis.call(<span style="color:#e6db74">&#39;get&#39;</span>,KEYS[<span style="color:#ae81ff">1</span>]) <span style="color:#f92672">==</span> ARGV[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">then</span> <span style="color:#66d9ef">return</span> redis.call(<span style="color:#e6db74">&#39;del&#39;</span>,KEYS[<span style="color:#ae81ff">1</span>]) <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span> <span style="color:#66d9ef">end</span>
+</code></pre></div><h1 id="单点redis分布式锁的问题">单点Redis分布式锁的问题</h1>
+<ul>
+<li>必须设置一个过期时间，过期时间长短需要根据业务判断。</li>
+<li>如果发生了故障转移，一个线程在master节点获取到了锁，但是没有同步到slave节点，master宕机，slave升级为master，其他线程获取分布式锁成功，就导致了有多个线程获取到了同一个锁。</li>
+</ul>
+<h1 id="redlock和redisson">Redlock和Redisson</h1>
+<p>Redlock算法基于N个完全独立的Redis节点来实现，获取锁的操作步骤：</p>
+<ul>
+<li>获取当前时间毫秒数</li>
+<li>按顺序依次向N个Redis节点执行获取锁操作，使用相同的key和具有唯一性的value，也包含过期时间。获取锁的操作还需要有个超时时间，需要远小于key的过期时间。获取失败后应该立即尝试下一个Redis节点。</li>
+<li>客户端使用当前时间减去开始获取锁的时间，得到了获取到锁使用的时间，如果客户端从大多数节点（N/2+1）成功获取到锁，并且总的获取锁的时间没有超过锁的有效期，才可以任务获取锁成功。</li>
+<li>获取锁成功之后，锁的有效期等于最初的有效期减去上一步获取锁消耗的时间。</li>
+<li>如果最终获取锁失败，客户端立刻向所有Redis节点发起释放锁的操作。</li>
+</ul>
+<h1 id="zookeeper实现分布式锁">zookeeper实现分布式锁</h1>
+<ol>
+<li>先建立一个持久（PERSISTENT）节点，比如名字是：lock</li>
+<li>需要获取锁的时候，线程在lock节点下创建对应的临时顺序（EPHEMERAL_SEQUENTIAL）节点</li>
+<li>获取lock下所有的子节点，判断自己的节点是否是最小的节点，如果是最小的节点则获取锁成功</li>
+<li>如果当前不是最小节点，说明有其他线程获取到了锁，当前线程需要获取到前一个节点，并注册监听事件监听前一个节点</li>
+<li>当上一个节点完成后，释放锁，也就是删除了临时节点后，当前等待的节点会收到zk的通知事件，就可以获取到锁。</li>
+</ol>
+<h1 id="tair实现分布式锁">Tair实现分布式锁</h1>
+<p>使用Tair的put方法来实现分布式锁，跟Redis的set类似，Tair可以传入版本号，cas保证只有一个能成功，同样还是使用key value加上过期时间来实现。</p>
+<h1 id="其他方式实现">其他方式实现</h1>
+<p>mysql、文件实现分布式锁，mysql可以创建一个锁的表，mysql和文件的方式性能对比缓存来说不是很好。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

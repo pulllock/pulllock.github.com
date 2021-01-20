@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>msm on Time Stream</title>
+    <link>http://cxis.me/tags/msm/</link>
+    <description>Recent content in msm on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Fri, 01 Jul 2016 15:09:23 +0000</lastBuildDate>
+    
+	<atom:link href="http://cxis.me/tags/msm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>tomcat与memcached-session-manager共享session测试</title>
+      <link>http://cxis.me/2016/07/01/tomcat%E4%B8%8Ememcached-session-manager%E5%85%B1%E4%BA%ABsession%E6%B5%8B%E8%AF%95/</link>
+      <pubDate>Fri, 01 Jul 2016 15:09:23 +0000</pubDate>
+      
+      <guid>http://cxis.me/2016/07/01/tomcat%E4%B8%8Ememcached-session-manager%E5%85%B1%E4%BA%ABsession%E6%B5%8B%E8%AF%95/</guid>
+      <description>简介 看书刚好看到集群session共享,总觉得只看不做,不能确定这到底是怎么运行的.所以就做了这个测试.有关Memcached-Sessio</description>
+    </item>
+    
+  </channel>
+</rss>

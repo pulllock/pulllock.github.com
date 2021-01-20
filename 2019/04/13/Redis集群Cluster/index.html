@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Redis集群Cluster</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Redis集群Cluster</h1>
+			<b><time>2019-04-13 22:20:27</time></b>
+		       
+		           <a href="/tags/redis">redis</a>
+        	       
+
+			<div>
+				<p>Redis提供的分布式解决方案：Redis Cluster集群，使用分片sharding来进行数据共享，还提供了复制和故障转移功能。</p>
+<p>Redis集群通常由多个节点node组成，节点通过CLUSTER MEET命令连接起来组成集群。</p>
+<p>Redis集群通过分片方式保存数据库中的键值对，集群的整个数据库分为16384个槽slot，数据库中的每个键都属于这16384个槽的其中一个，集群中每个节点可以处理0到最多16384个槽。</p>
+<p>一个节点出了会记录自己负责的槽外，还会把自己负责的slots数组通过消息发送给集群其他的节点，告知其他节点自己负责的槽有哪些。</p>
+<h1 id="在集群中执行命令">在集群中执行命令</h1>
+<p>客户端向节点发送命令时，接收命令的节点会计算出键对应属于哪个槽：</p>
+<ul>
+<li>如果键对应的槽属于自己，直接执行命令。</li>
+<li>如果键对应的槽属于其他节点，会向客户端返回MOVED错误，指引客户端转向redirect到正确的节点，并再次发送要执行的命令。</li>
+</ul>
+<p>
+<figure>
+  <img src="/Redis%e9%9b%86%e7%be%a4Cluster/cluster-1.png" alt="cluster-1" />
+</figure>
+
+
+</p>
+<h1 id="重新分片">重新分片</h1>
+<p>Redis集群可以通过重新分片将某节点的槽指派给另外一个节点，所有的对应的键值对也会被迁移到新的目标节点。</p>
+<ul>
+<li>redis-trib向目标节点发送：<code>CLUSTER SETSLOT &lt;slot&gt; IMPORTING &lt;source_id&gt;</code>，让目标节点准备好从源节点导入键值对</li>
+<li>redis-trib向源节点发送：<code>CLUSTER SETSLOT &lt;slot&gt; MIGRATING &lt;target_id&gt;</code>，让源标节点准备好从源节点迁移键值对到目标节点</li>
+<li>redis-trib向源节点发送：<code>CLUSTER GETKEYSINSLOT &lt;slot&gt; &lt;count&gt;</code>，获得最多count个键值对的键</li>
+<li>针对每个键，redis-trib向源节点发送：<code>MIGRATE &lt;target_ip&gt; &lt;target_port&gt; &lt;key_name&gt; 0 &lt;timeout</code>，将被选中的键原子的从源节点迁移到目标节点</li>
+<li>重复迁移步骤直到完成</li>
+<li>redis-trib向集群中任一节点发送<code>CLUSTER SETSLOT &lt;slot&gt; NODE &lt;target_id&gt;</code>，将槽指派配目标节点，这会通知整个集群。</li>
+</ul>
+<h1 id="复制和故障转移">复制和故障转移</h1>
+<p>Redis集群中的节点分为主节点和从节点，从节点会复制主节点，主节点下线时从节点代替主节点处理命令请求。</p>
+<p>集群中每个节点定期向集群中其他节点发送PING消息，用来检测对方是否在线，如果不在线就会将其标记疑似下线，并且各个节点会通过相互发消息交换集群中各个节点状态信息，如果一个集群中半数以上的节点都将某一个节点报告为疑似下线，那么这个节点会被标记为已下线，并广播给集群其他的节点，该节点已下线。</p>
+<p>当从节点发现主节点已下线，就开始故障转移：</p>
+<ul>
+<li>有一个从节点会被选中，执行<code>SLAVEOF no one</code>，变成新的主节点</li>
+<li>新的主节点会撤销所有对已下线主节点的槽指派，并把这些槽指派给自己</li>
+<li>新的主节点向集群发送PONG消息，让其他的节点知道自己变成了主节点</li>
+<li>新的主节点开始对外服务</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li>《redis设计与实现》（第二版）</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>
