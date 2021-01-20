@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>一次简单的持久带内存溢出java.lang.OutOfMemoryError: PermGen space</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>一次简单的持久带内存溢出java.lang.OutOfMemoryError: PermGen space</h1>
+			<b><time>2016-06-28 13:51:13</time></b>
+		       
+		           <a href="/tags/java.lang.OutOfMemoryError-PermGen-space">java.lang.OutOfMemoryError:-PermGen-space</a>
+        	       
+		           <a href="/tags/%E6%8C%81%E4%B9%85%E5%B8%A6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA">持久带内存溢出</a>
+        	       
+
+			<div>
+				<h2 id="简介">简介</h2>
+<p>昨天拿到服务器之后,便部署新开发的项目上去.顺带测试,运行不久,发现程序运行缓慢,随即提示java.lang.OutOfMemoryError: PermGen space.以前没遇到过这种情况,记录下来.
+服务器上的软件以及设置是一个酱油弄的,没仔细去查看,不知道是不是有问题.</p>
+<!-- raw HTML omitted -->
+<h2 id="查看tomcat-pid">查看tomcat pid</h2>
+<pre><code>jps -l 
+发现两个tomcat
+jps -v
+找到我部署程序的那个tomcat pid 32365
+</code></pre><h2 id="查看虚拟机相关信息">查看虚拟机相关信息</h2>
+<h3 id="查看jstat--gc">查看jstat -gc</h3>
+<pre><code>jstat -gc 32365
+S0C    S1C    S0U    S1U      EC       EU        OC         OU       PC     PU    YGC     YGCT    FGC    FGCT     GCT
+6848.0 6848.0 0.0    0.0   54976.0   742.8    137236.0   75708.3   65536.0 65535.9    115    1.345  688   172.945  174.290
+</code></pre><p>发现PC和PU两个数值相同了,持久代已经使用完.</p>
+<p>参数代表含义如下:</p>
+<pre><code>S0C 年轻代中第一个survivor（幸存区）的容量 (字节)
+S1C 年轻代中第二个survivor（幸存区）的容量 (字节)
+S0U 年轻代中第一个survivor（幸存区）目前已使用空间 (字节)
+S1U 年轻代中第二个survivor（幸存区）目前已使用空间 (字节)
+EC 年轻代中Eden（伊甸园）的容量 (字节)
+EU 年轻代中Eden（伊甸园）目前已使用空间 (字节)
+OC Old代的容量 (字节)
+OU Old代目前已使用空间 (字节)
+PC Perm(持久代)的容量 (字节)
+PU Perm(持久代)目前已使用空间 (字节)
+YGC 从应用程序启动到采样时年轻代中gc次数
+YGCT 从应用程序启动到采样时年轻代中gc所用时间(s)
+FGC 从应用程序启动到采样时old代(全gc)gc次数
+FGCT 从应用程序启动到采样时old代(全gc)gc所用时间(s)
+GCT 从应用程序启动到采样时gc用的总时间(s)
+</code></pre><h3 id="查看jstat--gcpermcapacity">查看jstat -gcpermcapacity</h3>
+<pre><code>jstat -gcpermcapacity 32365
+PGCMN      PGCMX       PGC         PC      YGC   FGC    FGCT     GCT
+12288.0    65536.0    65536.0    65536.0   115   610  153.078  154.423
+</code></pre><p>持久代初始大小(PGCMN)12M,最大(PGCMX)64M,上面一步显示,64M已经用完.可以考虑增加持久代大小64M增大到256M.</p>
+<p>参数代表含义如下:</p>
+<pre><code>PGCMN perm代中初始化(最小)的大小 (字节)
+PGCMX perm代的最大容量 (字节)
+PGC perm代当前新生成的容量 (字节)
+PC Perm(持久代)的容量 (字节)
+YGC 从应用程序启动到采样时年轻代中gc次数
+FGC 从应用程序启动到采样时old代(全gc)gc次数
+FGCT 从应用程序启动到采样时old代(全gc)gc所用时间(s)
+GCT 从应用程序启动到采样时gc用的总时间(s)
+</code></pre><h3 id="设置tomcat">设置tomcat</h3>
+<ol>
+<li>tomcat bin 目录下找到setenv.sh,没有的话新建一个</li>
+<li>添加如下内容到setenv.sh <code>export CATALINA_OPTS=&quot;$CATALINA_OPTS -XX:PermSize=256m -XX:MaxPermSize=256m&quot;</code></li>
+<li>重启tomcat</li>
+</ol>
+<h2 id="参考">参考</h2>
+<p><a href="http://stackoverflow.com/questions/19769675/tomcat-7-outofmemoryerror-from-uncaughtexceptionhandler">http://stackoverflow.com/questions/19769675/tomcat-7-outofmemoryerror-from-uncaughtexceptionhandler</a></p>
+<p><a href="http://tdcq.iteye.com/blog/1990666">http://tdcq.iteye.com/blog/1990666</a></p>
+
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>

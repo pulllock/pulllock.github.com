@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Dubbo中集群Cluster，负载均衡，容错，路由解析</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="http://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Dubbo中集群Cluster，负载均衡，容错，路由解析</h1>
+			<b><time>2017-03-26 12:12:49</time></b>
+		       
+		           <a href="/tags/dubbo%E9%9B%86%E7%BE%A4">dubbo集群</a>
+        	       
+		           <a href="/tags/dubbo%E5%AE%B9%E9%94%99">dubbo容错</a>
+        	       
+		           <a href="/tags/dubbo%E8%B7%AF%E7%94%B1">dubbo路由</a>
+        	       
+		           <a href="/tags/dubbo%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1">dubbo负载均衡</a>
+        	       
+		           <a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
+        	       
+
+			<div>
+				<p>Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）</p>
+<h1 id="集群的容错模式">集群的容错模式</h1>
+<h2 id="failover-cluster">Failover Cluster</h2>
+<p>这是dubbo中默认的集群容错模式</p>
+<ul>
+<li>失败自动切换，当出现失败，重试其它服务器。</li>
+<li>通常用于读操作，但重试会带来更长延迟。</li>
+<li>可通过retries=&quot;2&quot;来设置重试次数(不含第一次)。</li>
+</ul>
+<h2 id="failfast-cluster">Failfast Cluster</h2>
+<ul>
+<li>快速失败，只发起一次调用，失败立即报错。</li>
+<li>通常用于非幂等性的写操作，比如新增记录。</li>
+</ul>
+<h2 id="failsafe-cluster">Failsafe Cluster</h2>
+<ul>
+<li>失败安全，出现异常时，直接忽略。</li>
+<li>通常用于写入审计日志等操作。</li>
+</ul>
+<h2 id="failback-cluster">Failback Cluster</h2>
+<ul>
+<li>
+<ul>
+<li>失败自动恢复，后台记录失败请求，定时重发。</li>
+</ul>
+</li>
+<li>通常用于消息通知操作。</li>
+</ul>
+<h2 id="forking-cluster">Forking Cluster</h2>
+<ul>
+<li>并行调用多个服务器，只要一个成功即返回。</li>
+<li>通常用于实时性要求较高的读操作，但需要浪费更多服务资源。</li>
+<li>可通过forks=&quot;2&quot;来设置最大并行数。</li>
+</ul>
+<h2 id="broadcast-cluster">Broadcast Cluster</h2>
+<ul>
+<li>广播调用所有提供者，逐个调用，任意一台报错则报错。(2.1.0开始支持)</li>
+<li>通常用于通知所有提供者更新缓存或日志等本地资源信息。</li>
+</ul>
+<h1 id="负载均衡">负载均衡</h1>
+<p>dubbo默认的负载均衡策略是random，随机调用。</p>
+<h2 id="random-loadbalance">Random LoadBalance</h2>
+<ul>
+<li>随机，按权重设置随机概率。</li>
+<li>在一个截面上碰撞的概率高，但调用量越大分布越均匀，而且按概率使用权重后也比较均匀，有利于动态调整提供者权重。</li>
+</ul>
+<h2 id="roundrobin-loadbalance">RoundRobin LoadBalance</h2>
+<ul>
+<li>轮循，按公约后的权重设置轮循比率。</li>
+<li>存在慢的提供者累积请求问题，比如：第二台机器很慢，但没挂，当请求调到第二台时就卡在那，久而久之，所有请求都卡在调到第二台上。</li>
+</ul>
+<h2 id="leastactive-loadbalance">LeastActive LoadBalance</h2>
+<ul>
+<li>最少活跃调用数，相同活跃数的随机，活跃数指调用前后计数差。</li>
+<li>使慢的提供者收到更少请求，因为越慢的提供者的调用前后计数差会越大。</li>
+</ul>
+<h2 id="consistenthash-loadbalance">ConsistentHash LoadBalance</h2>
+<ul>
+<li>一致性Hash，相同参数的请求总是发到同一提供者。</li>
+<li>当某一台提供者挂时，原本发往该提供者的请求，基于虚拟节点，平摊到其它提供者，不会引起剧烈变动。</li>
+<li>缺省只对第一个参数Hash。</li>
+<li>缺省用160份虚拟节点。</li>
+</ul>
+<h1 id="集群相关源码解析">集群相关源码解析</h1>
+<p>回想一下在服务消费者初始化的过程中，在引用远程服务的那一步，也就是RegistryProtocol的refer方法中，调用了doRefer方法，doRefer方法中第一个参数就是cluster，我们就从这里开始解析。RegistryProtocol的refer方法：</p>
+<pre><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
+    url = url.setProtocol(url.getParameter(Constants.REGISTRY_KEY, Constants.DEFAULT_REGISTRY)).removeParameter(Constants.REGISTRY_KEY);
+    //根据url获取注册中心实例
+    //这一步连接注册中心，并把消费者注册到注册中心
+    Registry registry = registryFactory.getRegistry(url);
+    //对注册中心服务的处理
+    if (RegistryService.class.equals(type)) {
+        return proxyFactory.getInvoker((T) registry, type, url);
+    }
+	//以下是我们自己定义的业务的服务处理
+    // group=&quot;a,b&quot; or group=&quot;*&quot;
+    Map&lt;String, String&gt; qs = StringUtils.parseQueryString(url.getParameterAndDecoded(Constants.REFER_KEY));
+    String group = qs.get(Constants.GROUP_KEY);
+    //服务需要合并不同实现
+    if (group != null &amp;&amp; group.length() &gt; 0 ) {
+        if ( ( Constants.COMMA_SPLIT_PATTERN.split( group ) ).length &gt; 1
+                || &quot;*&quot;.equals( group ) ) {
+            return doRefer( getMergeableCluster(), registry, type, url );
+        }
+    }
+    //这里参数cluster是集群的适配类，代码在下面
+    return doRefer(cluster, registry, type, url);
+}
+</code></pre><p>接着看doRefer，真正去做服务引用的方法：</p>
+<pre><code>private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) {
+	//Directory中是Invoker的集合，相当于一个List
+    //也就是说这里面存放了多个Invoker，那么我们该调用哪一个呢？
+    //该调用哪一个Invoker的工作就是Cluster来处理的
+    RegistryDirectory&lt;T&gt; directory = new RegistryDirectory&lt;T&gt;(type, url);
+    directory.setRegistry(registry);
+    directory.setProtocol(protocol);
+    URL subscribeUrl = new URL(Constants.CONSUMER_PROTOCOL, NetUtils.getLocalHost(), 0, type.getName(), directory.getUrl().getParameters());
+    if (! Constants.ANY_VALUE.equals(url.getServiceInterface())
+            &amp;&amp; url.getParameter(Constants.REGISTER_KEY, true)) {
+        
+ //到注册中心注册服务       registry.register(subscribeUrl.addParameters(Constants.CATEGORY_KEY, Constants.CONSUMERS_CATEGORY,
+                Constants.CHECK_KEY, String.valueOf(false)));
+    }
+    
+ //订阅服务，注册中心会推送服务消息给消费者，消费者会再次进行服务的引用。   directory.subscribe(subscribeUrl.addParameter(Constants.CATEGORY_KEY, 
+            Constants.PROVIDERS_CATEGORY 
+            + &quot;,&quot; + Constants.CONFIGURATORS_CATEGORY 
+            + &quot;,&quot; + Constants.ROUTERS_CATEGORY));
+    //服务的引用和变更全部由Directory异步完成
+    //Directory中可能存在多个Invoker
+    //而Cluster会把多个Invoker伪装成一个Invoker
+    //这一步就是做这个事情的
+    return cluster.join(directory);
+}
+</code></pre><h2 id="集群处理的入口">集群处理的入口</h2>
+<p>入口就是在doRefer的时候最后一步：<code>cluster.join(directory);</code>。</p>
+<p>首先解释下cluster，这个是根据dubbo的扩展机制生成的，在RegistryProtocol中有一个setCluster方法，根据扩展机制可以知道，这是注入Cluster的地方，代码如下：</p>
+<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
+
+  public com.alibaba.dubbo.rpc.Invoker join(com.alibaba.dubbo.rpc.cluster.Directory arg0) throws com.alibaba.dubbo.rpc.cluster.Directory {
+    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument == null&quot;);
+
+    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
+
+    String extName = url.getParameter(&quot;cluster&quot;, &quot;failover&quot;);
+    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.cluster.Cluster) name from url(&quot; + url.toString() + &quot;) use keys([cluster])&quot;);
+
+    com.alibaba.dubbo.rpc.cluster.Cluster extension = (com.alibaba.dubbo.rpc.cluster.Cluster)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.cluster.Cluster.class).getExtension(extName);
+
+    return extension.join(arg0);
+  }
+}
+</code></pre><p>可以看到，如果我们没有配置集群策略的话，默认是用failover模式，在Cluster接口的注解上<code>@SPI(FailoverCluster.NAME)</code>也可以看到默认是failover。</p>
+<p>继续执行cluster.join方法，会首先进入MockClusterWrapper的join方法：</p>
+<pre><code>public &lt;T&gt; Invoker&lt;T&gt; join(Directory&lt;T&gt; directory) throws RpcException {
+	//先执行FailoverCluster的join方法处理
+    //然后将Directory和返回的Invoker封装成一个MockCluster
+    return new MockClusterInvoker&lt;T&gt;(directory,
+            this.cluster.join(directory));
+}
+</code></pre><p>看下Failover的join方法：</p>
+<pre><code>public &lt;T&gt; Invoker&lt;T&gt; join(Directory&lt;T&gt; directory) throws RpcException {
+	//直接返回一个FailoverClusterInvoker的实例
+    return new FailoverClusterInvoker&lt;T&gt;(directory);
+}
+</code></pre><p>到这里就算把Invoker都封装好了，返回的Invoker是一个MockClusterInvoker，MockClusterInvoker内部包含一个Directory和一个FailoverClusterInvoker。</p>
+<p>Invoker都封装好了之后，就是创建代理，然后使用代理调用我们的要调用的方法。</p>
+<h2 id="调用方法时集群的处理">调用方法时集群的处理</h2>
+<p>在进行具体方法调用的时候，代理中会<code>invoker.invoke()</code>，这里Invoker就是我们上面封装好的MockClusterInvoker，所以首先进入MockClusterInvoker的invoke方法：</p>
+<pre><code>public Result invoke(Invocation invocation) throws RpcException {
+    Result result = null;
+	//我们没配置mock，所以这里为false
+    //Mock通常用于服务降级
+    String value = directory.getUrl().getMethodParameter(invocation.getMethodName(), Constants.MOCK_KEY, Boolean.FALSE.toString()).trim(); 
+    //没有使用mock
+    if (value.length() == 0 || value.equalsIgnoreCase(&quot;false&quot;)){
+        //这里的invoker是FailoverClusterInvoker
+        result = this.invoker.invoke(invocation);
+    } else if (value.startsWith(&quot;force&quot;)) {
+    	//mock=force:return+null
+        //表示消费方对方法的调用都直接返回null，不发起远程调用
+        //可用于屏蔽不重要服务不可用的时候，对调用方的影响
+        //force:direct mock
+        result = doMockInvoke(invocation, null);
+    } else {
+    	//mock=fail:return+null
+        //表示消费方对该服务的方法调用失败后，再返回null，不抛异常
+        //可用于对不重要服务不稳定的时候，忽略对调用方的影响
+        //fail-mock
+        try {
+            result = this.invoker.invoke(invocation);
+        }catch (RpcException e) {
+            if (e.isBiz()) {
+                throw e;
+            } else {
+                result = doMockInvoke(invocation, e);
+            }
+        }
+    }
+    return result;
+}
+</code></pre><p>我们这里么有配置mock属性。首先进入的是AbstractClusterInvoker的incoke方法：</p>
+<pre><code>public Result invoke(final Invocation invocation) throws RpcException {
+	//检查是否已经被销毁
+    checkWheatherDestoried();
+	//可以看到这里该处理负载均衡的问题了
+    LoadBalance loadbalance;
+	//根据invocation中的信息从Directory中获取Invoker列表
+    //这一步中会进行路由的处理
+    List&lt;Invoker&lt;T&gt;&gt; invokers = list(invocation);
+    if (invokers != null &amp;&amp; invokers.size() &gt; 0) {
+    	//使用扩展机制，加载LoadBalance的实现类，默认使用的是random
+        //我们这里得到的就是RandomLoadBalance
+        loadbalance = ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(invokers.get(0).getUrl()
+                .getMethodParameter(invocation.getMethodName(),Constants.LOADBALANCE_KEY, Constants.DEFAULT_LOADBALANCE));
+    } else {
+        loadbalance = ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(Constants.DEFAULT_LOADBALANCE);
+    }
+    //异步操作默认添加invocation id
+    RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);
+    //调用具体的实现类的doInvoke方法，这里是FailoverClusterInvoker
+    return doInvoke(invocation, invokers, loadbalance);
+}
+</code></pre><p>看下FailoverClusterInvoker的invoke方法：</p>
+<pre><code>public Result doInvoke(Invocation invocation, final List&lt;Invoker&lt;T&gt;&gt; invokers, LoadBalance loadbalance) throws RpcException {
+	//Invoker列表
+    List&lt;Invoker&lt;T&gt;&gt; copyinvokers = invokers;
+    //确认下Invoker列表不为空
+    checkInvokers(copyinvokers, invocation);
+    //重试次数
+    int len = getUrl().getMethodParameter(invocation.getMethodName(), Constants.RETRIES_KEY, Constants.DEFAULT_RETRIES) + 1;
+    if (len &lt;= 0) {
+        len = 1;
+    }
+    // retry loop.
+    RpcException le = null; // last exception.
+    List&lt;Invoker&lt;T&gt;&gt; invoked = new ArrayList&lt;Invoker&lt;T&gt;&gt;(copyinvokers.size()); // invoked invokers.
+    Set&lt;String&gt; providers = new HashSet&lt;String&gt;(len);
+    for (int i = 0; i &lt; len; i++) {
+        //重试时，进行重新选择，避免重试时invoker列表已发生变化.
+        //注意：如果列表发生了变化，那么invoked判断会失效，因为invoker示例已经改变
+        if (i &gt; 0) {
+            checkWheatherDestoried();
+            copyinvokers = list(invocation);
+            //重新检查一下
+            checkInvokers(copyinvokers, invocation);
+        }
+        //使用loadBalance选择一个Invoker返回
+        Invoker&lt;T&gt; invoker = select(loadbalance, invocation, copyinvokers, invoked);
+        invoked.add(invoker);
+        RpcContext.getContext().setInvokers((List)invoked);
+        try {
+        	//使用选择的结果Invoker进行调用，返回结果
+            Result result = invoker.invoke(invocation);
+            return result;
+        } catch (RpcException e) {。。。} finally {
+            providers.add(invoker.getUrl().getAddress());
+        }
+    }
+    throw new RpcException(。。。);
+}
+</code></pre><p>先看下使用loadbalance选择invoker的select方法：</p>
+<pre><code>protected Invoker&lt;T&gt; select(LoadBalance loadbalance, Invocation invocation, List&lt;Invoker&lt;T&gt;&gt; invokers, List&lt;Invoker&lt;T&gt;&gt; selected) throws RpcException {
+    if (invokers == null || invokers.size() == 0)
+        return null;
+    String methodName = invocation == null ? &quot;&quot; : invocation.getMethodName();
+
+    //sticky，滞连接用于有状态服务，尽可能让客户端总是向同一提供者发起调用，除非该提供者挂了，再连另一台。
+    boolean sticky = invokers.get(0).getUrl().getMethodParameter(methodName,Constants.CLUSTER_STICKY_KEY, Constants.DEFAULT_CLUSTER_STICKY) ;
+    {
+        //ignore overloaded method
+        if ( stickyInvoker != null &amp;&amp; !invokers.contains(stickyInvoker) ){
+            stickyInvoker = null;
+        }
+        //ignore cucurrent problem
+        if (sticky &amp;&amp; stickyInvoker != null &amp;&amp; (selected == null || !selected.contains(stickyInvoker))){
+            if (availablecheck &amp;&amp; stickyInvoker.isAvailable()){
+                return stickyInvoker;
+            }
+        }
+    }
+    Invoker&lt;T&gt; invoker = doselect(loadbalance, invocation, invokers, selected);
+
+    if (sticky){
+        stickyInvoker = invoker;
+    }
+    return invoker;
+}
+</code></pre><p>doselect方法：</p>
+<pre><code>private Invoker&lt;T&gt; doselect(LoadBalance loadbalance, Invocation invocation, List&lt;Invoker&lt;T&gt;&gt; invokers, List&lt;Invoker&lt;T&gt;&gt; selected) throws RpcException {
+    if (invokers == null || invokers.size() == 0)
+        return null;
+    //只有一个invoker，直接返回，不需要处理
+    if (invokers.size() == 1)
+        return invokers.get(0);
+    // 如果只有两个invoker，退化成轮循
+    if (invokers.size() == 2 &amp;&amp; selected != null &amp;&amp; selected.size() &gt; 0) {
+        return selected.get(0) == invokers.get(0) ? invokers.get(1) : invokers.get(0);
+    }
+    //使用loadBalance进行选择
+    Invoker&lt;T&gt; invoker = loadbalance.select(invokers, getUrl(), invocation);
+
+    //如果 selected中包含（优先判断） 或者 不可用&amp;&amp;availablecheck=true 则重试.
+    if( (selected != null &amp;&amp; selected.contains(invoker))
+            ||(!invoker.isAvailable() &amp;&amp; getUrl()!=null &amp;&amp; availablecheck)){
+        try{
+        	//重新选择
+            Invoker&lt;T&gt; rinvoker = reselect(loadbalance, invocation, invokers, selected, availablecheck);
+            if(rinvoker != null){
+                invoker =  rinvoker;
+            }else{
+                //看下第一次选的位置，如果不是最后，选+1位置.
+                int index = invokers.indexOf(invoker);
+                try{
+                    //最后在避免碰撞
+                    invoker = index &lt;invokers.size()-1?invokers.get(index+1) :invoker;
+                }catch (Exception e) {。。。 }
+            }
+        }catch (Throwable t){。。。}
+    }
+    return invoker;
+} 
+</code></pre><p>接着看使用loadBalance进行选择，首先进入AbstractLoadBalance的select方法：</p>
+<pre><code> public &lt;T&gt; Invoker&lt;T&gt; select(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) {
+    if (invokers == null || invokers.size() == 0)
+        return null;
+    if (invokers.size() == 1)
+        return invokers.get(0);
+    //	进行选择，具体的子类实现，我们这里是RandomLoadBalance
+    return doSelect(invokers, url, invocation);
+}
+</code></pre><p>接着去RandomLoadBalance中查看：</p>
+<pre><code>protected &lt;T&gt; Invoker&lt;T&gt; doSelect(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) {
+    int length = invokers.size(); // 总个数
+    int totalWeight = 0; // 总权重
+    boolean sameWeight = true; // 权重是否都一样
+    for (int i = 0; i &lt; length; i++) {
+        int weight = getWeight(invokers.get(i), invocation);
+        totalWeight += weight; // 累计总权重
+        if (sameWeight &amp;&amp; i &gt; 0
+                &amp;&amp; weight != getWeight(invokers.get(i - 1), invocation)) {
+            sameWeight = false; // 计算所有权重是否一样
+        }
+    }
+    if (totalWeight &gt; 0 &amp;&amp; ! sameWeight) {
+        // 如果权重不相同且权重大于0则按总权重数随机
+        int offset = random.nextInt(totalWeight);
+        // 并确定随机值落在哪个片断上
+        for (int i = 0; i &lt; length; i++) {
+            offset -= getWeight(invokers.get(i), invocation);
+            if (offset &lt; 0) {
+                return invokers.get(i);
+            }
+        }
+    }
+    // 如果权重相同或权重为0则均等随机
+    return invokers.get(random.nextInt(length));
+}
+</code></pre><p>上面根据权重之类的来进行选择一个Invoker返回。接下来reselect的方法不在说明，是先从非selected的列表中选择，没有在从selected列表中选择。</p>
+<p>选择好了Invoker之后，就回去FailoverClusterInvoker的doInvoke方法，接着就是根据选中的Invoker调用invoke方法进行返回结果，接着就是到具体的Invoker进行调用的过程了。这部分的解析在消费者和提供者请求响应过程已经解析过了，不再重复。</p>
+<h2 id="路由">路由</h2>
+<p>回到AbstractClusterInvoker的invoke方法中，这里有一步是<code>List&lt;Invoker&lt;T&gt;&gt; invokers = list(invocation);</code>获取Invoker列表，这里同时也进行了路由的操作，看下list方法：</p>
+<pre><code>protected  List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException {
+    List&lt;Invoker&lt;T&gt;&gt; invokers = directory.list(invocation);
+    return invokers;
+}
+</code></pre><p>接着看AbstractDirectory的list方法：</p>
+<pre><code>public List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException {
+    if (destroyed){
+        throw new RpcException(&quot;Directory already destroyed .url: &quot;+ getUrl());
+    }
+    //RegistryDirectory中的doList实现
+    List&lt;Invoker&lt;T&gt;&gt; invokers = doList(invocation);
+    List&lt;Router&gt; localRouters = this.routers; // local reference
+    if (localRouters != null &amp;&amp; localRouters.size() &gt; 0) {
+        for (Router router: localRouters){
+            try {
+                if (router.getUrl() == null || router.getUrl().getParameter(Constants.RUNTIME_KEY, true)) {
+                    //路由选择
+                    //MockInvokersSelector中
+                    invokers = router.route(invokers, getConsumerUrl(), invocation);
+                }
+            } catch (Throwable t) {。。。}
+        }
+    }
+    return invokers;
+}
+</code></pre><p>路由来过滤之后，进行负载均衡的处理。</p>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+				<li><a href="/2020/08/25/Spring%E4%B8%AD%E4%BD%BF%E7%94%A8Groovy%E7%9A%84%E7%A4%BA%E4%BE%8B/">Spring中使用Groovy的示例</a></li>
+				
+				<li><a href="/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/">Spring中Placeholder的解析过程</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="http://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+</html>
