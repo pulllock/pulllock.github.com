@@ -22,17 +22,5 @@
 &lt;p&gt;一直记得ArrayList的初始容量大小是10，今天再次看ArrayList的源码（版本：Jdk 7u80）时发现在构造函数的注释上写着初始化容量是10，但是构造函数中却没有指定初始容量，仅仅初始化了一个空的数组。应该是不知道在哪个版本中已经修改了，我却还记着之前从别人口里得来的一句话：初始容量是10。实际上初始容量已经是0了，写出来分享下，有错的地方烦请指出来，说的不一定对。&lt;/p&gt;</description>
     </item>
     
-    <item>
-      <title>ArrayList简介</title>
-      <link>https://cxis.me/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/</link>
-      <pubDate>Fri, 20 May 2016 16:47:46 +0000</pubDate>
-      
-      <guid>https://cxis.me/2016/05/20/ArrayList%E7%AE%80%E4%BB%8B/</guid>
-      <description>&lt;h1 id=&#34;arraylist简介&#34;&gt;ArrayList简介&lt;/h1&gt;
-&lt;p&gt;ArrayList实现了List接口，内部以数组存储数据，允许重复的值。由于内部是数组实现，所以ArrayList具有数组所有的特性，通过索引支持随机访问，查询速度快，但是插入和删除的效率比较低。&lt;/p&gt;
-&lt;p&gt;ArrayList默认初始容量为10，每次添加新元素时都会检查是否需要扩容操作。扩容操作需要重新拷贝数组，比较耗时，所以如果预先能知道数组的大小，在初始化时候可以指定一个初始容量。&lt;/p&gt;
-&lt;p&gt;ArrayList不是线程安全的，使用时应注意。&lt;/p&gt;</description>
-    </item>
-    
   </channel>
 </rss>
