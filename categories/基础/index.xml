@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>基础 on Time Stream</title>
+    <link>https://cxis.me/categories/%E5%9F%BA%E7%A1%80/</link>
+    <description>Recent content in 基础 on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Tue, 26 Jan 2021 22:52:21 +0000</lastBuildDate>
+    
+	<atom:link href="https://cxis.me/categories/%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>有限自动机</title>
+      <link>https://cxis.me/2021/01/26/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA/</link>
+      <pubDate>Tue, 26 Jan 2021 22:52:21 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/01/26/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA/</guid>
+      <description>&lt;p&gt;有限自动机知识学习。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

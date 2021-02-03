@@ -7,10 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Mon, 02 Nov 2020 22:31:10 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 26 Jan 2021 22:52:21 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>DFA</title>
+      <link>https://cxis.me/tags/DFA/</link>
+      <pubDate>Tue, 26 Jan 2021 22:52:21 +0000</pubDate>
+      
+      <guid>https://cxis.me/tags/DFA/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>自动机</title>
+      <link>https://cxis.me/tags/%E8%87%AA%E5%8A%A8%E6%9C%BA/</link>
+      <pubDate>Tue, 26 Jan 2021 22:52:21 +0000</pubDate>
+      
+      <guid>https://cxis.me/tags/%E8%87%AA%E5%8A%A8%E6%9C%BA/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>MyBatis</title>

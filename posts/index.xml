@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Mon, 02 Nov 2020 22:31:10 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 26 Jan 2021 22:52:21 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>有限自动机</title>
+      <link>https://cxis.me/2021/01/26/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA/</link>
+      <pubDate>Tue, 26 Jan 2021 22:52:21 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/01/26/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA/</guid>
+      <description>&lt;p&gt;有限自动机知识学习。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>MyBatis启动过程介绍</title>

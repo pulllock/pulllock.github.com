@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Mon, 02 Nov 2020 22:31:10 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 26 Jan 2021 22:52:21 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>基础</title>
+      <link>https://cxis.me/categories/%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Tue, 26 Jan 2021 22:52:21 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/%E5%9F%BA%E7%A1%80/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>MyBatis</title>
