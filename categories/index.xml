@@ -7,10 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Tue, 26 Jan 2021 22:52:21 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 08 Feb 2021 15:24:14 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Java</title>
+      <link>https://cxis.me/categories/Java/</link>
+      <pubDate>Mon, 08 Feb 2021 15:24:14 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/Java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java基础</title>
+      <link>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Mon, 08 Feb 2021 15:24:14 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>基础</title>
@@ -81,24 +99,6 @@
       <pubDate>Sat, 04 May 2019 17:30:28 +0000</pubDate>
       
       <guid>https://cxis.me/categories/%E7%BC%93%E5%AD%98/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Java</title>
-      <link>https://cxis.me/categories/Java/</link>
-      <pubDate>Fri, 19 Oct 2018 21:19:37 +0000</pubDate>
-      
-      <guid>https://cxis.me/categories/Java/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Java基础</title>
-      <link>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</link>
-      <pubDate>Fri, 19 Oct 2018 21:19:37 +0000</pubDate>
-      
-      <guid>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</guid>
       <description></description>
     </item>
     

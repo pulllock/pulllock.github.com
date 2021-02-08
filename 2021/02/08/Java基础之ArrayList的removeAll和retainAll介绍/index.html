@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Java基础之ArrayList的removeAll和retainAll介绍</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="https://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Java基础之ArrayList的removeAll和retainAll介绍</h1>
+			<b><time>2021-02-08 15:24:14</time></b>
+		       
+
+			<div>
+				<p>对ArrayList中removeAll方法和retainAll方法源码、使用问题、性能问题等做个记录，之前每次看都会把这两个方法给忽略掉，这次细看的时候才发现漏掉了很大一部分的知识点。</p>
+<p>涉及到的JDK的源码版本是：Java8u192</p>
+<h1 id="removeall方法的使用示例">removeAll方法的使用示例</h1>
+<p>下面使用到两个List，list1表示主ArrayList，list2表示要删除的ArrayList。</p>
+<h2 id="list1中有和list2中相同的元素">list1中有和list2中相同的元素</h2>
+<p>示例代码1：</p>
+<pre><code>public static void main(String[] args) {
+    List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+    list1.add(1);
+    List&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+    list2.add(1);
+    list2.add(2);
+
+    System.out.println(String.format(&quot;removeAll的结果：%s&quot;, list1.removeAll(list2)));
+    System.out.println(String.format(&quot;removeAll之后list1：%s&quot;, list1));
+    System.out.println(String.format(&quot;removeAll之后list2：%s&quot;, list2));
+}
+</code></pre><p>运行结果：</p>
+<pre><code>removeAll的结果：true
+removeAll之后list1：[]
+removeAll之后list2：[1, 2]
+</code></pre><p>示例代码2：</p>
+<pre><code>public static void main(String[] args) {
+    List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+    list1.add(1);
+    list1.add(2);
+    List&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+    list2.add(1);
+
+    System.out.println(String.format(&quot;removeAll的结果：%s&quot;, list1.removeAll(list2)));
+    System.out.println(String.format(&quot;removeAll之后list1：%s&quot;, list1));
+    System.out.println(String.format(&quot;removeAll之后list2：%s&quot;, list2));
+}
+</code></pre><p>运行结果：</p>
+<pre><code>removeAll的结果：true
+removeAll之后list1：[2]
+removeAll之后list2：[1]
+</code></pre><p>示例代码3：</p>
+<pre><code>public static void main(String[] args) {
+    List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+    list1.add(1);
+    list1.add(2);
+    List&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+    list2.add(1);
+    list2.add(2);
+
+    System.out.println(String.format(&quot;removeAll的结果：%s&quot;, list1.removeAll(list2)));
+    System.out.println(String.format(&quot;removeAll之后list1：%s&quot;, list1));
+    System.out.println(String.format(&quot;removeAll之后list2：%s&quot;, list2));
+}
+</code></pre><p>运行结果：</p>
+<pre><code>removeAll的结果：true
+removeAll之后list1：[]
+removeAll之后list2：[1, 2]
+</code></pre><h2 id="list1中list2中没有相同元素">list1中list2中没有相同元素</h2>
+<p>示例代码1：</p>
+<pre><code>public static void main(String[] args) {
+    List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+    list1.add(1);
+    List&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+    list2.add(2);
+
+    System.out.println(String.format(&quot;removeAll的结果：%s&quot;, list1.removeAll(list2)));
+    System.out.println(String.format(&quot;removeAll之后list1：%s&quot;, list1));
+    System.out.println(String.format(&quot;removeAll之后list2：%s&quot;, list2));
+}
+</code></pre><p>运行结果：</p>
+<pre><code>removeAll的结果：false
+removeAll之后list1：[1]
+removeAll之后list2：[2]
+</code></pre><h2 id="代码示例总结">代码示例总结</h2>
+<p>可以看到，removeAll方法只有在list1有变化的时候才会返回true，如果没有任何变化则返回false。</p>
+<h1 id="retainall方法的使用示例">retainAll方法的使用示例</h1>
+<p>下面使用到两个List，list1表示主ArrayList，list2表示要保留的ArrayList。</p>
+<h2 id="list1中有和list2中相同的元素-1">list1中有和list2中相同的元素</h2>
+<p>示例代码1：</p>
+<pre><code>public static void main(String[] args) {
+    List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+    list1.add(1);
+    List&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+    list2.add(1);
+    list2.add(2);
+
+    System.out.println(String.format(&quot;retainAll的结果：%s&quot;, list1.retainAll(list2)));
+    System.out.println(String.format(&quot;retainAll之后list1：%s&quot;, list1));
+    System.out.println(String.format(&quot;retainAll之后list2：%s&quot;, list2));
+}
+</code></pre><p>运行结果：</p>
+<pre><code>retainAll的结果：false
+retainAll之后list1：[1]
+retainAll之后list2：[1, 2]
+</code></pre><p>示例代码2：</p>
+<pre><code>public static void main(String[] args) {
+    List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+    list1.add(1);
+    list1.add(2);
+    List&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+    list2.add(1);
+
+    System.out.println(String.format(&quot;retainAll的结果：%s&quot;, list1.retainAll(list2)));
+    System.out.println(String.format(&quot;retainAll之后list1：%s&quot;, list1));
+    System.out.println(String.format(&quot;retainAll之后list2：%s&quot;, list2));
+}
+</code></pre><p>运行结果：</p>
+<pre><code>retainAll的结果：true
+retainAll之后list1：[1]
+retainAll之后list2：[1]
+</code></pre><p>示例代码3：</p>
+<pre><code>public static void main(String[] args) {
+    List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+    list1.add(1);
+    list1.add(2);
+    List&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+    list2.add(1);
+    list2.add(2);
+
+    System.out.println(String.format(&quot;retainAll的结果：%s&quot;, list1.retainAll(list2)));
+    System.out.println(String.format(&quot;retainAll之后list1：%s&quot;, list1));
+    System.out.println(String.format(&quot;retainAll之后list2：%s&quot;, list2));
+}
+</code></pre><p>运行结果：</p>
+<pre><code>retainAll的结果：false
+retainAll之后list1：[1, 2]
+retainAll之后list2：[1, 2]
+</code></pre><h2 id="list1中list2中没有相同元素-1">list1中list2中没有相同元素</h2>
+<p>代码示例1：</p>
+<pre><code>public static void main(String[] args) {
+    List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+    list1.add(1);
+    List&lt;Integer&gt; list2 = new ArrayList&lt;&gt;();
+    list2.add(2);
+
+    System.out.println(String.format(&quot;retainAll的结果：%s&quot;, list1.retainAll(list2)));
+    System.out.println(String.format(&quot;retainAll之后list1：%s&quot;, list1));
+    System.out.println(String.format(&quot;retainAll之后list2：%s&quot;, list2));
+}
+</code></pre><p>运行结果：</p>
+<pre><code>retainAll的结果：true
+retainAll之后list1：[]
+retainAll之后list2：[2]
+</code></pre><h2 id="代码示例总结-1">代码示例总结</h2>
+<p>retainAll方法在主List没有变化的时候返回false，有变化的时候返回true。没变化包含了主List的所有元素全在要保留的List里面，也包括两个List全部相等的情况。</p>
+<h1 id="源码分析">源码分析</h1>
+<blockquote>
+<p>Java8u192</p>
+</blockquote>
+<pre><code>/**
+ * 从ArrayList中删除给定的集合中的所有元素
+ * 如果从ArrayList中删除集合中某些或全部元素，则返回true
+ * 如果ArrayList中和集合中没有任何相同元素，则返回false
+ *
+ * 如果是对象的话，需要重写equals和hashCode方法，底层实现的时候是通过indexOf方法
+ * 进行元素查找，indexOf方法中使用Object.equals方法来比较是否相等。
+ */
+public boolean removeAll(Collection&lt;?&gt; c) {
+    Objects.requireNonNull(c);
+    // 批量移除
+    return batchRemove(c, false);
+}
+
+/**
+ * ArrayList中只保留指定集合中的元素
+ * 如果ArrayList中保留了集合中某些或全部元素，返回true
+ * 如果ArrayList中和集合中没有任何相同元素，返回true
+ *
+ * 如果ArrayList中和集合中元素完全相同，返回false
+ */
+public boolean retainAll(Collection&lt;?&gt; c) {
+    Objects.requireNonNull(c);
+    // 批量移除
+    return batchRemove(c, true);
+}
+
+/**
+ * 批量移除指定的集合中的元素或者只保留指定集合中的元素
+ * complement=false，将指定集合中的元素移除掉
+ * complement=true，保留指定集合中的元素，其他的都移除掉
+ *
+ * 根据该方法的实现，可以知道removeAll和retainAll两个方法的返回值含义。
+ * removeAll的返回如果为true表示：ArrayList删除了集合中的某些或全部元素
+ * removeAll的返回如果为false表示：ArrayList和集合中没有任何相同元素
+ *
+ * retainAll的返回如果为true表示：
+ * 1. ArrayList只保留了集合中的某些或全部元素元素
+ * 2. ArrayList和集合中没有任何相同元素
+ * retainAll的返回如果为false表示：ArrayList中和集合中的元素完全相同
+ *
+ * 基于此方法的操作时间复杂度为O(m * n)，数据量大的时候性能会变差，
+ * 可以根据实际情况选择使用Set相关实现
+ */
+private boolean batchRemove(Collection&lt;?&gt; c, boolean complement) {
+    // ArrayList中存储的元素
+    final Object[] elementData = this.elementData;
+    int r = 0, w = 0;
+    boolean modified = false;
+    try {
+        // 遍历数组
+        for (; r &lt; size; r++)
+            /**
+             * 这里分开两部分讲，第一种是complement=false，将指定集合中的元素移除掉；
+             * 第二种是complement=true，保留指定集合中的元素，其他的都移除掉。
+             *
+             * 1. complement=false，将指定集合中的元素从ArrayList中移除掉，也就是
+             * 如果ArrayList中包含该元素，就需要移除掉，反过来看就是如果ArrayList中
+             * 的元素不在集合中，就保留下来。如果ArrayList中的元素在集合中存在，则
+             * c.contains(elementData[r])为true，不做操作（其实这个元素是需要移除的），循环继续，r自增。
+             * 如果ArrayList中的元素在集合中不存在，则c.contains(elementData[r])为false，此时进入if语句中，
+             * 将当前这个元素放到这个元素之前的需要移除的元素位置上进行覆盖，这样就保留了ArrayList中的元素，
+             * 将ArrayList中其他的元素都移除掉。w自增，r自增。
+             * 这样循环结束后，r = size，w = size - 集合中和ArrayList匹配到的元素的个数
+             *
+             * 2. complement=true，保留指定集合中的元素，其他的都移除掉，也就是ArrayList中
+             * 如果包含该元素就保留下来。如果ArrayList中的元素在集合中不存在，则
+             * c.contains(elementData[r])为false，不做操作（其实这个元素是需要移除的），循环继续，r自增。
+             * 如果ArrayList中的元素在集合中存在，则c.contains(elementData[r])为true，此时进入if语句中，
+             * 将当前这个元素放到这个元素之前的需要移除的元素位置上进行覆盖，这样就保留了集合中的元素，
+             * 将ArrayList中其他的元素都移除掉，w自增，r自增。
+             * 这样循环结束后，r = size，w = 集合中和ArrayList匹配到的元素的个数
+             *
+             * 上面两种都循环完后，w之前的都是要保留的元素
+             */
+            if (c.contains(elementData[r]) == complement)
+                elementData[w++] = elementData[r];
+    } finally {
+        // Preserve behavioral compatibility with AbstractCollection,
+        // even if c.contains() throws.
+        // 这里是处理抛出异常的场景，抛出异常的时候，还没循环完，r != size，
+        // w之前是要保留的元素，但是只是一部分，需要将这部分元素保留下来，
+        // 还要将剩余的元素复制到w之后
+        if (r != size) {
+            System.arraycopy(elementData, r,
+                             elementData, w,
+                             size - r);
+            // w = w + r之后的长度
+            w += size - r;
+        }
+        // w不等于size，表示原ArrayList发生了改变或者w=0没有任何变化
+        if (w != size) {
+            // clear to let GC do its work
+            // w之后的元素都没用了，需要置为null
+            for (int i = w; i &lt; size; i++)
+                elementData[i] = null;
+            modCount += size - w;
+            // w为最后ArrayList真正的大小
+            size = w;
+            /**
+             * modified = true，表示原ArrayList发生了改变：
+             * 如果是removeAll方法调用
+             * 1. 可能表示ArrayList删除了集合中的某些或全部元素
+             *
+             * 如果是retainAll方法调用
+             * 1. 可能表示ArrayList只保留了集合中的某些或全部元素
+             * 2. 可能表示ArrayList和集合中没有任何相同元素
+             */
+            modified = true;
+        }
+    }
+    return modified;
+}
+</code></pre><h1 id="性能注意事项">性能注意事项</h1>
+<p>从源码中可以看到会进行for循环，并且for循环中调用了contains方法，而ArrayList的contains方法使用的是indexOf方法，indexOf方法中也是使用遍历进行元素查找。时间复杂度是O(m * n)。如果涉及到两个比较大的List进行操作，性能会很差。可以根据实际情况使用Set相关实现来进行操作。</p>
+<h1 id="使用注意事项">使用注意事项</h1>
+<p>代码中使用了contains方法，contains方法使用indexOf来实现，indexOf方法中比较两个元素是使用Object.equals方法进行的，所以List中如果是对象的话，记得重写equals方法和hashCode方法，否则会产生不正确的结果。</p>
+<h1 id="参考内容">参考内容</h1>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/02/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BArrayList%E7%9A%84removeAll%E5%92%8CretainAll%E4%BB%8B%E7%BB%8D/">Java基础之ArrayList的removeAll和retainAll介绍</a></li>
+				
+				<li><a href="/2021/01/26/%E6%9C%89%E9%99%90%E8%87%AA%E5%8A%A8%E6%9C%BA/">有限自动机</a></li>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>

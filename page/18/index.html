@@ -41,6 +41,24 @@
 		
 		
 			<article>
+	<h1><a href="https://cxis.me/2017/04/06/Ubuntu%E8%AF%B7%E5%91%8A%E8%AF%89%E6%88%91%E8%BF%99%E4%B8%8D%E6%98%AF%E7%9C%9F%E7%9A%84/">Ubuntu，请告诉我这不是真的！</a></h1>
+	<b><time>2017-04-06 09:29:09</time></b>
+	
+	<a href="/tags/ubuntu">ubuntu</a>
+	
+	<div>
+		<p>Ubuntu别闹，请告诉我这是愚人节的过期玩笑。</p>
+<blockquote>
+<p>We are wrapping up an excellent quarter and an excellent year for the company, with performance in many teams and products that we can be proud of. As we head into the new fiscal year, it’s appropriate to reassess each of our initiatives. I’m writing to let you know that we will end our investment in Unity8, the phone and convergence shell. We will shift our default Ubuntu desktop back to GNOME for Ubuntu 18.04 LTS.</p>
+</blockquote>
+		
+			<a href="https://cxis.me/2017/04/06/Ubuntu%E8%AF%B7%E5%91%8A%E8%AF%89%E6%88%91%E8%BF%99%E4%B8%8D%E6%98%AF%E7%9C%9F%E7%9A%84/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/">使用gogs搭建git服务器记录</a></h1>
 	<b><time>2017-04-03 12:07:44</time></b>
 	
@@ -195,28 +213,6 @@
 <p>Netty3可以看成是对Reactor的实现，所以先简单看下Reactor模式。</p>
 		
 			<a href="https://cxis.me/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Dubbo中暴露服务的过程解析</a></h1>
-	<b><time>2017-02-19 00:46:14</time></b>
-	
-	<a href="/tags/dubbo%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2">dubbo服务暴露</a>
-	
-	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
-	
-	<div>
-		<p>dubbo暴露服务有两种情况，一种是设置了延迟暴露（比如delay=&quot;5000&rdquo;），另外一种是没有设置延迟暴露或者延迟设置为-1（delay=&rdquo;-1&rdquo;）：</p>
-<ul>
-<li>设置了延迟暴露，dubbo在Spring实例化bean（initializeBean）的时候会对实现了InitializingBean的类进行回调，回调方法是afterPropertySet()，如果设置了延迟暴露，dubbo在这个方法中进行服务的发布。</li>
-<li>没有设置延迟或者延迟为-1，dubbo会在Spring实例化完bean之后，在刷新容器最后一步发布ContextRefreshEvent事件的时候，通知实现了ApplicationListener的类进行回调onApplicationEvent，dubbo会在这个方法中发布服务。</li>
-</ul>
-<p>但是不管延迟与否，都是使用ServiceConfig的export()方法进行服务的暴露。使用export初始化的时候会将Bean对象转换成URL格式，所有Bean属性转换成URL的参数。</p>
-		
-			<a href="https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Read more...</a>
 		
 	</div>
 </article>
