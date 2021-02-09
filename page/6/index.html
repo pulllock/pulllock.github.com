@@ -41,6 +41,36 @@
 		
 		
 			<article>
+	<h1><a href="https://cxis.me/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">Redis分布式锁及其他分布式锁实现方式</a></h1>
+	<b><time>2019-04-20 21:10:02</time></b>
+	
+	<a href="/tags/redis">redis</a>
+	
+	<div>
+		<p>Redis实现分布式锁大概有几种方案：使用set命令同时指定过期时间和NX、使用lua脚本和setnx加过期时间配合、基于Redlock算法的Redisson实现。分布式锁除了可以使用Redis实现外，还可以使用其他的实现，比如：mysql数据库方式、Tair实现、Zookeeper等等。</p>
+		
+			<a href="https://cxis.me/2019/04/20/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8F%8A%E5%85%B6%E4%BB%96%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/">Redis跳表</a></h1>
+	<b><time>2019-04-19 22:20:37</time></b>
+	
+	<a href="/tags/redis">redis</a>
+	
+	<div>
+		<p>跳表skiplist是一种有序数据结构，在每个节点维持指向其他节点的指针，可以达到快速访问节点的目的。可以认为跳表在原有的有序链表上增加了多级索引，通过索引就可以快速查找。跳表的查找、插入、删除事件复杂度都是O(log n)，还可以实现区间查找。</p>
+		
+			<a href="https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://cxis.me/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/">Redis对象的9种类型</a></h1>
 	<b><time>2019-04-14 21:11:03</time></b>
 	
@@ -160,41 +190,11 @@
 </article>
 
 		
-			<article>
-	<h1><a href="https://cxis.me/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/">Redis持久化</a></h1>
-	<b><time>2019-04-02 20:01:00</time></b>
-	
-	<a href="/tags/redis">redis</a>
-	
-	<div>
-		<p>Redis可以将内存中的数据库状态持久化到磁盘中去，提供了两种持久化方法：RDB持久化和AOF持久化。</p>
-		
-			<a href="https://cxis.me/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2019/03/26/Redis%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5/">Redis过期键的删除策略</a></h1>
-	<b><time>2019-03-26 00:27:31</time></b>
-	
-	<a href="/tags/redis">redis</a>
-	
-	<div>
-		<p>Redis过期时间保存在过期字典中，键的过期策略有三种：定时删除、惰性删除、定期删除。Redis采用了惰性删除和定期删除两种策略配合。</p>
-		
-			<a href="https://cxis.me/2019/03/26/Redis%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5/">Read more...</a>
-		
-	</div>
-</article>
-
-		
 		<div>
 
 	<a href="/page/5/">Previous Page</a>
 
-6 of 23
+6 of 24
 
 	<a href="/page/7/">Next Page</a>
 
