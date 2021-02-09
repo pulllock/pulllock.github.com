@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Tue, 09 Feb 2021 17:15:14 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 09 Feb 2021 22:08:50 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>算法之希尔排序学习</title>
+      <link>https://cxis.me/2021/02/09/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Tue, 09 Feb 2021 22:08:50 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/02/09/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;希尔排序算法重新学习。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>算法之二分插入排序学习</title>
