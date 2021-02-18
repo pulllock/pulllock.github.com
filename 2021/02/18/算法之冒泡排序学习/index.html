@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>算法之冒泡排序学习</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="https://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>算法之冒泡排序学习</h1>
+			<b><time>2021-02-18 20:30:00</time></b>
+		       
+
+			<div>
+				<p>冒泡排序算法重新学习。</p>
+<p>交换排序算法有以下几种：</p>
+<ul>
+<li>冒泡排序</li>
+<li>快速排序</li>
+</ul>
+<h1 id="冒泡排序算法">冒泡排序算法</h1>
+<p>冒泡排序算法描述：比较相邻两个元素大小，如果是反序，就将两个元素进行交换。</p>
+<h1 id="冒泡排序代码示例">冒泡排序代码示例</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 冒泡排序
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BubbleSort</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 冒泡排序
+</span><span style="color:#75715e">     * @param source 待排序数组
+</span><span style="color:#75715e">     * @param asc 是否升序 true：升序（从小到大）false：降序（从大到小）
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bubbleSort</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">[]</span> source<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> asc<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 1<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> j <span style="color:#f92672">&lt;</span> source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> i<span style="color:#f92672">;</span> j<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>asc <span style="color:#f92672">?</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">]</span> <span style="color:#f92672">&gt;</span> source<span style="color:#f92672">[</span>j <span style="color:#f92672">+</span> 1<span style="color:#f92672">]</span> <span style="color:#f92672">:</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;</span> source<span style="color:#f92672">[</span>j <span style="color:#f92672">+</span> 1<span style="color:#f92672">])</span> <span style="color:#f92672">{</span>
+                    <span style="color:#66d9ef">int</span> temp <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">];</span>
+                    source<span style="color:#f92672">[</span>j<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>j <span style="color:#f92672">+</span> 1<span style="color:#f92672">];</span>
+                    source<span style="color:#f92672">[</span>j <span style="color:#f92672">+</span> 1<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> temp<span style="color:#f92672">;</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Integer<span style="color:#f92672">[]</span> array <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Integer<span style="color:#f92672">[]</span> <span style="color:#f92672">{</span>38<span style="color:#f92672">,</span> 55<span style="color:#f92672">,</span> 65<span style="color:#f92672">,</span> 97<span style="color:#f92672">,</span> 27<span style="color:#f92672">,</span> 76<span style="color:#f92672">,</span> 27<span style="color:#f92672">,</span> 13<span style="color:#f92672">,</span> 19<span style="color:#f92672">};</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;before: &#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>array<span style="color:#f92672">));</span>
+        <span style="color:#66d9ef">new</span> BubbleSort<span style="color:#f92672">().</span><span style="color:#a6e22e">bubbleSort</span><span style="color:#f92672">(</span>array<span style="color:#f92672">,</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;after: &#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>array<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="算法改进">算法改进</h2>
+<p>原始冒泡排序，如果在中间某一趟就已经排序完成了，后续的每一趟比较都不会有任何变化，后面这些都是多余的，可以使用一个标志位来进行控制。如果某一趟没有交换元素，说明已经排好序，下次循环判断标志位就可以直接结束。优化后代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 冒泡排序
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BubbleSort</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 冒泡排序
+</span><span style="color:#75715e">     * @param source 待排序数组
+</span><span style="color:#75715e">     * @param asc 是否升序 true：升序（从小到大）false：降序（从大到小）
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">bubbleSort</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">[]</span> source<span style="color:#f92672">,</span> <span style="color:#66d9ef">boolean</span> asc<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// 标志位
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">boolean</span> exchange <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 1<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">&amp;&amp;</span> exchange<span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+            exchange <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> j <span style="color:#f92672">&lt;</span> source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> i<span style="color:#f92672">;</span> j<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>asc <span style="color:#f92672">?</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">]</span> <span style="color:#f92672">&gt;</span> source<span style="color:#f92672">[</span>j <span style="color:#f92672">+</span> 1<span style="color:#f92672">]</span> <span style="color:#f92672">:</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;</span> source<span style="color:#f92672">[</span>j <span style="color:#f92672">+</span> 1<span style="color:#f92672">])</span> <span style="color:#f92672">{</span>
+                    Integer temp <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">];</span>
+                    source<span style="color:#f92672">[</span>j<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>j <span style="color:#f92672">+</span> 1<span style="color:#f92672">];</span>
+                    source<span style="color:#f92672">[</span>j <span style="color:#f92672">+</span> 1<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> temp<span style="color:#f92672">;</span>
+                    exchange <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Integer<span style="color:#f92672">[]</span> array <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Integer<span style="color:#f92672">[]</span> <span style="color:#f92672">{</span>38<span style="color:#f92672">,</span> 55<span style="color:#f92672">,</span> 65<span style="color:#f92672">,</span> 97<span style="color:#f92672">,</span> 27<span style="color:#f92672">,</span> 76<span style="color:#f92672">,</span> 27<span style="color:#f92672">,</span> 13<span style="color:#f92672">,</span> 19<span style="color:#f92672">};</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;before: &#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>array<span style="color:#f92672">));</span>
+        <span style="color:#66d9ef">new</span> BubbleSort<span style="color:#f92672">().</span><span style="color:#a6e22e">bubbleSort</span><span style="color:#f92672">(</span>array<span style="color:#f92672">,</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;after: &#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>array<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h1 id="冒泡排序算法分析">冒泡排序算法分析</h1>
+<h2 id="时间复杂度">时间复杂度</h2>
+<ul>
+<li>最好情况，数据已经排好序，只需要一趟扫描，比较n次，没有数据移动，时间复杂度O(n)</li>
+<li>最坏情况，数据是随机排列或者反序排列，需要n-1趟扫描，比较和移动次数都是$n^2$，时间复杂度$O(n^2)$</li>
+</ul>
+<p>进行冒泡排序的序列，序列越接近有序，效率越高。</p>
+<h2 id="空间复杂度">空间复杂度</h2>
+<p>算法中使用一个temp变量占用一个存储单元，用于交换两个元素，空间复杂度为O(1)</p>
+<h2 id="算法的稳定性">算法的稳定性</h2>
+<p>冒泡排序算法中两两元素之间进行排序，相等记录之间经过排序后，次序保持不变，因此冒泡排序是稳定的。</p>
+<h2 id="适用场景">适用场景</h2>
+<ul>
+<li>数据规模较小，元素基本有序，可以使用冒泡排序。</li>
+</ul>
+<h2 id="需要优化的地方">需要优化的地方</h2>
+<p>冒泡排序中，假设元素是按照反序排列，则一趟中，一个元素每次比较都需要交换，元素数据每次都要移动，存在重复移动数据的问题。可以使用快速排序来减少重复数据移动问题。</p>
+<h1 id="参考内容">参考内容</h1>
+<ul>
+<li>《数据结构（Java版）》</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/02/18/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之快速排序学习</a></li>
+				
+				<li><a href="/2021/02/18/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之冒泡排序学习</a></li>
+				
+				<li><a href="/2021/02/09/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B8%8C%E5%B0%94%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之希尔排序学习</a></li>
+				
+				<li><a href="/2021/02/09/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%BA%8C%E5%88%86%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之二分插入排序学习</a></li>
+				
+				<li><a href="/2021/02/09/%E7%AE%97%E6%B3%95%E4%B9%8B%E7%9B%B4%E6%8E%A5%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之直接插入排序学习</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>
