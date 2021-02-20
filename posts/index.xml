@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Thu, 18 Feb 2021 21:13:35 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 20 Feb 2021 15:24:43 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>算法之成对插入排序学习</title>
+      <link>https://cxis.me/2021/02/20/%E7%AE%97%E6%B3%95%E4%B9%8B%E6%88%90%E5%AF%B9%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Sat, 20 Feb 2021 15:24:43 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/02/20/%E7%AE%97%E6%B3%95%E4%B9%8B%E6%88%90%E5%AF%B9%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;成对插入排序算法重新学习。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>算法之快速排序学习</title>
