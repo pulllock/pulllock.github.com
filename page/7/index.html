@@ -41,6 +41,51 @@
 		
 		
 			<article>
+	<h1><a href="https://cxis.me/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/">Redis对象的9种类型</a></h1>
+	<b><time>2019-04-14 21:11:03</time></b>
+	
+	<a href="/tags/redis">redis</a>
+	
+	<div>
+		<p>Redis中基本数据结构有：简单动态字符串SDS、双端链表、跳表、字典、整数集合、压缩列表。但是Redis并没有直接使用这些数据结构来存放键值对，而是在这些基本数据结构之上构建了Redis的对象来表示。Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet、bitmaps、HyperLogLogs、Streams、GeoHash。</p>
+		
+			<a href="https://cxis.me/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/">Redis内存淘汰机制</a></h1>
+	<b><time>2019-04-14 17:02:40</time></b>
+	
+	<a href="/tags/redis">redis</a>
+	
+	<div>
+		<p>Redis可以设置key的过期时间，key过期了之后会根据key过期策略将key进行淘汰，但是如果Redis的内存到达了一定的阈值，即使key没有过期，也会根据一定的策略对数据进行淘汰。</p>
+		
+			<a href="https://cxis.me/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2019/04/14/Redis%E4%BA%8B%E5%8A%A1/">Redis事务</a></h1>
+	<b><time>2019-04-14 15:10:02</time></b>
+	
+	<a href="/tags/redis">redis</a>
+	
+	<div>
+		<p>Redis事务会将多个命令请求打包，一次性的按照顺序执行多个命令，在事务执行期间，服务器不会中断事务去执行其他客户端的请求命令，会一直执行完。涉及到的命令：MULTI、EXEC、WATCH。</p>
+		
+			<a href="https://cxis.me/2019/04/14/Redis%E4%BA%8B%E5%8A%A1/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/">Redis发布与订阅</a></h1>
 	<b><time>2019-04-14 14:08:13</time></b>
 	
@@ -140,49 +185,6 @@
 		<p>Redis过期时间保存在过期字典中，键的过期策略有三种：定时删除、惰性删除、定期删除。Redis采用了惰性删除和定期删除两种策略配合。</p>
 		
 			<a href="https://cxis.me/2019/03/26/Redis%E8%BF%87%E6%9C%9F%E9%94%AE%E7%9A%84%E5%88%A0%E9%99%A4%E7%AD%96%E7%95%A5/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2019/03/25/Redis%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C%E5%AE%9E%E7%8E%B0/">Redis数据库实现以及各种操作实现</a></h1>
-	<b><time>2019-03-25 22:10:07</time></b>
-	
-	<a href="/tags/redis">redis</a>
-	
-	<div>
-		<p>Redis数据库实现，保存键值对的方法，针对数据库添加、删除、更新、查询等方法的实现，设置生存时间和过期时间操作。</p>
-		
-			<a href="https://cxis.me/2019/03/25/Redis%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E4%BB%A5%E5%8F%8A%E5%90%84%E7%A7%8D%E6%93%8D%E4%BD%9C%E5%AE%9E%E7%8E%B0/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/">Redis对象</a></h1>
-	<b><time>2019-03-20 20:30:02</time></b>
-	
-	<a href="/tags/redis">redis</a>
-	
-	<div>
-		<p>Redis对象系统包含：字符串对象String、列表对象List、哈希对象Hash、集合对象Set、有序集合对象ZSet。</p>
-		
-			<a href="https://cxis.me/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2019/03/19/Redis%E5%8E%8B%E7%BC%A9%E5%88%97%E8%A1%A8/">Redis压缩列表</a></h1>
-	<b><time>2019-03-19 23:20:04</time></b>
-	
-	<a href="/tags/redis">redis</a>
-	
-	<div>
-		
 		
 	</div>
 </article>

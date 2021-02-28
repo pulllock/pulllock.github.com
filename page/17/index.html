@@ -41,6 +41,53 @@
 		
 		
 			<article>
+	<h1><a href="https://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/">tomcat7类加载器解析</a></h1>
+	<b><time>2017-05-10 11:12:56</time></b>
+	
+	<a href="/tags/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8">tomcat7类加载器</a>
+	
+	<div>
+		<p>tomcat中也有很多的自定义的类加载器，保证容器的不同部分，以及运行在容器中的web应用可以访问不同的保存着类和资源的仓库。tomcat的类加载器机制跟jdk的类加载器机制基本类似，但是web应用类加载器处理请求的时候会稍微有些不同，jdk的类加载机制不再重复。</p>
+		
+			<a href="https://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/">关于UTF-8的BOM标识以及非法字符65279错误的一些记录</a></h1>
+	<b><time>2017-05-09 21:33:28</time></b>
+	
+	<a href="/tags/UTF-8-BOM">UTF-8 BOM</a>
+	
+	<a href="/tags/%5C65279">\65279</a>
+	
+	<div>
+		<p>关于UTF-8的BOM标识和非法字符<code>\65279</code>的错误，已经遇到过好几次了，在这里记录一下。关于UTF-8带BOM和UTF-8不带BOM的区别，网上有很多解释。我遇到的最多的就是文件在Windows上被别人修改后，在我的电脑上会出错（我一直使用linux和macos），一般都是导入项目的时候，进行编译就会有问题。</p>
+		
+			<a href="https://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/">tomcat7中对http请求的处理过程</a></h1>
+	<b><time>2017-05-05 23:44:31</time></b>
+	
+	<a href="/tags/tomcat7%E5%A4%84%E7%90%86http">tomcat7处理http</a>
+	
+	<div>
+		<p>每个Server可以代表Tomcat，每个Server下面有多个Service，每个Service中包含多个Connector和一个Container，Connector用来处理和客户端的通信，然后把请求交给Container进行处理。这里就简单看下处理http请求的流程。</p>
+		
+			<a href="https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://cxis.me/2017/05/05/tomcat7%E6%9E%B6%E6%9E%84%E7%AE%80%E4%BB%8B/">tomcat7架构简介</a></h1>
 	<b><time>2017-05-05 23:41:35</time></b>
 	
@@ -142,51 +189,6 @@
 		<p>从头开始写一个迷你的dubbo，仅用作学习用，学习的过程中更深入的了解下dubbo，同时也补充下其他的知识。</p>
 		
 			<a href="https://cxis.me/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/">关于Servlet线程安全性和DispatcherServlet的线程安全性的解析</a></h1>
-	<b><time>2017-04-13 16:33:01</time></b>
-	
-	<a href="/tags/Servlet">Servlet</a>
-	
-	<div>
-		<p>我们知道在Servlet第一次被调用的时候，Servlet容器会根据web.xml中配置的信息去实例化Servlet，而且这个Servlet只会被实例化一次。当多个请求同时到来时，可能会使用同一个Servlet进行处理，这时候就会涉及到线程安全的问题。</p>
-		
-			<a href="https://cxis.me/2017/04/13/%E5%85%B3%E4%BA%8EServlet%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8CDispatcherServlet%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E6%80%A7%E7%9A%84%E8%A7%A3%E6%9E%90/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">Java Servlet工作流程以及源码解析</a></h1>
-	<b><time>2017-04-13 12:11:02</time></b>
-	
-	<a href="/tags/Servlet">Servlet</a>
-	
-	<div>
-		<p>关于Servlet的学习还是在上学的时候，自学Java，也就是只是了解了Servlet是什么以及怎么使用，现在慢慢的明白很多很多的框架等等都是在Servlet上做的扩展，也开始明白自己的基础不好。现在回头来学习一下Servlet的相关知识。</p>
-		
-			<a href="https://cxis.me/2017/04/13/Java-Servlet%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E4%BB%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/">Spring中AOP源码深入解析</a></h1>
-	<b><time>2017-04-12 22:39:24</time></b>
-	
-	<a href="/tags/Spring">Spring</a>
-	
-	<div>
-		<p>有关AOP相关概念以及Spring AOP相关概念和Spring AOP的使用不再重复。关于AOP在Spring中的地位，不用说相信我们都知道，也都会用，但是对于更深入的东西，还未接触过，这里就对Spring AOP的相关源码进行说明一下，看看到底Spring中AOP是怎么实现的。</p>
-		
-			<a href="https://cxis.me/2017/04/12/Spring%E4%B8%ADAOP%E6%BA%90%E7%A0%81%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90/">Read more...</a>
 		
 	</div>
 </article>

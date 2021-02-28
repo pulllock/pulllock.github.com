@@ -41,6 +41,58 @@
 		
 		
 			<article>
+	<h1><a href="https://cxis.me/2017/04/06/Ubuntu%E8%AF%B7%E5%91%8A%E8%AF%89%E6%88%91%E8%BF%99%E4%B8%8D%E6%98%AF%E7%9C%9F%E7%9A%84/">Ubuntu，请告诉我这不是真的！</a></h1>
+	<b><time>2017-04-06 09:29:09</time></b>
+	
+	<a href="/tags/ubuntu">ubuntu</a>
+	
+	<div>
+		<p>Ubuntu别闹，请告诉我这是愚人节的过期玩笑。</p>
+<blockquote>
+<p>We are wrapping up an excellent quarter and an excellent year for the company, with performance in many teams and products that we can be proud of. As we head into the new fiscal year, it’s appropriate to reassess each of our initiatives. I’m writing to let you know that we will end our investment in Unity8, the phone and convergence shell. We will shift our default Ubuntu desktop back to GNOME for Ubuntu 18.04 LTS.</p>
+</blockquote>
+		
+			<a href="https://cxis.me/2017/04/06/Ubuntu%E8%AF%B7%E5%91%8A%E8%AF%89%E6%88%91%E8%BF%99%E4%B8%8D%E6%98%AF%E7%9C%9F%E7%9A%84/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/">使用gogs搭建git服务器记录</a></h1>
+	<b><time>2017-04-03 12:07:44</time></b>
+	
+	<a href="/tags/gogs">gogs</a>
+	
+	<div>
+		<p>昨晚半夜网上一个朋友找到我，说是使用gogs搭建git服务器，使用ssh操作要免密啥啥啥的～也没描述清楚。就是要ssh的方式，提交时候不要账号密码，心想这不就三下的事情吗？结果折腾到晚上一点，没好～敢肯定的是他按照网上的毒教程，被坑了！还是自己本地虚拟机配置一下吧～</p>
+		
+			<a href="https://cxis.me/2017/04/03/%E4%BD%BF%E7%94%A8gogs%E6%90%AD%E5%BB%BAgit%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%B0%E5%BD%95/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/">Dubbo中Directory解析</a></h1>
+	<b><time>2017-04-02 23:38:55</time></b>
+	
+	<a href="/tags/dubbo-Directory">dubbo Directory</a>
+	
+	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
+	
+	<div>
+		<blockquote>
+<p>Directory代表多个Invoker，可以把它看成List<!-- raw HTML omitted -->，但与List不同的是，它的值可能是动态变化的，比如注册中心推送变更。Cluster将Directory中的多个Invoker伪装成一个Invoker，对上层透明，伪装过程包含了容错逻辑，调用失败后，重试另一个。</p>
+</blockquote>
+		
+			<a href="https://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/">Dubbo中订阅和通知解析</a></h1>
 	<b><time>2017-04-02 20:02:46</time></b>
 	
@@ -161,62 +213,6 @@
 <p>Netty3可以看成是对Reactor的实现，所以先简单看下Reactor模式。</p>
 		
 			<a href="https://cxis.me/2017/03/19/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Dubbo中暴露服务的过程解析</a></h1>
-	<b><time>2017-02-19 00:46:14</time></b>
-	
-	<a href="/tags/dubbo%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2">dubbo服务暴露</a>
-	
-	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
-	
-	<div>
-		<p>dubbo暴露服务有两种情况，一种是设置了延迟暴露（比如delay=&quot;5000&rdquo;），另外一种是没有设置延迟暴露或者延迟设置为-1（delay=&rdquo;-1&rdquo;）：</p>
-<ul>
-<li>设置了延迟暴露，dubbo在Spring实例化bean（initializeBean）的时候会对实现了InitializingBean的类进行回调，回调方法是afterPropertySet()，如果设置了延迟暴露，dubbo在这个方法中进行服务的发布。</li>
-<li>没有设置延迟或者延迟为-1，dubbo会在Spring实例化完bean之后，在刷新容器最后一步发布ContextRefreshEvent事件的时候，通知实现了ApplicationListener的类进行回调onApplicationEvent，dubbo会在这个方法中发布服务。</li>
-</ul>
-<p>但是不管延迟与否，都是使用ServiceConfig的export()方法进行服务的暴露。使用export初始化的时候会将Bean对象转换成URL格式，所有Bean属性转换成URL的参数。</p>
-		
-			<a href="https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">Dubbo中SPI扩展机制详解</a></h1>
-	<b><time>2017-02-18 23:13:34</time></b>
-	
-	<a href="/tags/dubbo-SPI">dubbo SPI</a>
-	
-	<a href="/tags/dubbo-%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6">dubbo 扩展机制</a>
-	
-	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
-	
-	<div>
-		<p>前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。</p>
-		
-			<a href="https://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/">Spring的ApplicationContext事件机制</a></h1>
-	<b><time>2017-02-15 19:04:30</time></b>
-	
-	<a href="/tags/Spring">Spring</a>
-	
-	<div>
-		<p>ApplicationContext中事件处理是由ApplicationEvent类和ApplicationListener接口来提供的。如果一个Bean实现了ApplicationListener接口，并且已经发布到容器中去，每次ApplicationContext发布一个ApplicationEvent事件，这个Bean就会接到通知。Spring事件机制是观察者模式的实现。</p>
-		
-			<a href="https://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/">Read more...</a>
 		
 	</div>
 </article>

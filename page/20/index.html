@@ -41,6 +41,62 @@
 		
 		
 			<article>
+	<h1><a href="https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Dubbo中暴露服务的过程解析</a></h1>
+	<b><time>2017-02-19 00:46:14</time></b>
+	
+	<a href="/tags/dubbo%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2">dubbo服务暴露</a>
+	
+	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
+	
+	<div>
+		<p>dubbo暴露服务有两种情况，一种是设置了延迟暴露（比如delay=&quot;5000&rdquo;），另外一种是没有设置延迟暴露或者延迟设置为-1（delay=&rdquo;-1&rdquo;）：</p>
+<ul>
+<li>设置了延迟暴露，dubbo在Spring实例化bean（initializeBean）的时候会对实现了InitializingBean的类进行回调，回调方法是afterPropertySet()，如果设置了延迟暴露，dubbo在这个方法中进行服务的发布。</li>
+<li>没有设置延迟或者延迟为-1，dubbo会在Spring实例化完bean之后，在刷新容器最后一步发布ContextRefreshEvent事件的时候，通知实现了ApplicationListener的类进行回调onApplicationEvent，dubbo会在这个方法中发布服务。</li>
+</ul>
+<p>但是不管延迟与否，都是使用ServiceConfig的export()方法进行服务的暴露。使用export初始化的时候会将Bean对象转换成URL格式，所有Bean属性转换成URL的参数。</p>
+		
+			<a href="https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">Dubbo中SPI扩展机制详解</a></h1>
+	<b><time>2017-02-18 23:13:34</time></b>
+	
+	<a href="/tags/dubbo-SPI">dubbo SPI</a>
+	
+	<a href="/tags/dubbo-%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6">dubbo 扩展机制</a>
+	
+	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
+	
+	<div>
+		<p>前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。</p>
+		
+			<a href="https://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/">Spring的ApplicationContext事件机制</a></h1>
+	<b><time>2017-02-15 19:04:30</time></b>
+	
+	<a href="/tags/Spring">Spring</a>
+	
+	<div>
+		<p>ApplicationContext中事件处理是由ApplicationEvent类和ApplicationListener接口来提供的。如果一个Bean实现了ApplicationListener接口，并且已经发布到容器中去，每次ApplicationContext发布一个ApplicationEvent事件，这个Bean就会接到通知。Spring事件机制是观察者模式的实现。</p>
+		
+			<a href="https://cxis.me/2017/02/15/Spring%E7%9A%84ApplicationContext%E4%BA%8B%E4%BB%B6%E6%9C%BA%E5%88%B6/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://cxis.me/2017/02/12/Spring%E4%B8%ADBean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">Spring中Bean的生命周期</a></h1>
 	<b><time>2017-02-12 22:02:37</time></b>
 	
@@ -143,52 +199,6 @@
 <p>Java中内置了对多线程的支持，让多线程的开发方便很多，但同时也带来了另外的复杂，线程间的交互以及很多的不确定性让多线程又显得很复杂。在此只是针对Java中多线程的基础做些说明，有关线程和进程的区别，以及多线程的好处和更深层的暂不多说。</p>
 		
 			<a href="https://cxis.me/2016/11/29/Java%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%AE%80%E4%BB%8B/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/">MVC简介</a></h1>
-	<b><time>2016-11-28 21:34:00</time></b>
-	
-	<a href="/tags/MVC%E7%AE%80%E4%BB%8B">MVC简介</a>
-	
-	<div>
-		<h1 id="mvc简介">MVC简介</h1>
-<p>面试的时候被问到关于MVC相关的知识，才发现自己只会说出来什么叫MVC，但是其详细的东西自己却无法顺利的表述出来，特在此记录下。</p>
-		
-			<a href="https://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/">Executor框架简介</a></h1>
-	<b><time>2016-08-11 15:16:11</time></b>
-	
-	<a href="/tags/Executor">Executor</a>
-	
-	<div>
-		Executor框架是在Java5中引入的，可以通过该框架来控制线程的启动，执行，关闭，简化并发编程。Executor框架把任务提交和执行解
-		
-			<a href="https://cxis.me/2016/08/11/Executor%E6%A1%86%E6%9E%B6%E7%AE%80%E4%BB%8B/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/">ConcurrentLinkedQueue简介</a></h1>
-	<b><time>2016-08-05 22:06:52</time></b>
-	
-	<a href="/tags/ConcurrentLinkedQueue">ConcurrentLinkedQueue</a>
-	
-	<div>
-		ConcurrentLinkedQueue是一个基于链表的无界线程安全队列，非阻塞实现方式，先进先出，适合高并发的场景。 非阻塞的性能较好，采
-		
-			<a href="https://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/">Read more...</a>
 		
 	</div>
 </article>

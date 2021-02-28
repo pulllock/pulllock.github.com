@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>算法之堆排序学习</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="https://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>算法之堆排序学习</h1>
+			<b><time>2021-02-28 15:30:08</time></b>
+		       
+
+			<div>
+				<p>堆排序算法重新学习。</p>
+<p>选择排序，每一趟从未排序序列中选择出最小元素，将元素放到已排序序列尾部。</p>
+<p>选择排序算法有以下几种：</p>
+<ul>
+<li>直接选择排序</li>
+<li>堆排序</li>
+</ul>
+<h1 id="堆排序算法">堆排序算法</h1>
+<p>堆排序则是利用堆这种数据结构进行排序。需要先了解下堆的定义。</p>
+<h2 id="堆">堆</h2>
+<p>堆是一个完全二叉树，每个结点的值都大于等于（或者小于等于）其左右子结点的值。</p>
+<p>堆分为大顶堆和小顶堆，大顶堆是每个结点的值都大于等于左右子结点的值，也就是堆顶是最大值。小顶堆是每个节点值都小于等于左右结点的值，也就是堆顶是最小值。一般排序如果是按照从大到小排序（降序）可以使用小顶堆；如果是按照从小到大排序（升序）可以使用大顶堆。</p>
+<p>堆可以使用数组来表示，映射到数组后假设数组中索引i为当前结点，则有如下：</p>
+<ul>
+<li>左子结点为：2i + 1</li>
+<li>右子结点为：2i + 2</li>
+<li>父结点为：(i - 1) / 2</li>
+<li>最后一个非叶子结点为：array.length / 2 - 1</li>
+</ul>
+<h2 id="堆排序算法描述">堆排序算法描述</h2>
+<p>堆排序算法（升序，大顶堆）描述如下：</p>
+<ol>
+<li>将无序序列构造成大顶堆</li>
+<li>将堆顶元素和未排序序列最后一个元素进行交换</li>
+<li>调整大顶堆，继续2、3步骤</li>
+</ol>
+<h1 id="堆排序代码示例">堆排序代码示例</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 堆排序
+</span><span style="color:#75715e">     * 1. 将无序序列构造成大顶堆
+</span><span style="color:#75715e">     * 2. 将堆顶元素和未排序序列最后一个元素进行交换
+</span><span style="color:#75715e">     * 3. 调整未排序序列的大顶堆后，继循环2、3步
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * 结点索引为i，则左子结点索引为2i + 1，右子结点索引为2i + 2，
+</span><span style="color:#75715e">     * 父节点索引为(i - 1) / 2
+</span><span style="color:#75715e">     * 最后一个非叶结点索引为：(array.length / 2) - 1
+</span><span style="color:#75715e">     * @param source
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">heapSort</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">[]</span> source<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+
+        <span style="color:#75715e">// 构造大顶堆，从最后一个非叶结点开始
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">&gt;&gt;</span> 1<span style="color:#f92672">)</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">;</span> i <span style="color:#f92672">&gt;=</span> 0<span style="color:#f92672">;</span> i<span style="color:#f92672">--)</span> <span style="color:#f92672">{</span>
+            adjustHeap<span style="color:#f92672">(</span>source<span style="color:#f92672">,</span> i<span style="color:#f92672">,</span> source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">;</span> i <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">;</span> i<span style="color:#f92672">--)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// 交换堆顶和最后一个元素
+</span><span style="color:#75715e"></span>            swap<span style="color:#f92672">(</span>source<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> i<span style="color:#f92672">);</span>
+
+            <span style="color:#75715e">// 调整剩余未排序序列的大顶堆
+</span><span style="color:#75715e"></span>            adjustHeap<span style="color:#f92672">(</span>source<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> i <span style="color:#f92672">-</span> 1<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 以start为根的子树调整成大顶堆
+</span><span style="color:#75715e">     * @param source
+</span><span style="color:#75715e">     * @param start
+</span><span style="color:#75715e">     * @param end
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">adjustHeap</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">[]</span> source<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> start<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> end<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Integer temp <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>start<span style="color:#f92672">];</span>
+
+        <span style="color:#75715e">// 从当前元素的左子结点开始遍历
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 2 <span style="color:#f92672">*</span> start <span style="color:#f92672">+</span> 1<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;=</span> end<span style="color:#f92672">;</span> i <span style="color:#f92672">=</span> 2 <span style="color:#f92672">*</span> i <span style="color:#f92672">+</span> 1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// 如果左子结点比右子结点小，则将i指向右子结点
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">+</span> 1 <span style="color:#f92672">&lt;=</span> end <span style="color:#f92672">&amp;&amp;</span> source<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;</span> source<span style="color:#f92672">[</span>i <span style="color:#f92672">+</span> 1<span style="color:#f92672">])</span> <span style="color:#f92672">{</span>
+                i<span style="color:#f92672">++;</span>
+            <span style="color:#f92672">}</span>
+
+            <span style="color:#75715e">// 到这里i指向左右子结点中大的那个结点
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// 比较大的结点和父结点进行比较，如果比父结点大，需要放到父结点位置上去
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>source<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">&gt;</span> temp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                <span style="color:#75715e">// 比父结点大的元素，放到父结点位置上
+</span><span style="color:#75715e"></span>                source<span style="color:#f92672">[</span>start<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>i<span style="color:#f92672">];</span>
+                start <span style="color:#f92672">=</span> i<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#75715e">// 遍历完后，将temp元素放到最终位置
+</span><span style="color:#75715e"></span>        source<span style="color:#f92672">[</span>start<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> temp<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">swap</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">[]</span> source<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> i<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> j<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Integer temp <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>i<span style="color:#f92672">];</span>
+        source<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">];</span>
+        source<span style="color:#f92672">[</span>j<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> temp<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Integer<span style="color:#f92672">[]</span> array <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Integer<span style="color:#f92672">[]</span> <span style="color:#f92672">{</span>38<span style="color:#f92672">,</span> 55<span style="color:#f92672">,</span> 65<span style="color:#f92672">,</span> 97<span style="color:#f92672">,</span> 27<span style="color:#f92672">,</span> 76<span style="color:#f92672">,</span> 27<span style="color:#f92672">,</span> 13<span style="color:#f92672">,</span> 19<span style="color:#f92672">};</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;before: &#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>array<span style="color:#f92672">));</span>
+        <span style="color:#66d9ef">new</span> HeapSort<span style="color:#f92672">().</span><span style="color:#a6e22e">heapSort</span><span style="color:#f92672">(</span>array<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;after: &#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>array<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h1 id="堆排序算法分析">堆排序算法分析</h1>
+<h2 id="时间复杂度">时间复杂度</h2>
+<ul>
+<li>时间复杂度为$O(nlog_{2}n)$</li>
+</ul>
+<h2 id="空间复杂度">空间复杂度</h2>
+<p>空间复杂度为O(1)</p>
+<h2 id="算法的稳定性">算法的稳定性</h2>
+<p>堆排序算法是不稳定的。</p>
+<h2 id="适用场景">适用场景</h2>
+<ul>
+<li>数据较多的时候，可以使用堆排序，堆排序所需的辅助空间少于快排。</li>
+</ul>
+<h1 id="参考内容">参考内容</h1>
+<ul>
+<li>《数据结构（Java版）》</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%90%84%E7%B1%BB%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93%E6%AF%94%E8%BE%83/">算法之各类排序算法总结比较</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之归并排序学习</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%A0%86%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之堆排序学习</a></li>
+				
+				<li><a href="/2021/02/23/%E7%AE%97%E6%B3%95%E4%B9%8B%E7%9B%B4%E6%8E%A5%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之直接选择排序学习</a></li>
+				
+				<li><a href="/2021/02/20/%E7%AE%97%E6%B3%95%E4%B9%8B%E6%88%90%E5%AF%B9%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之成对插入排序学习</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>

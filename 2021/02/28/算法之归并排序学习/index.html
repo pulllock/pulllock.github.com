@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>算法之归并排序学习</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="https://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>算法之归并排序学习</h1>
+			<b><time>2021-02-28 17:11:01</time></b>
+		       
+
+			<div>
+				<p>归并排序算法重新学习。</p>
+<p>归并排序使用分治的思想（divide and conquer）进行排序，就是先将大的问题分成一个一个小的问题，之后将小的问题进行挨个解决后合并成次小的问题，最后一直解决后合并成最后的整个问题。</p>
+<p>归并排序就是将原来无序的序列先分成小的序列，将小的序列进行排序合并，直到最后整个序列排序完成。</p>
+<h1 id="归并排序算法">归并排序算法</h1>
+<p>归并排序算法使用分治思想，算法描述如下：</p>
+<ol>
+<li>将无序序列进行递归拆分成小的序列</li>
+<li>将小的序列两两进行排序合并，直到最后整个序列排序完成</li>
+</ol>
+<h1 id="归并排序代码示例">归并排序代码示例</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 归并排序
+</span><span style="color:#75715e">     * 归并排序采用分治思想（divide and conquer），先将
+</span><span style="color:#75715e">     * 整个序列递归分成小的序列，小的序列之间进行排序，并合并
+</span><span style="color:#75715e">     * 成稍微大一点的序列，稍微大一点的序列继续排序并合并成
+</span><span style="color:#75715e">     * 更大的序列，直到排序完成
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * 首先是分，将大序列进行递归分成小序列，然后是小序列之间
+</span><span style="color:#75715e">     * 进行排序合并成稍微大的序列。
+</span><span style="color:#75715e">     * @param source
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mergeSort</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">[]</span> source<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// 排序需要使用到一个辅助数组，排序前直接分配好，
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 避免在排序过程中频繁进行空间的申请
+</span><span style="color:#75715e"></span>        Integer<span style="color:#f92672">[]</span> temp <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Integer<span style="color:#f92672">[</span>source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">];</span>
+
+        <span style="color:#75715e">// 开始进行分以及排序合并
+</span><span style="color:#75715e"></span>        mergeSort<span style="color:#f92672">(</span>source<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> source<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">,</span> temp<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 递归进行分，然后进行排序并合并
+</span><span style="color:#75715e">     * @param source
+</span><span style="color:#75715e">     * @param left
+</span><span style="color:#75715e">     * @param right
+</span><span style="color:#75715e">     * @param temp
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mergeSort</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">[]</span> source<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> left<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> right<span style="color:#f92672">,</span> Integer<span style="color:#f92672">[]</span> temp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>left <span style="color:#f92672">&lt;</span> right<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// 将大序列进行分，递归分成小序列
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> mid <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>left <span style="color:#f92672">+</span> right<span style="color:#f92672">)</span> <span style="color:#f92672">/</span> 2<span style="color:#f92672">;</span>
+
+            <span style="color:#75715e">// 左边子序列进行分治
+</span><span style="color:#75715e"></span>            mergeSort<span style="color:#f92672">(</span>source<span style="color:#f92672">,</span> left<span style="color:#f92672">,</span> mid<span style="color:#f92672">,</span> temp<span style="color:#f92672">);</span>
+
+            <span style="color:#75715e">// 右边子序列进行分治
+</span><span style="color:#75715e"></span>            mergeSort<span style="color:#f92672">(</span>source<span style="color:#f92672">,</span> mid <span style="color:#f92672">+</span> 1<span style="color:#f92672">,</span> right<span style="color:#f92672">,</span> temp<span style="color:#f92672">);</span>
+
+            <span style="color:#75715e">// 将两个有序的子序列进行合并，需要将两个子序列中的元素进行排序后合并到一个序列中
+</span><span style="color:#75715e"></span>            merge<span style="color:#f92672">(</span>source<span style="color:#f92672">,</span> left<span style="color:#f92672">,</span> mid<span style="color:#f92672">,</span> right<span style="color:#f92672">,</span> temp<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 将两个子序列进行排序、合并成一个序列
+</span><span style="color:#75715e">     * 序列1：从left到mid，序列2：从mid + 1到right
+</span><span style="color:#75715e">     * 序列1和序列2有序，将两个序列排序后合并到temp中，
+</span><span style="color:#75715e">     * 最后将temp复制到原序列中
+</span><span style="color:#75715e">     * @param source
+</span><span style="color:#75715e">     * @param left
+</span><span style="color:#75715e">     * @param mid
+</span><span style="color:#75715e">     * @param right
+</span><span style="color:#75715e">     * @param temp
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">merge</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">[]</span> source<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> left<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> mid<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> right<span style="color:#f92672">,</span> Integer<span style="color:#f92672">[]</span> temp<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// 左边序列开始位置
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> left<span style="color:#f92672">;</span>
+
+        <span style="color:#75715e">// 右边序列开始位置
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> mid <span style="color:#f92672">+</span> 1<span style="color:#f92672">;</span>
+
+        <span style="color:#75715e">// 指向临时数组中的元素位置
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> t <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+
+        <span style="color:#75715e">// 遍历左右两个序列
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">&lt;=</span> mid <span style="color:#f92672">&amp;&amp;</span> j <span style="color:#f92672">&lt;=</span> right<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// 这里示例的是从小到大排序的
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// 如果左边序列的元素比右边序列的元素小或者两者相等，将左边序列元素复制到临时数组中
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>source<span style="color:#f92672">[</span>i<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;=</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">])</span> <span style="color:#f92672">{</span>
+                <span style="color:#75715e">// 左边序列元素放到临时数组中
+</span><span style="color:#75715e"></span>                temp<span style="color:#f92672">[</span>t<span style="color:#f92672">++]</span> <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>i<span style="color:#f92672">++];</span>
+            <span style="color:#f92672">}</span>
+
+            <span style="color:#75715e">// 如果左边序列元素比右边序列元素大，需要将右边序列元素复制到临时数组中去
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                temp<span style="color:#f92672">[</span>t<span style="color:#f92672">++]</span> <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">++];</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#75715e">// 这样进行排序并合并后，可能会产生两种情况：
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 1.左边有剩余元素，右边遍历完了，此时左边剩余元素是最大的，直接复制到临时数组中去
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 2.右边有剩余元素，左边遍历完了，此时右边剩余元素是最大的，直接复制到临时数组中去
+</span><span style="color:#75715e"></span>
+        <span style="color:#75715e">// 左边元素如果有剩余元素，右边没有剩余元素的话，说明左边剩余元素都是最大的
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 将左边剩余元素直接复制到临时数组后面
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">&lt;=</span> mid<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            temp<span style="color:#f92672">[</span>t<span style="color:#f92672">++]</span> <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>i<span style="color:#f92672">++];</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#75715e">// 右边元素如果有剩余元素，左边没有剩余元素的话，说明右边剩余元素都是最大的
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 将右边剩余元素直接复制到临时数组后面
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>j <span style="color:#f92672">&lt;=</span> right<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            temp<span style="color:#f92672">[</span>t<span style="color:#f92672">++]</span> <span style="color:#f92672">=</span> source<span style="color:#f92672">[</span>j<span style="color:#f92672">++];</span>
+        <span style="color:#f92672">}</span>
+
+        <span style="color:#75715e">// 经过上面步骤之后，temp中的元素是排好序的，元素位置0~t
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 将temp中的元素复制到原数组中去，复制的目标位置是left~right
+</span><span style="color:#75715e"></span>
+        <span style="color:#75715e">// t复位
+</span><span style="color:#75715e"></span>        t <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>left <span style="color:#f92672">&lt;=</span> right<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            source<span style="color:#f92672">[</span>left<span style="color:#f92672">++]</span> <span style="color:#f92672">=</span> temp<span style="color:#f92672">[</span>t<span style="color:#f92672">++];</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Integer<span style="color:#f92672">[]</span> array <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Integer<span style="color:#f92672">[]</span> <span style="color:#f92672">{</span>38<span style="color:#f92672">,</span> 55<span style="color:#f92672">,</span> 65<span style="color:#f92672">,</span> 97<span style="color:#f92672">,</span> 27<span style="color:#f92672">,</span> 76<span style="color:#f92672">,</span> 27<span style="color:#f92672">,</span> 13<span style="color:#f92672">,</span> 19<span style="color:#f92672">};</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;before: &#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>array<span style="color:#f92672">));</span>
+        <span style="color:#66d9ef">new</span> MergeSort<span style="color:#f92672">().</span><span style="color:#a6e22e">mergeSort</span><span style="color:#f92672">(</span>array<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;after: &#34;</span> <span style="color:#f92672">+</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span>array<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h1 id="归并排序算法分析">归并排序算法分析</h1>
+<h2 id="时间复杂度">时间复杂度</h2>
+<ul>
+<li>时间复杂度为$O(nlog_{2}n)$</li>
+</ul>
+<h2 id="空间复杂度">空间复杂度</h2>
+<p>空间复杂度为O(n)</p>
+<h2 id="算法的稳定性">算法的稳定性</h2>
+<p>堆排序算法是稳定的。</p>
+<h2 id="适用场景">适用场景</h2>
+<ul>
+<li>数据较多的时候，可以使用归并排序，归并排序相对于快排和堆排序是稳定的。</li>
+</ul>
+<h1 id="参考内容">参考内容</h1>
+<ul>
+<li>《数据结构（Java版）》</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%90%84%E7%B1%BB%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93%E6%AF%94%E8%BE%83/">算法之各类排序算法总结比较</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之归并排序学习</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%A0%86%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之堆排序学习</a></li>
+				
+				<li><a href="/2021/02/23/%E7%AE%97%E6%B3%95%E4%B9%8B%E7%9B%B4%E6%8E%A5%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之直接选择排序学习</a></li>
+				
+				<li><a href="/2021/02/20/%E7%AE%97%E6%B3%95%E4%B9%8B%E6%88%90%E5%AF%B9%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之成对插入排序学习</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>

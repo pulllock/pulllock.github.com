@@ -41,6 +41,51 @@
 		
 		
 			<article>
+	<h1><a href="https://cxis.me/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/">JVM动态对象年龄判断</a></h1>
+	<b><time>2017-06-17 22:26:30</time></b>
+	
+	<a href="/tags/JVM">JVM</a>
+	
+	<div>
+		<p>JVM中新生代对象晋升到老年代的时候，对象会有个年龄最大阈值，但是除了这个年龄最大阈值外，JVM还会对对象年龄进行动态判断，不等到年龄最大阈值就可以晋升到老年代。</p>
+		
+			<a href="https://cxis.me/2017/06/17/JVM%E5%8A%A8%E6%80%81%E5%AF%B9%E8%B1%A1%E5%B9%B4%E9%BE%84%E5%88%A4%E6%96%AD/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/">JVM中的MinorGC-MajorGC-FullGC</a></h1>
+	<b><time>2017-06-17 16:02:05</time></b>
+	
+	<a href="/tags/JVM">JVM</a>
+	
+	<div>
+		<p>Minor GC、Major GC、Full GC</p>
+		
+			<a href="https://cxis.me/2017/06/17/JVM%E4%B8%AD%E7%9A%84MinorGC-MajorGC-FullGC/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/">JVM垃圾收集算法和垃圾收集器</a></h1>
+	<b><time>2017-06-11 00:16:17</time></b>
+	
+	<a href="/tags/JVM">JVM</a>
+	
+	<div>
+		<p>JVM的垃圾收集算法和垃圾收集器学习。</p>
+		
+			<a href="https://cxis.me/2017/06/11/JVM%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95%E5%92%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://cxis.me/2017/06/04/JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/">JVM类加载器</a></h1>
 	<b><time>2017-06-04 22:26:33</time></b>
 	
@@ -142,53 +187,6 @@
 		<p>主要介绍下tomcat7的启动流程，以及相关源码的分析。这里从我们常用的tomcat7的启动脚本为分析入口，然后进入到tomcat7相关源码中去。使用到的tomcat的版本为tomcat 7.0.77。</p>
 		
 			<a href="https://cxis.me/2017/05/10/tomcat7%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/">tomcat7类加载器解析</a></h1>
-	<b><time>2017-05-10 11:12:56</time></b>
-	
-	<a href="/tags/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8">tomcat7类加载器</a>
-	
-	<div>
-		<p>tomcat中也有很多的自定义的类加载器，保证容器的不同部分，以及运行在容器中的web应用可以访问不同的保存着类和资源的仓库。tomcat的类加载器机制跟jdk的类加载器机制基本类似，但是web应用类加载器处理请求的时候会稍微有些不同，jdk的类加载机制不再重复。</p>
-		
-			<a href="https://cxis.me/2017/05/10/tomcat7%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E8%A7%A3%E6%9E%90/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/">关于UTF-8的BOM标识以及非法字符65279错误的一些记录</a></h1>
-	<b><time>2017-05-09 21:33:28</time></b>
-	
-	<a href="/tags/UTF-8-BOM">UTF-8 BOM</a>
-	
-	<a href="/tags/%5C65279">\65279</a>
-	
-	<div>
-		<p>关于UTF-8的BOM标识和非法字符<code>\65279</code>的错误，已经遇到过好几次了，在这里记录一下。关于UTF-8带BOM和UTF-8不带BOM的区别，网上有很多解释。我遇到的最多的就是文件在Windows上被别人修改后，在我的电脑上会出错（我一直使用linux和macos），一般都是导入项目的时候，进行编译就会有问题。</p>
-		
-			<a href="https://cxis.me/2017/05/09/%E5%85%B3%E4%BA%8EUTF-8%E7%9A%84BOM%E6%A0%87%E8%AF%86%E4%BB%A5%E5%8F%8A%E9%9D%9E%E6%B3%95%E5%AD%97%E7%AC%A665279%E9%94%99%E8%AF%AF%E7%9A%84%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/">tomcat7中对http请求的处理过程</a></h1>
-	<b><time>2017-05-05 23:44:31</time></b>
-	
-	<a href="/tags/tomcat7%E5%A4%84%E7%90%86http">tomcat7处理http</a>
-	
-	<div>
-		<p>每个Server可以代表Tomcat，每个Server下面有多个Service，每个Service中包含多个Connector和一个Container，Connector用来处理和客户端的通信，然后把请求交给Container进行处理。这里就简单看下处理http请求的流程。</p>
-		
-			<a href="https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/">Read more...</a>
 		
 	</div>
 </article>
