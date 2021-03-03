@@ -58,12 +58,12 @@
     </item>
     
     <item>
-      <title>CopyOnWriteArrayList简介</title>
-      <link>https://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</link>
+      <title>Java基础之CopyOnWriteArrayList简介</title>
+      <link>https://cxis.me/2016/05/25/Java%E5%9F%BA%E7%A1%80%E4%B9%8BCopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 25 May 2016 10:30:09 +0000</pubDate>
       
-      <guid>https://cxis.me/2016/05/25/CopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</guid>
-      <description>CopyOnWriteArrayList，写数组的拷贝，支持高效率并发且是线程安全的,读操作无锁的ArrayList。所有可变操作都是通过对</description>
+      <guid>https://cxis.me/2016/05/25/Java%E5%9F%BA%E7%A1%80%E4%B9%8BCopyOnWriteArrayList%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;Java中CopyOnWrite机制的实现：CopyOnWriteArrayList学习。&lt;/p&gt;</description>
     </item>
     
   </channel>
