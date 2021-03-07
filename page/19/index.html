@@ -150,6 +150,30 @@
 
 		
 			<article>
+	<h1><a href="https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/">Java基础之Mutex介绍</a></h1>
+	<b><time>2017-03-23 16:25:44</time></b>
+	
+	<div>
+		<p>为了更好的学习Java中的AQS，先回顾下基础知识mutex互斥锁。</p>
+		
+			<a href="https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/">Read more...</a>
+		
+	</div>
+</article>
+
+		
+			<article>
+	<h1><a href="https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BSemaphore%E4%BB%8B%E7%BB%8D/">Java基础之Semaphore介绍</a></h1>
+	<b><time>2017-03-23 16:25:44</time></b>
+	
+	<div>
+		<p>为了更好的学习Java中的AQS，先回顾下基础知识semaphore信号量。</p>
+		
+	</div>
+</article>
+
+		
+			<article>
 	<h1><a href="https://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/">JUC中AQS简介</a></h1>
 	<b><time>2017-03-23 16:25:44</time></b>
 	
@@ -182,46 +206,11 @@
 </article>
 
 		
-			<article>
-	<h1><a href="https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Dubbo中消费者初始化的过程解析</a></h1>
-	<b><time>2017-03-21 20:30:29</time></b>
-	
-	<a href="/tags/dubbo%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96">dubbo消费者初始化</a>
-	
-	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
-	
-	<div>
-		<p>首先还是Spring碰到dubbo的标签之后，会使用parseCustomElement解析dubbo标签，使用的解析器是dubbo的DubboBeanDefinitionParser，解析完成之后返回BeanDefinition给Spring管理。</p>
-<p>服务消费者端对应的是ReferenceBean，实现了ApplicationContextAware接口，Spring会在Bean的实例化那一步回调setApplicationContext方法。也实现了InitializingBean接口，接着会回调afterPropertySet方法。还实现了FactoryBean接口，实现FactoryBean可以在后期获取bean的时候做一些操作，dubbo在这个时候做初始化。另外ReferenceBean还实现了DisposableBean，会在bean销毁的时候调用destory方法。</p>
-		
-			<a href="https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/">Read more...</a>
-		
-	</div>
-</article>
-
-		
-			<article>
-	<h1><a href="https://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/">Dubbo中编码和解码的解析</a></h1>
-	<b><time>2017-03-19 23:25:51</time></b>
-	
-	<a href="/tags/dubbo%E7%BC%96%E8%A7%A3%E7%A0%81">dubbo编解码</a>
-	
-	<a href="/tags/dubbo%E6%BA%90%E7%A0%81">dubbo源码</a>
-	
-	<div>
-		（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2
-		
-			<a href="https://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/">Read more...</a>
-		
-	</div>
-</article>
-
-		
 		<div>
 
 	<a href="/page/18/">Previous Page</a>
 
-19 of 24
+19 of 25
 
 	<a href="/page/20/">Next Page</a>
 

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Java基础之Mutex介绍</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="https://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Java基础之Mutex介绍</h1>
+			<b><time>2017-03-23 16:25:44</time></b>
+		       
+
+			<div>
+				<p>为了更好的学习Java中的AQS，先回顾下基础知识mutex互斥锁。</p>
+<h1 id="互斥锁的定义">互斥锁的定义</h1>
+<p>在多线程编程中，为了防止多个线程同时对临界区代码进行访问，操作系统引入了互斥锁。对于临界区代码的访问，同一时刻只能有一个线程进行。</p>
+<h1 id="互斥锁的实现原理">互斥锁的实现原理</h1>
+<p>互斥锁可以理解为是一个整形变量和两个操作（加锁和解锁）构成的锁。</p>
+<p>互斥锁只有两个状态：</p>
+<ul>
+<li>未加锁状态</li>
+<li>加锁状态</li>
+</ul>
+<p>互斥锁加锁的实现逻辑：先判断锁的状态，如果是未加锁状态，则将锁改为加锁状态，并返回成功；如果是已加锁状态，则挂起等待。</p>
+<p>互斥锁解锁的实现逻辑：直接将锁改为未加锁状态，并唤醒那些挂起等待的的线程。</p>
+<h1 id="互斥锁的底层支持">互斥锁的底层支持</h1>
+<p>在互斥锁的加锁和解锁实现逻辑中可以看到，加锁和解锁过程中是有多个步骤的，这需要操作系统保证互斥锁操作的原子性。</p>
+<p>CPU提供的支持有：</p>
+<ul>
+<li>提供原子操作（Test And Set）</li>
+<li>关闭中断</li>
+<li>锁内存总线</li>
+</ul>
+<p>操作系统利用CPU提供的支持，就可以实现互斥锁。</p>
+<h1 id="互斥锁的使用">互斥锁的使用</h1>
+<p>互斥锁的加锁和解锁只能由同一个线程进行操作。</p>
+<h1 id="mutex和优先级反转问题">Mutex和优先级反转问题</h1>
+<p>优先级反转是指：一个低优先级的任务持有一个共享资源，一个高优先的任务也需要持有该共享资源，但此时共享资源被低优先级的任务持有，故高优先级的任务需要阻塞等待低优先级的任务释放资源，而在这个过程中，有一个中优先级的任务（这个任务不需要持有该共享资源）到来，抢占了CPU时间，这样就导致中优先级的任务先执行了，甚至可能会导致高优先级的任务无法执行。</p>
+<p>解决优先级反转的方案有：</p>
+<ul>
+<li>优先级继承，当一个低优先级的任务持有资源，此时高优先级任务等待低优先级任务完成时，将低优先级任务的优先级调整为高优先级任务的优先级，等低优先级任务释放共享资源后，再回到原来的优先级。</li>
+<li>设置优先级上线，给访问共享资源的任务一个高优先级。</li>
+<li>禁止中断</li>
+</ul>
+<p>实时操作系统上，如果需要互斥保护，进行使用mutex，而不是semaphore，因为semaphore一般没有优先级继承，会导致优先级反转。</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://blog.csdn.net/Onlyonefate/article/details/52183908?utm_medium=distribute.pc_relevant.none-task-blog-baidujs_title-0&amp;spm=1001.2101.3001.4242">https://blog.csdn.net/Onlyonefate/article/details/52183908?utm_medium=distribute.pc_relevant.none-task-blog-baidujs_title-0&amp;spm=1001.2101.3001.4242</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E4%BA%92%E6%96%A5%E9%94%81">https://zh.wikipedia.org/wiki/%E4%BA%92%E6%96%A5%E9%94%81</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/146132061">https://zhuanlan.zhihu.com/p/146132061</a></li>
+<li><a href="https://developer.aliyun.com/article/449687">https://developer.aliyun.com/article/449687</a></li>
+<li><a href="https://blog.csdn.net/iteye_21199/article/details/82474836">https://blog.csdn.net/iteye_21199/article/details/82474836</a></li>
+<li><a href="https://www.cnblogs.com/sky-heaven/p/5016222.html">https://www.cnblogs.com/sky-heaven/p/5016222.html</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/02/%E7%AE%97%E6%B3%95%E4%B9%8BTimSort%E5%AD%A6%E4%B9%A0/">算法之TimSort学习</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%90%84%E7%B1%BB%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93%E6%AF%94%E8%BE%83/">算法之各类排序算法总结比较</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之归并排序学习</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%A0%86%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之堆排序学习</a></li>
+				
+				<li><a href="/2021/02/23/%E7%AE%97%E6%B3%95%E4%B9%8B%E7%9B%B4%E6%8E%A5%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之直接选择排序学习</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>
