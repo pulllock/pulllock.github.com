@@ -1693,21 +1693,21 @@
     </item>
     
     <item>
+      <title>Java基础之Semaphore介绍</title>
+      <link>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BSemaphore%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Thu, 23 Mar 2017 19:41:32 +0000</pubDate>
+      
+      <guid>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BSemaphore%E4%BB%8B%E7%BB%8D/</guid>
+      <description>&lt;p&gt;为了更好的学习Java中的AQS，先回顾下基础知识semaphore信号量。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Java基础之Mutex介绍</title>
       <link>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Thu, 23 Mar 2017 17:00:43 +0000</pubDate>
       
       <guid>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;为了更好的学习Java中的AQS，先回顾下基础知识mutex互斥锁。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Java基础之Semaphore介绍</title>
-      <link>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BSemaphore%E4%BB%8B%E7%BB%8D/</link>
-      <pubDate>Thu, 23 Mar 2017 17:00:43 +0000</pubDate>
-      
-      <guid>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BSemaphore%E4%BB%8B%E7%BB%8D/</guid>
-      <description>&lt;p&gt;为了更好的学习Java中的AQS，先回顾下基础知识semaphore信号量。&lt;/p&gt;</description>
     </item>
     
     <item>
