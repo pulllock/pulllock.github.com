@@ -1348,17 +1348,17 @@
   </url>
   
   <url>
-    <loc>https://cxis.me/tags/AQS/</loc>
-    <lastmod>2017-03-23T16:25:44+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/</loc>
-    <lastmod>2017-03-23T16:25:44+00:00</lastmod>
+    <lastmod>2017-03-23T17:00:43+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BSemaphore%E4%BB%8B%E7%BB%8D/</loc>
+    <lastmod>2017-03-23T17:00:43+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cxis.me/tags/AQS/</loc>
     <lastmod>2017-03-23T16:25:44+00:00</lastmod>
   </url>
   

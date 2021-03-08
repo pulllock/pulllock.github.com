@@ -39,11 +39,90 @@
 	<main>
 		<article>
 			<h1>Java基础之Semaphore介绍</h1>
-			<b><time>2017-03-23 16:25:44</time></b>
+			<b><time>2017-03-23 17:00:43</time></b>
 		       
 
 			<div>
 				<p>为了更好的学习Java中的AQS，先回顾下基础知识semaphore信号量。</p>
+<h1 id="定义">定义</h1>
+<p>Semaphore信号量，是比互斥锁功能更高级的一个工具，用于提供不同进程或者线程间的同步功能的原语。</p>
+<h1 id="实现原理">实现原理</h1>
+<p>Semaphore实现和Mutex类似，使用一个整形变量和两个原子操作（p、v操作）来实现，Semaphore的p、v操作可以由两个不同的线程进行操作，而Mutex的加锁和解锁操作必须由同一个线程进行。</p>
+<h2 id="p操作的实现">p操作的实现</h2>
+<p>当Semaphore的值小于等于0的时候，自旋等待；当值大于0的时候将值减1，p操作执行结束。</p>
+<h2 id="v操作的实现">v操作的实现</h2>
+<p>直接将信号量值加1即可</p>
+<h2 id="代码示例">代码示例</h2>
+<p>Semaphore伪代码如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Semaphore <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">int</span> semaphore<span style="color:#f92672">;</span>
+  
+  p<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>semaphore <span style="color:#f92672">&lt;=</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+      <span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    
+    semaphore<span style="color:#f92672">--;</span>
+  <span style="color:#f92672">}</span>
+  
+  v<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    semaphore<span style="color:#f92672">++</span><span style="color:#960050;background-color:#1e0010">；</span>
+  <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>信号量的p、v操作都是原子操作。</p>
+<h1 id="信号量的类型">信号量的类型</h1>
+<p>Semaphore有两种类型：</p>
+<ul>
+<li>二进制信号量</li>
+<li>计数信号量</li>
+</ul>
+<h2 id="二进制信号量">二进制信号量</h2>
+<p>二进制信号量的值只有0和1，功能和mutex类似。</p>
+<h2 id="计数信号量">计数信号量</h2>
+<p>计数信号量的值是一个大于等于0的值，用来表示可用资源的个数，允许多个线程同时使用资源。</p>
+<h1 id="信号量的另外一种实现">信号量的另外一种实现</h1>
+<p>上面说的信号量使用自旋来等待资源可用，这样会浪费CPU时间，可以使用另外一种方式来实现信号量：使用一个整形变量、一个同步队列和两个原子操作（p、v操作）来实现。</p>
+<h2 id="p操作的实现-1">p操作的实现</h2>
+<p>先将值减1，判断如果值小于0，则将当前线程加入同步队列，并将当前线程进行阻塞；如果值大于等于0，则p操作结束。</p>
+<h2 id="v操作的实现-1">v操作的实现</h2>
+<p>先将值加1，判断如果值小于等于0，说明同步队列中有线程，从同步队列中取出一个线程并唤醒；如果值大于0，v操作直接结束。</p>
+<h2 id="代码示例-1">代码示例</h2>
+<p>伪代码实现如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Semaphore <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">int</span> semaphore<span style="color:#f92672">;</span>
+  WaitQueue waitQueue<span style="color:#f92672">;</span>
+  
+  p<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    semaphore<span style="color:#f92672">--;</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>semaphore <span style="color:#f92672">&lt;</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+      <span style="color:#75715e">// 将当前线程(currentThread)加入队列
+</span><span style="color:#75715e"></span>      waitQueue<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>currentThread<span style="color:#f92672">);</span>
+      
+      <span style="color:#75715e">// 阻塞当前线程
+</span><span style="color:#75715e"></span>      block<span style="color:#f92672">(</span>currentThread<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+  <span style="color:#f92672">}</span>
+  
+  v<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    semaphore<span style="color:#f92672">++;</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>semaphore <span style="color:#f92672">&lt;=</span> 0<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+      <span style="color:#75715e">// 从队列中移除一个线程thread
+</span><span style="color:#75715e"></span>      waitQueue<span style="color:#f92672">.</span><span style="color:#a6e22e">remove</span><span style="color:#f92672">(</span>thread<span style="color:#f92672">);</span>
+      
+      <span style="color:#75715e">// 唤醒线程
+</span><span style="color:#75715e"></span>      wakeup<span style="color:#f92672">(</span>thread<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+  <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h1 id="信号量的使用">信号量的使用</h1>
+<p>可以使用信号量实现如下功能：</p>
+<ul>
+<li>使用二进制信号量实现互斥锁，但是有一点重要的区别是互斥锁mutex可以避免进程优先级反转问题。</li>
+<li>使用信号量实现条件同步，两个线程间需要使用同一个信号量，两个线程分别进行p操作和v操作。</li>
+<li>使用信号量可以解决生产者消费者问题，需要使用到三个信号量：一个作为互斥锁，两个作为条件变量。</li>
+</ul>
+<h1 id="缺点">缺点</h1>
+<p>信号量使用起来比较繁琐，容易出错，可以使用更好地管程来解决信号量这些问题。</p>
 			</div>
 		</article>
 	</main>
