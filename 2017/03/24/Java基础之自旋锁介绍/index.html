@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Java基础之自旋锁介绍</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="https://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Java基础之自旋锁介绍</h1>
+			<b><time>2017-03-24 23:20:07</time></b>
+		       
+
+			<div>
+				<p>为了更好的学习Java中的AQS，熟悉下自旋锁、排号自旋锁、MCS锁、CLH锁相关的知识。</p>
+<h1 id="自旋锁">自旋锁</h1>
+<p>自旋锁是用于多线程之间同步的一种锁，自旋锁使用的基本思路是：如果线程获取不到锁，不会将线程挂起等待，而是一直循环检测锁是否可用。等到锁可用，就会退出循环，表示当前线程获取到锁。</p>
+<h2 id="自旋锁优点">自旋锁优点</h2>
+<p>由于等待锁的线程一直在自旋，没有挂起阻塞操作，避免了进程或者线程调度的开销。</p>
+<h2 id="自旋锁的缺点">自旋锁的缺点</h2>
+<ul>
+<li>由于等待锁的线程一直自旋，会浪费CPU</li>
+<li>自旋锁不能保证公平性，多个线程自旋等待的时候，获取锁的时候是没有次序的，非公平</li>
+</ul>
+<h2 id="自旋锁适用场景">自旋锁适用场景</h2>
+<p>由于等待锁的线程一直自旋占有CPU，因此比较适合一些等待锁的时间很短的场景。短暂的自旋就能获取到锁，相比挂起等待的进程调度开销要小的情况下收益才会比较明显。</p>
+<p>单核单线程CPU不适合使用自旋锁，同一时间只有一个线程在运行，如果自旋锁获取时间较长，导致获取锁的线程长时间占用CPU，浪费资源。</p>
+<h1 id="排号自旋锁">排号自旋锁</h1>
+<p>排号自旋锁解决了自旋锁的公平性问题，排号自旋锁和去银行排队办理业务类似。</p>
+<p>排号自旋锁有一个变量叫服务号ServiceNumber，表示已经获取到锁的线程，还有一个变量叫排队号Ticket。每一个获取锁的线程都会获得一个排队号，当一个线程获取到锁的时候，服务号和排队号相等，做完操作释放锁的时候，该线程会将自己的排队号加1，并赋值给服务号，其他等待锁的线程都有自己的排队号，并且他们在自旋等待，当锁被释放时，等待的某一个线程会发现新的服务号和自己的排队号相等，于是这个线程就能获取到锁了。</p>
+<p>利用排队号的顺序，就能让锁的获取有序，保证了公平性，FIFO。</p>
+<h2 id="排号自旋锁的优点">排号自旋锁的优点</h2>
+<p>解决了自旋锁的公平性问题</p>
+<h2 id="排号自旋锁的缺点">排号自旋锁的缺点</h2>
+<p>在多处理器上，多个进程或者线程需要读写同一个ServiceNumber服务号，处理器核数越多，同步问题越严重，会降低系统的性能，所有等待锁的线程都在同一个共享变量上自旋，会导致频繁的CPU缓存同步。</p>
+<p>可以使用MCS锁和CLH锁来解决排号自旋锁的问题。</p>
+<h1 id="mcs锁">MCS锁</h1>
+<p>MCS锁是一个基于单向链表的自旋锁，保证公平性，性能高。</p>
+<p>在MCS锁中等待锁的线程只需要在本地变量上自旋，不需要所有线程共享同一个变量，并且每个结点的直接前驱来通知结点自旋结束。由于自旋是在本地变量，不是共享变量，相比排号自旋锁，解决了共享变量导致的CPU缓存同步问题。</p>
+<p>MCS是一个不可重入的独占锁。在NUMA系统架构中性能较好。</p>
+<h1 id="clh锁">CLH锁</h1>
+<p>CLH锁是一个比MCS锁更轻量的锁，基于单向链表（隐式）的自旋锁，保证公平性，性能高。</p>
+<p>CLH锁中等待锁的线程只需要在前驱结点的本地变量进行自旋，而MCS需要在线程自己的节结点上自旋。</p>
+<p>CLH是一个不可重入的独占锁。在SMP系统架构中性能较好</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://zh.wikipedia.org/wiki/%E8%87%AA%E6%97%8B%E9%94%81">https://zh.wikipedia.org/wiki/%E8%87%AA%E6%97%8B%E9%94%81</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E6%8E%92%E5%8F%B7%E8%87%AA%E6%97%8B%E9%94%81">https://zh.wikipedia.org/wiki/%E6%8E%92%E5%8F%B7%E8%87%AA%E6%97%8B%E9%94%81</a></li>
+<li><a href="https://coderbee.net/index.php/concurrent/20131115/577">https://coderbee.net/index.php/concurrent/20131115/577</a></li>
+<li><a href="https://destiny1020.blog.csdn.net/article/details/79677891">https://destiny1020.blog.csdn.net/article/details/79677891</a></li>
+<li><a href="https://destiny1020.blog.csdn.net/article/details/79783104">https://destiny1020.blog.csdn.net/article/details/79783104</a></li>
+<li><a href="https://destiny1020.blog.csdn.net/article/details/79842501">https://destiny1020.blog.csdn.net/article/details/79842501</a></li>
+<li><a href="https://blog.csdn.net/lengxiao1993/article/details/108227584">https://blog.csdn.net/lengxiao1993/article/details/108227584</a></li>
+<li><a href="https://blog.csdn.net/lengxiao1993/article/details/108448199">https://blog.csdn.net/lengxiao1993/article/details/108448199</a></li>
+<li><a href="https://blog.csdn.net/lengxiao1993/article/details/108449111">https://blog.csdn.net/lengxiao1993/article/details/108449111</a></li>
+<li><a href="https://blog.csdn.net/lengxiao1993/article/details/108449850">https://blog.csdn.net/lengxiao1993/article/details/108449850</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/02/%E7%AE%97%E6%B3%95%E4%B9%8BTimSort%E5%AD%A6%E4%B9%A0/">算法之TimSort学习</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%90%84%E7%B1%BB%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93%E6%AF%94%E8%BE%83/">算法之各类排序算法总结比较</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之归并排序学习</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%A0%86%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之堆排序学习</a></li>
+				
+				<li><a href="/2021/02/23/%E7%AE%97%E6%B3%95%E4%B9%8B%E7%9B%B4%E6%8E%A5%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之直接选择排序学习</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>
