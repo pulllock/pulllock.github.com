@@ -373,24 +373,6 @@
     </item>
     
     <item>
-      <title>Lock</title>
-      <link>https://cxis.me/tags/Lock/</link>
-      <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
-      
-      <guid>https://cxis.me/tags/Lock/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ReentrantLock</title>
-      <link>https://cxis.me/tags/ReentrantLock/</link>
-      <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
-      
-      <guid>https://cxis.me/tags/ReentrantLock/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>SpringMVC</title>
       <link>https://cxis.me/tags/SpringMVC/</link>
       <pubDate>Thu, 06 Apr 2017 22:47:17 +0000</pubDate>
@@ -468,15 +450,6 @@
       <pubDate>Sun, 26 Mar 2017 12:12:49 +0000</pubDate>
       
       <guid>https://cxis.me/tags/dubbo%E9%9B%86%E7%BE%A4/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>AQS</title>
-      <link>https://cxis.me/tags/AQS/</link>
-      <pubDate>Thu, 23 Mar 2017 16:25:44 +0000</pubDate>
-      
-      <guid>https://cxis.me/tags/AQS/</guid>
       <description></description>
     </item>
     
@@ -724,15 +697,6 @@
     </item>
     
     <item>
-      <title>Semaphore</title>
-      <link>https://cxis.me/tags/Semaphore/</link>
-      <pubDate>Wed, 01 Jun 2016 13:25:04 +0000</pubDate>
-      
-      <guid>https://cxis.me/tags/Semaphore/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>ThreadPoolExecutor</title>
       <link>https://cxis.me/tags/ThreadPoolExecutor/</link>
       <pubDate>Mon, 30 May 2016 14:04:19 +0000</pubDate>
@@ -747,15 +711,6 @@
       <pubDate>Mon, 30 May 2016 13:30:52 +0000</pubDate>
       
       <guid>https://cxis.me/tags/AtomicInteger/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ArrayBlockingQueue</title>
-      <link>https://cxis.me/tags/ArrayBlockingQueue/</link>
-      <pubDate>Sun, 29 May 2016 18:46:59 +0000</pubDate>
-      
-      <guid>https://cxis.me/tags/ArrayBlockingQueue/</guid>
       <description></description>
     </item>
     

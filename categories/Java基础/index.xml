@@ -68,12 +68,30 @@
     </item>
     
     <item>
-      <title>JUC中Lock和ReentrantLock介绍及源码解析</title>
-      <link>https://cxis.me/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <title>Java基础之ReentrantLock简介</title>
+      <link>https://cxis.me/2017/04/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BReentrantLock%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/04/08/JUC%E4%B8%ADLock%E5%92%8CReentrantLock%E4%BB%8B%E7%BB%8D%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
-      <description>&lt;p&gt;Lock框架是jdk1.5新增的，作用和synchronized的作用一样，所以学习的时候可以和synchronized做对比。在这里先和synchronized做一下简单对比，然后分析下Lock接口以及ReentrantLock的源码和说明。具体的其他的Lock实现的分析在后面会慢慢介绍。&lt;/p&gt;</description>
+      <guid>https://cxis.me/2017/04/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BReentrantLock%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;Java中Lock的基础是AQS，和synchronized功能类似，而AQS和synchronized都是管程模型的实现，所以需要先熟悉管程相关知识以及AQS相关知识，才能更好地认识Lock。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java基础之AQS简介</title>
+      <link>https://cxis.me/2017/03/27/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Mon, 27 Mar 2017 16:25:44 +0000</pubDate>
+      
+      <guid>https://cxis.me/2017/03/27/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;AQS并发包中的核心，了解其他类之前，需要先弄懂AQS，在弄懂AQS前需要先了解下管程、自选锁等基础知识。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java基础之AQS设计思路介绍</title>
+      <link>https://cxis.me/2017/03/26/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Sun, 26 Mar 2017 23:10:43 +0000</pubDate>
+      
+      <guid>https://cxis.me/2017/03/26/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%BB%8B%E7%BB%8D/</guid>
+      <description>&lt;p&gt;为了更好的学习Java中的AQS，先学习下AQS的设计思路。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -110,15 +128,6 @@
       
       <guid>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;为了更好的学习Java中的AQS，先回顾下基础知识mutex互斥锁。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>JUC中AQS简介</title>
-      <link>https://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/</link>
-      <pubDate>Thu, 23 Mar 2017 16:25:44 +0000</pubDate>
-      
-      <guid>https://cxis.me/2017/03/23/JUC%E4%B8%ADAQS%E7%AE%80%E4%BB%8B/</guid>
-      <description>&lt;p&gt;AQS，在java.util.concurrent.locks包中，AbstractQueuedSynchronizer这个类是并发包中的核心，了解其他类之前，需要先弄清楚AQS。在JUC的很多类中都会存在一个内部类Sync，Sync都是继承自AbstractQueuedSynchronizer，相信不用说就能明白AQS有多重要。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -195,15 +204,6 @@
     </item>
     
     <item>
-      <title>Semaphore简介</title>
-      <link>https://cxis.me/2016/06/01/Semaphore%E7%AE%80%E4%BB%8B/</link>
-      <pubDate>Wed, 01 Jun 2016 13:25:04 +0000</pubDate>
-      
-      <guid>https://cxis.me/2016/06/01/Semaphore%E7%AE%80%E4%BB%8B/</guid>
-      <description>Semaphore简介 Semaphore是并发包中提供的用于控制某资源同时被访问的个数 操作系统的信号量是个很重要的概念，在进程控制方面都有应</description>
-    </item>
-    
-    <item>
       <title>ThreadPoolExecutor简介</title>
       <link>https://cxis.me/2016/05/30/ThreadPoolExecutor%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 30 May 2016 14:04:19 +0000</pubDate>
@@ -222,12 +222,12 @@
     </item>
     
     <item>
-      <title>ArrayBlockingQueue简介</title>
-      <link>https://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</link>
+      <title>Java基础之ArrayBlockingQueue简介</title>
+      <link>https://cxis.me/2016/05/29/Java%E5%9F%BA%E7%A1%80%E4%B9%8BArrayBlockingQueue%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sun, 29 May 2016 18:46:59 +0000</pubDate>
       
-      <guid>https://cxis.me/2016/05/29/ArrayBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
-      <description>ArrayBlockingQueue基于数组，先进先出，从尾部插入到队列，从头部开始返回。 线程安全的有序阻塞队列，内部通过“互斥锁”保护竞争</description>
+      <guid>https://cxis.me/2016/05/29/Java%E5%9F%BA%E7%A1%80%E4%B9%8BArrayBlockingQueue%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;ArrayBlockingQueue就是一个有界阻塞队列，实现原理和生产者消费者模式一样，可以使用信号量来实现，也可以使用锁加条件变量来实现。&lt;/p&gt;</description>
     </item>
     
     <item>
