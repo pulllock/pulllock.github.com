@@ -679,24 +679,6 @@
     </item>
     
     <item>
-      <title>CyclicBarrier</title>
-      <link>https://cxis.me/tags/CyclicBarrier/</link>
-      <pubDate>Wed, 01 Jun 2016 14:38:32 +0000</pubDate>
-      
-      <guid>https://cxis.me/tags/CyclicBarrier/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>CountDownLatch</title>
-      <link>https://cxis.me/tags/CountDownLatch/</link>
-      <pubDate>Wed, 01 Jun 2016 14:26:33 +0000</pubDate>
-      
-      <guid>https://cxis.me/tags/CountDownLatch/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>ThreadPoolExecutor</title>
       <link>https://cxis.me/tags/ThreadPoolExecutor/</link>
       <pubDate>Mon, 30 May 2016 14:04:19 +0000</pubDate>

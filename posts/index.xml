@@ -1625,6 +1625,24 @@
     </item>
     
     <item>
+      <title>Java基础之ReentrantReadWriteLock简介</title>
+      <link>https://cxis.me/2017/04/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BReentrantReadWriteLock%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sat, 08 Apr 2017 20:00:51 +0000</pubDate>
+      
+      <guid>https://cxis.me/2017/04/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BReentrantReadWriteLock%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;ReentrantReadWriteLock是可重入的读写锁，比ReentrantLock多了一把读锁，实现上基本类似，主要还是使用AQS。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Java基础之StampedLock简介</title>
+      <link>https://cxis.me/2017/04/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BStampedLock%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sat, 08 Apr 2017 20:00:51 +0000</pubDate>
+      
+      <guid>https://cxis.me/2017/04/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BStampedLock%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;ReentrantReadWriteLock适合读多写少场景，但是可能会产生线程饥饿的问题，使用StampedLock可以解决ReentrantReadWriteLock的缺点。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Java基础之ReentrantLock简介</title>
       <link>https://cxis.me/2017/04/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BReentrantLock%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Sat, 08 Apr 2017 15:13:45 +0000</pubDate>
@@ -1984,21 +2002,21 @@
     </item>
     
     <item>
-      <title>CyclicBarrier简介</title>
-      <link>https://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</link>
+      <title>Java基础之CyclicBarrier简介</title>
+      <link>https://cxis.me/2016/06/01/Java%E5%9F%BA%E7%A1%80%E4%B9%8BCyclicBarrier%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 01 Jun 2016 14:38:32 +0000</pubDate>
       
-      <guid>https://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</guid>
-      <description>CyclicBarrier简介 CyclicBarrier和CountDownLatch不同,是当await的数量达到了设定的数量之后,才继续</description>
+      <guid>https://cxis.me/2016/06/01/Java%E5%9F%BA%E7%A1%80%E4%B9%8BCyclicBarrier%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;CyclicBarrier是所有线程都到了同一个集合点后，再一起同时开始执行后续操作。每个线程到达了集合点后就会等待，直到所有线程都到达了集合点。&lt;/p&gt;</description>
     </item>
     
     <item>
-      <title>CountDownLatch简介</title>
-      <link>https://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</link>
+      <title>Java基础之CountDownLatch简介</title>
+      <link>https://cxis.me/2016/06/01/Java%E5%9F%BA%E7%A1%80%E4%B9%8BCountDownLatch%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 01 Jun 2016 14:26:33 +0000</pubDate>
       
-      <guid>https://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</guid>
-      <description>CountDownLatch是并发包中提供的一个可用于控制多个线程同时开始某动作的类，可以看做是一个计数器，计数器操作是院子操作，同时只能有</description>
+      <guid>https://cxis.me/2016/06/01/Java%E5%9F%BA%E7%A1%80%E4%B9%8BCountDownLatch%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;CountDownLatch功能类似一个倒数的计数器，等到减为0才可以继续往下走，否则会一直等待计数器countDown。CountDownLatch实现还是依赖AQS。&lt;/p&gt;</description>
     </item>
     
     <item>

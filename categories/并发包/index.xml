@@ -22,24 +22,6 @@
     </item>
     
     <item>
-      <title>CyclicBarrier简介</title>
-      <link>https://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</link>
-      <pubDate>Wed, 01 Jun 2016 14:38:32 +0000</pubDate>
-      
-      <guid>https://cxis.me/2016/06/01/CyclicBarrier%E7%AE%80%E4%BB%8B/</guid>
-      <description>CyclicBarrier简介 CyclicBarrier和CountDownLatch不同,是当await的数量达到了设定的数量之后,才继续</description>
-    </item>
-    
-    <item>
-      <title>CountDownLatch简介</title>
-      <link>https://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</link>
-      <pubDate>Wed, 01 Jun 2016 14:26:33 +0000</pubDate>
-      
-      <guid>https://cxis.me/2016/06/01/CountDownLatch%E7%AE%80%E4%BB%8B/</guid>
-      <description>CountDownLatch是并发包中提供的一个可用于控制多个线程同时开始某动作的类，可以看做是一个计数器，计数器操作是院子操作，同时只能有</description>
-    </item>
-    
-    <item>
       <title>ThreadPoolExecutor简介</title>
       <link>https://cxis.me/2016/05/30/ThreadPoolExecutor%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 30 May 2016 14:04:19 +0000</pubDate>
