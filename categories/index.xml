@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Tue, 02 Mar 2021 16:35:06 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 15 Mar 2021 20:00:02 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>IO</title>
+      <link>https://cxis.me/categories/IO/</link>
+      <pubDate>Mon, 15 Mar 2021 20:00:02 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/IO/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>数据结构与算法</title>

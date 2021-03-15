@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>IO on Time Stream</title>
+    <link>https://cxis.me/categories/IO/</link>
+    <description>Recent content in IO on Time Stream</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Mon, 15 Mar 2021 20:00:02 +0000</lastBuildDate>
+    
+	<atom:link href="https://cxis.me/categories/IO/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>IO之同步、异步、阻塞、非阻塞</title>
+      <link>https://cxis.me/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</link>
+      <pubDate>Mon, 15 Mar 2021 20:00:02 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</guid>
+      <description>&lt;p&gt;重新梳理同步IO、异步IO、阻塞IO、非阻塞IO等相关概念。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

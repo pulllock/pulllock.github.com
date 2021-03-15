@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>IO之同步、异步、阻塞、非阻塞</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="https://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>IO之同步、异步、阻塞、非阻塞</h1>
+			<b><time>2021-03-15 20:00:02</time></b>
+		       
+
+			<div>
+				<p>重新梳理同步IO、异步IO、阻塞IO、非阻塞IO等相关概念。</p>
+<p>在学习这些知识的时候，需要先限定一个范围，才能更好地解释。这里限定的范围是：Linux环境下的网络IO。</p>
+<p>建议先阅读下《UNIX网络编程 卷一：套接字联网API（第三版）》第6.2节：I/O模型。</p>
+<p>再缩小一下讨论的范围：Linux环境下的网络IO，并且是进程从网络获取数据这一操作。</p>
+<p>进程从网络获取数据这一网络IO操作涉及到的对象有：</p>
+<ul>
+<li>进程</li>
+<li>系统内核</li>
+<li>数据</li>
+</ul>
+<p>进程从网络获取（read）数据会包含两个不同的阶段：</p>
+<ol>
+<li>等待数据准备好</li>
+<li>从内核向进程复制数据</li>
+</ol>
+<p>等待数据准备好是指：等待数据从网络中到达，当数据分组到达时，数据会被复制到内核中的某个缓冲区中。</p>
+<p>从内核向进程复制数据是指：把内核缓冲区中的数据复制到应用进程缓冲区。</p>
+<p>同步IO、异步IO、阻塞IO、非阻塞IO这几个概念就是针对上面这两个阶段的不同情况来作区分的。</p>
+<p>UNIX网络编程中将IO模型分成了五种：</p>
+<ul>
+<li>阻塞IO模型</li>
+<li>非阻塞IO模型</li>
+<li>IO复用模型</li>
+<li>信号驱动式IO模型</li>
+<li>异步IO模型</li>
+</ul>
+<p>进程进行IO操作的一般包含：</p>
+<ol>
+<li>进程发起recvfrom系统调用</li>
+<li>系统内核等待数据准备好</li>
+<li>系统内核将数据拷贝到进程缓冲区</li>
+<li>系统内核通知进程结果</li>
+</ol>
+<h1 id="阻塞io模型">阻塞IO模型</h1>
+<p>从进程发起recvfrom系统调用，到系统内核等待数据准备好，再到系统内核将数据拷贝到进程缓冲区，最后到系统内核通知进程结果的过程中，进程都一直阻塞等待，直到系统内核告知了进程最后结果，进程才能解除阻塞，重新运行。</p>
+<p>进程在IO执行的两个阶段：系统内核等待数据准备好、系统内核将数据拷贝到进程缓冲区，都被阻塞住了。</p>
+<h1 id="非阻塞io模型">非阻塞IO模型</h1>
+<p>进程发起recvfrom系统调用后，如果没有数据准备好，系统内核会立刻返回一个错误给进程，进程会不断的进行recvfrom系统调用，直到系统内核准备好了数据。如果系统内核准备好了数据，进程发起的recvfrom系统调用就会阻塞住，等待系统内核将数据拷贝到进程缓冲区中，直到系统内核告知进程最后结果，进行才能解除阻塞，重新运行。</p>
+<p>进程在IO执行的第一个阶段：系统内核等待数据准备好，没有被阻塞；在IO执行的第二个阶段：系统内核将数据拷贝到进程缓冲区，这一步被阻塞住了。</p>
+<h1 id="io复用模型">IO复用模型</h1>
+<p>IO复用模型实际应用是：select、poll、epoll。这种模型的核心思想就是一个进程可以同时处理多个网络连接。</p>
+<p>进程发起select系统调用后，进程就会阻塞住，系统内核等待数据准备好后，select调用就会返回给进程结果，这时候进程会再发起一个recvfrom系统调用，此时数据准备好了，不需要阻塞在：系统内核等待数据准备好这一阶段，但是会阻塞在系统内核将数据拷贝到进程缓冲区中这一阶段，最后系统内核告知进程最后结果，进程才能解除阻塞，重新运行。</p>
+<p>对于进程来说整个阶段还是阻塞的，只是阻塞在了select系统调用上。</p>
+<h1 id="信号驱动式io模型">信号驱动式IO模型</h1>
+<p>进程会首先发起一个sigaction系统调用，之后立刻返回，进程继续执行其他工作，进程没有被阻塞，也就是进程不需要阻塞在：系统内核等到数据准备好这一阶段。系统内核等到数据准备好之后，会返回给进程一个SIGIO信号，进程收到信号后发起recvfrom系统调用，此时数据准备好了，进程会阻塞在系统内核将数据拷贝到进程缓冲区中这一阶段，最后系统内核告知进程最后结果，进程才能解除阻塞，重新运行。</p>
+<h1 id="异步io模型">异步IO模型</h1>
+<p>进程会首先发起一个aio_read系统调用，并立即返回，进程继续其他工作，没有被阻塞。系统内核等到数据准备好，并将数据从内核拷贝到进程缓冲区中之后，会向进程发起一个信号，数据已经复制完成。</p>
+<h1 id="阻塞io和非阻塞io区别">阻塞IO和非阻塞IO区别</h1>
+<p>阻塞IO和非阻塞IO的区别：从进程的角度看就是发起网络IO后，进程是阻塞等待还是立刻返回，如果是阻塞等待的就是阻塞IO，如果是立刻返回的就是非阻塞IO。</p>
+<h1 id="同步io和异步io区别">同步IO和异步IO区别</h1>
+<p>POSIX对同步IO和异步IO的定义如下：</p>
+<ul>
+<li>同步IO操作导致请求进程阻塞，直到IO操作完成</li>
+<li>异步IO操作不导致请求进程阻塞。</li>
+</ul>
+<p>所以阻塞IO模型、非阻塞IO模型、IO复用模型、信号驱动式模型都有造成进程阻塞，都是同步IO。而异步IO模型没有导致请求进程阻塞，是异步IO。</p>
+<p>最后还是要说一下，讨论阻塞和非阻塞、同步和异步，一定要划定一个范围，也就是要有上下文，才能尽可能正确的理解。</p>
+<p>最后个人理解，在网络IO操作中：</p>
+<ul>
+<li>阻塞和非阻塞是站在进程的角度来看，这一次网络IO是阻塞还是非阻塞的</li>
+<li>同步和异步是站在我们的角度看进程是不是阻塞和非阻塞</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li>《UNIX网络编程 卷一：套接字联网API（第三版）》</li>
+<li><a href="https://blog.csdn.net/historyasamirror/article/details/5778378">https://blog.csdn.net/historyasamirror/article/details/5778378</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">IO之同步、异步、阻塞、非阻塞</a></li>
+				
+				<li><a href="/2021/03/02/%E7%AE%97%E6%B3%95%E4%B9%8BTimSort%E5%AD%A6%E4%B9%A0/">算法之TimSort学习</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%90%84%E7%B1%BB%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93%E6%AF%94%E8%BE%83/">算法之各类排序算法总结比较</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之归并排序学习</a></li>
+				
+				<li><a href="/2021/02/28/%E7%AE%97%E6%B3%95%E4%B9%8B%E5%A0%86%E6%8E%92%E5%BA%8F%E5%AD%A6%E4%B9%A0/">算法之堆排序学习</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>
