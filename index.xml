@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Mon, 15 Mar 2021 20:00:02 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 17 Mar 2021 21:46:04 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>MESI、Cache等相关文章暂存</title>
+      <link>https://cxis.me/2021/03/17/MESICache%E7%AD%89%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%E6%9A%82%E5%AD%98/</link>
+      <pubDate>Wed, 17 Mar 2021 21:46:04 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/03/17/MESICache%E7%AD%89%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%E6%9A%82%E5%AD%98/</guid>
+      <description>&lt;p&gt;MESI、Cache、CPU等相关文章暂存，后续整理。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>IO之同步、异步、阻塞、非阻塞</title>
@@ -1930,12 +1939,12 @@
     </item>
     
     <item>
-      <title>ConcurrentLinkedQueue简介</title>
-      <link>https://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</link>
+      <title>Java基础之ConcurrentLinkedQueue简介</title>
+      <link>https://cxis.me/2016/08/05/Java%E5%9F%BA%E7%A1%80%E4%B9%8BConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Fri, 05 Aug 2016 22:06:52 +0000</pubDate>
       
-      <guid>https://cxis.me/2016/08/05/ConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</guid>
-      <description>ConcurrentLinkedQueue是一个基于链表的无界线程安全队列，非阻塞实现方式，先进先出，适合高并发的场景。 非阻塞的性能较好，采</description>
+      <guid>https://cxis.me/2016/08/05/Java%E5%9F%BA%E7%A1%80%E4%B9%8BConcurrentLinkedQueue%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;ConcurrentLinkedQueue是一个基于链表的、无界的、线程安全的、非阻塞队列，适合高并发的场景。&lt;/p&gt;</description>
     </item>
     
     <item>
