@@ -64,14 +64,14 @@
 <h1 id="next数组">next数组</h1>
 <p>next数组定义next[j]：
 $$
-next[j]=
-\left{\begin{matrix}
+next[j] =
+\begin{cases}
 -1 &amp; 当j=0时
 \<br>
 k &amp; 当0&lt;=k&lt;j时且使&quot;p_0&hellip;p_{k-1}&ldquo;=&quot;p_{j-k&hellip;p_{j-1}}&ldquo;的最大整数
-\end{matrix}\right.
-$$
-求next[j]数组，也就是求j前面的串中最长的相同前缀和后缀子串的长度。求出了next[j]之后，也可以利用已经得到的结果来求next[j+1]。</p>
+\end{cases}
+$$</p>
+<p>求next[j]数组，也就是求j前面的串中最长的相同前缀和后缀子串的长度。求出了next[j]之后，也可以利用已经得到的结果来求next[j+1]。</p>
 <ol>
 <li>约定next[0]=-1，有next[1]=0</li>
 <li>假设模式串当前索引为j（0 &lt;= j &lt; m），有next[j]=k，表示&quot;$p_0&hellip;p_{j-1}$&quot;串中存在长度为k的相同前缀和后缀子串，就是：&ldquo;$p_0&hellip;p_{k-1}$&quot;=&quot;$p_{j-k}&hellip;p_{j-1}$&rdquo;，0 &lt;= k &lt; j且k取最大值。</li>
