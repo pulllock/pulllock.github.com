@@ -7,10 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Wed, 17 Mar 2021 21:46:04 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 21 Mar 2021 20:41:58 +0000</lastBuildDate>
     
 	<atom:link href="https://cxis.me/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>算法之串模式匹配KMP算法学习</title>
+      <link>https://cxis.me/2021/03/21/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8DKMP%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Sun, 21 Mar 2021 20:41:58 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/03/21/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8DKMP%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;串的模式匹配KMP算法重新学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>算法之串模式匹配BF算法学习</title>
+      <link>https://cxis.me/2021/03/21/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8DBF%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Sun, 21 Mar 2021 14:53:45 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/03/21/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8DBF%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;串的模式匹配BF算法重新学习。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>MESI、Cache等相关文章暂存</title>
