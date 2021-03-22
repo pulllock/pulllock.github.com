@@ -129,5 +129,23 @@
       <description>&lt;p&gt;直接插入排序算法重新学习。&lt;/p&gt;</description>
     </item>
     
+    <item>
+      <title>数据结构之平衡二叉树学习</title>
+      <link>https://cxis.me/2021/01/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Fri, 22 Jan 2021 15:47:18 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/01/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;平衡二叉树重新学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>数据结构之二叉排序树学习</title>
+      <link>https://cxis.me/2021/01/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%8E%92%E5%BA%8F%E6%A0%91%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Fri, 22 Jan 2021 14:49:22 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/01/22/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%8E%92%E5%BA%8F%E6%A0%91%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;p&gt;二叉排序树重新学习。&lt;/p&gt;</description>
+    </item>
+    
   </channel>
 </rss>
