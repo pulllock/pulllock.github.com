@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Java基础之HashMap简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=================<br>
+	== <a href="https://cxis.me/">Time Stream</a> ==<br>
+	=================
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Java基础之HashMap简介</h1>
+			<b><time>2016-05-25 15:47:13</time></b>
+		       
+
+			<div>
+				<p>HashMap就是数据结构中的散列表，可以先学习数据结构中的散列表，再看HashMap的实现。</p>
+<h1 id="散列和散列表">散列和散列表</h1>
+<p>数据结构中的散列（Hash）是一种按照关键字编址的存储和查找技术。</p>
+<p>散列表（Hash Table）根据元素关键字确定元素的存储位置 ，查找、插入、删除效率接近O(1)。</p>
+<p>散列表存储元素冲突的解决办法有：开放定址法和链地址法。</p>
+<p>开放定址法：当产生冲突时，在散列表中寻找另外一个位置存储冲突元素，寻找位置的方法有线性探查法和二次探查法。</p>
+<p>线性探查法：如果检测到冲突，则向后继续查找，直到找到一个空位置。这种线性探查法解决冲突时，可能会占用其他元素位置；查找可能退化成顺序查找；不能删除元素，否则探测序列会被中断。</p>
+<p>链地址法：在遇到冲突时，会将冲突元素组成一个链表。</p>
+<h1 id="hashmap">HashMap</h1>
+<p>基于JDK1.8。</p>
+<p>散列映射（HashMap）是使用散列表存储元素实现的映射。内部使用一个数组来存放元素，不过数组中不是存放的元素本身，而是一个结点Node。HashMap这是用链地址法来解决冲突，当冲突发生的时候，会将冲突元素结点组成一个链表。</p>
+<p>JDK1.8版本的HashMap在冲突链表达到一定长度的时候，将链表转化为一颗红黑树，用来提高查找效率。红黑树中结点是TreeNode。当移除元素后，如果元素个数减少到一定程度，就会将红黑树重新转换成链表。</p>
+<p>HashMap不是一个线程安全的类，多线程操作可能会出现结点和值的丢失。在并发中请使用ConcurrentHashMap类。</p>
+<h2 id="扩容">扩容</h2>
+<p>JDK1.7中扩容的原理如下：</p>
+<ol>
+<li>新建一个数组，长度为原来的两倍。</li>
+<li>遍历原来数组每一个元素，重新计算新的索引位置放到新数组中去。</li>
+</ol>
+<p>JDK1.8中扩容原理和JDK1.7类似，但是计算元素的位置的方法不一样，JDK1.7需要重新计算每个key在新数组中的哈希值，1.8则使用了另外的方式，不需要计算哈希值。</p>
+<h2 id="树化">树化</h2>
+<p>当链表的长度大于等于阈值的时候，将链表转化为红黑树。也不是所有情况下都会转为红黑树。当HashMap中的桶个数比较小的时候，不会先树化，而是先扩容，当桶的数量大于等于一个阈值的时候，才会进行树化。</p>
+<p>当桶比较小的时候，冲突率很高，这时候可以先选择将桶扩容，而不是先进行树化。冲突产生的原因是因为桶的容量小，所以解决冲突的最好办法就是扩容。另外桶比较小的时候，扩容会比较频繁，如果桶比较小的时候就进行冲突链转为树，一旦遇到频繁扩容，就会导致红黑树的频繁拆分。</p>
+<p>在树化的时候，HashMap使用next和prev保留了原来链表的节点顺序。</p>
+<h2 id="红黑树的链化">红黑树的链化</h2>
+<p>在树化的时候，HashMap使用next和prev保留了原来链表的节点顺序。链化的时候，就直接将TreeNode转成Node就可以。</p>
+<h1 id="源码">源码</h1>
+<p>参照源码解析：<a href="https://github.com/dachengxi/Java8u192SourceCode">https://github.com/dachengxi/Java8u192SourceCode</a></p>
+<h1 id="参考">参考</h1>
+<ul>
+<li>《数据结构（Java版）》</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/21/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8DKMP%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/">算法之串模式匹配KMP算法学习</a></li>
+				
+				<li><a href="/2021/03/21/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8DBF%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/">算法之串模式匹配BF算法学习</a></li>
+				
+				<li><a href="/2021/03/17/MESICache%E7%AD%89%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%E6%9A%82%E5%AD%98/">MESI、Cache等相关文章暂存</a></li>
+				
+				<li><a href="/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">IO之同步、异步、阻塞、非阻塞</a></li>
+				
+				<li><a href="/2021/03/02/%E7%AE%97%E6%B3%95%E4%B9%8BTimSort%E5%AD%A6%E4%B9%A0/">算法之TimSort学习</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>
