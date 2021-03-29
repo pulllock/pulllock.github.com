@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on Time Stream</title>
+    <title>Tags on 大程熙</title>
     <link>https://cxis.me/tags/</link>
-    <description>Recent content in Tags on Time Stream</description>
+    <description>Recent content in Tags on 大程熙</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
@@ -720,15 +720,6 @@
       <pubDate>Fri, 27 May 2016 13:58:00 +0000</pubDate>
       
       <guid>https://cxis.me/tags/TreeMap/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ConcurrentHashMap</title>
-      <link>https://cxis.me/tags/ConcurrentHashMap/</link>
-      <pubDate>Thu, 26 May 2016 11:00:23 +0000</pubDate>
-      
-      <guid>https://cxis.me/tags/ConcurrentHashMap/</guid>
       <description></description>
     </item>
     

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>并发集合 on Time Stream</title>
+    <title>并发集合 on 大程熙</title>
     <link>https://cxis.me/categories/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88/</link>
-    <description>Recent content in 并发集合 on Time Stream</description>
+    <description>Recent content in 并发集合 on 大程熙</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
@@ -28,15 +28,6 @@
       
       <guid>https://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</guid>
       <description>基于CopyOnWriteArrayList实现，线程安全无需集合。 add调用的是CopyOnWriteArraylist的addIfAbs</description>
-    </item>
-    
-    <item>
-      <title>ConcurrentHashMap简介</title>
-      <link>https://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</link>
-      <pubDate>Thu, 26 May 2016 11:00:23 +0000</pubDate>
-      
-      <guid>https://cxis.me/2016/05/26/ConcurrentHashMap%E7%AE%80%E4%BB%8B/</guid>
-      <description>ConcurrentHashMap为了高并发而设计，相比于HashTable和HashMap有更多优势。HashTable是同步的，在多线程</description>
     </item>
     
     <item>
