@@ -723,12 +723,17 @@
   </url>
   
   <url>
-    <loc>https://cxis.me/tags/MySQL/</loc>
-    <lastmod>2018-04-20T19:02:49+00:00</lastmod>
+    <loc>https://cxis.me/categories/MySQL/</loc>
+    <lastmod>2018-04-21T22:33:34+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://cxis.me/categories/MySQL/</loc>
+    <loc>https://cxis.me/2018/04/21/MySQL%E7%9A%84explain%E4%BB%8B%E7%BB%8D/</loc>
+    <lastmod>2018-04-21T22:33:34+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://cxis.me/tags/MySQL/</loc>
     <lastmod>2018-04-20T19:02:49+00:00</lastmod>
   </url>
   
