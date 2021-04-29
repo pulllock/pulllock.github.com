@@ -27,15 +27,6 @@
     </item>
     
     <item>
-      <title>Java基础</title>
-      <link>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</link>
-      <pubDate>Mon, 08 Feb 2021 15:24:14 +0000</pubDate>
-      
-      <guid>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>MyBatis</title>
       <link>https://cxis.me/categories/MyBatis/</link>
       <pubDate>Mon, 02 Nov 2020 22:31:10 +0000</pubDate>
@@ -122,6 +113,15 @@
       <pubDate>Wed, 03 Apr 2019 23:10:00 +0000</pubDate>
       
       <guid>https://cxis.me/categories/redis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java基础</title>
+      <link>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Fri, 08 Feb 2019 15:24:14 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</guid>
       <description></description>
     </item>
     
