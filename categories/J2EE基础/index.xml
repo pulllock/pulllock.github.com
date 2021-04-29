@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Mon, 28 Nov 2016 21:34:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/categories/J2EE%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 28 Nov 2016 21:34:00 +0000</lastBuildDate><atom:link href="https://cxis.me/categories/J2EE%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>MVC简介</title>
       <link>https://cxis.me/2016/11/28/MVC%E7%AE%80%E4%BB%8B/</link>

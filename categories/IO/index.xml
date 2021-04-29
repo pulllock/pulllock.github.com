@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Mon, 15 Mar 2021 20:00:02 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/categories/IO/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 15 Mar 2021 20:00:02 +0000</lastBuildDate><atom:link href="https://cxis.me/categories/IO/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>IO之同步、异步、阻塞、非阻塞</title>
       <link>https://cxis.me/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</link>

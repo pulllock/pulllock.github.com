@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Fri, 25 May 2018 21:44:30 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/Kafka/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 25 May 2018 21:44:30 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/Kafka/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Kafka中的事务</title>
       <link>https://cxis.me/2018/05/25/Kafka%E4%B8%AD%E7%9A%84%E4%BA%8B%E5%8A%A1/</link>

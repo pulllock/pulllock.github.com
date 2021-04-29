@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Fri, 27 May 2016 17:20:34 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/CopyOnWriteArraySet/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 27 May 2016 17:20:34 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/CopyOnWriteArraySet/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>CopyOnWriteArraySet简介</title>
       <link>https://cxis.me/2016/05/27/CopyOnWriteArraySet%E7%AE%80%E4%BB%8B/</link>

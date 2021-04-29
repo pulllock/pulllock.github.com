@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Mon, 05 Dec 2016 20:55:59 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/ThreadLocal%E7%AE%80%E4%BB%8B/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 05 Dec 2016 20:55:59 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/ThreadLocal%E7%AE%80%E4%BB%8B/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ThreadLocal简介</title>
       <link>https://cxis.me/2016/12/05/ThreadLocal%E7%AE%80%E4%BB%8B/</link>

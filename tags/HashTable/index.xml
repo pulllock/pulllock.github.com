@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Thu, 26 May 2016 10:35:01 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/HashTable/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 26 May 2016 10:35:01 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/HashTable/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>HashTable简介</title>
       <link>https://cxis.me/2016/05/26/HashTable%E7%AE%80%E4%BB%8B/</link>

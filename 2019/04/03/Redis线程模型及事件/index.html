@@ -41,21 +41,14 @@
 			<h1>Redis线程模型及事件</h1>
 			<b><time>2019-04-03 22:10:00</time></b>
 		       
-		           <a href="/tags/redis">redis</a>
-        	       
 
 			<div>
 				<p>Redis使用事件驱动模型，主要处理：文件事件，也就是和客户端的网络通信等等；以及时间事件，也就是一些定时任务之类的抽象。</p>
 <h1 id="文件事件">文件事件</h1>
 <p>Redis基于Reactor模式，采用I/O多路复用来处理请求，以单线程来运行，可以实现高性能网络通信模型。</p>
 <p>文件事件处理器组成：套接字、I/O多路复用程序、文件事件分派器、事件处理器。</p>
-<p>
-<figure>
-  <img src="/Redis%e7%ba%bf%e7%a8%8b%e6%a8%a1%e5%9e%8b%e5%8f%8a%e4%ba%8b%e4%bb%b6/event-1.png" alt="event-1" />
-</figure>
-
-
-</p>
+<p>处理流程：</p>
+<p>套接字（多个）&ndash;&gt; IO多路复用程序 &ndash;&gt; 文件事件分派器 &ndash;&gt; 事件处理器（命令请求处理器、命令回复处理器、连接应答处理、&hellip;）</p>
 <p>I/O多路复用监听多个套接字，向文件事件派发器传送产生了事件的套接字，如果存在并发，I/O多路复用程序会将所有产生事件的套接字放到一个队列里，按顺序向事件派发器传送。派发器根据套接字产生的事件调用响应的事件处理器。</p>
 <h2 id="事件类型">事件类型</h2>
 <ul>
@@ -84,15 +77,15 @@
 		<div>
 			<ul>
 				
-				<li><a href="/2021/03/21/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8DKMP%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/">算法之串模式匹配KMP算法学习</a></li>
-				
-				<li><a href="/2021/03/21/%E7%AE%97%E6%B3%95%E4%B9%8B%E4%B8%B2%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8DBF%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/">算法之串模式匹配BF算法学习</a></li>
-				
 				<li><a href="/2021/03/17/MESICache%E7%AD%89%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%E6%9A%82%E5%AD%98/">MESI、Cache等相关文章暂存</a></li>
 				
 				<li><a href="/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">IO之同步、异步、阻塞、非阻塞</a></li>
 				
-				<li><a href="/2021/03/02/%E7%AE%97%E6%B3%95%E4%B9%8BTimSort%E5%AD%A6%E4%B9%A0/">算法之TimSort学习</a></li>
+				<li><a href="/2021/02/08/Java%E5%9F%BA%E7%A1%80%E4%B9%8BArrayList%E7%9A%84removeAll%E5%92%8CretainAll%E4%BB%8B%E7%BB%8D/">Java基础之ArrayList的removeAll和retainAll介绍</a></li>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
 				
 			</ul>
 		</div>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>redis on 大程熙</title>
+    <link>https://cxis.me/categories/redis/</link>
+    <description>Recent content in redis on 大程熙</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>cxis</copyright>
+    <lastBuildDate>Wed, 03 Apr 2019 23:10:00 +0000</lastBuildDate><atom:link href="https://cxis.me/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis线程IO模型</title>
+      <link>https://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8BIO%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Wed, 03 Apr 2019 23:10:00 +0000</pubDate>
+      
+      <guid>https://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8BIO%E6%A8%A1%E5%9E%8B/</guid>
+      <description>&lt;p&gt;Redis单线程IO模型：基于Reactor模式，采用IO多路复用处理请求，单线程运行，高性能。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Redis线程模型及事件</title>
+      <link>https://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8F%8A%E4%BA%8B%E4%BB%B6/</link>
+      <pubDate>Wed, 03 Apr 2019 22:10:00 +0000</pubDate>
+      
+      <guid>https://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8F%8A%E4%BA%8B%E4%BB%B6/</guid>
+      <description>&lt;p&gt;Redis使用事件驱动模型，主要处理：文件事件，也就是和客户端的网络通信等等；以及时间事件，也就是一些定时任务之类的抽象。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

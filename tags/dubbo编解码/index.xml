@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Sun, 19 Mar 2017 23:25:51 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/dubbo%E7%BC%96%E8%A7%A3%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sun, 19 Mar 2017 23:25:51 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/dubbo%E7%BC%96%E8%A7%A3%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dubbo中编码和解码的解析</title>
       <link>https://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</link>

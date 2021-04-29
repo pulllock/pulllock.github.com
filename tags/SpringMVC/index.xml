@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Thu, 06 Apr 2017 22:47:17 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/SpringMVC/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 06 Apr 2017 22:47:17 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/SpringMVC/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>SpringMVC执行流程及源码解析</title>
       <link>https://cxis.me/2017/04/06/SpringMVC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>

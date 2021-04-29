@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Fri, 20 Mar 2020 23:25:44 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/categories/dubbo/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 20 Mar 2020 23:25:44 +0000</lastBuildDate><atom:link href="https://cxis.me/categories/dubbo/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dubbo启动以及服务调用的过程总结</title>
       <link>https://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
@@ -103,7 +99,7 @@
       <pubDate>Sun, 19 Feb 2017 00:46:14 +0000</pubDate>
       
       <guid>https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
-      <description>&lt;p&gt;dubbo暴露服务有两种情况，一种是设置了延迟暴露（比如delay=&amp;quot;5000&amp;rdquo;），另外一种是没有设置延迟暴露或者延迟设置为-1（delay=&amp;rdquo;-1&amp;rdquo;）：&lt;/p&gt;
+      <description>&lt;p&gt;dubbo暴露服务有两种情况，一种是设置了延迟暴露（比如delay=&amp;ldquo;5000&amp;rdquo;），另外一种是没有设置延迟暴露或者延迟设置为-1（delay=&amp;quot;-1&amp;quot;）：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;设置了延迟暴露，dubbo在Spring实例化bean（initializeBean）的时候会对实现了InitializingBean的类进行回调，回调方法是afterPropertySet()，如果设置了延迟暴露，dubbo在这个方法中进行服务的发布。&lt;/li&gt;
 &lt;li&gt;没有设置延迟或者延迟为-1，dubbo会在Spring实例化完bean之后，在刷新容器最后一步发布ContextRefreshEvent事件的时候，通知实现了ApplicationListener的类进行回调onApplicationEvent，dubbo会在这个方法中发布服务。&lt;/li&gt;

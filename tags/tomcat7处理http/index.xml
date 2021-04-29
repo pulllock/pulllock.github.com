@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Fri, 05 May 2017 23:44:31 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/tomcat7%E5%A4%84%E7%90%86http/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 05 May 2017 23:44:31 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/tomcat7%E5%A4%84%E7%90%86http/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>tomcat7中对http请求的处理过程</title>
       <link>https://cxis.me/2017/05/05/tomcat7%E4%B8%AD%E5%AF%B9http%E8%AF%B7%E6%B1%82%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B/</link>

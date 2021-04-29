@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Sat, 04 May 2019 17:30:28 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/redis/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sat, 04 May 2019 17:30:28 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/redis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Redis内存模型</title>
       <link>https://cxis.me/2019/05/04/Redis%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</link>
@@ -100,15 +96,6 @@
       
       <guid>https://cxis.me/2019/04/05/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</guid>
       <description>&lt;p&gt;主从复制，用户可以执行SLAVEOF命令或者设置slaveof选项，让一个服务器（从服务器slave）去复制replicate另外一个服务器（主服务器master）。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Redis线程模型及事件</title>
-      <link>https://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8F%8A%E4%BA%8B%E4%BB%B6/</link>
-      <pubDate>Wed, 03 Apr 2019 22:10:00 +0000</pubDate>
-      
-      <guid>https://cxis.me/2019/04/03/Redis%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E5%8F%8A%E4%BA%8B%E4%BB%B6/</guid>
-      <description>&lt;p&gt;Redis使用事件驱动模型，主要处理：文件事件，也就是和客户端的网络通信等等；以及时间事件，也就是一些定时任务之类的抽象。&lt;/p&gt;</description>
     </item>
     
     <item>

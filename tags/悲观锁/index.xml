@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Fri, 03 Jun 2016 14:45:07 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/%E6%82%B2%E8%A7%82%E9%94%81/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 03 Jun 2016 14:45:07 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/%E6%82%B2%E8%A7%82%E9%94%81/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>乐观锁与悲观锁简介</title>
       <link>https://cxis.me/2016/06/03/%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%8E%E6%82%B2%E8%A7%82%E9%94%81%E7%AE%80%E4%BB%8B/</link>

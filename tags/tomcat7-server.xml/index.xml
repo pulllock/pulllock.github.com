@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Tue, 16 May 2017 00:04:07 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/tomcat7-server.xml/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 16 May 2017 00:04:07 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/tomcat7-server.xml/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>tomcat7的server.xml解析</title>
       <link>https://cxis.me/2017/05/16/tomcat7%E7%9A%84server.xml%E8%A7%A3%E6%9E%90/</link>

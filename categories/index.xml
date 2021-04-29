@@ -7,20 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Sun, 21 Mar 2021 20:41:58 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/categories/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>数据结构与算法</title>
-      <link>https://cxis.me/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</link>
-      <pubDate>Sun, 21 Mar 2021 20:41:58 +0000</pubDate>
-      
-      <guid>https://cxis.me/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</guid>
-      <description></description>
-    </item>
-    
+    <lastBuildDate>Wed, 17 Mar 2021 21:46:04 +0000</lastBuildDate><atom:link href="https://cxis.me/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>计算机基础</title>
       <link>https://cxis.me/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</link>
@@ -40,29 +27,11 @@
     </item>
     
     <item>
-      <title>Java</title>
-      <link>https://cxis.me/categories/Java/</link>
-      <pubDate>Mon, 08 Feb 2021 15:24:14 +0000</pubDate>
-      
-      <guid>https://cxis.me/categories/Java/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Java基础</title>
       <link>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Mon, 08 Feb 2021 15:24:14 +0000</pubDate>
       
       <guid>https://cxis.me/categories/Java%E5%9F%BA%E7%A1%80/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>基础</title>
-      <link>https://cxis.me/categories/%E5%9F%BA%E7%A1%80/</link>
-      <pubDate>Tue, 26 Jan 2021 22:52:21 +0000</pubDate>
-      
-      <guid>https://cxis.me/categories/%E5%9F%BA%E7%A1%80/</guid>
       <description></description>
     </item>
     
@@ -76,20 +45,20 @@
     </item>
     
     <item>
-      <title>Spring</title>
-      <link>https://cxis.me/categories/Spring/</link>
-      <pubDate>Mon, 26 Oct 2020 13:54:40 +0000</pubDate>
-      
-      <guid>https://cxis.me/categories/Spring/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>SpringBoot</title>
       <link>https://cxis.me/categories/SpringBoot/</link>
       <pubDate>Mon, 26 Oct 2020 13:54:40 +0000</pubDate>
       
       <guid>https://cxis.me/categories/SpringBoot/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Spring</title>
+      <link>https://cxis.me/categories/Spring/</link>
+      <pubDate>Wed, 26 Aug 2020 20:32:49 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/Spring/</guid>
       <description></description>
     </item>
     
@@ -112,6 +81,15 @@
     </item>
     
     <item>
+      <title>数据结构与算法</title>
+      <link>https://cxis.me/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Sat, 21 Mar 2020 20:41:58 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>dubbo</title>
       <link>https://cxis.me/categories/dubbo/</link>
       <pubDate>Fri, 20 Mar 2020 23:25:44 +0000</pubDate>
@@ -121,11 +99,29 @@
     </item>
     
     <item>
+      <title>基础</title>
+      <link>https://cxis.me/categories/%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Sun, 26 Jan 2020 22:52:21 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/%E5%9F%BA%E7%A1%80/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>缓存</title>
       <link>https://cxis.me/categories/%E7%BC%93%E5%AD%98/</link>
       <pubDate>Sat, 04 May 2019 17:30:28 +0000</pubDate>
       
       <guid>https://cxis.me/categories/%E7%BC%93%E5%AD%98/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>redis</title>
+      <link>https://cxis.me/categories/redis/</link>
+      <pubDate>Wed, 03 Apr 2019 23:10:00 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/redis/</guid>
       <description></description>
     </item>
     
@@ -342,6 +338,15 @@
       <pubDate>Fri, 03 Jun 2016 14:45:07 +0000</pubDate>
       
       <guid>https://cxis.me/categories/%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Java</title>
+      <link>https://cxis.me/categories/Java/</link>
+      <pubDate>Mon, 30 May 2016 17:57:06 +0000</pubDate>
+      
+      <guid>https://cxis.me/categories/Java/</guid>
       <description></description>
     </item>
     

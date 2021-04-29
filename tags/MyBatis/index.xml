@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Mon, 02 Nov 2020 22:31:10 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/MyBatis/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Mon, 02 Nov 2020 22:31:10 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/MyBatis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>MyBatis启动过程介绍</title>
       <link>https://cxis.me/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/</link>

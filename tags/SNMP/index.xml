@@ -7,11 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Tue, 27 Dec 2016 15:15:15 +0000</lastBuildDate>
-    
-	<atom:link href="https://cxis.me/tags/SNMP/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 27 Dec 2016 15:15:15 +0000</lastBuildDate><atom:link href="https://cxis.me/tags/SNMP/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>SNMP-MIB-SNMP4J简介</title>
       <link>https://cxis.me/2016/12/27/SNMP-MIB-SNMP4J%E7%AE%80%E4%BB%8B/</link>
