@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>基础之负载均衡算法简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	===============<br>
+	== <a href="https://cxis.me/">大程熙</a> ==<br>
+	===============
+	<div style="float: right;">一个小学生</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>基础之负载均衡算法简介</h1>
+			<b><time>2020-04-29 10:12:49</time></b>
+		       
+
+			<div>
+				<p>负载均衡算法的基础知识记录。</p>
+<p>负载均衡算法有以下几种：</p>
+<ul>
+<li>轮询（Round Robin）</li>
+<li>加权轮询（Weight Round Robin）</li>
+<li>随机（Random）</li>
+<li>加权随机（Weight Random）</li>
+<li>源地址哈希（Hash）</li>
+<li>一致性哈希（ConsistentHash）</li>
+<li>最小连接数（Least Connections）</li>
+</ul>
+<h1 id="轮询round-robin">轮询（Round Robin）</h1>
+<p>按照顺序将请求轮流的分配到服务器上。不关心服务器实际负载以及服务器的链接数。</p>
+<p>优点：请求均衡的分配到每台服务器。</p>
+<p>缺点：</p>
+<ul>
+<li>由于不关心服务器的负载，可能会导致请求积压到处理能力比较慢的服务器上。</li>
+<li>为了轮询服务器，还需要维护一个全局变量，用来表示选择的服务器的索引，这样会涉及到共享变量的竞争问题，导致并发吞吐量下降。</li>
+</ul>
+<h1 id="加权轮询weight-round-robin">加权轮询（Weight Round Robin）</h1>
+<p>轮询（Round Robin）不关心服务器的负载，可能会导致请求积压在处理能力比较慢的服务器上。加权轮询可以解决该问题。</p>
+<p>加权轮询给配置高、负载低的服务器配置更高的权重，给配置低、负载高的服务器较低的权重，这样高权重的服务器处理更多的请求，低权重的服务器处理较少的请求。</p>
+<h1 id="随机random">随机（Random）</h1>
+<p>随机选择服务器进行请求的处理，调用量越大，请求分布越均匀。</p>
+<h1 id="加权随机weight-random">加权随机（Weight Random）</h1>
+<p>也是随机选择服务器进行请求处理，只不过会根据不同服务器设置不同权重，按照权重随机请求服务器。</p>
+<h1 id="源地址哈希hash">源地址哈希（Hash）</h1>
+<p>根据客户端的ip地址（也可以是其他参数），通过哈希函数计算一个数值，然后使用该数值对服务器列表大小进行取模运算，就能得到要访问的服务器。</p>
+<p>优点：同一个ip请求总能被分配到同一台服务器。</p>
+<p>缺点：如果服务器上线或者下线，导致服务器列表发生变化，会导致前后请求不能到同一台服务器上，如果是有状态的请求，可能会导致状态丢失。</p>
+<h1 id="一致性哈希consistenthash">一致性哈希（ConsistentHash）</h1>
+<p>和源地址哈希算法基本一样，只不过一致性哈希会提供虚拟节点，如果服务器列表发生变化，只影响一小部分服务器映射发生变化，不会产生剧烈变动，而源地址哈希可能会导致所有服务器映射都发生变化。</p>
+<h1 id="最小连接数least-connections">最小连接数（Least Connections）</h1>
+<p>最小连接数，或者是最少活跃调用（Least Active），动态的选择连接数最少的服务器进行处理请求，尽可能高的提升服务器利用率。</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://www.cnblogs.com/xrq730/p/5154340.html">https://www.cnblogs.com/xrq730/p/5154340.html</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/17/MESICache%E7%AD%89%E7%9B%B8%E5%85%B3%E6%96%87%E7%AB%A0%E6%9A%82%E5%AD%98/">MESI、Cache等相关文章暂存</a></li>
+				
+				<li><a href="/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">IO之同步、异步、阻塞、非阻塞</a></li>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>
