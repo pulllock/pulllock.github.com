@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>基础之CPU、Cache、MESI等相关知识总结记录</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=============<br>
+	== <a href="https://cxis.me/">cxis.me</a> ==<br>
+	=============
+	<div style="float: right;">脚踏实地</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>基础之CPU、Cache、MESI等相关知识总结记录</h1>
+			<b><time>2021-03-17 21:46:04</time></b>
+		       
+
+			<div>
+				<p>CPU、高速缓存、缓存行、MESI等相关知识总结记录</p>
+<p>学习顺序：CPU缓存 &ndash;&gt; 缓存一致性协议MESI &ndash;&gt; Store Buffers &ndash;&gt; Invalidate Queue &ndash;&gt; 内存屏障 &ndash;&gt; volatile &ndash;&gt; JMM内存模型 &ndash;&gt; JMM中定义的内存屏障。</p>
+<h1 id="cpu高速缓存内存缓存行">CPU高速缓存、内存、缓存行</h1>
+<p>CPU速度和CPU读取内存的速度存在差异，因此在CPU和内存的中间引入了CPU高速缓存。CPU高速缓存分为：一级缓存、二级缓存、三级缓存，其中一级缓存和二级缓存是CPU独有的，三级缓存是各个CPU共享的。CPU读取数据的时候，会先从高速缓存中读取，如果高速缓存中不存在，则到内存中读取，并将数据存储到高速缓存中。</p>
+<p>另外CPU在到内存中读取数据的时候，并不是需要多少就读取多少，而是一次读取固定大小的数据，哪怕当前用不到，也会被读取到高速缓存中，这个固定大小的数据称为缓存行。</p>
+<h1 id="高速缓存一致性问题">高速缓存一致性问题</h1>
+<p>内存是共享资源，多个CPU共享同一个内存；CPU的一级缓存和二级缓存是CPU私有地，CPU读取数据的时候会将内存中的数据先加载到自己的高速缓存中，如果需要修改数据也是先修改CPU自己的高速缓存，这样就会产生了各个CPU的高速缓存中数据不一致问题。</p>
+<p>解决高速缓存不一致性问题的方法和我们遇到的其他解决共享资源竞争问题的思路一样，加一个全局的锁，让读写串行化。在多核架构中使用总线事务的机制来解决高速缓存不一致的问题，也就是让并发写串行化。</p>
+<h1 id="mesi协议">MESI协议</h1>
+<p>MESI协议是基于总线事物机制的高速缓存一致性协议，MESI协议对缓存行定义了四种状态：</p>
+<ul>
+<li>M，Modified，已被修改</li>
+<li>E，Exclusive，独占的</li>
+<li>S，Shared，共享的</li>
+<li>I，Invalid，无效的</li>
+</ul>
+<p>MESI就是上面四种状态的缩写。</p>
+<p>MESI协议通过缓存行的四种状态和总线事务机制来实现高速缓存一致性协议，目的就是让对共享的内存的读写串行化。</p>
+<h2 id="mesi四种状态">MESI四种状态</h2>
+<h3 id="modified">Modified</h3>
+<p>当前CPU的高速缓存中的数据是有效的，但是被当前CPU修改过，并且没有写回到内存，当前CPU高速缓存中数据和内存中数据不一致，数据只存在于当前CPU高速缓存中，其他CPU的高速缓存中没有这些数据。</p>
+<h3 id="exclusive">Exclusive</h3>
+<p>当前CPU的高速缓存中的数据是有效的，数据没有被修改过，当前CPU高速缓存中数据和内存中数据是一致的，数据只存在于当前CPU高速缓存中，其他CPU高速缓存中没有这些数据。</p>
+<h3 id="shared">Shared</h3>
+<p>当前CPU的高速缓存中的数据是有效的，数据没有被修改过，当前CPU高速缓存中数据和内存中数据是一致的，数据不仅存在于当前CPU高速缓存中，还存在于其他CPU高速缓存中。</p>
+<h3 id="invalid">Invalid</h3>
+<p>当前CPU的高速缓存中的数据是无效的，可能有两种情况：之前缓存行有效，但是变为了无效；或者缓存行不存在。这两种情况都是Invalid状态。</p>
+<h2 id="mesi状态的变化">MESI状态的变化</h2>
+<p>导致MESI状态变化的事件有四种：</p>
+<ul>
+<li>本地读（Local Read），当前CPU读取自己的高速缓存</li>
+<li>本地写（Local Write），当前CPU写自己的高速缓存</li>
+<li>远程读（Remote Read），当前CPU监听到了其他的CPU读取内存的事件</li>
+<li>远程写（Remote Write），当前CPU监听到了其他的CPU写内存的事件</li>
+</ul>
+<p>当内存行处于不同状态的时候，如果接受到了不同的事件，会产生不同的状态转移。</p>
+<h3 id="当前cpu的缓存行是modified状态">当前CPU的缓存行是Modified状态</h3>
+<h4 id="发生了本地读事件">发生了本地读事件</h4>
+<p>当前CPU缓存行是Modified状态，说明当前CPU修改了缓存行，该缓存行只存在于当前CPU的高速缓存中，其他CPU的高速缓存中缓存行是Invalid状态，当前CPU高速缓存中的数据和内存中不一致，但是是最新的。如果发生了本地读，可以直接从当前CPU高速缓存中进行读取之前修改过的数据，此时当前缓存行的状态不变，依然是Modified。</p>
+<h4 id="发生了本地写事件">发生了本地写事件</h4>
+<p>当前CPU缓存行是Modified状态，说明当前CPU修改了缓存行，该缓存行只存在于当前CPU的高速缓存中，其他CPU的高速缓存中缓存行是Invalid状态，当前CPU高速缓存中的数据和内存中不一致，但是是最新的。如果发生了本地写，可以直接对当前CPU高速缓存中数据进行修改过，此时当前缓存行的状态不变，依然是Modified。</p>
+<h4 id="发生了远程读事件">发生了远程读事件</h4>
+<p>当前CPU缓存行是Modified状态，说明当前CPU修改了缓存行，该缓存行只存在于当前CPU的高速缓存中，其他CPU的高速缓存中缓存行是Invalid状态，当前CPU高速缓存中的数据和内存中不一致，但是是最新的。如果发生了远程读，当前CPU需要将修改过的最新的数据写回到内存中去，其他读取数据的CPU也会拥有最新的缓存行，当前CPU缓存行的状态由Modified变为Shared，其他读取数据的CPU的缓存行状态是Shared。</p>
+<h4 id="发生了远程写事件">发生了远程写事件</h4>
+<p>当前CPU缓存行是Modified状态，说明当前CPU修改了缓存行，该缓存行只存在于当前CPU的高速缓存中，其他CPU的高速缓存中缓存行是Invalid状态，当前CPU高速缓存中的数据和内存中不一致，但是是最新的。如果发生了远程写，当前CPU需要将修改过的最新的数据写回到内存中去，其他的CPU发生了写，所以其他的CPU中缓存行状态是Modified，发生写的其他的CPU导致当前CPU状态由Modified变为了Invalid状态。</p>
+<h3 id="当前cpu的缓存行是exclusive状态">当前CPU的缓存行是Exclusive状态</h3>
+<h4 id="发生了本地读事件-1">发生了本地读事件</h4>
+<p>当前CPU的缓存行状态是Exclusive，表示当前CPU独占该缓存行，和内存中的数据一致。如果发生本地读，可以直接从当前CPU的高速缓存中读取，当前缓存行状态不变，仍然是Exclusive状态。</p>
+<h4 id="发生了本地写事件-1">发生了本地写事件</h4>
+<p>当前CPU的缓存行状态是Exclusive，表示当前CPU独占该缓存行，和内存中的数据一致。如果发生本地写，可以直接写高速缓存中的数据，写数据发生了，此时和内存中的数据不一致，当前CPU缓存行状态由Exclusive变为Modified状态。</p>
+<h4 id="发生了远程读事件-1">发生了远程读事件</h4>
+<p>当前CPU的缓存行状态是Exclusive，表示当前CPU独占该缓存行，和内存中的数据一致。如果发生了远程读，说明当前的缓存行由多个CPU读取，变成了共享状态了，当前CPU的缓存行状态变为Shared。</p>
+<h4 id="发生了远程写事件-1">发生了远程写事件</h4>
+<p>当前CPU的缓存行状态是Exclusive，表示当前CPU独占该缓存行，和内存中的数据一致。如果发生了远程写，说明缓存行被其他CPU写了，当前CPU缓存中的缓存行状态变为Invalid状态。</p>
+<h3 id="当前cpu的缓存行是shared状态">当前CPU的缓存行是Shared状态</h3>
+<h4 id="发生了本地读事件-2">发生了本地读事件</h4>
+<p>当前CPU的缓存行状态是Shared，表示缓存行被多个CPU共享，和内存中数据是一致的，并且是最新的。如果发生本地读，当前CPU可以直接从高速缓存中读取，当前CPU缓存行状态不变，仍然是Shared状态。</p>
+<h4 id="发生了本地写事件-2">发生了本地写事件</h4>
+<p>当前CPU的缓存行状态是Shared，表示缓存行被多个CPU共享，和内存中数据是一致的，并且是最新的。如果发生本地写，当前CPU状态行的数据是最新的，和内存中数据不一致，当前CPU状态行的状态由Shared变为Modified，其他CPU中的缓存行状态变为Invalid。</p>
+<h4 id="发生了远程读事件-2">发生了远程读事件</h4>
+<p>当前CPU的缓存行状态是Shared，表示缓存行被多个CPU共享，和内存中数据是一致的，并且是最新的。如果发生远程读，当前CPU状态不变，仍然是Shared状态。</p>
+<h4 id="发生了远程写事件-2">发生了远程写事件</h4>
+<p>当前CPU的缓存行状态是Shared，表示缓存行被多个CPU共享，和内存中数据是一致的，并且是最新的。如果发生远程写，其他CPU状态由Shared变为Modified，当前CPU缓存行状态由Shared变为Invalid状态。</p>
+<h3 id="当前cpu的缓存行状态是invalid状态">当前CPU的缓存行状态是Invalid状态</h3>
+<h4 id="发生了本地读事件-3">发生了本地读事件</h4>
+<p>当前CPU的缓存行状态是Invalid，表示当前CPU缓存行是无效或者不存在。如果发生本地读，需要从内存或者其他处于Exclusive状态的高速缓存中获取。如果其他CPU高速缓存中不存在，则从内存中获取，从内存中获取数据后只有当前CPU有缓存行记录，所以当前CPU缓存行状态由Invalid变为Exclusive状态；如果其他的CPU高速缓存中存在对应缓存行数据，并且其他CPU中的状态是Exclusive或者Shared，则当前CPU从内存中或者存在缓存行的CPU高速缓存中获取，此时当前CPU缓存行状态变为Shared状态；如果其他某个CPU高速缓存存在该缓存行，并且状态是Modified，则触发远程CPU的远程读事件，远程CPU将修改的缓存写回到内存中，当前CPU从内存中读取最新数据，此时当前CPU和之前远程CPU都保存了缓存行数据，当前CPU缓存行状态变为Shared。</p>
+<h4 id="发生了本地写事件-3">发生了本地写事件</h4>
+<p>当前CPU的缓存行状态是Invalid，表示当前CPU缓存行是无效或者不存在。如果发生本地写，需要从内存或者其他处于Exclusive状态的高速缓存中获取，然后再进行修改。如果其他CPU高速缓存中不存在，则从内存中获取并修改，修改后当前CPU缓存行数据是最新的，和内存不一样，当前CPU缓存行状态由Invalid变为Modified；如果其他的CPU高速缓存中存在对应缓存行数据，并且其他CPU中的状态是Exclusive或者Shared，则当前CPU从内存中或者存在缓存行的CPU高速缓存中获取并修改，当前CPU缓存行是最新的数据，和内存不一致，其他CPU缓存行状态设置为Invalid状态，当前CPU缓存行状态设置为Modified；如果其他某个CPU高速缓存存在该缓存行，并且状态是Modified，则触发远程CPU的远程写事件，远程CPU将修改的缓存写回到内存中，当前CPU从内存中读取最新数据并修改，远程CPU缓存行状态变为Invalid，当前CPU缓存行状态由Invalid变为Modified。</p>
+<h4 id="发生了远程读事件-3">发生了远程读事件</h4>
+<p>当前CPU的缓存行状态是Invalid，表示当前CPU缓存行是无效或者不存在。如果发生了远程读，不进行任何处理，当前CPU缓存行状态仍然为Invalid。</p>
+<h4 id="发生了远程写事件-3">发生了远程写事件</h4>
+<p>当前CPU的缓存行状态是Invalid，表示当前CPU缓存行是无效或者不存在。如果发生了远程写，不进行任何处理，当前CPU缓存行状态仍然为Invalid。</p>
+<h1 id="mesi协议的性能问题">MESI协议的性能问题</h1>
+<p>MESI协议和总线事务能够保证高速缓存的一致性，但是却会有性能问题产生，比如本地写事件，会通知其他CPU对相应的缓存行进行失效处理，并等待其他CPU的响应，在这期间本地CPU不能做其他事情，只有其他的CPU都响应后，才能将本地CPU写的数据写回到内存中去。</p>
+<p>另外一种情况是，当前CPU需要响应其他CPU的远程写事件，当前CPU如果暂时没有时间处理缓存行失效的事件，也就不能响应远程CPU，导致远程CPU等待。</p>
+<p>这两种情况虽然保证了高速缓存的一致性，但是性能却非常低，针对性能问题，就引入了存储缓存（Store Buffers）和失效队列（Invalid Queue）来解决。</p>
+<h1 id="存储缓存store-buffers">存储缓存（Store Buffers）</h1>
+<p>针对本地写事件需要等待其他远程CPU响应的问题，引入了存储缓存（Store Buffers）来解决。每个CPU都有一个存储缓存，当前CPU如果发生了本地写事件，则CPU直接将要写的新值放到存储缓存中去，CPU会继续执行其他指令，而等待其他CPU响应的事情则交给了存储缓存，存储缓存等到其他CPU都响应之后，将新值写回到高速缓存中。这样将CPU同步等待其他CPU响应并写高速缓存的操作变成了异步，提升了效率。</p>
+<h2 id="存储缓存存在的问题">存储缓存存在的问题</h2>
+<ol>
+<li>存储缓存大小有限制，如果写事件很多导致存储缓存满了，CPU依然会阻塞。</li>
+<li>CPU将值写入到存储缓存后，如果存储缓存还没处理完，后续该CPU需要到高速缓存读这个值的时候，就会出问题。解决方案是：Store Fowarding，就是CPU需要读新值的时候，先看存储缓存中是否存在，如果存在就直接读取，如果存储缓存中不存在，则去高速缓存中读取。</li>
+</ol>
+<h1 id="失效队列invalid-queue">失效队列（Invalid Queue）</h1>
+<p>针对本地CPU需要响应远程CPU的写事件，可能导致远程CPU等待的问题，引入了失效队列（Invalid Queue）来解决。每个CPU都有一个失效队列，当有远程写事件到来时，直接将事件写入到失效队列中去，并直接返回响应给远程CPU，本地CPU会在空闲的时候处理失效队列中的事件。这也是将同步变为了异步操作，提升效率。</p>
+<h1 id="内存屏障memory-barrier">内存屏障（Memory Barrier）</h1>
+<p>存储缓存和失效队列，将MESI的强一致性变为了最终一致性，并发情况下会导致共享数据不一致问题，使用内存屏障可以解决这个问题。</p>
+<h2 id="write-barrier-写屏障">Write Barrier 写屏障</h2>
+<h1 id="参考">参考</h1>
+<ul>
+<li><a href="https://nextfe.com/memory-barrier/">https://nextfe.com/memory-barrier/</a></li>
+<li><a href="https://nextfe.com/cpu-cache/">https://nextfe.com/cpu-cache/</a></li>
+<li><a href="https://coolshell.cn/articles/20793.html">https://coolshell.cn/articles/20793.html</a></li>
+<li><a href="https://www.0xffffff.org/2017/02/21/40-atomic-variable-mutex-and-memory-barrier/">https://www.0xffffff.org/2017/02/21/40-atomic-variable-mutex-and-memory-barrier/</a></li>
+<li><a href="https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html">https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html</a></li>
+<li><a href="http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html">http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html</a></li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之CPU、Cache、MESI等相关知识总结记录</a></li>
+				
+				<li><a href="/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">IO之同步、异步、阻塞、非阻塞</a></li>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>
