@@ -105,7 +105,7 @@
 <li>DMA从内核缓冲区将数据拷贝到网卡中。</li>
 <li>上下文从内核态切换到用户态，<code>write()</code>调用返回。</li>
 </ol>
-<p>mmap+write方式，上下文切换有4次、CPU拷贝1次、DMA拷贝2次。mmap方式适合大文件的IO操作，小文件使用内存映射会导致空间浪费。</p>
+<p>mmap+write方式，上下文切换有4次、CPU拷贝1次、DMA拷贝2次。</p>
 <h2 id="sendfile">sendfile</h2>
 <p>sendfile方式的IO操作过程如下：</p>
 <ol>
