@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Wed, 17 Mar 2021 21:46:04 +0000</lastBuildDate><atom:link href="https://cxis.me/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 18 Mar 2021 21:54:39 +0000</lastBuildDate><atom:link href="https://cxis.me/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>基础之零拷贝相关知识总结记录</title>
+      <link>https://cxis.me/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Thu, 18 Mar 2021 21:54:39 +0000</pubDate>
+      
+      <guid>https://cxis.me/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
+      <description>&lt;p&gt;IO操作方式、零拷贝等相关知识总结记录&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>基础之CPU、Cache、MESI等相关知识总结记录</title>
       <link>https://cxis.me/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
@@ -18,11 +27,11 @@
     </item>
     
     <item>
-      <title>IO之同步、异步、阻塞、非阻塞</title>
-      <link>https://cxis.me/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</link>
+      <title>基础之IO的同步、异步、阻塞、非阻塞</title>
+      <link>https://cxis.me/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</link>
       <pubDate>Mon, 15 Mar 2021 20:00:02 +0000</pubDate>
       
-      <guid>https://cxis.me/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</guid>
+      <guid>https://cxis.me/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</guid>
       <description>&lt;p&gt;重新梳理同步IO、异步IO、阻塞IO、非阻塞IO等相关概念。&lt;/p&gt;</description>
     </item>
     

@@ -131,6 +131,22 @@
 <h1 id="内存屏障memory-barrier">内存屏障（Memory Barrier）</h1>
 <p>存储缓存和失效队列，将MESI的强一致性变为了最终一致性，并发情况下会导致共享数据不一致问题，使用内存屏障可以解决这个问题。</p>
 <h2 id="write-barrier-写屏障">Write Barrier 写屏障</h2>
+<p>CPU遇到写屏障时，必须强制等待存储缓存中的写事务全部处理完后，才能继续执行屏障后的写操作，也就是写屏障后面的写操作不能重排到写屏障之前。</p>
+<h2 id="read-barrier-读屏障">Read Barrier 读屏障</h2>
+<p>CPU遇到读屏障时，必须先将失效队列中的写事务全部处理完，才能继续执行读屏障后的读操作，也就是读屏障后的读操作不能重排到读屏障之前。</p>
+<h2 id="读写屏障">读写屏障</h2>
+<p>读写屏障是读屏障和写屏障合并一起的屏障，不准屏障后面的任何读写操作被重排到屏障之前。</p>
+<h1 id="伪共享">伪共享</h1>
+<p>多个线程修改相互独立的变量，如果这些独立的变量共享同一个缓存行，就会导致伪共享发生。</p>
+<p>解决伪共享的方法：</p>
+<ul>
+<li>在两个变量之前填充一些变量，使得变量不再共享同一个缓存行。</li>
+<li>Java中使用<code>@Contended</code>注解进行填充。</li>
+</ul>
+<p>在Java源码中有很多地方都使用到了填充来防止伪共享的发生：</p>
+<ul>
+<li>ConcurrentHashMap中的CounterCell使用<code>@Contended</code>注解来防止伪共享</li>
+</ul>
 <h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://nextfe.com/memory-barrier/">https://nextfe.com/memory-barrier/</a></li>
@@ -139,6 +155,7 @@
 <li><a href="https://www.0xffffff.org/2017/02/21/40-atomic-variable-mutex-and-memory-barrier/">https://www.0xffffff.org/2017/02/21/40-atomic-variable-mutex-and-memory-barrier/</a></li>
 <li><a href="https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html">https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html</a></li>
 <li><a href="http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html">http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html</a></li>
+<li><a href="https://monkeysayhi.github.io/2017/12/28/%E4%B8%80%E6%96%87%E8%A7%A3%E5%86%B3%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C/">https://monkeysayhi.github.io/2017/12/28/%E4%B8%80%E6%96%87%E8%A7%A3%E5%86%B3%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C/</a></li>
 </ul>
 			</div>
 		</article>
@@ -151,15 +168,15 @@
 		<div>
 			<ul>
 				
+				<li><a href="/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之零拷贝相关知识总结记录</a></li>
+				
 				<li><a href="/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之CPU、Cache、MESI等相关知识总结记录</a></li>
 				
-				<li><a href="/2021/03/15/IO%E4%B9%8B%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">IO之同步、异步、阻塞、非阻塞</a></li>
+				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
 				
 				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
 				
 				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
-				
-				<li><a href="/2020/08/26/Spring%E4%B8%AD%E5%AF%B9Groovy%E6%94%AF%E6%8C%81%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Spring中对Groovy支持的源码分析</a></li>
 				
 			</ul>
 		</div>
