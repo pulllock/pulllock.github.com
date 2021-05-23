@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Redis键空间以及过期键的删除策略</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=============<br>
+	== <a href="https://cxis.me/">cxis.me</a> ==<br>
+	=============
+	<div style="float: right;">脚踏实地</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Redis键空间以及过期键的删除策略</h1>
+			<b><time>2019-03-26 00:27:31</time></b>
+		       
+
+			<div>
+				<p>Redis键空间以及键过期的删除策略学习。</p>
+<ul>
+<li>redisServer结构表示redis服务器的状态</li>
+<li>redisDb结构表示redis服务器中的数据库</li>
+<li>client结构表示各个客户端的状态</li>
+</ul>
+<h1 id="数据库键空间">数据库键空间</h1>
+<p>Redis数据库由redisDb结构表示，所有键值对保存在redisDb的dict字典中，这个字典称为键空间（key space）：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> redisDb {
+  <span style="color:#75715e">// 键空间，保存数据库中所有键值对
+</span><span style="color:#75715e"></span>  dict <span style="color:#f92672">*</span>dict;
+  
+  <span style="color:#75715e">// 过期字典，保存着键的过期时间
+</span><span style="color:#75715e"></span>  dict <span style="color:#f92672">*</span>expires
+}
+</code></pre></div><ul>
+<li>键空间的键，就是数据库的键，是字符串对象</li>
+<li>键空间的值，就是数据库的值，可以是：字符串对象、列表对象、哈希表对象、集合对象、有序集合对象</li>
+</ul>
+<h2 id="数据库的操作">数据库的操作</h2>
+<ul>
+<li>添加新键：将新键值添加到键空间字典里面。</li>
+<li>删除键：在键空间里面删除键所对应的键值对对象。</li>
+<li>更新键：对键空间里键对应的值对象进行更新。</li>
+<li>对键取值：在键空间字典里取出键对应的值对象。</li>
+</ul>
+<h2 id="读写键空间时的附加操作">读写键空间时的附加操作</h2>
+<ul>
+<li>对键的读写操作，会根据键是否存在来更新服务器键空间命中hit次数和不命中miss次数。</li>
+<li>读取键后，服务器会更新键的LRU时间。</li>
+<li>读取一个键时发现键过期，服务器会先删除这个键。</li>
+<li>客户端如果使用WATCH监听了键，服务器对键的修改，会把这个键标记为dirty，让事务程序注意到这个键被修改。</li>
+<li>服务器每修改一次键，会对dirty计数器加1，计数器会触发服务器的持久化以及复制操作。</li>
+<li>如果服务器开启了数据库通知功能，对键修改后，服务器会按照配置发送通知。</li>
+</ul>
+<h1 id="设置键的生存时间或过期时间">设置键的生存时间或过期时间</h1>
+<ul>
+<li>EXPIRE，设置键的生存时间TTL，单位：秒</li>
+<li>PEXPIRE，设置键的生存时间TTL，单位：毫秒</li>
+<li>EXPIREAT，设置键的过期时间，单位：秒</li>
+<li>PEXPIREAT，设置键的过期时间，单位：毫秒</li>
+<li>EXPIRE、PEXPIRE、EXPIREAT三个命令都是使用PEXPIZREAT命令来实现的。</li>
+</ul>
+<h2 id="保存过期时间">保存过期时间</h2>
+<p>redisDb使用expires字典来保存数据库中所有键的过期时间，叫做过期字典：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">redisDb {
+  <span style="color:#75715e">// 键空间，保存数据库中所有键值对
+</span><span style="color:#75715e"></span>  dict <span style="color:#f92672">*</span>dict;
+  
+  <span style="color:#75715e">// 过期字典，保存着键的过期时间
+</span><span style="color:#75715e"></span>  dict <span style="color:#f92672">*</span>expires
+}
+</code></pre></div><ul>
+<li>过期字典的键是个指针，指向某个键对象。</li>
+<li>过期字典的值是一个long long类型整数，保存了键指向的键对象过期时间，毫秒经度的unix时间戳。</li>
+</ul>
+<h1 id="过期键删除策略">过期键删除策略</h1>
+<ul>
+<li>定时删除，在设置键过期时间的同时，创建一个定时器，让定时器在键的过期时间来临时，立即执行对键的删除操作</li>
+<li>惰性删除，每次从键空间中获取键时，检查要获取的键是否过期，如果过期就删除该键；如果没有过期就返回该键</li>
+<li>定期删除，每隔一段时间，程序对数据库进行一次检查，删除里面的过期键</li>
+</ul>
+<p>定时删除和定期删除是主动删除策略，惰性删除是被动删除策略。</p>
+<h2 id="定时删除">定时删除</h2>
+<p>优点：</p>
+<ul>
+<li>对内存友好，能及时删除过期的键，释放所占用的内存</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>占用CPU，过期键较多的情况峡，定时删除过期键可能会占用相当一部分的CPU时间</li>
+<li>定时需要用到Redis时间事件，时间事件实现方式是无序链表，查找事件复杂度O(N)</li>
+</ul>
+<h2 id="惰性删除">惰性删除</h2>
+<p>优点：</p>
+<ul>
+<li>对CPU友好，只会在取出的时候才会对键进行过期检查，可保证过期键能被删除掉，并且不会在删除其他无关的过期键上花费CPU时间</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>对内存不友好，如果一个键已过期，但键仍旧留在数据库中，占用的内存一直不会被释放掉</li>
+<li>如果有非常多的过期键，一直没有被访问到，则永远都不会被删除，会造成内存泄漏</li>
+</ul>
+<h2 id="定期删除">定期删除</h2>
+<p>优点：</p>
+<ul>
+<li>每隔一段时间执行一次删除操作，可通过限制删除操作执行时长和频率来减少对CPU的占用</li>
+<li>定期删除可以减少过期键带来的内存浪费</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>如果删除操作执行太频繁或者执行时间太长，定期删除策略会退化成定时删除策略，浪费过多的CPU</li>
+<li>如果删除操作执行太少或者时间太短，定期删除策略会和惰性删除策略一样，出现内存浪费的情况</li>
+</ul>
+<p>Redis使用惰性删除和定期删除两种策略，通过两种策略配合，可以在避免浪费CPU时间和避免浪费内存间取得平衡。</p>
+<h1 id="redis过期键删除策略">Redis过期键删除策略</h1>
+<p>Redis使用惰性删除和定期删除两种策略，通过两种策略配合，可以在避免浪费CPU时间和避免浪费内存间取得平衡。</p>
+<h2 id="惰性删除策略的实现">惰性删除策略的实现</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">expireIfNeeded</span>(redisDb <span style="color:#f92672">*</span>db, robj <span style="color:#f92672">*</span>key) {
+    <span style="color:#75715e">// 判断键是否已过期，未过期，返回0
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>keyIsExpired(db,key)) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+
+    <span style="color:#75715e">// 键已过期，并且当前是在从机器上，直接返回1，不做过期键的删除操作
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (server.masterhost <span style="color:#f92672">!=</span> NULL) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>;
+
+    <span style="color:#75715e">// 过期键计数器加1
+</span><span style="color:#75715e"></span>    server.stat_expiredkeys<span style="color:#f92672">++</span>;
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * propagateExpire字面意思是传播过期。
+</span><span style="color:#75715e">     * 删除过期键是在主机器上，需要将删除的事情通知出去：
+</span><span style="color:#75715e">     * - 如果开启了AOF，需要为这个要删除的键在AOF文件中记录一条删除日志
+</span><span style="color:#75715e">     * - 如果当前主机器有从机器的话，需要向所有的从机器发送删除键的命令
+</span><span style="color:#75715e">     */</span>
+    propagateExpire(db,key,server.lazyfree_lazy_expire);
+    <span style="color:#75715e">// 发起键过期的通知
+</span><span style="color:#75715e"></span>    notifyKeyspaceEvent(NOTIFY_EXPIRED,
+        <span style="color:#e6db74">&#34;expired&#34;</span>,key,db<span style="color:#f92672">-&gt;</span>id);
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * lazyfree_lazy_expire的值是在配置文件中配置的，在键过期的时候使用该配置
+</span><span style="color:#75715e">     * 来控制是否进行异步删除过期键。
+</span><span style="color:#75715e">     * dbAsyncDelete 异步删除
+</span><span style="color:#75715e">     * dbSyncDelete 同步删除
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * redis是单线程的，如果删除的时候耗时过长，会影响到redis性能，并导致请求阻塞掉，
+</span><span style="color:#75715e">     * 因此可以选择配置中开启惰性释放，异步删除。实际上redis实现的时候，
+</span><span style="color:#75715e">     * 并不是直接开启线程进行异步删除，而是权衡了进行异步删除和直接同步删除的
+</span><span style="color:#75715e">     * 影响后，根据实际情况选择是否使用异步删除。另外删除的时候也不是真正直接
+</span><span style="color:#75715e">     * 释放掉对应内存，而是从redis数据库中将键给删除掉，后续再做数据的清理。
+</span><span style="color:#75715e">     * 删除前需要先评估下，如果直接删除影响较小，就在主线程中直接删除掉。
+</span><span style="color:#75715e">     * 在开启线程异步执行的时候，是需要进行加锁的，加锁后将异步任务提交到队列中，
+</span><span style="color:#75715e">     * 有可能直接删除的影响会小于加锁的影响。
+</span><span style="color:#75715e">     * 如果释放对象需要做大量工作，对主线程影响较大，就需要开启一个新线程异步去做删除。
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">return</span> server.lazyfree_lazy_expire <span style="color:#f92672">?</span> dbAsyncDelete(db,key) <span style="color:#f92672">:</span>
+                                         dbSyncDelete(db,key);
+}
+</code></pre></div><h2 id="定期删除策略的实现">定期删除策略的实现</h2>
+<p>redis的时间事件是serverCron执行的时候，activeExpireCycle就会被调用，在规定的时间内，分多次遍历服务器中的各个数据库，从数据库的expires字典中随机检查一部分键的过期时间，并删除过期键。</p>
+<h1 id="rdb功能对过期键的处理">RDB功能对过期键的处理</h1>
+<ul>
+<li>生成RDB文件，使用SAVE或者BGSAVE新建RDB文件时，会对键检查，过期的键不会保存到RDB中。</li>
+<li>载入RDB文件，主服务器载入RDB文件，过期键会被忽略。</li>
+<li>载入RDB文件，从服务载入RDB文件，不会检查过期键，全部载入数据库中。主从服务器同步的时候，从服务器数据库会被清空。</li>
+</ul>
+<h1 id="aof功能对过期键的处理">AOF功能对过期键的处理</h1>
+<ul>
+<li>服务器AOF持久化模式运行时，如果键过期，还没被惰性删除或定期删除，AOF文件不会做处理。</li>
+<li>当键被惰性删除或定期删除，程序会向AOF文件追加一条DEL命令，显式记录删除该键。</li>
+<li>AOF重写时，会对键校验，已过期的键不会保存到重写后的AOF文件中。</li>
+</ul>
+<h1 id="复制功能对过期键的处理">复制功能对过期键的处理</h1>
+<ul>
+<li>从服务器的过期键删除动作由主服务器控制。</li>
+<li>主服务器删除一个过期键后，会显式向所有从服务器发送一个DEL命令，告知删除过期键。</li>
+<li>从服务器执行客户端发送的读命令时，碰到过期键也不会删除。</li>
+<li>从服务器只有在接收到主服务器发来的DEL命令才会删除过期键。</li>
+</ul>
+<h1 id="参考">参考</h1>
+<ul>
+<li>《redis设计与实现》（第二版）</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之零拷贝相关知识总结记录</a></li>
+				
+				<li><a href="/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之CPU、Cache、MESI等相关知识总结记录</a></li>
+				
+				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>
