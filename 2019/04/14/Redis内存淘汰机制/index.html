@@ -41,27 +41,28 @@
 			<h1>Redis内存淘汰机制</h1>
 			<b><time>2019-04-14 17:02:40</time></b>
 		       
-		           <a href="/tags/redis">redis</a>
-        	       
 
 			<div>
-				<p>Redis可以设置key的过期时间，key过期了之后会根据key过期策略将key进行淘汰，但是如果Redis的内存到达了一定的阈值，即使key没有过期，也会根据一定的策略对数据进行淘汰。</p>
-<p>Redis可以配置maxmemory来开启内存淘汰机制，当内存达到了配置的值，就会开始淘汰内存中的数据。maxmemory为0的时候表示对内存的使用没有限制。</p>
+				<p>Redis内存淘汰机制学习。</p>
 <p>Redis内存淘汰策略有以下几种：</p>
 <ul>
-<li>volatile-lru，从已设置过期时间的数据集中挑选最近最少使用的数据淘汰，设置过期时间的数据在expires字典中，Redis并不是将所有的最近最少使用的数据全部淘汰，而是随机挑选几个进行淘汰。</li>
-<li>volatile-ttl，从已设置过期时间的数据集中挑选将要过期的数据进行淘汰，设置过期时间的数据在expires字典中，Redis并不是将所有的将要过期的数据全部淘汰，而是随机挑选几个进行淘汰。</li>
-<li>volatile-random，从已设置过期时间的数据集中随机选择数据进行淘汰。</li>
-<li>allkeys-lru，从所有数据集中挑选最近最少使用的数据淘汰，数据集在服务器的dict字典中。</li>
-<li>allkeys-random，从所有数据集中随机选择数据进行淘汰，数据集在服务器的dict字典中。</li>
+<li>volatile-lru，从已设置过期时间的数据集（redisDb.expires字典）中挑选最近最少使用的数据淘汰，Redis并不是将所有的最近最少使用的数据全部淘汰，而是随机挑选几个进行淘汰。</li>
+<li>volatile-lfu，从已设置过期时间的数据集（redisDb.expires字典）中选择使用频率最少的数据进行淘汰。</li>
+<li>volatile-ttl，从已设置过期时间的数据集（redisDb.expires字典）中挑选将要过期的数据进行淘汰，Redis并不是将所有的将要过期的数据全部淘汰，而是随机挑选几个进行淘汰。</li>
+<li>volatile-random，从已设置过期时间的数据集（redisDb.expires字典）中随机选择数据进行淘汰。</li>
+<li>allkeys-lru，从所有数据集（redisDb.dict字典）中挑选最近最少使用的数据淘汰。</li>
+<li>allkeys-lfu，从所有数据集（redisDb.dict字典）中选择使用频率最少的数据进行淘汰。</li>
+<li>allkeys-random，从所有数据集（redisDb.dict字典）中随机选择数据进行淘汰。</li>
 <li>no-enviction，禁止淘汰数据，新写入会报错。</li>
 </ul>
-<p>Redis4.0之后增加了两个LFU（Least Frequently Used）使用频率最少的：</p>
-<ul>
-<li>volatile-lfu，从已设置过期时间的数据集中选择使用频率最少的数据进行淘汰。</li>
-<li>allkeys-lfu，从所有数据集中选择使用频率最少的数据进行淘汰。</li>
-</ul>
 <p>一般会选择allkeys-lru淘汰策略，原因是如果我们的应用对缓存的访问符合幂律分布，存在相对热点数据，或者不太清楚应用的缓存访问分布状况，则可以选allkeys-lru策略。</p>
+<p>Redis可以配置maxmemory来开启内存淘汰机制，当内存达到了配置的值，就会开始淘汰内存中的数据。maxmemory为0的时候表示对内存的使用没有限制。</p>
+<p>内存淘汰机制有两种情况会触发：</p>
+<ol>
+<li>客户端的查询或者插入的命令执行时，会触发内存淘汰机制</li>
+<li>客户端修改maxmemory的配置的时候会触发</li>
+</ol>
+<p>这两种情况都会调用freeMemoryIfNeededAndSafe方法触发。</p>
 			</div>
 		</article>
 	</main>
