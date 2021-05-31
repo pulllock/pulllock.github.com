@@ -41,17 +41,16 @@
 			<h1>Redis主从复制</h1>
 			<b><time>2019-04-05 21:03:55</time></b>
 		       
-		           <a href="/tags/redis">redis</a>
-        	       
 
 			<div>
-				<p>主从复制，用户可以执行SLAVEOF命令或者设置slaveof选项，让一个服务器（从服务器slave）去复制replicate另外一个服务器（主服务器master）。</p>
-<p>Redis复制功能分为同步sync和命令传播command propagate：</p>
-<ul>
-<li>同步用于将服务器数据库状态更新到主服务器所处的数据库状态。</li>
-<li>命令传播用于主服务器数据库状态被修改后，让从服务器数据库重新回到一致状态。</li>
-</ul>
+				<p>主从复制，主要学习：怎样进行主从复制、旧版复制功能实现、旧版复制功能缺陷、新版复制功能实现等。</p>
+<p>试用SLAVEOF命令或者设置slaveof选项，可以让一个从服务器slave去复制另外一个主服务器master。</p>
 <h1 id="旧版复制功能实现">旧版复制功能实现</h1>
+<p>Redis复制功能分为同步（sync）和命令传播（command propagate）：</p>
+<ul>
+<li>同步：用于将服务器数据库状态更新到主服务器所处的数据库状态。</li>
+<li>命令传播：用于主服务器数据库状态被修改后，让从服务器数据库重新回到一致状态。</li>
+</ul>
 <h2 id="同步">同步</h2>
 <ol>
 <li>从服务器向主服务器发送SYNC命令</li>
@@ -76,13 +75,15 @@
 <li>服务器运行ID，主从服务器都会有自己的运行ID</li>
 </ul>
 <h1 id="psync命令的实现">PSYNC命令的实现</h1>
-<p>
-<figure>
-  <img src="/Redis%e4%b8%bb%e4%bb%8e%e5%a4%8d%e5%88%b6/PSYNC-1.png" alt="PSYNC-1" />
-</figure>
-
-
-</p>
+<h2 id="从服务器没有复制过任何主服务器">从服务器没有复制过任何主服务器</h2>
+<p>如果从服务器没有复制过任何主服务器，那么从服务器在开始一次新的复制时向主服务器发送<code>PSYNC ? -1</code> 命令，进行完整同步</p>
+<h2 id="从服务器已经复制过某个主服务器">从服务器已经复制过某个主服务器</h2>
+<p>如果从服务器已经复制过某个主服务器，那么从服务器开始一次新的复制时会向主服务器发送<code>PSYNC runid offset</code>，runid是上一次复制的主服务器的id，offset时从服务器当前的复制偏移量。主服务器接受到从服务器的命令后，可能会返回的回复有：</p>
+<ul>
+<li>主服务器要求从服务器执行完整重同步操作，返回命令<code>+FULLRSYNC runid offset</code>给从服务器，runid是主服务器的id，offset时主服务器当前偏移量</li>
+<li>主服务器返回<code>+CONTINUE</code>，则从服务器进行部分重同步</li>
+<li>主服务器返回<code>+ERR</code>，表示主服务器版本低于Redis2.8，不能识别PSYNC命令，则从服务器会发送SYNC命令执行完整同步。</li>
+</ul>
 <h1 id="参考">参考</h1>
 <ul>
 <li>《redis设计与实现》（第二版）</li>

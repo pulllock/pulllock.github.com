@@ -680,7 +680,7 @@
       <pubDate>Fri, 05 Apr 2019 21:03:55 +0000</pubDate>
       
       <guid>https://cxis.me/2019/04/05/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</guid>
-      <description>&lt;p&gt;主从复制，用户可以执行SLAVEOF命令或者设置slaveof选项，让一个服务器（从服务器slave）去复制replicate另外一个服务器（主服务器master）。&lt;/p&gt;</description>
+      <description>&lt;p&gt;主从复制，主要学习：怎样进行主从复制、旧版复制功能实现、旧版复制功能缺陷、新版复制功能实现等。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -693,11 +693,20 @@
     </item>
     
     <item>
-      <title>Redis持久化</title>
-      <link>https://cxis.me/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/</link>
+      <title>Redis客户端和服务器简介</title>
+      <link>https://cxis.me/2019/04/02/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8C%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Tue, 02 Apr 2019 22:01:00 +0000</pubDate>
+      
+      <guid>https://cxis.me/2019/04/02/Redis%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8C%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;Redis客户端和服务器实现的学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Redis的RDB和AOF持久化</title>
+      <link>https://cxis.me/2019/04/02/Redis%E7%9A%84RDB%E5%92%8CAOF%E6%8C%81%E4%B9%85%E5%8C%96/</link>
       <pubDate>Tue, 02 Apr 2019 20:01:00 +0000</pubDate>
       
-      <guid>https://cxis.me/2019/04/02/Redis%E6%8C%81%E4%B9%85%E5%8C%96/</guid>
+      <guid>https://cxis.me/2019/04/02/Redis%E7%9A%84RDB%E5%92%8CAOF%E6%8C%81%E4%B9%85%E5%8C%96/</guid>
       <description>&lt;p&gt;Redis可以将内存中的数据库状态持久化到磁盘中去，提供了两种持久化方法：RDB持久化和AOF持久化。&lt;/p&gt;</description>
     </item>
     
@@ -747,12 +756,21 @@
     </item>
     
     <item>
-      <title>Redis字典</title>
-      <link>https://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8/</link>
+      <title>Redis字典、rehash和渐进式rehash</title>
+      <link>https://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8rehash%E5%92%8C%E6%B8%90%E8%BF%9B%E5%BC%8Frehash/</link>
       <pubDate>Fri, 15 Mar 2019 22:05:40 +0000</pubDate>
       
-      <guid>https://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8/</guid>
+      <guid>https://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8rehash%E5%92%8C%E6%B8%90%E8%BF%9B%E5%BC%8Frehash/</guid>
       <description>Redis字典使用哈希表作为底层实现，一个哈希表可以有多个哈希节点，每个哈希表节点就保存了字典中的一个键值对。 哈希表 Redis字典使用哈希表</description>
+    </item>
+    
+    <item>
+      <title>Redis学习路线</title>
+      <link>https://cxis.me/2019/03/13/Redis%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF/</link>
+      <pubDate>Wed, 13 Mar 2019 20:05:32 +0000</pubDate>
+      
+      <guid>https://cxis.me/2019/03/13/Redis%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF/</guid>
+      <description>&lt;p&gt;学习的路线。&lt;/p&gt;</description>
     </item>
     
     <item>

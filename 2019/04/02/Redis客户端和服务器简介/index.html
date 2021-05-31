@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Redis客户端和服务器简介</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=============<br>
+	== <a href="https://cxis.me/">cxis.me</a> ==<br>
+	=============
+	<div style="float: right;">脚踏实地</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Redis客户端和服务器简介</h1>
+			<b><time>2019-04-02 22:01:00</time></b>
+		       
+
+			<div>
+				<p>Redis客户端和服务器实现的学习。</p>
+<h1 id="redis客户端">Redis客户端</h1>
+<p>每一个和服务器连接的客户端，都有一个client结构与之对应，并且这些client组成一个链表，保存在redisServer的clients属性中。</p>
+<p>客户端client结构如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> client {
+    <span style="color:#75715e">// 客户端套接字描述符
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> fd;
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * db记录了客户端当前的目标数据库
+</span><span style="color:#75715e">     * 是指向redisDb结构的指针
+</span><span style="color:#75715e">     */</span>
+    redisDb <span style="color:#f92672">*</span>db; 
+    <span style="color:#75715e">// 客户端名字
+</span><span style="color:#75715e"></span>    robj <span style="color:#f92672">*</span>name;
+    <span style="color:#75715e">// 客户端创建时间
+</span><span style="color:#75715e"></span>    time_t ctime;
+    <span style="color:#75715e">// 客户端标志，比如是主还是从
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> flags;
+    <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>} client;
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> redisServer {
+    <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// clients是一个链表，保存了所有的客户端
+</span><span style="color:#75715e"></span>    list <span style="color:#f92672">*</span>clients;
+    <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>};
+</code></pre></div><h2 id="普通客户端和伪客户端">普通客户端和伪客户端</h2>
+<p>redis的客户端有两种：</p>
+<ul>
+<li>伪客户端，套接字描述符是-1，主要是在AOF文件载入时执行AOF文件中包含的redis命令以及执行lua脚本中包含的redis命令的</li>
+<li>普通客户端，套接字描述符大于-1的整数，处理来自网络的请求</li>
+</ul>
+<h3 id="普通客户端">普通客户端</h3>
+<p>客户端通过connect函数连接到服务器，服务器调用连接事件处理器，为客户端创建相应的客户端状态，并将这个客户端加入到服务器状态redisServer的clients链表的末尾</p>
+<h3 id="lua脚本的伪客户端">lua脚本的伪客户端</h3>
+<p>服务器初始化的时候会创建一个负责执行lua脚本中包含的redis命令的伪客户端，并将这个伪客户端关联到服务器状态redisServer的lua_client属性中。lua_client在服务器运行的整个生命周期一直存在，只有在服务器被关闭，这个客户端才会被关闭</p>
+<h3 id="aof文件的伪客户端">AOF文件的伪客户端</h3>
+<p>服务器在载入AOF文件的时候会创建用于执行AOF文件中包含的redis命令的伪客户端，并在载入文件完成后关闭这个伪客户端</p>
+<h1 id="redis服务器">Redis服务器</h1>
+<p>redis服务器负责与多个客户端建立网络连接，处理客户端发送的命令请求。</p>
+<h2 id="命令请求的执行过程">命令请求的执行过程</h2>
+<ol>
+<li>客户端发送命令请求</li>
+<li>服务端读取命令请求</li>
+<li>命令执行器查找命令实现</li>
+<li>命令执行器执行预备操作</li>
+<li>命令执行器调用命令的实现函数</li>
+<li>命令执行器执行后续工作</li>
+<li>将命令回复发送给客户端</li>
+<li>客户端接收并打印命令回复</li>
+</ol>
+<h3 id="客户端发送命令请求">客户端发送命令请求</h3>
+<p>客户端会将命令请求转换成redis的协议格式，连接到服务器套接字，并将命令请求发送到服务器。</p>
+<h3 id="服务端读取命令请求">服务端读取命令请求</h3>
+<p>客户端发送命令到服务端，服务器调用命令请求处理器readQueryFromClient来进行命令请求的读取，主要有以下步骤：</p>
+<ol>
+<li>从套接字中读取redis协议格式的命令请求，并保存到客户端状态client的输入缓冲区querybuf中。</li>
+<li>对输入缓冲区中的命令请求进行解析，提取出命令参数和命令参数个数，保存在argv和argc属性中。</li>
+<li>调用命令执行器，执行客户端发送的命令。</li>
+</ol>
+<h3 id="查找命令请求">查找命令请求</h3>
+<p>Redis中命令和命令的实现保存在一个字典中，称为命令表，字典的key是redis命令，字典的value是命令对应的实现redisCommand结构。</p>
+<p>可以根据从输入缓冲区中解析到的argv[0]里面的命令到命令表中查找对应命令的实现，然后执行命令。</p>
+<h3 id="执行预备操作">执行预备操作</h3>
+<p>在从命令表中找到命令对应的命令实现后，还需要执行一些预备工作，才会真正执行命令：</p>
+<ul>
+<li>命令是否存在</li>
+<li>命令所需要参数个数是否正确</li>
+<li>检查客户端是否通过了身份验证</li>
+<li>如果启用了maxmemmory配置，执行命令前需要先检查服务器内存占用情况，并在需要的时候进行内存回收</li>
+<li>如果上一次执行BGSAVE失败，并且服务器打开了是投票-writes-on-bgsave-error，并且此时要执行的是写命令，则服务器拒绝执行该命令</li>
+<li>如果客户端正在使用SUBSCRIBE命令订阅频道，或者正再用PSUBSCRIBE命令订阅模式，则服务器只会执行SUBSCRIBE、PSUBSCRIBE、UNSUBSCRIBE、PUNSUBSCRIBE四个命令，其他的命令都会被服务器拒绝</li>
+<li>如果服务器正在进行数据载入，客户端发送的命令必须带有l标识，比如INFO、SHUTDOWN、PUBLISH等命令才会被服务器执行，其他的都会被服务器拒绝</li>
+<li>如果服务器因执行lua脚本而超时并进入阻塞状态，则服务器只会执行客户端发来的SHUTDOWN nosave命令和SCRIPT KILL命令，其他命令都会被拒绝</li>
+<li>如果客户端正在执行事务，服务器只会执行客户端发送的EXEC、DISCARD、MULTI、WATCH命令，其他命令都会被放进事务队列中</li>
+<li>如果服务器打开监视器功能，服务器要执行的命令和参数信息会发送给监视器。</li>
+</ul>
+<h3 id="调用命令实现函数">调用命令实现函数</h3>
+<p>在argv[0]中保存了命令，argv其他的位置保存的是命令所需要的参数。在命令实现函数执行完后，会产生相应的命令回复，命令回复会保存在客户端状态client的输出缓冲区中（buf和reply属性），然后命令实现函数会为客户端套接字关联命令回复处理器sendReplayToClient。</p>
+<h3 id="执行后续工作">执行后续工作</h3>
+<p>执行完命令实现函数后，服务器还要做一些后续工作：</p>
+<ul>
+<li>如果开启慢查询日志功能，则根据情况记录慢查询日志</li>
+<li>更新redisCommand结构的一些属性：milliseconds命令耗费时长、calls计数器加1</li>
+<li>如果开启了AOF持久化功能，则将刚执行的命令请求写入到AOF缓冲区</li>
+<li>如果有其他服务器正在复制当前服务器，则服务器将刚刚执行的命令传播给所有从服务器</li>
+</ul>
+<h3 id="将命令回复发送给客户端">将命令回复发送给客户端</h3>
+<p>命令函数执行后会将命令回复保存到客户端状态的输出缓冲区，并为客户端套接字关联命令回复处理器sendReplayToClient。</p>
+<p>当客户端套接字变的可写时，服务器就执行命令回复处理器，并将输出缓冲区中的命令回复发送给客户端。命令回复发送完后，命令回复处理器会清空客户端状态的输出缓冲区</p>
+<h3 id="客户端接收并打印命令回复">客户端接收并打印命令回复</h3>
+<p>客户端接受到redis协议格式的命令回复后，会打印出来。</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li>《redis设计与实现》（第二版）</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之零拷贝相关知识总结记录</a></li>
+				
+				<li><a href="/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之CPU、Cache、MESI等相关知识总结记录</a></li>
+				
+				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>

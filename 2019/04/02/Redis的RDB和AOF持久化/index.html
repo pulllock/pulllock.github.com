@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style type=text/css>body{font-family:monospace;}</style>
+	<title>Redis的RDB和AOF持久化</title>
+	
+	
+	<link rel="stylesheet" href="/css/style.css">
+	
+	
+
+</head>
+<body>
+	<header>
+	=============<br>
+	== <a href="https://cxis.me/">cxis.me</a> ==<br>
+	=============
+	<div style="float: right;">脚踏实地</div><br>
+	<p>
+	<nav>
+			<a href="/"><b>Start</b></a>.
+			
+			
+			<a href="/posts/"><b>Posts</b></a>.
+			
+			<a href="/categories"><b>Categories</b></a>.
+			
+			<a href="/tags"><b>Tags</b></a>.
+			
+	</nav>
+	</p>
+	
+</header>
+
+	
+	<main>
+		<article>
+			<h1>Redis的RDB和AOF持久化</h1>
+			<b><time>2019-04-02 20:01:00</time></b>
+		       
+
+			<div>
+				<p>Redis可以将内存中的数据库状态持久化到磁盘中去，提供了两种持久化方法：RDB持久化和AOF持久化。</p>
+<h1 id="rdb持久化">RDB持久化</h1>
+<p>RDB持久化功能既可以手动执行，也可以根据服务器配置定期执行，会将某个时间点上的数据库状态保存到一个RDB文件中。</p>
+<h2 id="rdb创建和加载">RDB创建和加载</h2>
+<p>RDB文件创建有两个命令：SAVE和BGSAVE</p>
+<ul>
+<li>SAVE，会阻塞Redis服务进程，直到RDB文件创建完毕，此期间服务器不能处理任何命令请求。</li>
+<li>BGSAVE，会派生一个子进程去创建RDB文件，服务器进程继续处理命令请求。</li>
+</ul>
+<p>RDB文件恢复是在服务器启动的时候自动执行的，只要Redis服务器启动时检测到RDB文件存在，就自动载入RDB文件，RDB载入期间，服务器会一直处于阻塞，直到载入完成才能提供服务。</p>
+<ul>
+<li>如果开启了AOF，则优先使用AOF来还原数据库状态，因为AOF文件更新频率比RDB文件更新频率高。</li>
+<li>如果AOF未开启，则使用RDB来还原数据库状态。</li>
+</ul>
+<p>另外，SAVE、BGSAVE、BGREWRITEAOF三个命令之间也会有一些互斥的关系：</p>
+<ul>
+<li>SAVE命令执行期间，Redis服务器会被阻塞，所有客户端的请求都会被拒绝。</li>
+<li>BGSAVE是子进程，在执行期间，SAVE命令会被拒绝，新的BGSAVE命令也会被拒绝。</li>
+<li>BGSAVE运行期间，BGREWRITEAOF命令会被延迟到BGSAVE命令执行完毕。</li>
+<li>BGREWRITEAOF执行期间，BGSAVE命令会被拒绝。</li>
+</ul>
+<h2 id="rdb自动保存的时机">RDB自动保存的时机</h2>
+<p>Redis允许配置save选项，让服务器每隔一段时间自动执行一次BGSAVE命令。配置的保存选项可以有多个，只要其中任一个条件满足，服务器就会执行BGSAVE命令。</p>
+<p>配置的选项存在redisServer结构的saveparams属性中，saveparams是一个数组，每一项是一个saveparam结构，表示一个配置的保存选项。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> redisServer {
+    <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// saveparams数组
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> saveparam <span style="color:#f92672">*</span>saveparams;
+    <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 修改计数器
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> dirty;
+    <span style="color:#75715e">// 上一次执行保存的时间
+</span><span style="color:#75715e"></span>    time_t lastsave;
+};
+
+<span style="color:#66d9ef">struct</span> saveparam {
+    <span style="color:#75715e">// 秒数
+</span><span style="color:#75715e"></span>    time_t seconds;
+    <span style="color:#75715e">// 修改次数
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> changes;
+}
+</code></pre></div><h3 id="dirty计数器和lastsave属性">dirty计数器和lastsave属性</h3>
+<p>redisServer结构中还有一个dirty计数器和leastsave属性：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">redisServer {
+  <span style="color:#75715e">// 计数器，记录距离上一次成功执行SAVE或者BGSAVE命令后，服务器对数据库进行了多少次修改
+</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> dirty;
+  
+  <span style="color:#75715e">// 上一次执行SAVE命令或者BGSAVE命令的时间
+</span><span style="color:#75715e"></span>  time_t lastsave;
+}
+</code></pre></div><p>Redis的时间事件serverCron默认每隔100ms执行一次，其中就会检查保存选项是否满足，如果条件满足了，就会执行BGSAVE命令。</p>
+<h2 id="rdb文件结构">RDB文件结构</h2>
+<p>结构可参考书上内容，暂不写。</p>
+<h1 id="aof持久化">AOF持久化</h1>
+<p>AOF（Append Only File），通过保存Redis服务器所执行的写命令来记录数据库状态，而RDB是保存数据库中的键值对数据来记录数据库状态。</p>
+<h2 id="aof持久化实现">AOF持久化实现</h2>
+<p>AOF持久化功能实现分为三部分：</p>
+<ul>
+<li>命令追加append，执行完一个写命令后，会以协议格式将写命令追加到服务器的aof_buff缓冲区末尾。</li>
+<li>文件写入（还在内存中）</li>
+<li>文件同步sync到磁盘上</li>
+</ul>
+<p>文件写入和同步有三个选项appendfsync：</p>
+<ul>
+<li>always，每个事件都要将aof_buf缓冲区中所有内容写入到AOF文件中，并且同步AOF文件，效率最慢，但是最安全，出现故障只会丢失一个事件循环中的命令数据。</li>
+<li>everysec，每个事件循环都要将aof_buf缓冲区所有内容写到AOF文件，并且每隔一秒就要在子线程中对AOF进行同步一次，效率足够快，出现故障会丢失1秒的数据。默认选项是这个。</li>
+<li>no，每个事件循环都要将aof_buf缓冲区内容写到AOF文件中，但AOF文件同步则由操作系统决定，由于不进行同步操作，效率最好，但是出现故障丢失的数据是积累一段时间的数据。</li>
+</ul>
+<p>从内存到磁盘的持久化有三种方式：</p>
+<ul>
+<li>sync，只是将修改过的内存块缓冲区加入写队列，就返回，不等待实际的IO操作结束。性能好，但是掉电有丢失数据的风险。</li>
+<li>fsync，强制将修改过的数据同步到磁盘上，等待磁盘操作结束才返回，并且刷新文件的所有信息。性能差，但是不会丢失数据。</li>
+<li>fdatasync，强制将修改过的数据同步到磁盘上，但是不修改文件本身的一些元数据（比如修改时间、访问时间；如果文件大小变了需要刷新元数据），可以减少IO次数。性能比fsync好，可能会丢失一些元数据的风险。</li>
+</ul>
+<h2 id="aof文件载入和数据还原">AOF文件载入和数据还原</h2>
+<p>服务器读取并重新执行一遍AOF文件中保存的写命令：</p>
+<ol>
+<li>创建一个不带网络连接的伪客户端</li>
+<li>从AOF文件中分析读取一条写命令</li>
+<li>使用伪客户端执行被读出的写命令</li>
+</ol>
+<h2 id="aof重写">AOF重写</h2>
+<p>AOF重写就是让原来的AOF文件变小，去除冗余的命令。</p>
+<p>AOF持久化记录了被执行的写命令，AOF文件会越来越大，会对服务器造成影响，恢复时间也会很长，AOF采用重写rewrite来解决文件膨胀问题，创建一个新的AOF文件代替现有的AOF文件，新旧文件保存的数据库状态相同，但是新文件不会包含冗余的命令，体积会比旧文件小很多。</p>
+<p>重写不是读取原来AOF文件进行重写，而是读取服务器当前的数据库状态进行实现，简单说就是根据数据库现有状态，将现有一个键值对的数据汇总成一条写命令，而不是原来的若干条命令。这样就减少了AOF文件的大小。</p>
+<h2 id="aof后台重写">AOF后台重写</h2>
+<p>由于AOF重写会阻塞服务，所以需要采用后台重写，后台重写使用子进程来处理。子进程开始重写文件后，主进程还在继续提供服务，会有新的命令进来，会造成重写后的AOF文件和数据库状态不一致，Redis使用AOF重写缓冲区来解决，Redis服务器执行一个写命令后，会同时将这个命令发送给AOF缓冲区和AOF重写缓冲区。</p>
+<p>子进程完成AOF重写工作后，会向父进程发一个信号，父进程会调用处理函数：</p>
+<ol>
+<li>将AOF重写缓冲区所有内容写到新的AOF文件中，新的AOF文件和服务器当前数据库状态就保持一致了。</li>
+<li>对新AOF文件改名，并原子的覆盖现有AOF文件，完成新旧文件的替换。</li>
+</ol>
+<h2 id="几个特殊命令的写aof操作">几个特殊命令的写AOF操作</h2>
+<p>通常情况下Redis只会将那些对数据库进行修改的命令写入到AOF文件中，并复制到各个从服务器，但是PUBSUB命令和SCRIPT LOAD命令是例外：</p>
+<ul>
+<li>PUBSUB没有修改数据库，但是PUBSUB命令向频道所有订阅者发送消息这一行为带有副作用，接受到消息的所有客户端状态会改变，服务器需要使用REDIS_FORCE_AOF标志，强制将这个命令写入AOF文件，将来载入AOF文件时，服务器可以再次执行相同的PUBSUB命令。</li>
+<li>SCRIPT LOAD命令没有修改数据库，但是修改了服务器状态，也是一个带有副作用的命令，服务器使用REDIS_FORCE_AOF强制将这个命令写入AOF文件。</li>
+</ul>
+<h1 id="rdb和aof对比">RDB和AOF对比</h1>
+<ul>
+<li>RDB持久化是保存数据库中键值对来记录数据库状态的不同</li>
+<li>AOF持久化是通过保存服务器执行的写命令来记录数据库状态</li>
+<li>RDB文件紧凑，全量备份，适合用于备份和灾难恢复，在恢复大数据集时的速度比AOF快</li>
+<li>RDB持久化期间修改的数据可能会丢失</li>
+</ul>
+<h1 id="bgsave和bgrewriteaof对哈希表rehash的影响">BGSAVE和BGREWRITEAOF对哈希表rehash的影响</h1>
+<p>如果没有BGSAVE和BGREWRITEAOF执行的时候，哈希表负载因子大于等于1的时候，进行rehash，而当有BGSAVE和BGREWRITEAOF执行的时候，哈希表负载因子会提高，当大于等与5的时候才会进行rehash。</p>
+<p>这是因为执行BGSAVE和BGREWRITEAOF的时候，是需要创建子进程来执行的，而大多数操作系统采用写时复制（Copy on Write）来优化子进程的效率，服务器提高负载因子后，就可以减少在有子进程存在期间哈希表的扩展操作，可以减少内存的写入操作，节约内存。</p>
+<h1 id="参考">参考</h1>
+<ul>
+<li>《redis设计与实现》（第二版）</li>
+</ul>
+			</div>
+		</article>
+	</main>
+<aside>
+	<div>
+		<div>
+			<h3>LATEST POSTS</h3>
+		</div>
+		<div>
+			<ul>
+				
+				<li><a href="/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之零拷贝相关知识总结记录</a></li>
+				
+				<li><a href="/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/">基础之CPU、Cache、MESI等相关知识总结记录</a></li>
+				
+				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
+				
+				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				
+				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</aside>
+
+
+	<footer>
+	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<a href="https://gohugo.io/"><b>Hugo</b></a>.
+	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
+	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	</p>
+</footer>
+
+</body>
+<script>
+    window.MathJax = {
+    tex: {
+      tags: 'ams',  
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    },
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.1.2/es5/tex-mml-svg.min.js" integrity="sha512-cvY8FLZ100SA0lUHyX38BDEr1rz0AKP6Iz+t5yfOPOyuKX72RNHIuPGH/+ScEsbKBhngYhKJSaFbtKet0te1Sw==" crossorigin="anonymous"></script>
+</html>

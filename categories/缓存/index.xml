@@ -81,15 +81,6 @@
     </item>
     
     <item>
-      <title>Redis主从复制</title>
-      <link>https://cxis.me/2019/04/05/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</link>
-      <pubDate>Fri, 05 Apr 2019 21:03:55 +0000</pubDate>
-      
-      <guid>https://cxis.me/2019/04/05/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</guid>
-      <description>&lt;p&gt;主从复制，用户可以执行SLAVEOF命令或者设置slaveof选项，让一个服务器（从服务器slave）去复制replicate另外一个服务器（主服务器master）。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>Redis对象</title>
       <link>https://cxis.me/2019/03/20/Redis%E5%AF%B9%E8%B1%A1/</link>
       <pubDate>Wed, 20 Mar 2019 20:30:02 +0000</pubDate>
@@ -114,15 +105,6 @@
       
       <guid>https://cxis.me/2019/03/19/Redis%E6%95%B4%E6%95%B0%E9%9B%86%E5%90%88/</guid>
       <description>&lt;p&gt;当一个集合只包含整数值元素，并且集合的元素数不多时，Redis使用整数集合intset作为集合键的底层实现。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Redis字典</title>
-      <link>https://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8/</link>
-      <pubDate>Fri, 15 Mar 2019 22:05:40 +0000</pubDate>
-      
-      <guid>https://cxis.me/2019/03/15/Redis%E5%AD%97%E5%85%B8/</guid>
-      <description>Redis字典使用哈希表作为底层实现，一个哈希表可以有多个哈希节点，每个哈希表节点就保存了字典中的一个键值对。 哈希表 Redis字典使用哈希表</description>
     </item>
     
     <item>
