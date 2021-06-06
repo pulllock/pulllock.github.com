@@ -7,7 +7,25 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>cxis</copyright>
-    <lastBuildDate>Sun, 14 Apr 2019 17:02:40 +0000</lastBuildDate><atom:link href="https://cxis.me/categories/Redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 20 Apr 2019 00:20:37 +0000</lastBuildDate><atom:link href="https://cxis.me/categories/Redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis有序集合使用和应用场景.md</title>
+      <link>https://cxis.me/2019/04/20/Redis%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E4%BD%BF%E7%94%A8%E5%92%8C%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF.md/</link>
+      <pubDate>Sat, 20 Apr 2019 00:20:37 +0000</pubDate>
+      
+      <guid>https://cxis.me/2019/04/20/Redis%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E4%BD%BF%E7%94%A8%E5%92%8C%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF.md/</guid>
+      <description>&lt;p&gt;有序集合Sorted Set的使用、实现、以及应用场景学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Redis跳表</title>
+      <link>https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</link>
+      <pubDate>Fri, 19 Apr 2019 22:20:37 +0000</pubDate>
+      
+      <guid>https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</guid>
+      <description>&lt;p&gt;跳表skiplist是一种有序数据结构，在每个节点维持指向其他节点的指针，可以达到快速访问节点的目的。可以认为跳表在原有的有序链表上增加了多级索引，通过索引就可以快速查找。跳表的查找、插入、删除事件复杂度都是O(log n)，还可以实现区间查找。&lt;/p&gt;</description>
+    </item>
+    
     <item>
       <title>Redis内存淘汰机制</title>
       <link>https://cxis.me/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/</link>
@@ -15,6 +33,15 @@
       
       <guid>https://cxis.me/2019/04/14/Redis%E5%86%85%E5%AD%98%E6%B7%98%E6%B1%B0%E6%9C%BA%E5%88%B6/</guid>
       <description>&lt;p&gt;Redis内存淘汰机制学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Redis发布与订阅</title>
+      <link>https://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/</link>
+      <pubDate>Sun, 14 Apr 2019 14:08:13 +0000</pubDate>
+      
+      <guid>https://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/</guid>
+      <description>&lt;p&gt;Redis支持发布订阅功能，SUBSCRIBE命令可以让客户端订阅一个或者多个频道，PSUBSCRIBE可以让客户端订阅一个或多个模式的，PUBLISH用来发布消息。&lt;/p&gt;</description>
     </item>
     
     <item>

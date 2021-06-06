@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<style type=text/css>body{font-family:monospace;}</style>
-	<title>Redis发布与订阅</title>
+	<title>Redis有序集合使用和应用场景.md</title>
 	
 	
 	<link rel="stylesheet" href="/css/style.css">
@@ -38,28 +38,32 @@
 	
 	<main>
 		<article>
-			<h1>Redis发布与订阅</h1>
-			<b><time>2019-04-14 14:08:13</time></b>
+			<h1>Redis有序集合使用和应用场景.md</h1>
+			<b><time>2019-04-20 00:20:37</time></b>
 		       
 
 			<div>
-				<p>Redis支持发布订阅功能，SUBSCRIBE命令可以让客户端订阅一个或者多个频道，PSUBSCRIBE可以让客户端订阅一个或多个模式的，PUBLISH用来发布消息。</p>
-<h1 id="频道的订阅和退订">频道的订阅和退订</h1>
-<p>客户端执行SUBSCRIBE可以订阅频道，订阅关系保存在服务器状态的pubsub_channels字典里：</p>
+				<p>有序集合Sorted Set的使用、实现、以及应用场景学习。</p>
 <ul>
-<li>键时某个被订阅的频道</li>
-<li>值是一个链表，记录了所有订阅这个频道的客户端</li>
+<li>Redis的有序集合的底层实现使用了跳表。</li>
+<li>有序集合同时使用跳表和字典实现</li>
 </ul>
-<p>退订频道的时候使用UNSUBSCRIBE命令，服务器会把客户端从pubsub_channels字典中删除。</p>
-<h1 id="发送消息">发送消息</h1>
-<p>客户端使用<code>PUBLISH &lt;channel&gt; &lt;message&gt;</code>来发送消息给频道channel，服务器会执行：</p>
+<p>使用场景：</p>
 <ul>
-<li>将消息发送给所有订阅了这个channel的订阅者</li>
-<li>如果有模式频道匹配到，则将消息发送给订阅了这个模式的订阅者</li>
+<li>排行榜、时间排序的列表</li>
+<li>带权重的队列</li>
+<li>做交集、差集、并集，公共好友</li>
+<li>延时队列</li>
+<li>限流</li>
 </ul>
 <h1 id="参考">参考</h1>
 <ul>
 <li>《redis设计与实现》（第二版）</li>
+<li><a href="https://zhuanlan.zhihu.com/p/147912757">https://zhuanlan.zhihu.com/p/147912757</a></li>
+<li><a href="https://www.jianshu.com/p/eddd2388d077">https://www.jianshu.com/p/eddd2388d077</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1402590">https://cloud.tencent.com/developer/article/1402590</a></li>
+<li><a href="https://www.oraclejsq.com/redisjc/040101722.html">https://www.oraclejsq.com/redisjc/040101722.html</a></li>
+<li><a href="https://juejin.cn/post/6844903951502934030">https://juejin.cn/post/6844903951502934030</a></li>
 </ul>
 			</div>
 		</article>

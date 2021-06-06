@@ -612,6 +612,15 @@
     </item>
     
     <item>
+      <title>Redis有序集合使用和应用场景.md</title>
+      <link>https://cxis.me/2019/04/20/Redis%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E4%BD%BF%E7%94%A8%E5%92%8C%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF.md/</link>
+      <pubDate>Sat, 20 Apr 2019 00:20:37 +0000</pubDate>
+      
+      <guid>https://cxis.me/2019/04/20/Redis%E6%9C%89%E5%BA%8F%E9%9B%86%E5%90%88%E4%BD%BF%E7%94%A8%E5%92%8C%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF.md/</guid>
+      <description>&lt;p&gt;有序集合Sorted Set的使用、实现、以及应用场景学习。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Redis跳表</title>
       <link>https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</link>
       <pubDate>Fri, 19 Apr 2019 22:20:37 +0000</pubDate>

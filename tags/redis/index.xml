@@ -27,15 +27,6 @@
     </item>
     
     <item>
-      <title>Redis跳表</title>
-      <link>https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</link>
-      <pubDate>Fri, 19 Apr 2019 22:20:37 +0000</pubDate>
-      
-      <guid>https://cxis.me/2019/04/19/Redis%E8%B7%B3%E8%A1%A8/</guid>
-      <description>&lt;p&gt;跳表skiplist是一种有序数据结构，在每个节点维持指向其他节点的指针，可以达到快速访问节点的目的。可以认为跳表在原有的有序链表上增加了多级索引，通过索引就可以快速查找。跳表的查找、插入、删除事件复杂度都是O(log n)，还可以实现区间查找。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
       <title>Redis对象的9种类型</title>
       <link>https://cxis.me/2019/04/14/Redis%E5%AF%B9%E8%B1%A1%E7%9A%849%E7%A7%8D%E7%B1%BB%E5%9E%8B/</link>
       <pubDate>Sun, 14 Apr 2019 21:11:03 +0000</pubDate>
@@ -51,15 +42,6 @@
       
       <guid>https://cxis.me/2019/04/14/Redis%E4%BA%8B%E5%8A%A1/</guid>
       <description>&lt;p&gt;Redis事务会将多个命令请求打包，一次性的按照顺序执行多个命令，在事务执行期间，服务器不会中断事务去执行其他客户端的请求命令，会一直执行完。涉及到的命令：MULTI、EXEC、WATCH。&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>Redis发布与订阅</title>
-      <link>https://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/</link>
-      <pubDate>Sun, 14 Apr 2019 14:08:13 +0000</pubDate>
-      
-      <guid>https://cxis.me/2019/04/14/Redis%E5%8F%91%E5%B8%83%E4%B8%8E%E8%AE%A2%E9%98%85/</guid>
-      <description>&lt;p&gt;Redis支持发布订阅功能，SUBSCRIBE命令可以让客户端订阅一个或者多个频道，PSUBSCRIBE可以让客户端订阅一个或多个模式的，PUBLISH用来发布消息。&lt;/p&gt;</description>
     </item>
     
     <item>
