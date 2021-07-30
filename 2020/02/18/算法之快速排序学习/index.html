@@ -51,7 +51,7 @@
 <h1 id="快速排序算法">快速排序算法</h1>
 <p>快速排序算法可以减少冒泡排序中重复移动数据的问题。算法描述如下：在数据序列中选取一个元素作为基准值（可以选择任意一个元素），然后开始从序列的两端开始交替和基准值进行比较，如果比基准值小，则将元素放到序列的左边；如果比基准值大，则将元素放到序列的右边。最后中间的元素就是基准值的位置。以基准值为分隔点，左右两边的两个子序列，左边的都比基准值小，右边的都比基准值大。在分别对两个子序列进行快速排序，一直到子序列长度为1，排序完成。</p>
 <h1 id="快速排序代码示例">快速排序代码示例</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e"> * 快速排序
 </span><span style="color:#75715e"> * 赋值填充方式，一端挖坑一端填充
 </span><span style="color:#75715e"> * 从右边找比基准小的元素，找到后将该元素填到基准元素所在位置，
@@ -135,7 +135,7 @@
 <li>左右两边相交的位置，就是基准值应该放的位置。</li>
 </ul>
 <p>示例代码如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e"> * 快速排序
 </span><span style="color:#75715e"> * 赋值填充方式，一端挖坑一端填充
 </span><span style="color:#75715e"> * 从右边找比基准小的元素，找到后将该元素填到基准元素所在位置，
@@ -201,7 +201,7 @@
 <li>找到了两个元素后，将两个元素位置交换。</li>
 <li>如果左右两个指针交错了，需要将基准值交换到中心位置。</li>
 </ul>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e"> * 快速排序
 </span><span style="color:#75715e"> * 两端扫描交换方式
 </span><span style="color:#75715e"> * 从左边开始扫描，找到一个比基准大的元素，接着从右边开始扫描，找到一个比基准小的元素，
@@ -268,7 +268,7 @@
 <li>扫描完后序列划分变为：基准 + 比基准小的序列 + 比基准大的序列，此时需要将基准元素和比基准小的序列的最右端进行交换，让基准元素处于中间。</li>
 </ul>
 <p>代码示例如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e"> * 快速排序
 </span><span style="color:#75715e"> * 单向扫描划分
 </span><span style="color:#75715e"> * 将序列分成：基准 + 比基准小的序列 + 比基准大的序列 + 待排序列
@@ -329,7 +329,7 @@
 <li>如果找到和基准元素相等的，不做操作继续遍历。</li>
 </ul>
 <p>代码示例如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e"> * 快速排序
 </span><span style="color:#75715e"> * 三分单向扫描
 </span><span style="color:#75715e"> * 将序列分为：小于基准序列 + 等于基准序列 + 待排序序列 + 大于基准序列
@@ -395,7 +395,7 @@
 <li>如果找到等于基准的元素，不做处理继续遍历。</li>
 </ul>
 <p>代码示例如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e"> * 快速排序
 </span><span style="color:#75715e"> * 三分双向扫描
 </span><span style="color:#75715e"> * 将序列分为：小于基准序列 + 等于基准序列 + 待排序序列 + 大于基准序列
@@ -483,7 +483,7 @@
 <li>在分别将三个序列递归进行双轴快排。</li>
 </ul>
 <h2 id="双轴快排代码示例">双轴快排代码示例</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e">     * 快速排序
 </span><span style="color:#75715e">     * 双轴快排
 </span><span style="color:#75715e">     * 取两个基准：基准1 pivot1和基准2 pivot2，并且pivot1 &lt;= pivot2

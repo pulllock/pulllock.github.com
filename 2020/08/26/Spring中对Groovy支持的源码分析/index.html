@@ -46,7 +46,7 @@
 			<div>
 				<p>分析一下Spring中对Groovy使用的源码。</p>
 <p>Spring使用Groovy动态语言支持的时候，会使用到xml配置文件进行配置，如下所示：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;lang:groovy</span> <span style="color:#a6e22e">id =</span> <span style="color:#e6db74">&#34;processorFromClasspathFile&#34;</span> <span style="color:#a6e22e">script-source =</span> <span style="color:#e6db74">&#34;classpath:groovy/ClasspathMessageProcessor.groovy&#34;</span><span style="color:#f92672">/&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;lang:groovy</span> <span style="color:#a6e22e">id =</span> <span style="color:#e6db74">&#34;processorFromClasspathFile&#34;</span> <span style="color:#a6e22e">script-source =</span> <span style="color:#e6db74">&#34;classpath:groovy/ClasspathMessageProcessor.groovy&#34;</span><span style="color:#f92672">/&gt;</span>
 </code></pre></div><p>这里是Spring的自定义标签的扩展机制，就是NamespaceHandler的处理机制。Spring遇到lang:groovy自定义标签，会查找对应的NamespaceHandler，这里是LangNamespaceHandler。</p>
 <p>LangNamespaceHandler会直接注册几个BeanDefinitionParser，用来将配置文件解析为BeanDefinition。这里注册的统一都是ScriptBeanDefinitionParser，对于groovy、bsh、std等差别就是使用了不同的ScriptFactory。</p>
 <p>注册完了BeanDefinitionParser之后，紧接着就开始了标签的解析工作，可以直接看到ScriptBeanDefinitionParser的parseInternal方法：</p>

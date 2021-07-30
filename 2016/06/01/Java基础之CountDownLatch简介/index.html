@@ -45,7 +45,7 @@
 				<p>CountDownLatch功能类似一个倒数的计数器，等到减为0才可以继续往下走，否则会一直等待计数器countDown。CountDownLatch实现还是依赖AQS。</p>
 <h1 id="使用示例">使用示例</h1>
 <p>CountDownLatch一般使用场景是：主线程分发任务给其他线程去处理，然后主线程调用await等待其他线程处理完任务，其他线程处理完任务后会countDown，等到所有的线程都处理完了，主线程在await处继续执行，下面是JDK中的示例：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Driver</span> <span style="color:#f92672">{</span> <span style="color:#75715e">// ...
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Driver</span> <span style="color:#f92672">{</span> <span style="color:#75715e">// ...
 </span><span style="color:#75715e"></span>   <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> InterruptedException <span style="color:#f92672">{</span>
      CountDownLatch startSignal <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> CountDownLatch<span style="color:#f92672">(</span>1<span style="color:#f92672">);</span>
      CountDownLatch doneSignal <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> CountDownLatch<span style="color:#f92672">(</span>N<span style="color:#f92672">);</span>

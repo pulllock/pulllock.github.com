@@ -46,7 +46,7 @@
 			<div>
 				<p>Spring对动态语言提供了支持，最近准备在项目中使用Groovy实现功能的热插拔，这里记录下Spring中使用Groovy的示例。</p>
 <p>先定义一个接口，用来处理消息的接口：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
 
 <span style="color:#75715e">/**
 </span><span style="color:#75715e"> * 处理器接口，提供给groovy脚本来实现
@@ -64,7 +64,7 @@
 <p>这里通过Groovy脚本文件、xml中内嵌脚本、从数据库中获取脚本等三种方式来说明。</p>
 <h1 id="使用groovy脚本文件">使用Groovy脚本文件</h1>
 <p>定义消息处理的具体实现，ClasspathMessageProcessor.groovy：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"><span style="color:#f92672">import</span> me.cxis.spring.groovy.Processor
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy"><span style="color:#f92672">import</span> me.cxis.spring.groovy.Processor
 
 <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ClasspathMessageProcessor</span> <span style="color:#66d9ef">implements</span> Processor <span style="color:#f92672">{</span>
 
@@ -81,7 +81,7 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>接下来定义spring的配置文件，目前还不支持使用注解或者Java Config的方式来配置动态语言，只能使用xml的配置方式，spring-groovy.xml：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
 <span style="color:#f92672">&lt;beans</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
        <span style="color:#a6e22e">xmlns:xsi=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
        <span style="color:#a6e22e">xmlns:lang=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/lang&#34;</span>
@@ -95,7 +95,7 @@
 
 <span style="color:#f92672">&lt;/beans&gt;</span>
 </code></pre></div><p>xml配置文件中指定了id和groovy文件的位置，可以理解成是一个Bean，接下来就是代码中使用，可以像普通的Bean进行注入：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
 
 <span style="color:#f92672">import</span> org.slf4j.Logger<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> org.slf4j.LoggerFactory<span style="color:#f92672">;</span>
@@ -130,7 +130,7 @@
 </code></pre></div><p>这样就可以使用了。</p>
 <h1 id="xml中内嵌脚本">xml中内嵌脚本</h1>
 <p>这种方式和上面的方式差不多，区别就是把Groovy脚本内容直接内嵌到了xml配置文件中，配置文件如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
 <span style="color:#f92672">&lt;beans</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
        <span style="color:#a6e22e">xmlns:xsi=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
        <span style="color:#a6e22e">xmlns:lang=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/lang&#34;</span>
@@ -165,7 +165,7 @@
 <h1 id="从数据库中获取脚本">从数据库中获取脚本</h1>
 <p>这种方式需要自定义获取脚本方式，下面是具体的实现步骤。</p>
 <h2 id="自定义scriptsource">自定义ScriptSource</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
 
 <span style="color:#f92672">import</span> com.google.common.io.Resources<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> org.springframework.scripting.ScriptSource<span style="color:#f92672">;</span>
@@ -209,7 +209,7 @@
 
 </code></pre></div><p>这里就是自定义脚本获取的逻辑，是从数据库中根据脚本名字获取脚本内容，这里假装从数据库中获取。想要真从数据库中获取，需要自己实现。</p>
 <h2 id="重写scriptfactorypostprocessor的获取脚本来源的方法">重写ScriptFactoryPostProcessor的获取脚本来源的方法</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> me.cxis.spring.groovy<span style="color:#f92672">;</span>
 
 <span style="color:#f92672">import</span> org.springframework.core.io.ResourceLoader<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> org.springframework.scripting.ScriptSource<span style="color:#f92672">;</span>
@@ -242,7 +242,7 @@
 
 </code></pre></div><p>这里其实就是根据xml配置文件中配置的脚本路径来使用不同加载器来加载脚本内容，我们定义了一个新的方式database，这个会在下面的xml中使用到。</p>
 <h2 id="定义xml配置文件">定义xml配置文件</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
 <span style="color:#f92672">&lt;beans</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
        <span style="color:#a6e22e">xmlns:xsi=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
        <span style="color:#a6e22e">xmlns:lang=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/lang&#34;</span>

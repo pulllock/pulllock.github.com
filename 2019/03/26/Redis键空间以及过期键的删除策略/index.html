@@ -50,7 +50,7 @@
 </ul>
 <h1 id="数据库键空间">数据库键空间</h1>
 <p>Redis数据库由redisDb结构表示，所有键值对保存在redisDb的dict字典中，这个字典称为键空间（key space）：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> redisDb {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> redisDb {
   <span style="color:#75715e">// 键空间，保存数据库中所有键值对
 </span><span style="color:#75715e"></span>  dict <span style="color:#f92672">*</span>dict;
   
@@ -87,7 +87,7 @@
 </ul>
 <h2 id="保存过期时间">保存过期时间</h2>
 <p>redisDb使用expires字典来保存数据库中所有键的过期时间，叫做过期字典：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">redisDb {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">redisDb {
   <span style="color:#75715e">// 键空间，保存数据库中所有键值对
 </span><span style="color:#75715e"></span>  dict <span style="color:#f92672">*</span>dict;
   
@@ -140,7 +140,7 @@
 <h1 id="redis过期键删除策略">Redis过期键删除策略</h1>
 <p>Redis使用惰性删除和定期删除两种策略，通过两种策略配合，可以在避免浪费CPU时间和避免浪费内存间取得平衡。</p>
 <h2 id="惰性删除策略的实现">惰性删除策略的实现</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">expireIfNeeded</span>(redisDb <span style="color:#f92672">*</span>db, robj <span style="color:#f92672">*</span>key) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">expireIfNeeded</span>(redisDb <span style="color:#f92672">*</span>db, robj <span style="color:#f92672">*</span>key) {
     <span style="color:#75715e">// 判断键是否已过期，未过期，返回0
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>keyIsExpired(db,key)) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
 

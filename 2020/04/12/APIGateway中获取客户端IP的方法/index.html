@@ -49,7 +49,7 @@
 <p>加入一个请求从IP1位置开始，经过IP2，IP3，IP4三个代理然后到达服务端，那么使用ServletRequest的getRemoteHost获取到的IP是：IP4，X-Forwarded-For中存储的是：</p>
 <pre><code>X-Forwarded-For: IP1, IP2, IP3
 </code></pre><p>我们可以使用X-Forwarded-For中的值来获取真是IP：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// ...
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// ...
 </span><span style="color:#75715e"></span>String xff <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getHeader</span><span style="color:#f92672">(</span>X_FORWARDED_FOR<span style="color:#f92672">);</span>
 <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>xff<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
   clientIp <span style="color:#f92672">=</span> xff<span style="color:#f92672">.</span><span style="color:#a6e22e">split</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">)[</span>0<span style="color:#f92672">];</span>

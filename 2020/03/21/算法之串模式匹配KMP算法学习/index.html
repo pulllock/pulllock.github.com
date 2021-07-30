@@ -83,7 +83,7 @@ $$</p>
 <p>对于上面第2步解释如下：</p>
 <p>在串&rdquo;$p_0&hellip;p_{k-1},p_k,p_{j-k}&hellip;p_{j-1}$&ldquo;中有长度为k的最长相同前缀和后缀子串，也就是next[j]=k，前缀后缀串：&quot;$p_0&hellip;p_{k-1}$&quot;=&quot;$p_{j-k}&hellip;p_{j-1}$&quot;，如果要找次长的相同前缀和后缀串，则只能在现在的前缀中找，前缀是：&quot;$p_0&hellip;p_{k-1}$&quot;，而这个串的最长前缀和后缀子串其实已经计算出来了是next[k]，找到了这个next[k]之后，对于&rdquo;$p_0&hellip;p_{k-1}$&ldquo;串的最长前缀后缀是：&quot;$p_0&hellip;p_{next[k]-1}$&quot;=&quot;$p_{k-next[k]}&hellip;p_{k-1}$&quot;，此时原来前缀的最长前缀和后缀，同原来后缀的最长前缀和后缀都是相等的，也就是原来前缀的最长前缀和原来后缀的最长后缀相等，也就是原来串的次长前缀和后缀相等。</p>
 <h1 id="代码示例">代码示例</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">KMPString</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">KMPString</span> <span style="color:#f92672">{</span>
 
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         String pattern <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ssfass&#34;</span><span style="color:#f92672">;</span>

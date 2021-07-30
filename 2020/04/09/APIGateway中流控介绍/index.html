@@ -50,7 +50,7 @@
 <p>需要使用两个map，一个用来记录同一个ip访问的次数，一个用来记录同一个ip上次访问的时间戳。防止map无限制增长，可以单独开启一个线程，用来定时清除超过时间窗口的ip数据。</p>
 <p>计数器算法可能会产生突刺，请求集中到达处理后，后面时间就会空闲掉。</p>
 <p>示例代码如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IPCounter</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IPCounter</span> <span style="color:#f92672">{</span>
 
     <span style="color:#75715e">/**
 </span><span style="color:#75715e">     * 保存ip访问的次数

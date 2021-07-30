@@ -67,14 +67,14 @@
 <p>Sentinel默认10秒一次，向从服务器发送INFO命令获取从服务器信息，并更新缓存的实例信息。</p>
 <h1 id="向主从服务器发送信息">向主从服务器发送信息</h1>
 <p>Sentinel默认2秒会通过命令连接想所有被监视的主服务器和从服务器发送命令：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">PUBLISH __sentinel__:hello <span style="color:#e6db74">&#34;&lt;s_ip&gt;,&lt;s_port&gt;,&lt;s_runid&gt;,&lt;s_epoch&gt;,&lt;m_name&gt;,&lt;m_ip&gt;,&lt;m_port&gt;,&lt;m_epoch&gt;&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">PUBLISH __sentinel__:hello <span style="color:#e6db74">&#34;&lt;s_ip&gt;,&lt;s_port&gt;,&lt;s_runid&gt;,&lt;s_epoch&gt;,&lt;m_name&gt;,&lt;m_ip&gt;,&lt;m_port&gt;,&lt;m_epoch&gt;&#34;</span>
 </code></pre></div><ul>
 <li>s开头的是Sentinel本身信息</li>
 <li>m开头的是主服务器信息，如果Sentinel监控的是主服务器，这些就是主服务器信息；如果监控的是从服务器，这些就是从服务器对应的主服务器的信息</li>
 </ul>
 <h1 id="接收来主从服务器的频道信息">接收来主从服务器的频道信息</h1>
 <p>Sentinel与主从服务器建立订阅连接后，会订阅频道：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">SUBSCRIBE __sentinel__:hello
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">SUBSCRIBE __sentinel__:hello
 </code></pre></div><p>Sentinel会向服务器的<code>__sentinel__:hello</code>频道发消息，也会订阅服务器的<code>__sentinel__:hello</code>频道接收消息。</p>
 <p>Sentinel之间通过这些信息相互感知。</p>
 <p>Sentinel的sentinels字典除了保存自己本身之外，还保存同样监视这个主服务器的其他的Sentinel信息。Sentinel通过频道信息发现了新的Sentinel时，会更新sentinels字典，还会创建一个命令连接到新的Sentinel。</p>

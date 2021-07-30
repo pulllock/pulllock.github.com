@@ -66,7 +66,7 @@
 <h2 id="rdb自动保存的时机">RDB自动保存的时机</h2>
 <p>Redis允许配置save选项，让服务器每隔一段时间自动执行一次BGSAVE命令。配置的保存选项可以有多个，只要其中任一个条件满足，服务器就会执行BGSAVE命令。</p>
 <p>配置的选项存在redisServer结构的saveparams属性中，saveparams是一个数组，每一项是一个saveparam结构，表示一个配置的保存选项。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> redisServer {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> redisServer {
     <span style="color:#75715e">// ...
 </span><span style="color:#75715e"></span>    <span style="color:#75715e">// saveparams数组
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">struct</span> saveparam <span style="color:#f92672">*</span>saveparams;
@@ -85,7 +85,7 @@
 }
 </code></pre></div><h3 id="dirty计数器和lastsave属性">dirty计数器和lastsave属性</h3>
 <p>redisServer结构中还有一个dirty计数器和leastsave属性：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">redisServer {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">redisServer {
   <span style="color:#75715e">// 计数器，记录距离上一次成功执行SAVE或者BGSAVE命令后，服务器对数据库进行了多少次修改
 </span><span style="color:#75715e"></span>  <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> dirty;
   

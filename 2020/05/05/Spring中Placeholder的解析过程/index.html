@@ -50,9 +50,9 @@
 <p>定义application.properties文件：</p>
 <pre><code class="language-properties" data-lang="properties">placeholder.user.prefix=UserPrefix_
 </code></pre><p>在applicationContext.xml中引入application.properties文件：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;context:property-placeholder</span> <span style="color:#a6e22e">location=</span><span style="color:#e6db74">&#34;application.properties&#34;</span><span style="color:#f92672">/&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;context:property-placeholder</span> <span style="color:#a6e22e">location=</span><span style="color:#e6db74">&#34;application.properties&#34;</span><span style="color:#f92672">/&gt;</span>
 </code></pre></div><p>在实际使用的地方注入，这里使用@Value注解：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;${placeholder.user.prefix}&#34;</span><span style="color:#f92672">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;${placeholder.user.prefix}&#34;</span><span style="color:#f92672">)</span>
 <span style="color:#66d9ef">private</span> String userPrefix<span style="color:#f92672">;</span>
 </code></pre></div><h1 id="解析">解析</h1>
 <ol>

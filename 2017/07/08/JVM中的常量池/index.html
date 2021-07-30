@@ -106,7 +106,7 @@
 <h2 id="为什么要把字符串常量池移到堆中">为什么要把字符串常量池移到堆中</h2>
 <p>JDK1.6以及之前字符串常量池是放在永久代，也就是方法区中的，方法区中存储类的结构信息，例如运行时常量池、字段、方法数据、构造函数、普通方法的字节码内容、还包括一些在类、实例、接口初始化时用到的特殊方法。一旦大量使用intern方法，常量池会被大量占用，会产生<code>java.lang.OutOfMemoryError: PermGen space</code>错误。</p>
 <h2 id="字符串常量池几个实例分析">字符串常量池几个实例分析</h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span> <span style="color:#f92672">{</span>
   
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         <span style="color:#75715e">/**

@@ -47,7 +47,7 @@
 				<p>APIGateway需要调用各个业务系统的接口，但是不可能作为消费者依赖所有系统的接口jar包，可以使用Dubbo的泛化调用功能来实现。APIGateway作为消费者，连接到注册中心，拿到相应接口后可以使用泛化调用。</p>
 <p>泛化调用比较简单，可以直接参考dubbo官方文档：<a href="http://dubbo.apache.org/zh-cn/blog/dubbo-generic-invoke.html">Dubbo的泛化调用</a></p>
 <p>示例代码：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GenericInvokeDubbo</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GenericInvokeDubbo</span> <span style="color:#f92672">{</span>
 
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String PROTOCOL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zookeeper&#34;</span><span style="color:#f92672">;</span>
 

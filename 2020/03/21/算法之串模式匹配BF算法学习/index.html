@@ -54,7 +54,7 @@
 <li>如果$t_i != p_j$，表示&rdquo;$t_{i-j}&hellip;t_i&hellip;t_{i-j+m-1}$&ldquo;与&rdquo;$p_0&hellip;p_j&hellip;p_{m-1}$&ldquo;匹配失败，目标串下一个匹配字串是&rdquo;$t_{i-j+1}&hellip;t_{i-j+m}$&quot;，继续比较$t_{i-j+1}$和$p_0$，此时目标串回溯，从$t_i$退回到$t_{i-j+1}$</li>
 </ol>
 <h1 id="代码示例">代码示例</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BFString</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BFString</span> <span style="color:#f92672">{</span>
 
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         String pattern <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ssfass&#34;</span><span style="color:#f92672">;</span>

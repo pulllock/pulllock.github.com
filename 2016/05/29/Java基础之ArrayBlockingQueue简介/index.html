@@ -45,11 +45,11 @@
 				<p>ArrayBlockingQueue就是一个有界阻塞队列，实现原理和生产者消费者模式一样，可以使用信号量来实现，也可以使用锁加条件变量来实现。</p>
 <p>ArrayBlockingQueue是一个有界阻塞队列，使用数组存储元素。阻塞队列是典型的生产者消费者模式。</p>
 <p>可以先回顾下使用信号量实现生产者消费者模式的场景：使用一个信号量当做互斥锁，使用另外两个信号量当做条件变量（非空条件变量和非满条件变量）。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Semaphore mutex <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Semaphore<span style="color:#f92672">(</span>1<span style="color:#f92672">);</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Semaphore mutex <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Semaphore<span style="color:#f92672">(</span>1<span style="color:#f92672">);</span>
 Semaphore notFull <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Semaphore<span style="color:#f92672">(</span>n<span style="color:#f92672">);</span>
 Semaphore notEmpty <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Semaphore<span style="color:#f92672">(</span>0<span style="color:#f92672">);</span>
 </code></pre></div><h1 id="生产者方法流程">生产者方法流程</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 缓冲区满的时候，生产者线程需要等待缓冲区不满
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 缓冲区满的时候，生产者线程需要等待缓冲区不满
 </span><span style="color:#75715e"></span>notFull<span style="color:#f92672">.</span><span style="color:#a6e22e">p</span><span style="color:#f92672">();</span>
 
 <span style="color:#75715e">// 生产者不满了，可以添加元素，需要使用互斥锁保证一次只有一个线程操作缓冲区
@@ -64,7 +64,7 @@ Semaphore notEmpty <span style="color:#f92672">=</span> <span style="color:#66d9
 <span style="color:#75715e">// 缓冲区中添加了新元素后，通知其他等待消费的线程现在缓冲区不空了，有元素了
 </span><span style="color:#75715e"></span>notEmpty<span style="color:#f92672">.</span><span style="color:#a6e22e">v</span><span style="color:#f92672">();</span>
 </code></pre></div><h1 id="消费者方法流程">消费者方法流程</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 缓冲区空的时候，消费者线程需要等待缓冲区中有元素，
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 缓冲区空的时候，消费者线程需要等待缓冲区中有元素，
 </span><span style="color:#75715e"></span>notEmpty<span style="color:#f92672">.</span><span style="color:#a6e22e">p</span><span style="color:#f92672">();</span>
 
 <span style="color:#75715e">// 缓冲区有元素了，可以消费一个元素，需要使用互斥锁保证一次只有一个线程操作缓冲区

@@ -71,7 +71,7 @@
 <p>可以看到上面文件是通过导出功能生成的，红框里缺少size。而下面的是系统压缩软件压缩的zip文件，红框里面带有size大小。故猜测可能是由于代码里生成ZipEntry的时候没有设置size，compressize，crc32等属性的原因。</p>
 <h1 id="读取zip文件时zipentry的size为-1解决办法">读取zip文件时ZipEntry的size为-1解决办法</h1>
 <p>直接读取当前ZipEntry的流，直到为-1为止，代码如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@PostMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;import&#34;</span><span style="color:#f92672">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@PostMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;import&#34;</span><span style="color:#f92672">)</span>
 <span style="color:#a6e22e">@ResponseBody</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">importZip</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@RequestParam</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;file&#34;</span><span style="color:#f92672">)</span>MultipartFile file<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>
 

@@ -51,7 +51,7 @@
 				<p>从两个示例代码，介绍dubbo的SPI的使用以及相关源码分析，分析了获取扩展实现和获取自适应扩展点实现的源码，最后简单说了下ExtensionFactory的流程，看完就可以理解为什么dubbo是自包含的了。从上往下看，再回头看，应该能看明白，文章比较长，希望能耐心读下去。如果有错误的地方希望能指出来，我也理解不是太完整或者表述不是太明白。</p>
 <h1 id="extensionloader使用以及简单流程分析">ExtensionLoader使用以及简单流程分析</h1>
 <p>假设有这样一段示例代码：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         ExtensionLoader<span style="color:#f92672">&lt;</span>Protocol<span style="color:#f92672">&gt;</span> extensionLoader <span style="color:#f92672">=</span> ExtensionLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getExtensionLoader</span><span style="color:#f92672">(</span>Protocol<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
 
         Protocol dubboProtocol <span style="color:#f92672">=</span> extensionLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getExtension</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dubbo&#34;</span><span style="color:#f92672">);</span>
@@ -66,7 +66,7 @@
 <li>返回<code>ExtensionLoader</code>实例。</li>
 </ol>
 <p>这部分源码如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> ExtensionLoader<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getExtensionLoader</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> type<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> ExtensionLoader<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getExtensionLoader</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> type<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
     <span style="color:#75715e">// 扩展点类型不能为空
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>type <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
         <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> IllegalArgumentException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Extension type == null&#34;</span><span style="color:#f92672">);</span>
@@ -94,11 +94,11 @@
 <span style="color:#f92672">}</span>
 </code></pre></div><h2 id="extensionloader缓存">ExtensionLoader缓存</h2>
 <p>前面的校验可以参考注释，这里先说下缓存<code>EXTENSION_LOADERS</code>：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> ConcurrentMap<span style="color:#f92672">&lt;</span>Class<span style="color:#f92672">&lt;?&gt;,</span> ExtensionLoader<span style="color:#f92672">&lt;?&gt;&gt;</span> EXTENSION_LOADERS <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;</span>Class<span style="color:#f92672">&lt;?&gt;,</span> ExtensionLoader<span style="color:#f92672">&lt;?&gt;&gt;();</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> ConcurrentMap<span style="color:#f92672">&lt;</span>Class<span style="color:#f92672">&lt;?&gt;,</span> ExtensionLoader<span style="color:#f92672">&lt;?&gt;&gt;</span> EXTENSION_LOADERS <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;</span>Class<span style="color:#f92672">&lt;?&gt;,</span> ExtensionLoader<span style="color:#f92672">&lt;?&gt;&gt;();</span>
 </code></pre></div><p>可以看到每个SPI扩展的<code>ExtensionLoader</code>的实例只有一个，缓存的key就是具体SPI接口类型，比如<code>com.alibaba.dubbo.rpc.Protocol</code>作为key。</p>
 <h2 id="extensionloader实例化">ExtensionLoader实例化</h2>
 <p><code>new ExtensionLoader&lt;T&gt;(type)</code>这里做了什么？</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#a6e22e">ExtensionLoader</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;?&gt;</span> type<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#a6e22e">ExtensionLoader</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;?&gt;</span> type<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> type<span style="color:#f92672">;</span>
     objectFactory <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>
             type <span style="color:#f92672">==</span> ExtensionFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span> <span style="color:#f92672">?</span>
@@ -119,7 +119,7 @@
 <p>说明一下，一个扩展点最多只能有一个自适应实现，也就是一个扩展点的具体实现类最多只能有一个可以在类级别上注解<code>@Adaptive</code>。如果一个扩展点没有任何一个实现在类级别上注解<code>@Adaptive</code>，那么dubbo会在运行时动态生成一个自适应实现类，比如Protocol的具体实现类就没有任何一个有在类级别上注解了<code>@Adaptive</code>，dubbo会自动生成一个名字是<code>Protocol$Adpative</code>的自适应实现类。</p>
 <h1 id="使用extensionloader获取扩展点实现">使用ExtensionLoader获取扩展点实现</h1>
 <p>上面的步骤完成了获取Protocol类型的ExtensionLoader的实例，同时也完成了ExtensionFactory类型的ExtensionLoader实例的加载，同时也生成了ExtensionFactory的自适应实现，接下来继续往下走：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Protocol dubboProtocol <span style="color:#f92672">=</span> extensionLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getExtension</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dubbo&#34;</span><span style="color:#f92672">);</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Protocol dubboProtocol <span style="color:#f92672">=</span> extensionLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getExtension</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dubbo&#34;</span><span style="color:#f92672">);</span>
 </code></pre></div><p>获取了Protocol类型的ExtensionLoader实例后，就可以根据名字来加载具体的实现类了，Protocol的具体实现类有：</p>
 <ul>
 <li>DubboProtocol</li>
@@ -136,7 +136,7 @@
 </ul>
 <p>可以看到Protocol有很多具体的实现，根据使用协议的不同，可以动态选择具体使用哪一个Protocol实现。</p>
 <p>继续看<code>getExtension()</code>方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">getExtension</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">getExtension</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
 	<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>name <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">||</span> name<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> 0<span style="color:#f92672">)</span>
 		<span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> IllegalArgumentException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Extension name == null&#34;</span><span style="color:#f92672">);</span>
 	<span style="color:#75715e">// 获取默认实现
@@ -173,7 +173,7 @@
 </ol>
 <h2 id="扩展点实现的实例缓存">扩展点实现的实例缓存</h2>
 <p>获取默认扩展点实现实例暂时不说，先看下cachedInstances缓存：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ConcurrentMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Holder<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;&gt;</span> cachedInstances <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Holder<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;&gt;();</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> ConcurrentMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Holder<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;&gt;</span> cachedInstances <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Holder<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;&gt;();</span>
 </code></pre></div><p>这里缓存了扩展点具体实现的实例，key是扩展点的名字，比如DubboProtocol的实例，key就是dubbo，value是DubboProtocol的实例，Holder中持有DubboProtocol的实例。</p>
 <h1 id="创建扩展点实现实例">创建扩展点实现实例</h1>
 <p>接下来看根据name创建具体扩展点实现实例的方法<code>createExtension(name)</code>方法，该方法的代码如下：</p>
@@ -233,10 +233,10 @@
 <li>返回注入和包装后的扩展点实现的实例，在我们的这个例子中返回的不是DubboProtocol实例了，而是经过了ProtocolFilterWrapper和ProtocolListenerWrapper包装后的实例。</li>
 </ol>
 <p>总体的流程就算说完了，已经获取到了名字为dubbo的Protocol的实现的实例，接下来的执行最后一行代码，得到结果：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>dubboProtocol<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefaultPort</span><span style="color:#f92672">());</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>dubboProtocol<span style="color:#f92672">.</span><span style="color:#a6e22e">getDefaultPort</span><span style="color:#f92672">());</span>
 </code></pre></div><h1 id="加载扩展点实现类的class">加载扩展点实现类的Class</h1>
 <p>接下来我们看看<code>getExtensionClasses()</code>方法具体做了什么，该方法是用来加载当前扩展点的所有实现的class的，具体代码如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;?&gt;&gt;</span> getExtensionClasses<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;?&gt;&gt;</span> getExtensionClasses<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 	<span style="color:#75715e">/**
 </span><span style="color:#75715e">	 * 先从缓存中获取，不存在的话就调用loadExtensionClasses进行加载
 </span><span style="color:#75715e">	 * cachedClasses缓存中存储了当前扩展点所有的实现类
@@ -262,7 +262,7 @@
 <span style="color:#f92672">}</span>
 </code></pre></div><p>这里也只是尝试从缓存中获取，如果缓存中不存在的话，就进行具体的加载逻辑。但是这里有个点要注意，一个扩展点的的实现类加载只会执行一次。</p>
 <p>继续往下走就是真正的加载扩展点的实现逻辑了，代码如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;?&gt;&gt;</span> loadExtensionClasses<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Class<span style="color:#f92672">&lt;?&gt;&gt;</span> loadExtensionClasses<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 	<span style="color:#66d9ef">final</span> SPI defaultAnnotation <span style="color:#f92672">=</span> type<span style="color:#f92672">.</span><span style="color:#a6e22e">getAnnotation</span><span style="color:#f92672">(</span>SPI<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
 	<span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>defaultAnnotation <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
 		<span style="color:#75715e">// 当前扩展点的默认实现名字，如果有的话进行缓存
@@ -298,7 +298,7 @@
 </ol>
 <h1 id="扩展点依赖注入">扩展点依赖注入</h1>
 <p>我们在返回上面，还又一点没说，就是依赖注入的功能injectExtension的代码：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> T <span style="color:#a6e22e">injectExtension</span><span style="color:#f92672">(</span>T instance<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> T <span style="color:#a6e22e">injectExtension</span><span style="color:#f92672">(</span>T instance<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
 	<span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
 		<span style="color:#75715e">// 在获取第一个扩展点的ExtensionLoader的实例的时候，objectFactory就被实例化了，是AdaptiveExtensionFactory
 </span><span style="color:#75715e"></span>		<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>objectFactory <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
@@ -338,7 +338,7 @@
 </code></pre></div><p>依赖注入的代码也很简单，就是实例化要注入的类，然后反射调用set方法注入实例中去。</p>
 <h1 id="自适应扩展点使用">自适应扩展点使用</h1>
 <p>到这里，使用指定名称加载扩展点实现的流程就分析完了，但是这种直接指定扩展点名字的方式却不是我们主要使用的方式。可以想象一下，dubbo是可以配置多协议的，也就是可以同时配置比如dubbo、rmi等协议。如果我们使用了多协议的话，那dubbo是怎么做的呢？我们可以想到最简单的方法就是有一个转发器，用来根据实际请求中配置的协议来使用不同的实现来处理，下面可以写个伪代码：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProtocolDispatcher</span> <span style="color:#66d9ef">implements</span> Protocol <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProtocolDispatcher</span> <span style="color:#66d9ef">implements</span> Protocol <span style="color:#f92672">{</span>
     
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">refer</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>name<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dubbo&#34;</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
@@ -349,12 +349,12 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>实际上dubbo中没有这样的代码，但实际上也差不多类似这样的方式来处理的，我们看下实际在dubbo中的使用方式：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Protocol protocol <span style="color:#f92672">=</span> ExtensionLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getExtensionLoader</span><span style="color:#f92672">(</span>Protocol<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">).</span><span style="color:#a6e22e">getAdaptiveExtension</span><span style="color:#f92672">();</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Protocol protocol <span style="color:#f92672">=</span> ExtensionLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getExtensionLoader</span><span style="color:#f92672">(</span>Protocol<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">).</span><span style="color:#a6e22e">getAdaptiveExtension</span><span style="color:#f92672">();</span>
 </code></pre></div><p>可以看到第一步还是先获取Protocol类型的ExtensionLoader的实例，这个过程跟最上面的获取ExtensionLoader实例的过程是一样的，接下来这一步<code>getAdaptiveExtension()</code>就跟我们之前的示例不一样了，这是获取自适应扩展的方法。</p>
 <p>自适应扩展是不是很熟悉，上面我们也说过自适应，可以回头先去看下大概情况。首先说下获取自适应扩展是干嘛的？其实就是做到上面那个伪代码的转发器功能。</p>
 <h2 id="自适应扩展点动态生成的代码">自适应扩展点动态生成的代码</h2>
 <p>当调用了上面<code>getAdaptiveExtension()</code>方法后，dubbo会动态生成如下代码：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.alibaba.dubbo.rpc<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> com.alibaba.dubbo.rpc<span style="color:#f92672">;</span>
 
 <span style="color:#f92672">import</span> com.alibaba.dubbo.common.extension.ExtensionLoader<span style="color:#f92672">;</span>
 
@@ -415,7 +415,7 @@
 </code></pre></div><p>当我们调用<code>protocol.xxxx()</code>方法的时候，其实就是调用动态生成的<code>Protocol$Adaptive</code>这个类的方法，这里面的逻辑其还是就跟我们的伪代码差不多了，根据url中传入的Protocol名字，通过<code>getExtension(extName)</code>方法获取实际的扩展点实现实例。</p>
 <h1 id="自适应扩展点的获取">自适应扩展点的获取</h1>
 <p>接下来就看下获取自适应扩展的源码：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">getAdaptiveExtension</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">getAdaptiveExtension</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 	<span style="color:#75715e">// 先从自适应实例缓存中查找实例对象
 </span><span style="color:#75715e"></span>	Object instance <span style="color:#f92672">=</span> cachedAdaptiveInstance<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
 	<span style="color:#75715e">// 缓存中不存在
@@ -445,7 +445,7 @@
 	<span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>T<span style="color:#f92672">)</span> instance<span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>这边还是老套路，先从缓存中获取，如果缓存中不存在，就创建自适应扩展实例，继续看<code>createAdaptiveExtension()</code>方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> T <span style="color:#a6e22e">createAdaptiveExtension</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> T <span style="color:#a6e22e">createAdaptiveExtension</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 	<span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
 		<span style="color:#75715e">/**
 </span><span style="color:#75715e">		 * 先通过getAdaptiveExtensionClass获取自适应扩展类的Class
@@ -465,7 +465,7 @@
 </ul>
 <h2 id="获取自适应扩展点类的class">获取自适应扩展点类的Class</h2>
 <p>首先看下获取自适应扩展类的Class方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Class<span style="color:#f92672">&lt;?&gt;</span> getAdaptiveExtensionClass<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Class<span style="color:#f92672">&lt;?&gt;</span> getAdaptiveExtensionClass<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 	<span style="color:#75715e">/**
 </span><span style="color:#75715e">	 * getExtensionClasses加载当前扩展点的所有实现
 </span><span style="color:#75715e">	 * 比如：
@@ -500,7 +500,7 @@
 </span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> cachedAdaptiveClass <span style="color:#f92672">=</span> createAdaptiveExtensionClass<span style="color:#f92672">();</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>获取自适应扩展类的过程参考上面代码的注释即可，继续往下说创建自适应扩展类的方法<code>createAdaptiveExtensionClass()</code>：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Class<span style="color:#f92672">&lt;?&gt;</span> createAdaptiveExtensionClass<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> Class<span style="color:#f92672">&lt;?&gt;</span> createAdaptiveExtensionClass<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 	<span style="color:#75715e">/**
 </span><span style="color:#75715e">	 * 根据具体的接口来生成自适应扩展类的代码
 </span><span style="color:#75715e">	 * 比如Protocol就会生成Protocol$Adaptive为名字的类的代码
@@ -530,7 +530,7 @@
 <p>这两种不能重复使用。如果用在实现类上，一个扩展点的实现类有且只能有一个类使用此注解，比如ExtensionFactory的实现类AdaptiveExtensionFactory使用了此注解，这个类本身就是一个自适应扩展类了；如果用在接口的方法上，表示dubbo框架会在生成该接口的自适应扩展类的时候，生成该方法的代码，如果方法没有添加此注解，则生成抛出不支持异常的代码。</p>
 <h1 id="extensionfactory">ExtensionFactory</h1>
 <p>到这里获取扩展和获取自适应扩展就已经说完了，接下来可以把最上面留下的ExtensionFactory相关的加载流程说下了，每个ExtensionLoader实例中都会有一个objectFactory实例，而objectFactory实例的赋值都是在ExtensionLoader的构造方法中：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#a6e22e">ExtensionLoader</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;?&gt;</span> type<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#a6e22e">ExtensionLoader</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;?&gt;</span> type<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
 	<span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span> <span style="color:#f92672">=</span> type<span style="color:#f92672">;</span>
 	<span style="color:#75715e">/**
 </span><span style="color:#75715e">	 * 对于扩展类型是ExtensionFactory的，设置为null
@@ -546,7 +546,7 @@
 	<span style="color:#f92672">);</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>可以看到ExtensionFactory的实例获取也是通过扩展点自适应来获取到的，获取到的实例是AdaptiveExtensionFactory。而在AdaptiveExtensionFactory实例化的时候，会通过SPI机制加载所有的ExtensionFactory的实现：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">AdaptiveExtensionFactory</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">AdaptiveExtensionFactory</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
 	ExtensionLoader<span style="color:#f92672">&lt;</span>ExtensionFactory<span style="color:#f92672">&gt;</span> loader <span style="color:#f92672">=</span> ExtensionLoader<span style="color:#f92672">.</span><span style="color:#a6e22e">getExtensionLoader</span><span style="color:#f92672">(</span>ExtensionFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
 	List<span style="color:#f92672">&lt;</span>ExtensionFactory<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>ExtensionFactory<span style="color:#f92672">&gt;();</span>
 	<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String name <span style="color:#f92672">:</span> loader<span style="color:#f92672">.</span><span style="color:#a6e22e">getSupportedExtensions</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
@@ -556,7 +556,7 @@
 	factories <span style="color:#f92672">=</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">unmodifiableList</span><span style="color:#f92672">(</span>list<span style="color:#f92672">);</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>使用objectFactory获取扩展的时候，是调用AdaptiveExtensionFactory的getExtension方法，该方法会遍历所有的ExtensionFactory的实现的getExtension方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> T <span style="color:#a6e22e">getExtension</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> type<span style="color:#f92672">,</span> String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> T <span style="color:#a6e22e">getExtension</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> type<span style="color:#f92672">,</span> String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
 	<span style="color:#75715e">// 依次遍历各个ExtensionFactory实现的getExtension方法
 </span><span style="color:#75715e"></span>	<span style="color:#75715e">// 找到Extension后立即返回，没找到返回null
 </span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>ExtensionFactory factory <span style="color:#f92672">:</span> factories<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>

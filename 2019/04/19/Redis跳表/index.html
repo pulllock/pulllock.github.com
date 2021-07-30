@@ -52,7 +52,7 @@
 </ul>
 <h1 id="跳表的实现">跳表的实现</h1>
 <p>Redis跳表由两个结构组成：zskiplistNode表示跳表节点、zskiplist保存跳表节点相关信息：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> zskiplist {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> zskiplist {
   <span style="color:#75715e">// 表头节点和表尾节点
 </span><span style="color:#75715e"></span>  <span style="color:#66d9ef">struct</span> zskiplistNode <span style="color:#f92672">*</span>header<span style="color:#960050;background-color:#1e0010">，</span> <span style="color:#f92672">*</span>tail;
   

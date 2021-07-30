@@ -90,7 +90,7 @@
 <p>unpark操作不计数，在park之前多次调用unpark，park调用时不会阻塞线程，如果再次调用park，则会阻塞线程。</p>
 <p>park和unpark还支持超时和中断。</p>
 <h1 id="acquire操作">acquire操作</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>尝试获取锁不成功<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>尝试获取锁不成功<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
     node <span style="color:#f92672">=</span> 创建新结点<span style="color:#960050;background-color:#1e0010">，</span>并入队列
     pred <span style="color:#f92672">=</span> 结点的前驱结点
     <span style="color:#a6e22e">while</span> <span style="color:#f92672">(</span>pred 不是头结点 <span style="color:#f92672">||</span> 尝试获取锁失败<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
@@ -103,7 +103,7 @@
      <span style="color:#f92672">}</span>
  <span style="color:#f92672">}</span>
 </code></pre></div><h1 id="release操作">release操作</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>尝试释放锁 <span style="color:#f92672">&amp;&amp;</span> 头结点的waitStatus是SIGNAL<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>尝试释放锁 <span style="color:#f92672">&amp;&amp;</span> 头结点的waitStatus是SIGNAL<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
     cas设置头结点waitStatus不是SIGNAL
     唤醒后继结点
 <span style="color:#f92672">}</span>

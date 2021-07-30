@@ -155,7 +155,7 @@
 </table>
 <h1 id="实现">实现</h1>
 <p>zset通过添加一个score参数来为集合中元素进行排序。底层同时使用了跳表和字典来实现，zset结构如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> zset {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> zset {
     <span style="color:#75715e">// 保存了member到score的映射
 </span><span style="color:#75715e"></span>    dict <span style="color:#f92672">*</span>dict;
     <span style="color:#75715e">// 按照socre从小到大包存了所有集合元素

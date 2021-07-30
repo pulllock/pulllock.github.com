@@ -51,7 +51,7 @@
 <p>也就是在往DelayQueue中放元素的时候，该元素必须实现Delayed接口，并且可以指定一个需要延迟的时间，等过了一段时间到了我们指定的延迟时间后，可以获取到该元素，继续针对该元素处理。</p>
 <h1 id="示例">示例</h1>
 <p>模拟延迟发送短信功能，发短信的时候可以指定延时多久进行发送。</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
 </span><span style="color:#75715e"> * 延迟短信
 </span><span style="color:#75715e"> */</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DelayedSms</span> <span style="color:#66d9ef">implements</span> Delayed <span style="color:#f92672">{</span>
@@ -97,7 +97,7 @@
 </span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Override</span>
     <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span> <span style="color:#f92672">{...}</span>
 <span style="color:#f92672">}</span>
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmsSender</span> <span style="color:#f92672">{</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SmsSender</span> <span style="color:#f92672">{</span>
 
     <span style="color:#66d9ef">private</span> DelayQueue<span style="color:#f92672">&lt;</span>DelayedSms<span style="color:#f92672">&gt;</span> queue <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DelayQueue<span style="color:#f92672">&lt;&gt;();</span>
 
@@ -139,7 +139,7 @@
         System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;发送短信：&#34;</span> <span style="color:#f92672">+</span> sms<span style="color:#f92672">.</span><span style="color:#a6e22e">getSms</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;，createTime：&#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">new</span> Date<span style="color:#f92672">(</span>sms<span style="color:#f92672">.</span><span style="color:#a6e22e">getCreateTime</span><span style="color:#f92672">())</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;，sendTime: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">new</span> Date<span style="color:#f92672">(</span>sms<span style="color:#f92672">.</span><span style="color:#a6e22e">getSendTime</span><span style="color:#f92672">())</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;，发送时间：&#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">new</span> Date<span style="color:#f92672">(</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">currentTimeMillis</span><span style="color:#f92672">()));</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Client</span> <span style="color:#f92672">{</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Client</span> <span style="color:#f92672">{</span>
 
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> InterruptedException <span style="color:#f92672">{</span>
         SmsSender smsSender <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SmsSender<span style="color:#f92672">();</span>
@@ -166,7 +166,7 @@
 <h2 id="priorityqueue">PriorityQueue</h2>
 <p>延时队列内部使用PriorityQueue实现，PriorityQueue中存放的元素必须实现Delayed接口，根据元素的compareTo方法来确定元素顺序</p>
 <h1 id="源码">源码</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DelayQueue</span><span style="color:#f92672">&lt;</span>E <span style="color:#66d9ef">extends</span> Delayed<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> AbstractQueue<span style="color:#f92672">&lt;</span>E<span style="color:#f92672">&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DelayQueue</span><span style="color:#f92672">&lt;</span>E <span style="color:#66d9ef">extends</span> Delayed<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> AbstractQueue<span style="color:#f92672">&lt;</span>E<span style="color:#f92672">&gt;</span>
     <span style="color:#66d9ef">implements</span> BlockingQueue<span style="color:#f92672">&lt;</span>E<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
 
     <span style="color:#75715e">/**

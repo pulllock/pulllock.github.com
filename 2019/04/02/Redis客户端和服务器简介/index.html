@@ -46,7 +46,7 @@
 <h1 id="redis客户端">Redis客户端</h1>
 <p>每一个和服务器连接的客户端，都有一个client结构与之对应，并且这些client组成一个链表，保存在redisServer的clients属性中。</p>
 <p>客户端client结构如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> client {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> client {
     <span style="color:#75715e">// 客户端套接字描述符
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> fd;
     <span style="color:#75715e">/**
@@ -62,7 +62,7 @@
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> flags;
     <span style="color:#75715e">// ...
 </span><span style="color:#75715e"></span>} client;
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> redisServer {
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> redisServer {
     <span style="color:#75715e">// ...
 </span><span style="color:#75715e"></span>    <span style="color:#75715e">// clients是一个链表，保存了所有的客户端
 </span><span style="color:#75715e"></span>    list <span style="color:#f92672">*</span>clients;

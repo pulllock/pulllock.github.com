@@ -72,6 +72,15 @@
     </item>
     
     <item>
+      <title>Spring中ignoreDependencyInterface和ignoreDependencyType介绍</title>
+      <link>https://cxis.me/2020/07/30/Spring%E4%B8%ADignoreDependencyInterface%E5%92%8CignoreDependencyType%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Thu, 30 Jul 2020 15:53:08 +0000</pubDate>
+      
+      <guid>https://cxis.me/2020/07/30/Spring%E4%B8%ADignoreDependencyInterface%E5%92%8CignoreDependencyType%E4%BB%8B%E7%BB%8D/</guid>
+      <description>&lt;p&gt;ignoreDependencyInterface和ignoreDependencyType的使用以及作用的介绍。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Spring中Placeholder的解析过程</title>
       <link>https://cxis.me/2020/05/05/Spring%E4%B8%ADPlaceholder%E7%9A%84%E8%A7%A3%E6%9E%90%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Tue, 05 May 2020 10:46:26 +0000</pubDate>

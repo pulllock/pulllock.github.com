@@ -64,7 +64,7 @@
 <h1 id="import的实现原理">@Import的实现原理</h1>
 <p>Spring容器初始化的时候有一步invokeBeanFactoryPostProcessor，这里会调用实现了接口BeanDefinitionRegistryPostProcessor的postProcessBeanDefinitionRegistry方法，ConfigurationClassPostProcessor也实现了此接口，在该方法postProcessBeanDefinitionRegistry中会处理@Configuration相关注解，这里就进行了@Import注解的处理。</p>
 <p>ConfigurationClassParser的processImport方法：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">...</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">...</span>
     <span style="color:#75715e">// ImportSelector的处理，会实例化我们自定义的实现类ImportSelector接口的类 ，然后调用ImportSelector的selectImports方法获取我们要处理Bean
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>checkAssignability<span style="color:#f92672">(</span>ImportSelector<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> candidateToCheck<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
     <span style="color:#75715e">// Candidate class is an ImportSelector -&gt; delegate to it to determine imports

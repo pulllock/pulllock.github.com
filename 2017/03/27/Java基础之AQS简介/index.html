@@ -56,7 +56,7 @@
 <h1 id="aqs的clh队列锁">AQS的CLH队列锁</h1>
 <p>AQS的CLH队列锁对原始的CLH队列锁做了改动，增加了前驱和后继指针，增加了waitStatus，将原始结点的state变成了队列可见的state等，但是原理还是自旋锁。具体的可参考之前的一篇：Java基础之AQS设计思路介绍。</p>
 <h1 id="acquire操作">acquire操作</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>尝试获取锁不成功<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>尝试获取锁不成功<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
     node <span style="color:#f92672">=</span> 创建新结点<span style="color:#960050;background-color:#1e0010">，</span>并入队列
     pred <span style="color:#f92672">=</span> 结点的前驱结点
     <span style="color:#a6e22e">while</span> <span style="color:#f92672">(</span>pred 不是头结点 <span style="color:#f92672">||</span> 尝试获取锁失败<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
@@ -69,7 +69,7 @@
      <span style="color:#f92672">}</span>
  <span style="color:#f92672">}</span>
 </code></pre></div><h1 id="release操作">release操作</h1>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>尝试释放锁 <span style="color:#f92672">&amp;&amp;</span> 头结点的waitStatus是SIGNAL<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>尝试释放锁 <span style="color:#f92672">&amp;&amp;</span> 头结点的waitStatus是SIGNAL<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
     cas设置头结点waitStatus不是SIGNAL
     唤醒后继结点
 <span style="color:#f92672">}</span>

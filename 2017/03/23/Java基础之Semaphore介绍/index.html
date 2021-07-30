@@ -53,7 +53,7 @@
 <p>直接将信号量值加1即可</p>
 <h2 id="代码示例">代码示例</h2>
 <p>Semaphore伪代码如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Semaphore <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Semaphore <span style="color:#f92672">{</span>
   <span style="color:#66d9ef">int</span> semaphore<span style="color:#f92672">;</span>
   
   p<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
@@ -87,7 +87,7 @@
 <p>先将值加1，判断如果值小于等于0，说明同步队列中有线程，从同步队列中取出一个线程并唤醒；如果值大于0，v操作直接结束。</p>
 <h2 id="代码示例-1">代码示例</h2>
 <p>伪代码实现如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Semaphore <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Semaphore <span style="color:#f92672">{</span>
   <span style="color:#66d9ef">int</span> semaphore<span style="color:#f92672">;</span>
   WaitQueue waitQueue<span style="color:#f92672">;</span>
   

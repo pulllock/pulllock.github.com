@@ -49,7 +49,7 @@
 <li>client结构表示各个客户端的状态</li>
 </ul>
 <p>Redis中redisServer结构表示服务器的状态，服务器的所有数据库存在redisServer的db数组中，数组中每个redisDb代表一个数据库，redisServer结构如下</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> redisServer {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">struct</span> redisServer {
   <span style="color:#75715e">// db数组，保存服务器中所有数据库
 </span><span style="color:#75715e"></span>  redisDb <span style="color:#f92672">*</span>db;
   
@@ -60,7 +60,7 @@
 </span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> dbnum;
 }
 </code></pre></div><p>每个redis客户端都有自己的目标数据库，默认是0号数据库，可以通过select命令切换客户端对应的数据库。在redis内部使用client结构来保存客户端状态，client结构中的db属性记录了当前客户端的目标数据库，client结构如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> client {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> client {
     <span style="color:#75715e">/**
 </span><span style="color:#75715e">     * db记录了客户端当前的目标数据库
 </span><span style="color:#75715e">     * 是指向redisDb结构的指针

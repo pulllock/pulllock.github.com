@@ -66,7 +66,7 @@
 </code></pre><p>定义spring.handlers文件：</p>
 <pre><code class="language-properties" data-lang="properties">https\://www.cxis.me/schema/dcc=me.cxis.dcc.spring.DccConfigNamespaceHandler
 </code></pre><p>定义dcc-config.xsd文件</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
 
 <span style="color:#f92672">&lt;xsd:schema</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;https://www.cxis.me/schema/dcc&#34;</span>
 		<span style="color:#a6e22e">xmlns:xsd=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema&#34;</span>
@@ -89,7 +89,7 @@
 <span style="color:#f92672">&lt;/xsd:schema&gt;</span>
 
 </code></pre></div><p>定义DccConfigNamespaceHandler：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DccConfigNamespaceHandler</span> <span style="color:#66d9ef">extends</span> NamespaceHandlerSupport <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DccConfigNamespaceHandler</span> <span style="color:#66d9ef">extends</span> NamespaceHandlerSupport <span style="color:#f92672">{</span>
 
     <span style="color:#a6e22e">@Override</span>
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
@@ -97,7 +97,7 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>定义DccConfigDefinitionParser：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DccConfigDefinitionParser</span> <span style="color:#66d9ef">implements</span> BeanDefinitionParser <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DccConfigDefinitionParser</span> <span style="color:#66d9ef">implements</span> BeanDefinitionParser <span style="color:#f92672">{</span>
 
     <span style="color:#a6e22e">@Override</span>
     <span style="color:#66d9ef">public</span> BeanDefinition <span style="color:#a6e22e">parse</span><span style="color:#f92672">(</span>Element element<span style="color:#f92672">,</span> ParserContext parserContext<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
