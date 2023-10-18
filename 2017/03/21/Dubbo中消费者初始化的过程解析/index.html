@@ -56,22 +56,22 @@
 <h1 id="初始化开始">初始化开始</h1>
 <p>这里以没有配置init的reference为例，只要不注入bean或者不调用getBean获取bean的时候，就不会被初始化。<code>HelloService helloService = (HelloService) applicationContext.getBean(&quot;helloService&quot;);</code></p>
 <p>另外在ReferenceBean这个类在Spring中初始化的时候，有几个静态变量会被初始化：</p>
-<pre><code>private static final Protocol refprotocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
+<pre tabindex="0"><code>private static final Protocol refprotocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension();
 
 private static final Cluster cluster = ExtensionLoader.getExtensionLoader(Cluster.class).getAdaptiveExtension();
 
 private static final ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getAdaptiveExtension();
 </code></pre><p>这几个变量的初始化是根据dubbo的SPI扩展机制动态生成的代码：</p>
 <p>refprotocol：</p>
-<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+<pre tabindex="0"><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
 public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol {
   public com.alibaba.dubbo.rpc.Invoker refer(java.lang.Class arg0, com.alibaba.dubbo.common.URL arg1) throws java.lang.Class {
-    if (arg1 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
+    if (arg1 == null) throw new IllegalArgumentException(&#34;url == null&#34;);
 
     com.alibaba.dubbo.common.URL url = arg1;
-    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+    String extName = ( url.getProtocol() == null ? &#34;dubbo&#34; : url.getProtocol() );
 
-    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+    if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&#34; + url.toString() + &#34;) use keys([protocol])&#34;);
     
     com.alibaba.dubbo.rpc.Protocol extension = (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);
     
@@ -79,13 +79,13 @@ public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol {
   }
   
   public com.alibaba.dubbo.rpc.Exporter export(com.alibaba.dubbo.rpc.Invoker arg0) throws com.alibaba.dubbo.rpc.Invoker {
-    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument == null&quot;);
+    if (arg0 == null) throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.Invoker argument == null&#34;);
     
-    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
+    if (arg0.getUrl() == null) throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&#34;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
     
-    String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+    String extName = ( url.getProtocol() == null ? &#34;dubbo&#34; : url.getProtocol() );
     
-    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+    if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&#34; + url.toString() + &#34;) use keys([protocol])&#34;);
     
     com.alibaba.dubbo.rpc.Protocol extension = (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);
     
@@ -93,24 +93,24 @@ public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol {
   }
   
   public void destroy() {
-  	throw new UnsupportedOperationException(&quot;method public abstract void com.alibaba.dubbo.rpc.Protocol.destroy() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);
+  	throw new UnsupportedOperationException(&#34;method public abstract void com.alibaba.dubbo.rpc.Protocol.destroy() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&#34;);
   }
   
   public int getDefaultPort() {
-  	throw new UnsupportedOperationException(&quot;method public abstract int com.alibaba.dubbo.rpc.Protocol.getDefaultPort() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);
+  	throw new UnsupportedOperationException(&#34;method public abstract int com.alibaba.dubbo.rpc.Protocol.getDefaultPort() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&#34;);
   }
 }
 </code></pre><p>cluster：</p>
-<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+<pre tabindex="0"><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
 public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
 
   public com.alibaba.dubbo.rpc.Invoker join(com.alibaba.dubbo.rpc.cluster.Directory arg0) throws com.alibaba.dubbo.rpc.cluster.Directory {
-    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument == null&quot;);
+    if (arg0 == null) throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.cluster.Directory argument == null&#34;);
     
-    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
+    if (arg0.getUrl() == null) throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.cluster.Directory argument getUrl() == null&#34;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
     
-    String extName = url.getParameter(&quot;cluster&quot;, &quot;failover&quot;);
-    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.cluster.Cluster) name from url(&quot; + url.toString() + &quot;) use keys([cluster])&quot;);
+    String extName = url.getParameter(&#34;cluster&#34;, &#34;failover&#34;);
+    if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.cluster.Cluster) name from url(&#34; + url.toString() + &#34;) use keys([cluster])&#34;);
     
     com.alibaba.dubbo.rpc.cluster.Cluster extension = (com.alibaba.dubbo.rpc.cluster.Cluster)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.cluster.Cluster.class).getExtension(extName);
     
@@ -118,16 +118,16 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
   }
 }
 </code></pre><p>proxyFactory：</p>
-<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+<pre tabindex="0"><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
 public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory {
 
   public java.lang.Object getProxy(com.alibaba.dubbo.rpc.Invoker arg0) throws com.alibaba.dubbo.rpc.Invoker {
-    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument == null&quot;);
+    if (arg0 == null) throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.Invoker argument == null&#34;);
     
-    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
+    if (arg0.getUrl() == null) throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&#34;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
     
-    String extName = url.getParameter(&quot;proxy&quot;, &quot;javassist&quot;);
-    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&quot; + url.toString() + &quot;) use keys([proxy])&quot;);
+    String extName = url.getParameter(&#34;proxy&#34;, &#34;javassist&#34;);
+    if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&#34; + url.toString() + &#34;) use keys([proxy])&#34;);
     
     com.alibaba.dubbo.rpc.ProxyFactory extension = (com.alibaba.dubbo.rpc.ProxyFactory)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.ProxyFactory.class).getExtension(extName);
     
@@ -135,12 +135,12 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
   }
   
   public com.alibaba.dubbo.rpc.Invoker getInvoker(java.lang.Object arg0, java.lang.Class arg1, com.alibaba.dubbo.common.URL arg2) throws java.lang.Object {
-    if (arg2 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
+    if (arg2 == null) throw new IllegalArgumentException(&#34;url == null&#34;);
     
     com.alibaba.dubbo.common.URL url = arg2;
-    String extName = url.getParameter(&quot;proxy&quot;, &quot;javassist&quot;);
+    String extName = url.getParameter(&#34;proxy&#34;, &#34;javassist&#34;);
     
-    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&quot; + url.toString() + &quot;) use keys([proxy])&quot;);
+    if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&#34; + url.toString() + &#34;) use keys([proxy])&#34;);
     
     com.alibaba.dubbo.rpc.ProxyFactory extension = (com.alibaba.dubbo.rpc.ProxyFactory)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.ProxyFactory.class).getExtension(extName);
     
@@ -149,9 +149,9 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 }
 </code></pre><h1 id="初始化入口">初始化入口</h1>
 <p>初始化的入口在ReferenceConfig的get()方法：</p>
-<pre><code>public synchronized T get() {
+<pre tabindex="0"><code>public synchronized T get() {
   if (destroyed){
-  	throw new IllegalStateException(&quot;Already destroyed!&quot;);
+  	throw new IllegalStateException(&#34;Already destroyed!&#34;);
   }
   if (ref == null) {
   	init();
@@ -175,7 +175,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 <li>创建代理</li>
 </ul>
 <p>init()中createProxy方法：</p>
-<pre><code>private T createProxy(Map&lt;String, String&gt; map) {
+<pre tabindex="0"><code>private T createProxy(Map&lt;String, String&gt; map) {
 	//先判断是否是本地服务引用injvm
     //判断是否是点对点直连
     //判断是否是通过注册中心连接
@@ -196,7 +196,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 </code></pre><p>这里refprotocol是上面生成的代码，会根据协议不同选择不同的Protocol协议。</p>
 <h2 id="引用远程服务">引用远程服务</h2>
 <p>对于服务引用<code>refprotocol.refer(interfaceClass, url)</code>会首先进入ProtocolListenerWrapper的refer方法，然后在进入ProtocolFilterWrapper的refer方法，然后再进入RegistryProtocol的refer方法，这里的url协议是registry，所以上面两个Wrapper中不做处理，直接进入了RegistryProtocol，看下RegistryProtocol中：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
 	//这里获得的url是
     //zookeeper://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?
     //application=dubbo-consumer&amp;dubbo=2.5.3&amp;pid=12272&amp;
@@ -214,7 +214,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
         return proxyFactory.getInvoker((T) registry, type, url);
     }
 	//以下是普通服务，需要进入注册中心和集群下面的逻辑
-    // group=&quot;a,b&quot; or group=&quot;*&quot;
+    // group=&#34;a,b&#34; or group=&#34;*&#34;
     //获取ref的各种属性
     Map&lt;String, String&gt; qs = StringUtils.parseQueryString(url.getParameterAndDecoded(Constants.REFER_KEY));
     //获取分组属性
@@ -222,17 +222,17 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
     //先判断引用服务是否需要合并不同实现的返回结果
     if (group != null &amp;&amp; group.length() &gt; 0 ) {
         if ( ( Constants.COMMA_SPLIT_PATTERN.split( group ) ).length &gt; 1
-                || &quot;*&quot;.equals( group ) ) {
+                || &#34;*&#34;.equals( group ) ) {
                 //使用默认的分组聚合集群策略
             return doRefer( getMergeableCluster(), registry, type, url );
         }
     }
-    //选择配置的集群策略（cluster=&quot;failback&quot;）或者默认策略
+    //选择配置的集群策略（cluster=&#34;failback&#34;）或者默认策略
     return doRefer(cluster, registry, type, url);
 }
 </code></pre><h3 id="获取注册中心">获取注册中心</h3>
 <p>连接注册中心<code>Registry registry = registryFactory.getRegistry(url);</code>首先会到AbstractRegistryFactory的getRegistry方法：</p>
-<pre><code>public Registry getRegistry(URL url) {
+<pre tabindex="0"><code>public Registry getRegistry(URL url) {
 	//这里url是
     //zookeeper://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?
     //application=dubbo-consumer&amp;dubbo=2.5.3&amp;
@@ -255,7 +255,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
         //返回的Registry中封装了已经连接到Zookeeper的zkClient实例
         registry = createRegistry(url);
         if (registry == null) {
-            throw new IllegalStateException(&quot;Can not create registry &quot; + url);
+            throw new IllegalStateException(&#34;Can not create registry &#34; + url);
         }
         //放到缓存中
         REGISTRIES.put(key, registry);
@@ -266,22 +266,22 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
     }
 }
 </code></pre><p>ZookeeperRegistryFactory的createRegistry方法：</p>
-<pre><code>public Registry createRegistry(URL url) {
+<pre tabindex="0"><code>public Registry createRegistry(URL url) {
 	//直接返回一个新的ZookeeperRegistry实例
     //这里的zookeeperTransporter代码在下面，动态生成的适配类
     return new ZookeeperRegistry(url, zookeeperTransporter);
 }
 </code></pre><p>zookeeperTransporter代码：</p>
-<pre><code>package com.alibaba.dubbo.remoting.zookeeper;
+<pre tabindex="0"><code>package com.alibaba.dubbo.remoting.zookeeper;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter {
     public com.alibaba.dubbo.remoting.zookeeper.ZookeeperClient connect(com.alibaba.dubbo.common.URL arg0) {
-        if (arg0 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
+        if (arg0 == null) throw new IllegalArgumentException(&#34;url == null&#34;);
         
         com.alibaba.dubbo.common.URL url = arg0;
-        String extName = url.getParameter(&quot;client&quot;, url.getParameter(&quot;transporter&quot;, &quot;zkclient&quot;));
+        String extName = url.getParameter(&#34;client&#34;, url.getParameter(&#34;transporter&#34;, &#34;zkclient&#34;));
         
-        if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter) name from url(&quot; + url.toString() + &quot;) use keys([client, transporter])&quot;);
+        if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter) name from url(&#34; + url.toString() + &#34;) use keys([client, transporter])&#34;);
         
         com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter extension = (com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.remoting.zookeeper.ZookeeperTransporter.class).getExtension(extName);
         
@@ -290,11 +290,11 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
 }
 </code></pre><p>上面代码中可以看到，如果我们没有指定Zookeeper的client属性，默认使用zkClient，所以上面的zookeeperTransporter是ZkclientZookeeperTransporter。</p>
 <p>继续看<code>new ZookeeperRegistry(url, zookeeperTransporter);</code>：</p>
-<pre><code>public ZookeeperRegistry(URL url, ZookeeperTransporter zookeeperTransporter) {
+<pre tabindex="0"><code>public ZookeeperRegistry(URL url, ZookeeperTransporter zookeeperTransporter) {
 	//这里会先经过AbstractRegistry的处理，然后经过FailbackRegistry的处理（解释在下面）
     super(url);
     if (url.isAnyHost()) {
-        throw new IllegalStateException(&quot;registry address == null&quot;);
+        throw new IllegalStateException(&#34;registry address == null&#34;);
     }
     //服务分组，默认dubbo
     String group = url.getParameter(Constants.GROUP_KEY, DEFAULT_ROOT);
@@ -321,19 +321,19 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
     });
 }
 </code></pre><p>AbstractRegistry的处理：</p>
-<pre><code>public AbstractRegistry(URL url) {
+<pre tabindex="0"><code>public AbstractRegistry(URL url) {
 	//设置registryUrl
     setUrl(url);
     // 启动文件保存定时器
     syncSaveFile = url.getParameter(Constants.REGISTRY_FILESAVE_SYNC_KEY, false);
     //会先去用户主目录下的.dubbo目录下加载缓存注册中心的缓存文件比如：dubbo-registry-127.0.0.1.cache
-    String filename = url.getParameter(Constants.FILE_KEY, System.getProperty(&quot;user.home&quot;) + &quot;/.dubbo/dubbo-registry-&quot; + url.getHost() + &quot;.cache&quot;);
+    String filename = url.getParameter(Constants.FILE_KEY, System.getProperty(&#34;user.home&#34;) + &#34;/.dubbo/dubbo-registry-&#34; + url.getHost() + &#34;.cache&#34;);
     File file = null;
     if (ConfigUtils.isNotEmpty(filename)) {
         file = new File(filename);
         if(! file.exists() &amp;&amp; file.getParentFile() != null &amp;&amp; ! file.getParentFile().exists()){
             if(! file.getParentFile().mkdirs()){
-                throw new IllegalArgumentException(&quot;Invalid registry store file &quot; + file + &quot;, cause: Failed to create directory &quot; + file.getParentFile() + &quot;!&quot;);
+                throw new IllegalArgumentException(&#34;Invalid registry store file &#34; + file + &#34;, cause: Failed to create directory &#34; + file.getParentFile() + &#34;!&#34;);
             }
         }
     }
@@ -346,7 +346,7 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
 }
 </code></pre><h3 id="获取注册中心时的通知方法">获取注册中心时的通知方法</h3>
 <p>notify方法：</p>
-<pre><code>protected void notify(List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(List&lt;URL&gt; urls) {
     if(urls == null || urls.isEmpty()) return;
 	//getSubscribed()方法获取订阅者列表
     for (Map.Entry&lt;URL, Set&lt;NotifyListener&gt;&gt; entry : getSubscribed().entrySet()) {
@@ -368,7 +368,7 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
     }
 }
 </code></pre><p><code>notify(url, listener, filterEmpty(url, urls));</code>代码：</p>
-<pre><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
     Map&lt;String, List&lt;URL&gt;&gt; result = new HashMap&lt;String, List&lt;URL&gt;&gt;();
     for (URL u : urls) {
         if (UrlUtils.isMatch(url, u)) {
@@ -400,7 +400,7 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
     }
 }
 </code></pre><p>AbstractRegistry构造完，接着是FailbackRegistry的处理：</p>
-<pre><code>public FailbackRegistry(URL url) {
+<pre tabindex="0"><code>public FailbackRegistry(URL url) {
     super(url);
     int retryPeriod = url.getParameter(Constants.REGISTRY_RETRY_PERIOD_KEY, Constants.DEFAULT_REGISTRY_RETRY_PERIOD);
     //启动失败重试定时器
@@ -418,7 +418,7 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
 </code></pre><p>这里会启动一个新的定时线程，主要是有连接失败的话，会进行重试连接retry()，启动完之后返回ZookeeperRegistry中继续处理。接下来下一步是服务的引用。</p>
 <h3 id="引用远程服务-1">引用远程服务</h3>
 <p>继续看ref方法中最后一步，服务的引用，返回的是一个Invoker，<code>return doRefer(cluster, registry, type, url)；</code></p>
-<pre><code>private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) {
+<pre tabindex="0"><code>private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) {
 	//初始化Directory
     //组装Directory，可以看成一个消费端的List，可以随着注册中心的消息推送而动态的变化服务的Invoker
     //封装了所有服务真正引用逻辑，覆盖配置，路由规则等逻辑
@@ -446,8 +446,8 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
     //有服务提供的时候，注册中心会推送服务消息给消费者，消费者再进行服务的引用。
     directory.subscribe(subscribeUrl.addParameter(Constants.CATEGORY_KEY, 
             Constants.PROVIDERS_CATEGORY 
-            + &quot;,&quot; + Constants.CONFIGURATORS_CATEGORY 
-            + &quot;,&quot; + Constants.ROUTERS_CATEGORY));
+            + &#34;,&#34; + Constants.CONFIGURATORS_CATEGORY 
+            + &#34;,&#34; + Constants.ROUTERS_CATEGORY));
     //服务的引用与变更全部由Directory异步完成
     //集群策略会将Directory伪装成一个Invoker返回
     //合并所有相同的invoker
@@ -456,7 +456,7 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
 </code></pre><p>注册中心接收到消费者发送的订阅请求后，会根据提供者注册服务的列表，推送服务消息给消费者。消费者端接收到注册中心发来的提供者列表后，进行服务的引用。触发Directory监听器的可以是订阅请求，覆盖策略消息，路由策略消息。</p>
 <h3 id="注册到注册中心">注册到注册中心</h3>
 <p>AbstractRegistry的register方法：</p>
-<pre><code>public void register(URL url) {
+<pre tabindex="0"><code>public void register(URL url) {
 	//此时url是
     //consumer://192.168.1.100/dubbo.common.hello.service.HelloService?
     //application=dubbo-consumer&amp;
@@ -464,16 +464,16 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
     //interface=dubbo.common.hello.service.HelloService&amp;methods=sayHello
     //&amp;pid=16409&amp;side=consumer&amp;timeout=100000&amp;timestamp=1489322133987
     if (url == null) {
-        throw new IllegalArgumentException(&quot;register url == null&quot;);
+        throw new IllegalArgumentException(&#34;register url == null&#34;);
     }
     if (logger.isInfoEnabled()){
-        logger.info(&quot;Register: &quot; + url);
+        logger.info(&#34;Register: &#34; + url);
     }
     registered.add(url);
 }
 </code></pre><p>上面只是把url添加到registered这个set中。</p>
 <p>接着看FailbackRegistry的register方法：</p>
-<pre><code>public void register(URL url) {
+<pre tabindex="0"><code>public void register(URL url) {
     super.register(url);
     failedRegistered.remove(url);
     failedUnregistered.remove(url);
@@ -493,9 +493,9 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
             if(skipFailback) {
                 t = t.getCause();
             }
-            throw new IllegalStateException(&quot;Failed to register &quot; + url + &quot; to registry &quot; + getUrl().getAddress() + &quot;, cause: &quot; + t.getMessage(), t);
+            throw new IllegalStateException(&#34;Failed to register &#34; + url + &#34; to registry &#34; + getUrl().getAddress() + &#34;, cause: &#34; + t.getMessage(), t);
         } else {
-            logger.error(&quot;Failed to register &quot; + url + &quot;, waiting for retry, cause: &quot; + t.getMessage(), t);
+            logger.error(&#34;Failed to register &#34; + url + &#34;, waiting for retry, cause: &#34; + t.getMessage(), t);
         }
 
         // 将失败的注册请求记录到失败列表，定时重试
@@ -503,16 +503,16 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
     }
 }
 </code></pre><p>接着看下doRegister(url);方法，向服务器端发送注册请求，在ZookeeperRegistry中：</p>
-<pre><code>protected void doRegister(URL url) {
+<pre tabindex="0"><code>protected void doRegister(URL url) {
     try {
     	//直接调用create，在AbstractZookeeperClient类中
         zkClient.create(toUrlPath(url), url.getParameter(Constants.DYNAMIC_KEY, true));
     } catch (Throwable e) {
-        throw new RpcException(&quot;Failed to register &quot; + url + &quot; to zookeeper &quot; + getUrl() + &quot;, cause: &quot; + e.getMessage(), e);
+        throw new RpcException(&#34;Failed to register &#34; + url + &#34; to zookeeper &#34; + getUrl() + &#34;, cause: &#34; + e.getMessage(), e);
     }
 }
 </code></pre><p>zkClient.create()方法：</p>
-<pre><code>//path为
+<pre tabindex="0"><code>//path为
 ///dubbo/dubbo.common.hello.service.HelloService/consumers/
 //consumer%3A%2F%2F192.168.1.100%2F
 //dubbo.common.hello.service.HelloService%3Fapplication%3D
@@ -522,7 +522,7 @@ public class ZookeeperTransporter$Adpative implements com.alibaba.dubbo.remoting
 //methods%3DsayHello%26pid%3D28819%26
 //side%3Dconsumer%26timeout%3D100000%26timestamp%3D1489332839677
 public void create(String path, boolean ephemeral) {
-    int i = path.lastIndexOf('/');
+    int i = path.lastIndexOf(&#39;/&#39;);
     if (i &gt; 0) {
         create(path.substring(0, i), false);
     }
@@ -544,7 +544,7 @@ public void create(String path, boolean ephemeral) {
     }
 }
 </code></pre><p>经过上面create之后，Zookeeper中就存在了消费者需要订阅的服务的节点：</p>
-<pre><code>/dubbo
+<pre tabindex="0"><code>/dubbo
 	/dubbo.common.hello.service.HelloService
     	/consumers
         	/http://0.0.0.0:4550/?path=dubbo%2F
@@ -559,7 +559,7 @@ public void create(String path, boolean ephemeral) {
             consumer%2526timeout%253D100000%2526timestamp%253D1490063394184
 </code></pre><h3 id="订阅服务提供者">订阅服务提供者</h3>
 <p>消费者自己注册到注册中心之后，接着是订阅服务提供者，directory.subscribe()：</p>
-<pre><code>public void subscribe(URL url) {
+<pre tabindex="0"><code>public void subscribe(URL url) {
 	//设置消费者url
     setConsumerUrl(url);
     //这里的registry是ZookeeperRegistry
@@ -567,7 +567,7 @@ public void create(String path, boolean ephemeral) {
 }
 </code></pre><p>看下registry.subscribe(url, this);，这里registry是ZookeeperRegistry，会先经过AbstractRegistry的处理，然后是FailbackRegistry的处理。</p>
 <p>在AbstractRegistry中：</p>
-<pre><code>//此时url为consumer://192.168.1.100/dubbo.common.hello.service.HelloService?application=dubbo-consumer&amp;
+<pre tabindex="0"><code>//此时url为consumer://192.168.1.100/dubbo.common.hello.service.HelloService?application=dubbo-consumer&amp;
 //category=providers,configurators,routers&amp;dubbo=2.5.3&amp;interface=dubbo.common.hello.service.HelloService&amp;methods=
 //sayHello&amp;pid=28819&amp;side=consumer&amp;timeout=100000&amp;timestamp=1489332839677
 public void subscribe(URL url, NotifyListener listener) {
@@ -582,7 +582,7 @@ public void subscribe(URL url, NotifyListener listener) {
     listeners.add(listener);
 }
 </code></pre><p>然后是FailbackRegistry中：</p>
-<pre><code>public void subscribe(URL url, NotifyListener listener) {
+<pre tabindex="0"><code>public void subscribe(URL url, NotifyListener listener) {
     super.subscribe(url, listener);
     removeFailedSubscribed(url, listener);
     try {
@@ -591,7 +591,7 @@ public void subscribe(URL url, NotifyListener listener) {
     } catch (Exception e) {...}
 }
 </code></pre><p>继续看doSubscribe(url, listener);向服务端发送订阅请求，在ZookeeperRegistry中：</p>
-<pre><code>protected void doSubscribe(final URL url, final NotifyListener listener) {
+<pre tabindex="0"><code>protected void doSubscribe(final URL url, final NotifyListener listener) {
     try {
         if (Constants.ANY_VALUE.equals(url.getServiceInterface())) {... } else {
             List&lt;URL&gt; urls = new ArrayList&lt;URL&gt;();
@@ -626,13 +626,13 @@ public void subscribe(URL url, NotifyListener listener) {
             notify(url, listener, urls);
         }
     } catch (Throwable e) {
-        throw new RpcException(&quot;Failed to subscribe &quot; + url + &quot; to zookeeper &quot; + getUrl() + &quot;, cause: &quot; + e.getMessage(), e);
+        throw new RpcException(&#34;Failed to subscribe &#34; + url + &#34; to zookeeper &#34; + getUrl() + &#34;, cause: &#34; + e.getMessage(), e);
     }
 }
 </code></pre><h3 id="服务订阅完之后的通知">服务订阅完之后的通知</h3>
 <p>服务订阅完成之后，接着就是notify(url, listener, urls);：</p>
 <p>会先经过FailbackRegistry将失败的通知请求记录到失败列表，定时重试。</p>
-<pre><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
     try {
         doNotify(url, listener, urls);
     } catch (Exception t) {
@@ -643,16 +643,16 @@ public void subscribe(URL url, NotifyListener listener) {
             listeners = failedNotified.get(url);
         }
         listeners.put(listener, urls);
-        logger.error(&quot;Failed to notify for subscribe &quot; + url + &quot;, waiting for retry, cause: &quot; + t.getMessage(), t);
+        logger.error(&#34;Failed to notify for subscribe &#34; + url + &#34;, waiting for retry, cause: &#34; + t.getMessage(), t);
     }
 }
 </code></pre><p>doNotify(url, listener, urls);：</p>
-<pre><code>protected void doNotify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void doNotify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
 	//父类实现
     super.notify(url, listener, urls);
 }
 </code></pre><p>AbstractRegistry中的doNotify实现：</p>
-<pre><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
     Map&lt;String, List&lt;URL&gt;&gt; result = new HashMap&lt;String, List&lt;URL&gt;&gt;();
     for (URL u : urls) {
         if (UrlUtils.isMatch(url, u)) {
@@ -686,7 +686,7 @@ public void subscribe(URL url, NotifyListener listener) {
     }
 }
 </code></pre><p>到RegistryDirectory中查看notify方法：</p>
-<pre><code>public synchronized void notify(List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>public synchronized void notify(List&lt;URL&gt; urls) {
     List&lt;URL&gt; invokerUrls = new ArrayList&lt;URL&gt;();
     List&lt;URL&gt; routerUrls = new ArrayList&lt;URL&gt;();
     List&lt;URL&gt; configuratorUrls = new ArrayList&lt;URL&gt;();
@@ -702,7 +702,7 @@ public void subscribe(URL url, NotifyListener listener) {
         } else if (Constants.PROVIDERS_CATEGORY.equals(category)) {
             invokerUrls.add(url);
         } else {
-            logger.warn(&quot;Unsupported category &quot; + category + &quot; in notified url: &quot; + url + &quot; from registry &quot; + getUrl().getAddress() + &quot; to consumer &quot; + NetUtils.getLocalHost());
+            logger.warn(&#34;Unsupported category &#34; + category + &#34; in notified url: &#34; + url + &#34; from registry &#34; + getUrl().getAddress() + &#34; to consumer &#34; + NetUtils.getLocalHost());
         }
     }
     // configurators 更新缓存的服务提供方配置
@@ -730,7 +730,7 @@ public void subscribe(URL url, NotifyListener listener) {
 }
 </code></pre><h4 id="重建invoker实例">重建invoker实例</h4>
 <p>refreshInvoker(invokerUrls);：</p>
-<pre><code>/**
+<pre tabindex="0"><code>/**
  * 根据invokerURL列表转换为invoker列表。转换规则如下：
  * 1.如果url已经被转换为invoker，则不在重新引用，直接从缓存中获取，注意如果url中任何一个参数变更也会重新引用
  * 2.如果传入的invoker列表不为空，则表示最新的invoker列表
@@ -762,7 +762,7 @@ private void refreshInvoker(List&lt;URL&gt; invokerUrls){
         // state change
         //如果计算错误，则不进行处理.
         if (newUrlInvokerMap == null || newUrlInvokerMap.size() == 0 ){
-            logger.error(new IllegalStateException(&quot;urls to invokers error .invokerUrls.size :&quot;+invokerUrls.size() + &quot;, invoker.size :0. urls :&quot;+invokerUrls.toString()));
+            logger.error(new IllegalStateException(&#34;urls to invokers error .invokerUrls.size :&#34;+invokerUrls.size() + &#34;, invoker.size :0. urls :&#34;+invokerUrls.toString()));
             return ;
         }
         //服务提供者Invoker保存在这个map中
@@ -771,12 +771,12 @@ private void refreshInvoker(List&lt;URL&gt; invokerUrls){
         try{
             destroyUnusedInvokers(oldUrlInvokerMap,newUrlInvokerMap); // 关闭未使用的Invoker
         }catch (Exception e) {
-            logger.warn(&quot;destroyUnusedInvokers error. &quot;, e);
+            logger.warn(&#34;destroyUnusedInvokers error. &#34;, e);
         }
     }
 }
 </code></pre><p>toInvokers(invokerUrls) 方法：</p>
-<pre><code>private Map&lt;String, Invoker&lt;T&gt;&gt; toInvokers(List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>private Map&lt;String, Invoker&lt;T&gt;&gt; toInvokers(List&lt;URL&gt; urls) {
     Map&lt;String, Invoker&lt;T&gt;&gt; newUrlInvokerMap = new HashMap&lt;String, Invoker&lt;T&gt;&gt;();
     if(urls == null || urls.size() == 0){
         return newUrlInvokerMap;
@@ -792,7 +792,7 @@ private void refreshInvoker(List&lt;URL&gt; invokerUrls){
         //如果reference端配置了protocol，则只选择匹配的protocol
         if (queryProtocols != null &amp;&amp; queryProtocols.length() &gt;0) {
             boolean accept = false;
-            String[] acceptProtocols = queryProtocols.split(&quot;,&quot;);
+            String[] acceptProtocols = queryProtocols.split(&#34;,&#34;);
             for (String acceptProtocol : acceptProtocols) {
                 if (providerUrl.getProtocol().equals(acceptProtocol)) {
                     accept = true;
@@ -807,8 +807,8 @@ private void refreshInvoker(List&lt;URL&gt; invokerUrls){
             continue;
         }
         if (! ExtensionLoader.getExtensionLoader(Protocol.class).hasExtension(providerUrl.getProtocol())) {
-            logger.error(new IllegalStateException(&quot;Unsupported protocol &quot; + providerUrl.getProtocol() + &quot; in notified url: &quot; + providerUrl + &quot; from registry &quot; + getUrl().getAddress() + &quot; to consumer &quot; + NetUtils.getLocalHost() 
-                    + &quot;, supported protocol: &quot;+ExtensionLoader.getExtensionLoader(Protocol.class).getSupportedExtensions()));
+            logger.error(new IllegalStateException(&#34;Unsupported protocol &#34; + providerUrl.getProtocol() + &#34; in notified url: &#34; + providerUrl + &#34; from registry &#34; + getUrl().getAddress() + &#34; to consumer &#34; + NetUtils.getLocalHost() 
+                    + &#34;, supported protocol: &#34;+ExtensionLoader.getExtensionLoader(Protocol.class).getSupportedExtensions()));
             continue;
         }
         URL url = mergeUrl(providerUrl);
@@ -834,7 +834,7 @@ private void refreshInvoker(List&lt;URL&gt; invokerUrls){
                     invoker = new InvokerDelegete&lt;T&gt;(protocol.refer(serviceType, url), url, providerUrl);
                 }
             } catch (Throwable t) {
-                logger.error(&quot;Failed to refer invoker for interface:&quot;+serviceType+&quot;,url:(&quot;+url+&quot;)&quot; + t.getMessage(), t);
+                logger.error(&#34;Failed to refer invoker for interface:&#34;+serviceType+&#34;,url:(&#34;+url+&#34;)&#34; + t.getMessage(), t);
             }
             if (invoker != null) { // 将新的引用放入缓存
                 newUrlInvokerMap.put(key, invoker);
@@ -853,7 +853,7 @@ private void refreshInvoker(List&lt;URL&gt; invokerUrls){
 </ul>
 <h4 id="创建invoker">创建invoker</h4>
 <p>在DubboProtocol中创建DubboInvoker的时候代码如下：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; serviceType, URL url) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; serviceType, URL url) throws RpcException {
     // create rpc invoker.
     //这里有一个getClients方法
     DubboInvoker&lt;T&gt; invoker = new DubboInvoker&lt;T&gt;(serviceType, url, getClients(url), invokers);
@@ -861,7 +861,7 @@ private void refreshInvoker(List&lt;URL&gt; invokerUrls){
     return invoker;
 }
 </code></pre><p>查看getClients方法：</p>
-<pre><code>private ExchangeClient[] getClients(URL url){
+<pre tabindex="0"><code>private ExchangeClient[] getClients(URL url){
     //是否共享连接
     boolean service_share_connect = false;
     int connections = url.getParameter(Constants.CONNECTIONS_KEY, 0);
@@ -884,22 +884,22 @@ private void refreshInvoker(List&lt;URL&gt; invokerUrls){
     return clients;
 }
 </code></pre><p>直接看initClient方法：</p>
-<pre><code>//创建新连接
+<pre tabindex="0"><code>//创建新连接
 private ExchangeClient initClient(URL url) {
         
     // client type setting.
     String str = url.getParameter(Constants.CLIENT_KEY, url.getParameter(Constants.SERVER_KEY, Constants.DEFAULT_REMOTING_CLIENT));
 
     String version = url.getParameter(Constants.DUBBO_VERSION_KEY);
-    boolean compatible = (version != null &amp;&amp; version.startsWith(&quot;1.0.&quot;));
+    boolean compatible = (version != null &amp;&amp; version.startsWith(&#34;1.0.&#34;));
     url = url.addParameter(Constants.CODEC_KEY, Version.isCompatibleVersion() &amp;&amp; compatible ? COMPATIBLE_CODEC_NAME : DubboCodec.NAME);
     //默认开启heartbeat
     url = url.addParameterIfAbsent(Constants.HEARTBEAT_KEY, String.valueOf(Constants.DEFAULT_HEARTBEAT));
 
     // BIO存在严重性能问题，暂时不允许使用
     if (str != null &amp;&amp; str.length() &gt; 0 &amp;&amp; ! ExtensionLoader.getExtensionLoader(Transporter.class).hasExtension(str)) {
-        throw new RpcException(&quot;Unsupported client type: &quot; + str + &quot;,&quot; +
-                &quot; supported client type is &quot; + StringUtils.join(ExtensionLoader.getExtensionLoader(Transporter.class).getSupportedExtensions(), &quot; &quot;));
+        throw new RpcException(&#34;Unsupported client type: &#34; + str + &#34;,&#34; +
+                &#34; supported client type is &#34; + StringUtils.join(ExtensionLoader.getExtensionLoader(Transporter.class).getSupportedExtensions(), &#34; &#34;));
     }
 
     ExchangeClient client ;
@@ -913,13 +913,13 @@ private ExchangeClient initClient(URL url) {
             client = Exchangers.connect(url ,requestHandler);
         }
     } catch (RemotingException e) {
-        throw new RpcException(&quot;Fail to create remoting client for service(&quot; + url
-                + &quot;): &quot; + e.getMessage(), e);
+        throw new RpcException(&#34;Fail to create remoting client for service(&#34; + url
+                + &#34;): &#34; + e.getMessage(), e);
     }
     return client;
 }
 </code></pre><p>和服务端建立连接，Exchangers.connect(url ,requestHandler);，其实最后使用的是HeaderExchanger，Exchanger目前只有这一个实现：</p>
-<pre><code>public ExchangeClient connect(URL url, ExchangeHandler handler) throws RemotingException {
+<pre tabindex="0"><code>public ExchangeClient connect(URL url, ExchangeHandler handler) throws RemotingException {
 	//先经过HeaderExchangeHandler包装
     //然后是DecodeHandler
     //然后是Transporters.connect
@@ -927,7 +927,7 @@ private ExchangeClient initClient(URL url) {
     return new HeaderExchangeClient(Transporters.connect(url, new DecodeHandler(new HeaderExchangeHandler(handler))));
 }
 </code></pre><p>Transporters.connect中也是根据SPI扩展获取Transport的具体实现，这里默认使用NettyTransporter.connect()，在NettyTransporter的connect方法中直接返回一个NettyClient(url, listener);，下面看下具体的NettyClient初始化细节，会先初始化AbstractPeer这里只是吧url和handler赋值；然后是AbstractEndpoint初始化：</p>
-<pre><code>public AbstractEndpoint(URL url, ChannelHandler handler) {
+<pre tabindex="0"><code>public AbstractEndpoint(URL url, ChannelHandler handler) {
     super(url, handler);
     //获取编解码器，这里是DubboCountCodec
     this.codec = getChannelCodec(url);
@@ -935,12 +935,12 @@ private ExchangeClient initClient(URL url) {
     this.connectTimeout = url.getPositiveParameter(Constants.CONNECT_TIMEOUT_KEY, Constants.DEFAULT_CONNECT_TIMEOUT);
 }
 </code></pre><p>接着是AbstractClient的初始化：</p>
-<pre><code>public AbstractClient(URL url, ChannelHandler handler) throws RemotingException {
+<pre tabindex="0"><code>public AbstractClient(URL url, ChannelHandler handler) throws RemotingException {
     super(url, handler);
     send_reconnect = url.getParameter(Constants.SEND_RECONNECT_KEY, false);
     shutdown_timeout = url.getParameter(Constants.SHUTDOWN_TIMEOUT_KEY, Constants.DEFAULT_SHUTDOWN_TIMEOUT);
     //默认重连间隔2s，1800表示1小时warning一次.
-    reconnect_warning_period = url.getParameter(&quot;reconnect.waring.period&quot;, 1800);
+    reconnect_warning_period = url.getParameter(&#34;reconnect.waring.period&#34;, 1800);
 
     try {
     	//具体实现在子类中
@@ -957,28 +957,28 @@ private ExchangeClient initClient(URL url) {
         .getDefaultExtension().remove(Constants.CONSUMER_SIDE, Integer.toString(url.getPort()));
 }
 </code></pre><p>看下在NettyClient中doOpen()的实现：</p>
-<pre><code>protected void doOpen() throws Throwable {
+<pre tabindex="0"><code>protected void doOpen() throws Throwable {
     NettyHelper.setNettyLoggerFactory();
     bootstrap = new ClientBootstrap(channelFactory);
     // config
     // @see org.jboss.netty.channel.socket.SocketChannelConfig
-    bootstrap.setOption(&quot;keepAlive&quot;, true);
-    bootstrap.setOption(&quot;tcpNoDelay&quot;, true);
-    bootstrap.setOption(&quot;connectTimeoutMillis&quot;, getTimeout());
+    bootstrap.setOption(&#34;keepAlive&#34;, true);
+    bootstrap.setOption(&#34;tcpNoDelay&#34;, true);
+    bootstrap.setOption(&#34;connectTimeoutMillis&#34;, getTimeout());
     final NettyHandler nettyHandler = new NettyHandler(getUrl(), this);
     bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
         public ChannelPipeline getPipeline() {
             NettyCodecAdapter adapter = new NettyCodecAdapter(getCodec(), getUrl(), NettyClient.this);
             ChannelPipeline pipeline = Channels.pipeline();
-            pipeline.addLast(&quot;decoder&quot;, adapter.getDecoder());
-            pipeline.addLast(&quot;encoder&quot;, adapter.getEncoder());
-            pipeline.addLast(&quot;handler&quot;, nettyHandler);
+            pipeline.addLast(&#34;decoder&#34;, adapter.getDecoder());
+            pipeline.addLast(&#34;encoder&#34;, adapter.getEncoder());
+            pipeline.addLast(&#34;handler&#34;, nettyHandler);
             return pipeline;
         }
     });
 }
 </code></pre><p>这里是Netty3中的客户端连接的一些常规步骤，暂不做具体解析。open之后，就是真正连接服务端的操作了，connect()：</p>
-<pre><code>protected void connect() throws RemotingException {
+<pre tabindex="0"><code>protected void connect() throws RemotingException {
     connectLock.lock();
     try {
         if (isConnected()) {
@@ -995,7 +995,7 @@ private ExchangeClient initClient(URL url) {
     }
 }
 </code></pre><p>NettyClient中的doConnect方法：</p>
-<pre><code>protected void doConnect() throws Throwable {
+<pre tabindex="0"><code>protected void doConnect() throws Throwable {
     long start = System.currentTimeMillis();
     //消费者端开始连接，这一步的时候，服务提供者端就接到了连接请求，开始处理了
     ChannelFuture future = bootstrap.connect(getConnectAddress());
@@ -1036,7 +1036,7 @@ private ExchangeClient initClient(URL url) {
 </code></pre><p>这里连接的细节都交给了netty。</p>
 <p>NettyClient初始化完成之后，返回给Transporters，再返回给HeaderExchanger，HeaderExchanger中将NettyClient包装成HeaderExchangeClient返回给DubboProtocol的initClient方法中，到此在getSharedClient中就获取到了一个ExchangeClient，然后包装一下返回<code>client = new ReferenceCountExchangeClient(exchagneclient, ghostClientMap);</code>。</p>
 <p>到这里在DubboProtocol的refer方法中这句<code>DubboInvoker&lt;T&gt; invoker = new DubboInvoker&lt;T&gt;(serviceType, url, getClients(url), invokers);</code>创建DubboInvoker就已经解析完成，创建过程中连接了服务端，包含一个ExchangeClient等：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; serviceType, URL url) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; serviceType, URL url) throws RpcException {
     // create rpc invoker.
     DubboInvoker&lt;T&gt; invoker = new DubboInvoker&lt;T&gt;(serviceType, url, getClients(url), invokers);
     //将invoker缓存
@@ -1045,14 +1045,14 @@ private ExchangeClient initClient(URL url) {
     return invoker;
 }
 </code></pre><p>接着返回ProtocolFilterWrapper的refer方法，在这里会构建invoker链：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
     if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
         return protocol.refer(type, url);
     }
     return buildInvokerChain(protocol.refer(type, url), Constants.REFERENCE_FILTER_KEY, Constants.CONSUMER);
 }
 </code></pre><p>接着再返回到ProtocolListenerWrapper的refer方法，这里会初始化监听器，包装：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
     if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
         return protocol.refer(type, url);
     }
@@ -1065,9 +1065,9 @@ private ExchangeClient initClient(URL url) {
 <h2 id="创建服务代理">创建服务代理</h2>
 <p>到这里有关消费者端注册到注册中心和订阅注册中心就完事儿了，这部分是在RegistryProtocol.doRefer方法中，这个方法最后一句是<code>return cluster.join(directory);</code>，这里由Cluster组件创建一个Invoker并返回，这里的cluster默认是用FailoverCluster，最后返回的是经过MockClusterInvoker包装过的FailoverCluster。继续返回到ReferenceConfig中createProxy方法，这时候我们已经完成了消费者端引用服务的Invoker。然后最后返回的是根据我们得到的invoker创建的服务代理<code>return (T) proxyFactory.getProxy(invoker);</code>。这里proxyFactory是我们在最上面列出的动态生成的代码。</p>
 <p>首先经过AbstractProxyFactory的处理：</p>
-<pre><code>public &lt;T&gt; T getProxy(Invoker&lt;T&gt; invoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; T getProxy(Invoker&lt;T&gt; invoker) throws RpcException {
     Class&lt;?&gt;[] interfaces = null;
-    String config = invoker.getUrl().getParameter(&quot;interfaces&quot;);
+    String config = invoker.getUrl().getParameter(&#34;interfaces&#34;);
     if (config != null &amp;&amp; config.length() &gt; 0) {
         String[] types = Constants.COMMA_SPLIT_PATTERN.split(config);
         if (types != null &amp;&amp; types.length &gt; 0) {
@@ -1086,7 +1086,7 @@ private ExchangeClient initClient(URL url) {
     return getProxy(invoker, interfaces);
 }
 </code></pre><p>然后经过StubProxyFactoryWrapper的处理：</p>
-<pre><code>public &lt;T&gt; T getProxy(Invoker&lt;T&gt; invoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; T getProxy(Invoker&lt;T&gt; invoker) throws RpcException {
     T proxy = proxyFactory.getProxy(invoker);
     if (GenericService.class != invoker.getInterface()) {
         String stub = invoker.getUrl().getParameter(Constants.STUB_KEY, invoker.getUrl().getParameter(Constants.LOCAL_KEY));
@@ -1094,15 +1094,15 @@ private ExchangeClient initClient(URL url) {
             Class&lt;?&gt; serviceType = invoker.getInterface();
             if (ConfigUtils.isDefault(stub)) {
                 if (invoker.getUrl().hasParameter(Constants.STUB_KEY)) {
-                    stub = serviceType.getName() + &quot;Stub&quot;;
+                    stub = serviceType.getName() + &#34;Stub&#34;;
                 } else {
-                    stub = serviceType.getName() + &quot;Local&quot;;
+                    stub = serviceType.getName() + &#34;Local&#34;;
                 }
             }
             try {
                 Class&lt;?&gt; stubClass = ReflectUtils.forName(stub);
                 if (! serviceType.isAssignableFrom(stubClass)) {
-                    throw new IllegalStateException(&quot;The stub implemention class &quot; + stubClass.getName() + &quot; not implement interface &quot; + serviceType.getName());
+                    throw new IllegalStateException(&#34;The stub implemention class &#34; + stubClass.getName() + &#34; not implement interface &#34; + serviceType.getName());
                 }
                 try {
                     Constructor&lt;?&gt; constructor = ReflectUtils.findConstructor(stubClass, serviceType);
@@ -1110,19 +1110,19 @@ private ExchangeClient initClient(URL url) {
                     //export stub service
                     URL url = invoker.getUrl();
                     if (url.getParameter(Constants.STUB_EVENT_KEY, Constants.DEFAULT_STUB_EVENT)){
-                        url = url.addParameter(Constants.STUB_EVENT_METHODS_KEY, StringUtils.join(Wrapper.getWrapper(proxy.getClass()).getDeclaredMethodNames(), &quot;,&quot;));
+                        url = url.addParameter(Constants.STUB_EVENT_METHODS_KEY, StringUtils.join(Wrapper.getWrapper(proxy.getClass()).getDeclaredMethodNames(), &#34;,&#34;));
                         url = url.addParameter(Constants.IS_SERVER_KEY, Boolean.FALSE.toString());
                         try{
                             export(proxy, (Class)invoker.getInterface(), url);
                         }catch (Exception e) {
-                            LOGGER.error(&quot;export a stub service error.&quot;, e);
+                            LOGGER.error(&#34;export a stub service error.&#34;, e);
                         }
                     }
                 } catch (NoSuchMethodException e) {
-                    throw new IllegalStateException(&quot;No such constructor \&quot;public &quot; + stubClass.getSimpleName() + &quot;(&quot; + serviceType.getName() + &quot;)\&quot; in stub implemention class &quot; + stubClass.getName(), e);
+                    throw new IllegalStateException(&#34;No such constructor \&#34;public &#34; + stubClass.getSimpleName() + &#34;(&#34; + serviceType.getName() + &#34;)\&#34; in stub implemention class &#34; + stubClass.getName(), e);
                 }
             } catch (Throwable t) {
-                LOGGER.error(&quot;Failed to create stub implemention class &quot; + stub + &quot; in consumer &quot; + NetUtils.getLocalHost() + &quot; use dubbo version &quot; + Version.getVersion() + &quot;, cause: &quot; + t.getMessage(), t);
+                LOGGER.error(&#34;Failed to create stub implemention class &#34; + stub + &#34; in consumer &#34; + NetUtils.getLocalHost() + &#34; use dubbo version &#34; + Version.getVersion() + &#34;, cause: &#34; + t.getMessage(), t);
                 // ignore
             }
         }
@@ -1148,9 +1148,9 @@ private ExchangeClient initClient(URL url) {
 				
 				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
 				
-				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				<li><a href="/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/">DynamicConfigCenter中基于Spring的Schema扩展功能</a></li>
 				
-				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				<li><a href="/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/">基础之负载均衡算法简介</a></li>
 				
 			</ul>
 		</div>
@@ -1159,10 +1159,10 @@ private ExchangeClient initClient(URL url) {
 
 
 	<footer>
-	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<p>&copy; 2023 <a href="https://cxis.me/"><b>cxis</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
-	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	<a href="https://github.com/pulllock"><b>Github</b></a>.
 	</p>
 </footer>
 

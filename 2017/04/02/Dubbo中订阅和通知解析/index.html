@@ -49,7 +49,7 @@
 				<p>Dubbo中关于服务的订阅和通知主要发生在服务提供方暴露服务的过程和服务消费方初始化时候引用服务的过程中。</p>
 <h1 id="服务引用过程中的订阅和通知">服务引用过程中的订阅和通知</h1>
 <p>在服务消费者初始化的过程中，会有一步是进行服务的引用，具体的代码是在RegistryProtocol的refer方法：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
     url = url.setProtocol(url.getParameter(Constants.REGISTRY_KEY, Constants.DEFAULT_REGISTRY)).removeParameter(Constants.REGISTRY_KEY);
     //在这一步获取注册中心实例的过程中，也会有notify的操作。（这里省略）
     Registry registry = registryFactory.getRegistry(url);
@@ -57,19 +57,19 @@
         return proxyFactory.getInvoker((T) registry, type, url);
     }
 
-    // group=&quot;a,b&quot; or group=&quot;*&quot;
+    // group=&#34;a,b&#34; or group=&#34;*&#34;
     Map&lt;String, String&gt; qs = StringUtils.parseQueryString(url.getParameterAndDecoded(Constants.REFER_KEY));
     String group = qs.get(Constants.GROUP_KEY);
     if (group != null &amp;&amp; group.length() &gt; 0 ) {
         if ( ( Constants.COMMA_SPLIT_PATTERN.split( group ) ).length &gt; 1
-                || &quot;*&quot;.equals( group ) ) {
+                || &#34;*&#34;.equals( group ) ) {
             return doRefer( getMergeableCluster(), registry, type, url );
         }
     }
     return doRefer(cluster, registry, type, url);
 }
 </code></pre><p>在refer方法中有一步是获取注册中心实例，这一步中也会有一个notify操作，先暂时不解释。接着就是doRefer方法：</p>
-<pre><code>private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) {
+<pre tabindex="0"><code>private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) {
     RegistryDirectory&lt;T&gt; directory = new RegistryDirectory&lt;T&gt;(type, url);
     directory.setRegistry(registry);
     directory.setProtocol(protocol);
@@ -85,13 +85,13 @@
     //同时订阅了三种类型providers，routers，configurators。
     directory.subscribe(subscribeUrl.addParameter(Constants.CATEGORY_KEY, 
             Constants.PROVIDERS_CATEGORY 
-            + &quot;,&quot; + Constants.CONFIGURATORS_CATEGORY 
-            + &quot;,&quot; + Constants.ROUTERS_CATEGORY));
+            + &#34;,&#34; + Constants.CONFIGURATORS_CATEGORY 
+            + &#34;,&#34; + Constants.ROUTERS_CATEGORY));
     return cluster.join(directory);
 }
 </code></pre><p>在doRefer方法中服务消费者会订阅服务，同时订阅了三种类型：providers，routers，configurators。</p>
 <p>接续看directory.subscribe订阅方法，这里directory是RegistryDirectory：</p>
-<pre><code>public void subscribe(URL url) {
+<pre tabindex="0"><code>public void subscribe(URL url) {
 	//设置消费者url
     setConsumerUrl(url);
     //订阅
@@ -101,12 +101,12 @@
 }
 </code></pre><p>这里registry是ZookeeperRegistry，在ZookeeperRegistry调用subscribe处理之前会先经过AbstractRegistry的处理，然后经过FailbackRegistry处理，在FailbackRegistry中会调用ZookeeperRegistry的doSubscribe方法。</p>
 <p>首先看下AbstractRegistry中subscribe方法：</p>
-<pre><code>public void subscribe(URL url, NotifyListener listener) {
+<pre tabindex="0"><code>public void subscribe(URL url, NotifyListener listener) {
     if (url == null) {
-        throw new IllegalArgumentException(&quot;subscribe url == null&quot;);
+        throw new IllegalArgumentException(&#34;subscribe url == null&#34;);
     }
     if (listener == null) {
-        throw new IllegalArgumentException(&quot;subscribe listener == null&quot;);
+        throw new IllegalArgumentException(&#34;subscribe listener == null&#34;);
     }
     //从缓存中获取已经订阅的url的监听器
     Set&lt;NotifyListener&gt; listeners = subscribed.get(url);
@@ -118,7 +118,7 @@
     listeners.add(listener);
 }
 </code></pre><p>然后是FailbackRegistry的subscribe方法：</p>
-<pre><code>public void subscribe(URL url, NotifyListener listener) {
+<pre tabindex="0"><code>public void subscribe(URL url, NotifyListener listener) {
 	//上面AbstractRegistry的处理
     super.subscribe(url, listener);
     //移除订阅失败的
@@ -143,7 +143,7 @@
                 if(skipFailback) {
                     t = t.getCause();
                 }
-                throw new IllegalStateException(&quot;Failed to subscribe &quot; + url + &quot;, cause: &quot; + t.getMessage(), t);
+                throw new IllegalStateException(&#34;Failed to subscribe &#34; + url + &#34;, cause: &#34; + t.getMessage(), t);
             }
         }
 
@@ -160,7 +160,7 @@
 <li>将失败的订阅请求记录到失败列表，定时重试</li>
 </ul>
 <p>主要看下子类向服务器段发送订阅请求的步骤，在ZookeeperRegistry的doSubscribe方法中：</p>
-<pre><code>protected void doSubscribe(final URL url, final NotifyListener listener) {
+<pre tabindex="0"><code>protected void doSubscribe(final URL url, final NotifyListener listener) {
     try {
         if (Constants.ANY_VALUE.equals(url.getServiceInterface())) {//这里暂时没用到先不解释
             String root = toRootPath();
@@ -228,17 +228,17 @@
             notify(url, listener, urls);
         }
     } catch (Throwable e) {
-        throw new RpcException(&quot;Failed to subscribe &quot; + url + &quot; to zookeeper &quot; + getUrl() + &quot;, cause: &quot; + e.getMessage(), e);
+        throw new RpcException(&#34;Failed to subscribe &#34; + url + &#34; to zookeeper &#34; + getUrl() + &#34;, cause: &#34; + e.getMessage(), e);
     }
 }
 </code></pre><p>上面主要是分别对providers，routers，configurators三种不同类型的进行订阅，也就是往zookeeper中注册节点，注册之前先给url添加监听器。最后是订阅完之后进行通知。</p>
 <p>notify方法，这里notify方法实现是在ZookeeperRegistry的父类FailbackRegistry中：</p>
-<pre><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
     if (url == null) {
-        throw new IllegalArgumentException(&quot;notify url == null&quot;);
+        throw new IllegalArgumentException(&#34;notify url == null&#34;);
     }
     if (listener == null) {
-        throw new IllegalArgumentException(&quot;notify listener == null&quot;);
+        throw new IllegalArgumentException(&#34;notify listener == null&#34;);
     }
     try {
     	//doNotify方法中没做处理，直接调用父类的notify方法
@@ -254,7 +254,7 @@
     }
 }
 </code></pre><p>看下AbstractRegistry的notify方法：</p>
-<pre><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
     Map&lt;String, List&lt;URL&gt;&gt; result = new HashMap&lt;String, List&lt;URL&gt;&gt;();
     //获取catagory列表，providers，routers，configurators
     for (URL u : urls) {
@@ -288,7 +288,7 @@
     }
 }
 </code></pre><p>继续看RegistryDirectory的notify方法：</p>
-<pre><code>public synchronized void notify(List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>public synchronized void notify(List&lt;URL&gt; urls) {
 	//三种类型分开
     List&lt;URL&gt; invokerUrls = new ArrayList&lt;URL&gt;();
     List&lt;URL&gt; routerUrls = new ArrayList&lt;URL&gt;();
@@ -335,7 +335,7 @@
 </code></pre><p>最重要的重建invoker实例，在服务引用的文章中已经介绍过，不再重复，还有上面说省略的<code>获取注册中心实例的过程中，也会有notify的操作。（这里省略）</code>这里也是进行了invoker实例的重建。</p>
 <h1 id="暴露服务过程中的订阅和通知">暴露服务过程中的订阅和通知</h1>
 <p>服务暴露过程中的订阅在RegistryProtocol的export方法中：</p>
-<pre><code>public &lt;T&gt; Exporter&lt;T&gt; export(final Invoker&lt;T&gt; originInvoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Exporter&lt;T&gt; export(final Invoker&lt;T&gt; originInvoker) throws RpcException {
     //export invoker
     final ExporterChangeableWrapper&lt;T&gt; exporter = doLocalExport(originInvoker);
     //registry provider
@@ -376,7 +376,7 @@
     };
 }
 </code></pre><p>registry.subscribe订阅override数据，会首先经过AbstractRegistry处理，然后经过FailbackRegistry处理。处理方法在上面消费者发布订阅的讲解中都已经介绍。往下的步骤基本相同，不同之处在于AbstractRegistry的notify方法：</p>
-<pre><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
     Map&lt;String, List&lt;URL&gt;&gt; result = new HashMap&lt;String, List&lt;URL&gt;&gt;();
     //获取catagory列表，providers，routers，configurators
     for (URL u : urls) {
@@ -411,7 +411,7 @@
     }
 }
 </code></pre><p>接下来看OverrideListener的notify方法：</p>
-<pre><code>/*
+<pre tabindex="0"><code>/*
  *  provider 端可识别的override url只有这两种.
  *  override://0.0.0.0/serviceName?timeout=10
  *  override://0.0.0.0/?timeout=10
@@ -430,7 +430,7 @@ public void notify(List&lt;URL&gt; urls) {
                 result = new ArrayList&lt;URL&gt;(urls);
             }
             result.remove(url);
-            logger.warn(&quot;Subsribe category=configurator, but notifed non-configurator urls. may be registry bug. unexcepted url: &quot; + url);
+            logger.warn(&#34;Subsribe category=configurator, but notifed non-configurator urls. may be registry bug. unexcepted url: &#34; + url);
         }
     }
     if (result != null) {
@@ -474,9 +474,9 @@ public void notify(List&lt;URL&gt; urls) {
 				
 				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
 				
-				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				<li><a href="/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/">DynamicConfigCenter中基于Spring的Schema扩展功能</a></li>
 				
-				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				<li><a href="/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/">基础之负载均衡算法简介</a></li>
 				
 			</ul>
 		</div>
@@ -485,10 +485,10 @@ public void notify(List&lt;URL&gt; urls) {
 
 
 	<footer>
-	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<p>&copy; 2023 <a href="https://cxis.me/"><b>cxis</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
-	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	<a href="https://github.com/pulllock"><b>Github</b></a>.
 	</p>
 </footer>
 

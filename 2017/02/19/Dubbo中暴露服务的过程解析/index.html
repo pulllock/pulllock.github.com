@@ -63,18 +63,18 @@
 <p>当Spring容器实例化bean完成，走到最后一步发布ContextRefreshEvent事件的时候，ServiceBean会执行onApplicationEvent方法，该方法调用ServiceConfig的export方法。</p>
 <p>ServiceConfig初始化的时候，会先初始化静态变量protocol和proxyFactory，这两个变量初始化的结果是通过dubbo的spi扩展机制得到的。</p>
 <p>生成的protocol实例是：</p>
-<pre><code>package com.alibaba.dubbo.rpc;
+<pre tabindex="0"><code>package com.alibaba.dubbo.rpc;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 
 public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol {
     public com.alibaba.dubbo.rpc.Invoker refer(java.lang.Class arg0, com.alibaba.dubbo.common.URL arg1) throws java.lang.Class {
         if (arg1 == null) 
-            throw new IllegalArgumentException(&quot;url == null&quot;);
+            throw new IllegalArgumentException(&#34;url == null&#34;);
 
         com.alibaba.dubbo.common.URL url = arg1;
-        String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+        String extName = ( url.getProtocol() == null ? &#34;dubbo&#34; : url.getProtocol() );
         if(extName == null) 
-            throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+            throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&#34; + url.toString() + &#34;) use keys([protocol])&#34;);
 
         com.alibaba.dubbo.rpc.Protocol extension = (com.alibaba.dubbo.rpc.Protocol)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.Protocol.class).getExtension(extName);
 
@@ -83,14 +83,14 @@ public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol {
 
     public com.alibaba.dubbo.rpc.Exporter export(com.alibaba.dubbo.rpc.Invoker arg0) throws com.alibaba.dubbo.rpc.Invoker {
         if (arg0 == null) 
-            throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument == null&quot;);
+            throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.Invoker argument == null&#34;);
 
         if (arg0.getUrl() == null) 
-            throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
+            throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&#34;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
         //根据URL配置信息获取Protocol协议，默认是dubbo
-        String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+        String extName = ( url.getProtocol() == null ? &#34;dubbo&#34; : url.getProtocol() );
         if(extName == null) 
-            throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+            throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.Protocol) name from url(&#34; + url.toString() + &#34;) use keys([protocol])&#34;);
             //根据协议名，获取Protocol的实现
             //获得Protocol的实现过程中，会对Protocol先进行依赖注入，然后进行Wrapper包装，最后返回被修改过的Protocol
             //包装经过了ProtocolFilterWrapper，ProtocolListenerWrapper，RegistryProtocol
@@ -100,25 +100,25 @@ public class Protocol$Adpative implements com.alibaba.dubbo.rpc.Protocol {
     }
 
     public void destroy() {
-        throw new UnsupportedOperationException(&quot;method public abstract void com.alibaba.dubbo.rpc.Protocol.destroy() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);
+        throw new UnsupportedOperationException(&#34;method public abstract void com.alibaba.dubbo.rpc.Protocol.destroy() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&#34;);
     }
 
     public int getDefaultPort() {
-        throw new UnsupportedOperationException(&quot;method public abstract int com.alibaba.dubbo.rpc.Protocol.getDefaultPort() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&quot;);
+        throw new UnsupportedOperationException(&#34;method public abstract int com.alibaba.dubbo.rpc.Protocol.getDefaultPort() of interface com.alibaba.dubbo.rpc.Protocol is not adaptive method!&#34;);
     }
 }
 </code></pre><p>生成的proxyFactory实例：</p>
-<pre><code>package com.alibaba.dubbo.rpc;
+<pre tabindex="0"><code>package com.alibaba.dubbo.rpc;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory {
     public com.alibaba.dubbo.rpc.Invoker getInvoker(java.lang.Object arg0, java.lang.Class arg1, com.alibaba.dubbo.common.URL arg2) throws java.lang.Object {
         if (arg2 == null) 
-            throw new IllegalArgumentException(&quot;url == null&quot;);
+            throw new IllegalArgumentException(&#34;url == null&#34;);
 
         com.alibaba.dubbo.common.URL url = arg2;
-        String extName = url.getParameter(&quot;proxy&quot;, &quot;javassist&quot;);
+        String extName = url.getParameter(&#34;proxy&#34;, &#34;javassist&#34;);
         if(extName == null) 
-            throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&quot; + url.toString() + &quot;) use keys([proxy])&quot;);
+            throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&#34; + url.toString() + &#34;) use keys([proxy])&#34;);
 
         com.alibaba.dubbo.rpc.ProxyFactory extension = (com.alibaba.dubbo.rpc.ProxyFactory)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.ProxyFactory.class).getExtension(extName);
 
@@ -127,14 +127,14 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 
     public java.lang.Object getProxy(com.alibaba.dubbo.rpc.Invoker arg0) throws com.alibaba.dubbo.rpc.Invoker {
         if (arg0 == null) 
-            throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument == null&quot;);
+            throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.Invoker argument == null&#34;);
 
        if (arg0.getUrl() == null) 
-        throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
+        throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.Invoker argument getUrl() == null&#34;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
 
-        String extName = url.getParameter(&quot;proxy&quot;, &quot;javassist&quot;);
+        String extName = url.getParameter(&#34;proxy&#34;, &#34;javassist&#34;);
         if(extName == null) 
-            throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&quot; + url.toString() + &quot;) use keys([proxy])&quot;);
+            throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.ProxyFactory) name from url(&#34; + url.toString() + &#34;) use keys([proxy])&#34;);
 
         com.alibaba.dubbo.rpc.ProxyFactory extension = (com.alibaba.dubbo.rpc.ProxyFactory)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.ProxyFactory.class).getExtension(extName);
 
@@ -158,13 +158,13 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 <p>doExport方法先执行一系列的检查方法，然后调用doExportUrls方法。检查方法会检测dubbo的配置是否在Spring配置文件中声明，没有的话读取properties文件初始化。</p>
 <p>doExportUrls方法先调用loadRegistries获取所有的注册中心url，然后遍历调用doExportUrlsFor1Protocol方法。对于在标签中指定了registry属性的Bean，会在加载BeanDefinition的时候就加载了注册中心。</p>
 <p>获取注册中心url，会把注册的信息都放在一个URL对象中，一个URL内容如下：</p>
-<pre><code>registry://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?application=dubbo-provider&amp;application.version=1.0&amp;dubbo=2.5.3&amp;environment=product&amp;organization=china&amp;owner=cheng.xi&amp;pid=2939&amp;registry=zookeeper&amp;timestamp=1488898049284
+<pre tabindex="0"><code>registry://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?application=dubbo-provider&amp;application.version=1.0&amp;dubbo=2.5.3&amp;environment=product&amp;organization=china&amp;owner=cheng.xi&amp;pid=2939&amp;registry=zookeeper&amp;timestamp=1488898049284
 </code></pre><p>doExportUrlsFor1Protocol根据不同的协议将服务以URL形式暴露。如果scope配置为none则不暴露，如果服务未配置成remote，则本地暴露exportLocal，如果未配置成local，则注册服务registryProcotol。</p>
 <p>这里的URL是：</p>
-<pre><code>dubbo://192.168.1.100:20880/dubbo.common.hello.service.HelloService?anyhost=true&amp;application=dubbo-provider&amp;application.version=1.0&amp;delay=5000&amp;dubbo=2.5.3&amp;environment=product&amp;interface=dubbo.common.hello.service.HelloService&amp;methods=sayHello&amp;organization=china&amp;owner=cheng.xi&amp;pid=2939&amp;side=provider&amp;timestamp=1488898464953
+<pre tabindex="0"><code>dubbo://192.168.1.100:20880/dubbo.common.hello.service.HelloService?anyhost=true&amp;application=dubbo-provider&amp;application.version=1.0&amp;delay=5000&amp;dubbo=2.5.3&amp;environment=product&amp;interface=dubbo.common.hello.service.HelloService&amp;methods=sayHello&amp;organization=china&amp;owner=cheng.xi&amp;pid=2939&amp;side=provider&amp;timestamp=1488898464953
 </code></pre><h3 id="本地暴露">本地暴露</h3>
 <p>这时候会先做本地暴露，exportLocal(url);：</p>
-<pre><code>private void exportLocal(URL url) {
+<pre tabindex="0"><code>private void exportLocal(URL url) {
     if (!Constants.LOCAL_PROTOCOL.equalsIgnoreCase(url.getProtocol())) {
     	//这时候转成本地暴露的url：injvm://127.0.0.1/dubbo.common.hello.service.HelloService?anyhost=true&amp;
         //application=dubbo-provider&amp;application.version=1.0&amp;dubbo=2.5.3&amp;environment=product&amp;
@@ -181,12 +181,12 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
         Exporter&lt;?&gt; exporter = protocol.export(
                 proxyFactory.getInvoker(ref, (Class) interfaceClass, local));
         exporters.add(exporter);
-        logger.info(&quot;Export dubbo service &quot; + interfaceClass.getName() +&quot; to local registry&quot;);
+        logger.info(&#34;Export dubbo service &#34; + interfaceClass.getName() +&#34; to local registry&#34;);
     }
 }
 </code></pre><h3 id="暴露为远程服务">暴露为远程服务</h3>
 <p>接下来是暴露为远程服务，跟本地暴露的流程一样还是先获取Invoker，然后导出成Exporter：</p>
-<pre><code>//根据服务具体实现，实现接口，以及registryUrl通过ProxyFactory将HelloServiceImpl封装成一个本地执行的Invoker
+<pre tabindex="0"><code>//根据服务具体实现，实现接口，以及registryUrl通过ProxyFactory将HelloServiceImpl封装成一个本地执行的Invoker
 //invoker是对具体实现的一种代理。
 //这里proxyFactory是上面列出的生成的代码
  Invoker&lt;?&gt; invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
@@ -203,17 +203,17 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 <li>getInvoker的过程是，首先对实现类做一个包装，生成一个包装后的类。</li>
 <li>然后新创建一个Invoker实例，这个Invoker中包含着生成的Wrapper类，Wrapper类中有具体的实现类。</li>
 </ol>
-<pre><code>Invoker&lt;?&gt; invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
+<pre tabindex="0"><code>Invoker&lt;?&gt; invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
 </code></pre><p>这行代码中包含服务实现类转换成Invoker的过程，其中proxyFactory是上面列出的动态生成的代码，其中getInvoker的代码为（做了精简，把包都去掉了）：</p>
-<pre><code>public Invoker getInvoker(Object arg0, Class arg1, URL arg2) throws Object {
-    if (arg2 == null)  throw new IllegalArgumentException(&quot;url == null&quot;);
+<pre tabindex="0"><code>public Invoker getInvoker(Object arg0, Class arg1, URL arg2) throws Object {
+    if (arg2 == null)  throw new IllegalArgumentException(&#34;url == null&#34;);
 	//传进来的url是dubbo://192.168.110.197:20880/dubbo.common.hello.service.HelloService?anyhost=true&amp;application=dubbo-provider
     //&amp;application.version=1.0&amp;dubbo=2.5.3&amp;environment=product&amp;interface=dubbo.common.hello.service.HelloService&amp;methods=sayHello&amp;organization=china&amp;owner=cheng.xi
     //&amp;pid=28191&amp;side=provider&amp;timestamp=1489027396094
     URL url = arg2;
     //没有proxy参数配置，默认使用javassist
-    String extName = url.getParameter(&quot;proxy&quot;, &quot;javassist&quot;);
-    if(extName == null)  throw new IllegalStateException(&quot;Fail to get extension(ProxyFactory) name from url(&quot; + url.toString() + &quot;) use keys([proxy])&quot;);
+    String extName = url.getParameter(&#34;proxy&#34;, &#34;javassist&#34;);
+    if(extName == null)  throw new IllegalStateException(&#34;Fail to get extension(ProxyFactory) name from url(&#34; + url.toString() + &#34;) use keys([proxy])&#34;);
 	//这一步就使用javassist来获取ProxyFactory的实现类JavassistProxyFactory
     ProxyFactory extension = (ProxyFactory)ExtensionLoader.getExtensionLoader(ProxyFactory.class).getExtension(extName);
 	//JavassistProxyFactory的getInvoker方法
@@ -221,12 +221,12 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 }
 </code></pre><h2 id="使用javassistproxyfactory获取invoker">使用JavassistProxyFactory获取Invoker</h2>
 <p>JavassistProxyFactory的getInvoker方法：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; getInvoker(T proxy, Class&lt;T&gt; type, URL url) {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; getInvoker(T proxy, Class&lt;T&gt; type, URL url) {
     // TODO Wrapper类不能正确处理带$的类名
     //第一步封装一个Wrapper类
     //该类是手动生成的
     //如果类是以$开头，就使用接口类型获取，其他的使用实现类获取
-    final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf('$') &lt; 0 ? proxy.getClass() : type);
+    final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf(&#39;$&#39;) &lt; 0 ? proxy.getClass() : type);
     //返回一个Invoker实例，doInvoke方法中直接返回上面wrapper的invokeMethod
     //关于生成的wrapper，请看下面列出的生成的代码，其中invokeMethod方法中就有实现类对实际方法的调用
     return new AbstractProxyInvoker&lt;T&gt;(proxy, type, url) {
@@ -239,7 +239,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
     };
 }
 </code></pre><p>生成wrapper类的过程，首先看getWrapper方法：</p>
-<pre><code>public static Wrapper getWrapper(Class&lt;?&gt; c){
+<pre tabindex="0"><code>public static Wrapper getWrapper(Class&lt;?&gt; c){
     while( ClassGenerator.isDynamicClass(c) ) // can not wrapper on dynamic class.
         c = c.getSuperclass();
 	//Object类型的
@@ -255,7 +255,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
     return ret;
 }
 </code></pre><p>makeWrapper方法代码不在列出，太长了。就是生成一个继承自Wrapper的类，最后的结果大概是：</p>
-<pre><code>public class Wrapper1 extends Wrapper {
+<pre tabindex="0"><code>public class Wrapper1 extends Wrapper {
     public static String[] pns;
     public static Map pts;
     public static String[] mns; // all method name array.
@@ -289,7 +289,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
         } catch (Throwable e) {
             throw new IllegalArgumentException(e);
         }
-        throw new com.alibaba.dubbo.common.bytecode.NoSuchPropertyException(&quot;Not found property \&quot;&quot; + $2 + &quot;\&quot; filed or setter method in class dubbo.provider.hello.service.impl.HelloServiceImpl.&quot;);
+        throw new com.alibaba.dubbo.common.bytecode.NoSuchPropertyException(&#34;Not found property \&#34;&#34; + $2 + &#34;\&#34; filed or setter method in class dubbo.provider.hello.service.impl.HelloServiceImpl.&#34;);
     }
 
     public Object getPropertyValue(Object o, String n) {
@@ -299,7 +299,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
         } catch (Throwable e) {
             throw new IllegalArgumentException(e);
         }
-        throw new com.alibaba.dubbo.common.bytecode.NoSuchPropertyException(&quot;Not found property \&quot;&quot; + $2 + &quot;\&quot; filed or setter method in class dubbo.provider.hello.service.impl.HelloServiceImpl.&quot;);
+        throw new com.alibaba.dubbo.common.bytecode.NoSuchPropertyException(&#34;Not found property \&#34;&#34; + $2 + &#34;\&#34; filed or setter method in class dubbo.provider.hello.service.impl.HelloServiceImpl.&#34;);
     }
 
     public Object invokeMethod(Object o, String n, Class[] p, Object[] v) throws java.lang.reflect.InvocationTargetException {
@@ -310,20 +310,20 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
             throw new IllegalArgumentException(e);
         }
         try {
-            if (&quot;sayHello&quot;.equals($2) &amp;&amp; $3.length == 0) {
+            if (&#34;sayHello&#34;.equals($2) &amp;&amp; $3.length == 0) {
                 w.sayHello();
                 return null;
             }
         } catch (Throwable e) {
             throw new java.lang.reflect.InvocationTargetException(e);
         }
-        throw new com.alibaba.dubbo.common.bytecode.NoSuchMethodException(&quot;Not found method \&quot;&quot; + $2 + &quot;\&quot; in class dubbo.provider.hello.service.impl.HelloServiceImpl.&quot;);
+        throw new com.alibaba.dubbo.common.bytecode.NoSuchMethodException(&#34;Not found method \&#34;&#34; + $2 + &#34;\&#34; in class dubbo.provider.hello.service.impl.HelloServiceImpl.&#34;);
     }
 }
 </code></pre><p>生成完Wrapper以后，返回一个AbstractProxyInvoker实例。至此生成Invoker的步骤就完成了。可以看到Invoker执行方法的时候，会调用Wrapper的invokeMethod，这个方法中会有真实的实现类调用真实方法的代码。</p>
 <h2 id="使用jdkproxyfactory获取invoker">使用JdkProxyFactory获取invoker</h2>
 <p>JdkProxyFactory的getInvoker方法：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; getInvoker(T proxy, Class&lt;T&gt; type, URL url) {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; getInvoker(T proxy, Class&lt;T&gt; type, URL url) {
     return new AbstractProxyInvoker&lt;T&gt;(proxy, type, url) {
         @Override
         protected Object doInvoke(T proxy, String methodName, 
@@ -336,14 +336,14 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 }
 </code></pre><p>直接返回一个AbstractProxyInvoker实例，没有做处理，只是使用反射调用具体的方法。</p>
 <p>JdkProxyFactory的getProxy方法：</p>
-<pre><code>public &lt;T&gt; T getProxy(Invoker&lt;T&gt; invoker, Class&lt;?&gt;[] interfaces) {
+<pre tabindex="0"><code>public &lt;T&gt; T getProxy(Invoker&lt;T&gt; invoker, Class&lt;?&gt;[] interfaces) {
     return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), interfaces, new InvokerInvocationHandler(invoker));
 }
 </code></pre><p>使用Java的反射机制生成一个代理类。</p>
 <h1 id="暴露远程服务时导出invoker为exporter">暴露远程服务时导出Invoker为Exporter</h1>
 <p>Invoker导出为Exporter分为两种情况，第一种是Registry类型的Invoker，第二种是其他协议类型的Invoker，分开解析。</p>
 <p>代码入口：</p>
-<pre><code>Exporter&lt;?&gt; exporter = protocol.export(invoker);
+<pre tabindex="0"><code>Exporter&lt;?&gt; exporter = protocol.export(invoker);
 </code></pre><h2 id="registry类型的invoker处理过程">Registry类型的Invoker处理过程</h2>
 <p>大概的步骤是：</p>
 <ol>
@@ -354,7 +354,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 <li>生成一个新的Exporter实例，将上面的Exporter进行引入，然后返回。</li>
 </ol>
 <p>protocol是上面列出的动态生成的代码，会先调用ProtocolListenerWrapper，这个Wrapper负责初始化暴露和引用服务的监听器。对于Registry类型的不做处理，代码如下：</p>
-<pre><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
 	//registry类型的Invoker，不需要做处理
     if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
         return protocol.export(invoker);
@@ -365,7 +365,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
                     .getActivateExtension(invoker.getUrl(), Constants.EXPORTER_LISTENER_KEY)));
 }
 </code></pre><p>接着调用ProtocolFilterWrapper中的export方法，ProtocolFilterWrapper负责初始化invoker所有的Filter。代码如下：</p>
-<pre><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
 	//Registry类型的Invoker不做处理
     if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
         return protocol.export(invoker);
@@ -374,7 +374,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
     return protocol.export(buildInvokerChain(invoker, Constants.SERVICE_FILTER_KEY, Constants.PROVIDER));
 }
 </code></pre><p>这里我们先解析的是Registry类型的Invoker，接着就会调用RegistryProtocol的export方法，RegistryProtocol负责注册服务到注册中心和向注册中心订阅服务。代码如下：</p>
-<pre><code>public &lt;T&gt; Exporter&lt;T&gt; export(final Invoker&lt;T&gt; originInvoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Exporter&lt;T&gt; export(final Invoker&lt;T&gt; originInvoker) throws RpcException {
     //export invoker
     //这里就交给了具体的协议去暴露服务（先不解析，留在后面，可以先去后面看下导出过程）
     final ExporterChangeableWrapper&lt;T&gt; exporter = doLocalExport(originInvoker);
@@ -427,7 +427,7 @@ public class ProxyFactory$Adpative implements com.alibaba.dubbo.rpc.ProxyFactory
 <p>先不解析，留在后面，可以先去后面看下导出过程，然后再回来接着看注册到注册中心的过程。具体协议暴露服务主要是打开服务器和端口，进行监听。</p>
 <h3 id="连接注册中心并获取registry实例">连接注册中心并获取Registry实例</h3>
 <p>具体的协议进行暴露并且返回了一个ExporterChangeableWrapper之后，接下来看下一步连接注册中心并注册到注册中心，代码是在RegistryProtocol的export方法：</p>
-<pre><code>//先假装此步已经分析完
+<pre tabindex="0"><code>//先假装此步已经分析完
 final ExporterChangeableWrapper&lt;T&gt; exporter = doLocalExport(originInvoker);
 //得到具体的注册中心，连接注册中心，此时提供者作为消费者引用注册中心核心服务RegistryService
 final Registry registry = getRegistry(originInvoker);
@@ -440,7 +440,7 @@ registry.subscribe(overrideSubscribeUrl, overrideSubscribeListener);
 //返回暴露后的Exporter给上层ServiceConfig进行缓存
 return new Exporter&lt;T&gt;() {。。。}
 </code></pre><p>getRegistry(originInvoker)方法：</p>
-<pre><code>//根据invoker的地址获取registry实例
+<pre tabindex="0"><code>//根据invoker的地址获取registry实例
 private Registry getRegistry(final Invoker&lt;?&gt; originInvoker){
 	//获取invoker中的registryUrl
     URL registryUrl = originInvoker.getUrl();
@@ -462,16 +462,16 @@ private Registry getRegistry(final Invoker&lt;?&gt; originInvoker){
     return registryFactory.getRegistry(registryUrl);
 }
 </code></pre><p>这里的registryFactory是动态生成的代码，如下：</p>
-<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+<pre tabindex="0"><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
 public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.RegistryFactory {
     public com.alibaba.dubbo.registry.Registry getRegistry(com.alibaba.dubbo.common.URL arg0) {
     
-        if (arg0 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
+        if (arg0 == null) throw new IllegalArgumentException(&#34;url == null&#34;);
 
         com.alibaba.dubbo.common.URL url = arg0;
-        String extName = ( url.getProtocol() == null ? &quot;dubbo&quot; : url.getProtocol() );
+        String extName = ( url.getProtocol() == null ? &#34;dubbo&#34; : url.getProtocol() );
 
-        if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.registry.RegistryFactory) name from url(&quot; + url.toString() + &quot;) use keys([protocol])&quot;);
+        if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.registry.RegistryFactory) name from url(&#34; + url.toString() + &#34;) use keys([protocol])&#34;);
 
         com.alibaba.dubbo.registry.RegistryFactory extension = (com.alibaba.dubbo.registry.RegistryFactory)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.registry.RegistryFactory.class).getExtension(extName);
 
@@ -480,7 +480,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
 }
 </code></pre><p>所以这里registryFactory.getRegistry(registryUrl)用的是ZookeeperRegistryFactory。</p>
 <p>先看下getRegistry方法，会发现该方法会在AbstractRegistryFactory中实现：</p>
-<pre><code>public Registry getRegistry(URL url) {
+<pre tabindex="0"><code>public Registry getRegistry(URL url) {
     url = url.setPath(RegistryService.class.getName())
             .addParameter(Constants.INTERFACE_KEY, RegistryService.class.getName())
             .removeParameters(Constants.EXPORT_KEY, Constants.REFER_KEY);
@@ -499,7 +499,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
         //具体创建实例是子类来实现的
         registry = createRegistry(url);
         if (registry == null) {
-            throw new IllegalStateException(&quot;Can not create registry &quot; + url);
+            throw new IllegalStateException(&#34;Can not create registry &#34; + url);
         }
         //放到缓存中
         REGISTRIES.put(key, registry);
@@ -510,7 +510,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     }
 }
 </code></pre><p>createRegistry(url);是在子类中实现的，这里是ZookeeperRegistry，首先需要经过AbstractRegistry的构造：</p>
-<pre><code>public AbstractRegistry(URL url) {
+<pre tabindex="0"><code>public AbstractRegistry(URL url) {
 	//url保存起来
     setUrl(url);
     // 启动文件保存定时器
@@ -518,13 +518,13 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     syncSaveFile = url.getParameter(Constants.REGISTRY_FILESAVE_SYNC_KEY, false);
     //保存的文件为：
     ///home/xxx/.dubbo/dubbo-registry-127.0.0.1.cache
-    String filename = url.getParameter(Constants.FILE_KEY, System.getProperty(&quot;user.home&quot;) + &quot;/.dubbo/dubbo-registry-&quot; + url.getHost() + &quot;.cache&quot;);
+    String filename = url.getParameter(Constants.FILE_KEY, System.getProperty(&#34;user.home&#34;) + &#34;/.dubbo/dubbo-registry-&#34; + url.getHost() + &#34;.cache&#34;);
     File file = null;
     if (ConfigUtils.isNotEmpty(filename)) {
         file = new File(filename);
         if(! file.exists() &amp;&amp; file.getParentFile() != null &amp;&amp; ! file.getParentFile().exists()){
             if(! file.getParentFile().mkdirs()){
-                throw new IllegalArgumentException(&quot;Invalid registry store file &quot; + file + &quot;, cause: Failed to create directory &quot; + file.getParentFile() + &quot;!&quot;);
+                throw new IllegalArgumentException(&#34;Invalid registry store file &#34; + file + &#34;, cause: Failed to create directory &#34; + file.getParentFile() + &#34;!&#34;);
             }
         }
     }
@@ -536,7 +536,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
 }
 </code></pre><h3 id="获取registry时的订阅">获取Registry时的订阅</h3>
 <p>notify()方法：</p>
-<pre><code>protected void notify(List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(List&lt;URL&gt; urls) {
     if(urls == null || urls.isEmpty()) return;
 	//getSubscribed()方法获取订阅者列表
     //订阅者Entry里每个URL都对应着n个NotifyListener
@@ -559,7 +559,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     }
 }
 </code></pre><p><code>notify(url, listener, filterEmpty(url, urls));</code>代码：</p>
-<pre><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
+<pre tabindex="0"><code>protected void notify(URL url, NotifyListener listener, List&lt;URL&gt; urls) {
     Map&lt;String, List&lt;URL&gt;&gt; result = new HashMap&lt;String, List&lt;URL&gt;&gt;();
     for (URL u : urls) {
         if (UrlUtils.isMatch(url, u)) {
@@ -592,7 +592,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     }
 }
 </code></pre><p>AbstractRegistry构造器初始化完，接着调用FailbackRegistry构造器初始化：</p>
-<pre><code>public FailbackRegistry(URL url) {
+<pre tabindex="0"><code>public FailbackRegistry(URL url) {
     super(url);
     //重试时间，默认5000ms
     int retryPeriod = url.getParameter(Constants.REGISTRY_RETRY_PERIOD_KEY, Constants.DEFAULT_REGISTRY_RETRY_PERIOD);
@@ -609,10 +609,10 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     }, retryPeriod, retryPeriod, TimeUnit.MILLISECONDS);
 }
 </code></pre><p>最后回到ZookeeperRegistry的构造初始化：</p>
-<pre><code>public ZookeeperRegistry(URL url, ZookeeperTransporter zookeeperTransporter) {
+<pre tabindex="0"><code>public ZookeeperRegistry(URL url, ZookeeperTransporter zookeeperTransporter) {
     super(url);
     if (url.isAnyHost()) {
-        throw new IllegalStateException(&quot;registry address == null&quot;);
+        throw new IllegalStateException(&#34;registry address == null&#34;);
     }
     //获得到注册中心中的分组，默认dubbo
     String group = url.getParameter(Constants.GROUP_KEY, DEFAULT_ROOT);
@@ -642,7 +642,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
 }
 </code></pre><h3 id="获取注册到注册中心的url">获取注册到注册中心的url</h3>
 <p>获取到了Registry，Registry实例中保存着连接到了zookeeper的zkClient实例之后，下一步获取要注册到注册中心的url（在RegistryProtocol中）。</p>
-<pre><code>final URL registedProviderUrl = getRegistedProviderUrl(originInvoker);
+<pre tabindex="0"><code>final URL registedProviderUrl = getRegistedProviderUrl(originInvoker);
 //得到的URL是：
 //dubbo://192.168.1.100:20880/dubbo.common.hello.service.HelloService?
 //anyhost=true&amp;application=dubbo-provider&amp;application.version=1.0&amp;dubbo=2.5.3&amp;environment=product&amp;
@@ -650,7 +650,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
 //organization=china&amp;owner=cheng.xi&amp;pid=9457&amp;side=provider&amp;timestamp=1489807681627
 </code></pre><h3 id="注册到注册中心">注册到注册中心</h3>
 <p>然后调用<code>registry.register(registedProviderUrl)</code>注册到注册中心（在RegistryProtocol中）。register方法的实现在FailbackRegistry中：</p>
-<pre><code>public void register(URL url) {
+<pre tabindex="0"><code>public void register(URL url) {
     super.register(url);
     failedRegistered.remove(url);
     failedUnregistered.remove(url);
@@ -678,7 +678,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     }
 }
 </code></pre><p><code>doRegister(url);</code>在这里是ZookeeperRegistry中具体实现的，这里将会注册到注册中心：</p>
-<pre><code>protected void doRegister(URL url) {
+<pre tabindex="0"><code>protected void doRegister(URL url) {
     try {
     	//这里zkClient就是我们上面调用构造的时候生成的
         //ZkClientZookeeperClient
@@ -695,7 +695,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     } catch (Throwable e) { }
 }
 </code></pre><p>经过这一步之后，Zookeeper中就有节点存在了，具体节点为：</p>
-<pre><code>/dubbo
+<pre tabindex="0"><code>/dubbo
 	dubbo.common.hello.service.HelloService
     	providers
         	/dubbo/dubbo.common.hello.service.HelloService/providers/
@@ -712,7 +712,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
 <h2 id="交给具体的协议进行服务暴露">交给具体的协议进行服务暴露</h2>
 <p>这里也就是非Registry类型的Invoker的导出过程。主要的步骤是将本地ip和20880端口打开，进行监听。最后包装成exporter返回。</p>
 <p>doLocalExport(invoker)：</p>
-<pre><code>private &lt;T&gt; ExporterChangeableWrapper&lt;T&gt;  doLocalExport(final Invoker&lt;T&gt; originInvoker){
+<pre tabindex="0"><code>private &lt;T&gt; ExporterChangeableWrapper&lt;T&gt;  doLocalExport(final Invoker&lt;T&gt; originInvoker){
 	//原始的invoker中的url：
     //registry://127.0.0.1:2181/com.alibaba.dubbo.registry.RegistryService?
     //application=dubbo-provider&amp;application.version=1.0&amp;dubbo=2.5.3
@@ -748,7 +748,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
 }
 </code></pre><h3 id="使用dubbo协议导出">使用dubbo协议导出</h3>
 <p>这里<code>protocol.export(invokerDelegete)</code>就要去具体的DubboProtocol中执行了，DubboProtocol的外面包裹着ProtocolFilterWrapper，再外面还包裹着ProtocolListenerWrapper。会先经过ProtocolListenerWrapper：</p>
-<pre><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
 	//Registry类型的Invoker
     if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
         return protocol.export(invoker);
@@ -763,7 +763,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
                     .getActivateExtension(invoker.getUrl(), Constants.EXPORTER_LISTENER_KEY)));
 }
 </code></pre><p>再经过ProtocolFilterWrapper：</p>
-<pre><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
 	//Registry类型的Invoker
     if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
         return protocol.export(invoker);
@@ -773,7 +773,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     return protocol.export(buildInvokerChain(invoker, Constants.SERVICE_FILTER_KEY, Constants.PROVIDER));
 }
 </code></pre><p>查看下构建Invoker链的方法：</p>
-<pre><code>private static &lt;T&gt; Invoker&lt;T&gt; buildInvokerChain(final Invoker&lt;T&gt; invoker, String key, String group) {
+<pre tabindex="0"><code>private static &lt;T&gt; Invoker&lt;T&gt; buildInvokerChain(final Invoker&lt;T&gt; invoker, String key, String group) {
 	//我们要处理的那个Invoker作为处理链的最后一个
     Invoker&lt;T&gt; last = invoker;
     //根据key和group获取自动激活的Filter
@@ -815,7 +815,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     return last;
 }
 </code></pre><p>接着就到了DubboProtocol的export方法，这里进行暴露服务：</p>
-<pre><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Exporter&lt;T&gt; export(Invoker&lt;T&gt; invoker) throws RpcException {
 	//dubbo://10.42.0.1:20880/dubbo.common.hello.service.HelloService?
     //anyhost=true&amp;application=dubbo-provider&amp;
     //application.version=1.0&amp;dubbo=2.5.3&amp;environment=product&amp;
@@ -860,7 +860,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
 }
 </code></pre><p>上面得到的Exporter会被放到缓存中去，key就是上面生成的，客户端就可以发请求根据key找到Exporter，然后找到invoker进行调用了。接下来是创建服务器并监听端口。</p>
 <p>接着调用openServer方法创建NIO Server进行监听：</p>
-<pre><code>private void openServer(URL url) {
+<pre tabindex="0"><code>private void openServer(URL url) {
     // find server.
     //key是IP:PORT
     //192.168.110.197:20880
@@ -885,7 +885,7 @@ public class RegistryFactory$Adpative implements com.alibaba.dubbo.registry.Regi
     }
 }
 </code></pre><p>继续看createServer方法：</p>
-<pre><code>//url为：
+<pre tabindex="0"><code>//url为：
 //dubbo://192.168.110.197:20880/dubbo.common.hello.service.HelloService?
 //anyhost=true&amp;application=dubbo-provider&amp;
 //application.version=1.0&amp;dubbo=2.5.3&amp;environment=product&amp;
@@ -901,7 +901,7 @@ private ExchangeServer createServer(URL url) {
     String str = url.getParameter(Constants.SERVER_KEY, Constants.DEFAULT_REMOTING_SERVER);
 
     if (str != null &amp;&amp; str.length() &gt; 0 &amp;&amp; ! ExtensionLoader.getExtensionLoader(Transporter.class).hasExtension(str))
-        throw new RpcException(&quot;Unsupported server type: &quot; + str + &quot;, url: &quot; + url);
+        throw new RpcException(&#34;Unsupported server type: &#34; + str + &#34;, url: &#34; + url);
 
     url = url.addParameter(Constants.CODEC_KEY, Version.isCompatibleVersion() ? COMPATIBLE_CODEC_NAME : DubboCodec.NAME);
     ExchangeServer server;
@@ -917,20 +917,20 @@ private ExchangeServer createServer(URL url) {
     if (str != null &amp;&amp; str.length() &gt; 0) {
         Set&lt;String&gt; supportedTypes = ExtensionLoader.getExtensionLoader(Transporter.class).getSupportedExtensions();
         if (!supportedTypes.contains(str)) {
-            throw new RpcException(&quot;Unsupported client type: &quot; + str);
+            throw new RpcException(&#34;Unsupported client type: &#34; + str);
         }
     }
     return server;
 }
 </code></pre><p>Exchangers.bind方法：</p>
-<pre><code>public static ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
-    url = url.addParameterIfAbsent(Constants.CODEC_KEY, &quot;exchange&quot;);
+<pre tabindex="0"><code>public static ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
+    url = url.addParameterIfAbsent(Constants.CODEC_KEY, &#34;exchange&#34;);
     //getExchanger方法根据url获取到一个默认的实现HeaderExchanger
     //调用HeaderExchanger的bind方法
     return getExchanger(url).bind(url, handler);
 }
 </code></pre><p>HeaderExchanger的bind方法：</p>
-<pre><code>public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
+<pre tabindex="0"><code>public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
 	//直接返回一个HeaderExchangeServer
     //先创建一个HeaderExchangeHandler
     //再创建一个DecodeHandler
@@ -940,7 +940,7 @@ private ExchangeServer createServer(URL url) {
 </code></pre><p>这里会先创建一个HeaderExchangerHandler，包含着ExchangeHandlerAdapter，接着创建一个DecodeHandler，会包含前面的handler，接下来调用Transporters的bind方法，返回一个Server，接着用HeaderExchangeServer包装一下，就返回给Protocol层了。</p>
 <p>在HeaderExchangerServer包装的时候会启动心跳定时器<code>startHeatbeatTimer();</code>，暂不解析。</p>
 <p>Transports的bind方法：</p>
-<pre><code>public static Server bind(URL url, ChannelHandler... handlers) throws RemotingException {
+<pre tabindex="0"><code>public static Server bind(URL url, ChannelHandler... handlers) throws RemotingException {
     ChannelHandler handler;
     if (handlers.length == 1) {
         handler = handlers[0];
@@ -953,14 +953,14 @@ private ExchangeServer createServer(URL url) {
     return getTransporter().bind(url, handler);
 }
 </code></pre><p>getTransporter()生成的Transporter的代码如下：</p>
-<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+<pre tabindex="0"><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
 public class Transporter$Adpative implements com.alibaba.dubbo.remoting.Transporter {
     public com.alibaba.dubbo.remoting.Server bind(com.alibaba.dubbo.common.URL arg0, com.alibaba.dubbo.remoting.ChannelHandler arg1) throws com.alibaba.dubbo.common.URL {
-        if (arg0 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
+        if (arg0 == null) throw new IllegalArgumentException(&#34;url == null&#34;);
         com.alibaba.dubbo.common.URL url = arg0;
         //Server默认使用netty
-        String extName = url.getParameter(&quot;server&quot;, url.getParameter(&quot;transporter&quot;, &quot;netty&quot;));
-        if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.remoting.Transporter) name from url(&quot; + url.toString() + &quot;) use keys([server, transporter])&quot;);
+        String extName = url.getParameter(&#34;server&#34;, url.getParameter(&#34;transporter&#34;, &#34;netty&#34;));
+        if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.remoting.Transporter) name from url(&#34; + url.toString() + &#34;) use keys([server, transporter])&#34;);
         //获取到一个NettyTransporter
         com.alibaba.dubbo.remoting.Transporter extension = (com.alibaba.dubbo.remoting.Transporter)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.remoting.Transporter.class).getExtension(extName);
         //调用NettyTransporter的bind方法
@@ -968,12 +968,12 @@ public class Transporter$Adpative implements com.alibaba.dubbo.remoting.Transpor
     }
     
 public com.alibaba.dubbo.remoting.Client connect(com.alibaba.dubbo.common.URL arg0, com.alibaba.dubbo.remoting.ChannelHandler arg1) throws com.alibaba.dubbo.common.URL {
-    if (arg0 == null) throw new IllegalArgumentException(&quot;url == null&quot;);
+    if (arg0 == null) throw new IllegalArgumentException(&#34;url == null&#34;);
     com.alibaba.dubbo.common.URL url = arg0;
     
-    String extName = url.getParameter(&quot;client&quot;, url.getParameter(&quot;transporter&quot;, &quot;netty&quot;));
+    String extName = url.getParameter(&#34;client&#34;, url.getParameter(&#34;transporter&#34;, &#34;netty&#34;));
     
-    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.remoting.Transporter) name from url(&quot; + url.toString() + &quot;) use keys([client, transporter])&quot;);
+    if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.remoting.Transporter) name from url(&#34; + url.toString() + &#34;) use keys([client, transporter])&#34;);
     
     com.alibaba.dubbo.remoting.Transporter extension = (com.alibaba.dubbo.remoting.Transporter)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.remoting.Transporter.class).getExtension(extName);
     
@@ -981,18 +981,18 @@ public com.alibaba.dubbo.remoting.Client connect(com.alibaba.dubbo.common.URL ar
 }
 }
 </code></pre><p>NettyTransporter的bind方法：</p>
-<pre><code> public Server bind(URL url, ChannelHandler listener) throws RemotingException {
+<pre tabindex="0"><code> public Server bind(URL url, ChannelHandler listener) throws RemotingException {
  	//创建一个Server
     return new NettyServer(url, listener);
 }
-</code></pre><pre><code>public NettyServer(URL url, ChannelHandler handler) throws RemotingException{
+</code></pre><pre tabindex="0"><code>public NettyServer(URL url, ChannelHandler handler) throws RemotingException{
 	//handler先经过ChannelHandlers的包装方法
     //然后再初始化
     super(url, ChannelHandlers.wrap(handler, ExecutorUtil.setThreadName(url, SERVER_THREAD_POOL_NAME)));
 }
 </code></pre><p>ChannelHandlers.wrap方法中会根据SPI扩展机制动态生成Dispatcher的自适应类，生成的代码不在列出，默认使用AllDispatcher处理，会返回一个AllChannelHandler，会把线程池和DataStore都初始化了。然后经过HeartbeatHandler封装，再经过MultiMessageHandler封装后返回。</p>
 <p>NettyServer构造，会依次经过AbstractPeer，AbstractEndpoint，AbstractServer，NettyServer的初始化。重点看下AbstractServer的构造方法：</p>
-<pre><code>public AbstractServer(URL url, ChannelHandler handler) throws RemotingException {
+<pre tabindex="0"><code>public AbstractServer(URL url, ChannelHandler handler) throws RemotingException {
     super(url, handler);
     localAddress = getUrl().toInetSocketAddress();
     String host = url.getParameter(Constants.ANYHOST_KEY, false) 
@@ -1011,12 +1011,12 @@ public com.alibaba.dubbo.remoting.Client connect(com.alibaba.dubbo.common.URL ar
     }
 }
 </code></pre><p>然后调用doOpen方法：</p>
-<pre><code>protected void doOpen() throws Throwable {
+<pre tabindex="0"><code>protected void doOpen() throws Throwable {
     NettyHelper.setNettyLoggerFactory();
     //boss线程池
-    ExecutorService boss = Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerBoss&quot;, true));
+    ExecutorService boss = Executors.newCachedThreadPool(new NamedThreadFactory(&#34;NettyServerBoss&#34;, true));
     //worker线程池
-    ExecutorService worker = Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerWorker&quot;, true));
+    ExecutorService worker = Executors.newCachedThreadPool(new NamedThreadFactory(&#34;NettyServerWorker&#34;, true));
     //ChannelFactory，没有指定工作者线程数量，就使用cpu+1
     ChannelFactory channelFactory = new NioServerSocketChannelFactory(boss, worker, getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS));
     bootstrap = new ServerBootstrap(channelFactory);
@@ -1027,9 +1027,9 @@ public com.alibaba.dubbo.remoting.Client connect(com.alibaba.dubbo.common.URL ar
         public ChannelPipeline getPipeline() {
             NettyCodecAdapter adapter = new NettyCodecAdapter(getCodec() ,getUrl(), NettyServer.this);
             ChannelPipeline pipeline = Channels.pipeline();
-            pipeline.addLast(&quot;decoder&quot;, adapter.getDecoder());
-            pipeline.addLast(&quot;encoder&quot;, adapter.getEncoder());
-            pipeline.addLast(&quot;handler&quot;, nettyHandler);
+            pipeline.addLast(&#34;decoder&#34;, adapter.getDecoder());
+            pipeline.addLast(&#34;encoder&#34;, adapter.getEncoder());
+            pipeline.addLast(&#34;handler&#34;, nettyHandler);
             return pipeline;
         }
     });
@@ -1082,9 +1082,9 @@ public com.alibaba.dubbo.remoting.Client connect(com.alibaba.dubbo.common.URL ar
 <p>提供者端的Invoker封装了服务实现类，URL，Type，状态都是只读并且线程安全。通过发起invoke来具体调用服务类。</p>
 <h2 id="proxyfactory">ProxyFactory</h2>
 <p>在服务提供者端，ProxyFactory主要服务的实现统一包装成一个Invoker，Invoker通过反射来执行具体的Service实现对象的方法。默认的实现是JavassistProxyFactory，代码如下：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; getInvoker(T proxy, Class&lt;T&gt; type, URL url) {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; getInvoker(T proxy, Class&lt;T&gt; type, URL url) {
     // TODO Wrapper类不能正确处理带$的类名
-    final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf('$') &lt; 0 ? proxy.getClass() : type);
+    final Wrapper wrapper = Wrapper.getWrapper(proxy.getClass().getName().indexOf(&#39;$&#39;) &lt; 0 ? proxy.getClass() : type);
     return new AbstractProxyInvoker&lt;T&gt;(proxy, type, url) {
         @Override
         protected Object doInvoke(T proxy, String methodName, 
@@ -1099,7 +1099,7 @@ public com.alibaba.dubbo.remoting.Client connect(com.alibaba.dubbo.common.URL ar
 <p>Protocol是dubbo中的服务域，只在服务启用时加载，无状态，线程安全，是实体域Invoker暴露和引用的主功能入口，负责Invoker的生命周期管理，是Dubbo中远程服务调用层。</p>
 <p>Protocol根据指定协议对外公布服务，当客户端根据协议调用这个服务时，Protocol会将客户端传递过来的Invocation参数交给Invoker去执行。</p>
 <p>Protocol加入了远程通信协议，会根据客户端的请求来获取参数Invocation。</p>
-<pre><code>@Extension(&quot;dubbo&quot;)
+<pre tabindex="0"><code>@Extension(&#34;dubbo&#34;)
 public interface Protocol {
 
     int getDefaultPort();
@@ -1180,9 +1180,9 @@ public interface Protocol {
 				
 				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
 				
-				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				<li><a href="/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/">DynamicConfigCenter中基于Spring的Schema扩展功能</a></li>
 				
-				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				<li><a href="/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/">基础之负载均衡算法简介</a></li>
 				
 			</ul>
 		</div>
@@ -1191,10 +1191,10 @@ public interface Protocol {
 
 
 	<footer>
-	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<p>&copy; 2023 <a href="https://cxis.me/"><b>cxis</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
-	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	<a href="https://github.com/pulllock"><b>Github</b></a>.
 	</p>
 </footer>
 

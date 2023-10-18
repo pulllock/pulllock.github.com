@@ -117,7 +117,7 @@
 </ul>
 <h1 id="集群相关源码解析">集群相关源码解析</h1>
 <p>回想一下在服务消费者初始化的过程中，在引用远程服务的那一步，也就是RegistryProtocol的refer方法中，调用了doRefer方法，doRefer方法中第一个参数就是cluster，我们就从这里开始解析。RegistryProtocol的refer方法：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; refer(Class&lt;T&gt; type, URL url) throws RpcException {
     url = url.setProtocol(url.getParameter(Constants.REGISTRY_KEY, Constants.DEFAULT_REGISTRY)).removeParameter(Constants.REGISTRY_KEY);
     //根据url获取注册中心实例
     //这一步连接注册中心，并把消费者注册到注册中心
@@ -127,13 +127,13 @@
         return proxyFactory.getInvoker((T) registry, type, url);
     }
 	//以下是我们自己定义的业务的服务处理
-    // group=&quot;a,b&quot; or group=&quot;*&quot;
+    // group=&#34;a,b&#34; or group=&#34;*&#34;
     Map&lt;String, String&gt; qs = StringUtils.parseQueryString(url.getParameterAndDecoded(Constants.REFER_KEY));
     String group = qs.get(Constants.GROUP_KEY);
     //服务需要合并不同实现
     if (group != null &amp;&amp; group.length() &gt; 0 ) {
         if ( ( Constants.COMMA_SPLIT_PATTERN.split( group ) ).length &gt; 1
-                || &quot;*&quot;.equals( group ) ) {
+                || &#34;*&#34;.equals( group ) ) {
             return doRefer( getMergeableCluster(), registry, type, url );
         }
     }
@@ -141,7 +141,7 @@
     return doRefer(cluster, registry, type, url);
 }
 </code></pre><p>接着看doRefer，真正去做服务引用的方法：</p>
-<pre><code>private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) {
+<pre tabindex="0"><code>private &lt;T&gt; Invoker&lt;T&gt; doRefer(Cluster cluster, Registry registry, Class&lt;T&gt; type, URL url) {
 	//Directory中是Invoker的集合，相当于一个List
     //也就是说这里面存放了多个Invoker，那么我们该调用哪一个呢？
     //该调用哪一个Invoker的工作就是Cluster来处理的
@@ -158,8 +158,8 @@
     
  //订阅服务，注册中心会推送服务消息给消费者，消费者会再次进行服务的引用。   directory.subscribe(subscribeUrl.addParameter(Constants.CATEGORY_KEY, 
             Constants.PROVIDERS_CATEGORY 
-            + &quot;,&quot; + Constants.CONFIGURATORS_CATEGORY 
-            + &quot;,&quot; + Constants.ROUTERS_CATEGORY));
+            + &#34;,&#34; + Constants.CONFIGURATORS_CATEGORY 
+            + &#34;,&#34; + Constants.ROUTERS_CATEGORY));
     //服务的引用和变更全部由Directory异步完成
     //Directory中可能存在多个Invoker
     //而Cluster会把多个Invoker伪装成一个Invoker
@@ -169,16 +169,16 @@
 </code></pre><h2 id="集群处理的入口">集群处理的入口</h2>
 <p>入口就是在doRefer的时候最后一步：<code>cluster.join(directory);</code>。</p>
 <p>首先解释下cluster，这个是根据dubbo的扩展机制生成的，在RegistryProtocol中有一个setCluster方法，根据扩展机制可以知道，这是注入Cluster的地方，代码如下：</p>
-<pre><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
+<pre tabindex="0"><code>import com.alibaba.dubbo.common.extension.ExtensionLoader;
 public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
 
   public com.alibaba.dubbo.rpc.Invoker join(com.alibaba.dubbo.rpc.cluster.Directory arg0) throws com.alibaba.dubbo.rpc.cluster.Directory {
-    if (arg0 == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument == null&quot;);
+    if (arg0 == null) throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.cluster.Directory argument == null&#34;);
 
-    if (arg0.getUrl() == null) throw new IllegalArgumentException(&quot;com.alibaba.dubbo.rpc.cluster.Directory argument getUrl() == null&quot;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
+    if (arg0.getUrl() == null) throw new IllegalArgumentException(&#34;com.alibaba.dubbo.rpc.cluster.Directory argument getUrl() == null&#34;);com.alibaba.dubbo.common.URL url = arg0.getUrl();
 
-    String extName = url.getParameter(&quot;cluster&quot;, &quot;failover&quot;);
-    if(extName == null) throw new IllegalStateException(&quot;Fail to get extension(com.alibaba.dubbo.rpc.cluster.Cluster) name from url(&quot; + url.toString() + &quot;) use keys([cluster])&quot;);
+    String extName = url.getParameter(&#34;cluster&#34;, &#34;failover&#34;);
+    if(extName == null) throw new IllegalStateException(&#34;Fail to get extension(com.alibaba.dubbo.rpc.cluster.Cluster) name from url(&#34; + url.toString() + &#34;) use keys([cluster])&#34;);
 
     com.alibaba.dubbo.rpc.cluster.Cluster extension = (com.alibaba.dubbo.rpc.cluster.Cluster)ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.rpc.cluster.Cluster.class).getExtension(extName);
 
@@ -187,14 +187,14 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
 }
 </code></pre><p>可以看到，如果我们没有配置集群策略的话，默认是用failover模式，在Cluster接口的注解上<code>@SPI(FailoverCluster.NAME)</code>也可以看到默认是failover。</p>
 <p>继续执行cluster.join方法，会首先进入MockClusterWrapper的join方法：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; join(Directory&lt;T&gt; directory) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; join(Directory&lt;T&gt; directory) throws RpcException {
 	//先执行FailoverCluster的join方法处理
     //然后将Directory和返回的Invoker封装成一个MockCluster
     return new MockClusterInvoker&lt;T&gt;(directory,
             this.cluster.join(directory));
 }
 </code></pre><p>看下Failover的join方法：</p>
-<pre><code>public &lt;T&gt; Invoker&lt;T&gt; join(Directory&lt;T&gt; directory) throws RpcException {
+<pre tabindex="0"><code>public &lt;T&gt; Invoker&lt;T&gt; join(Directory&lt;T&gt; directory) throws RpcException {
 	//直接返回一个FailoverClusterInvoker的实例
     return new FailoverClusterInvoker&lt;T&gt;(directory);
 }
@@ -202,16 +202,16 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
 <p>Invoker都封装好了之后，就是创建代理，然后使用代理调用我们的要调用的方法。</p>
 <h2 id="调用方法时集群的处理">调用方法时集群的处理</h2>
 <p>在进行具体方法调用的时候，代理中会<code>invoker.invoke()</code>，这里Invoker就是我们上面封装好的MockClusterInvoker，所以首先进入MockClusterInvoker的invoke方法：</p>
-<pre><code>public Result invoke(Invocation invocation) throws RpcException {
+<pre tabindex="0"><code>public Result invoke(Invocation invocation) throws RpcException {
     Result result = null;
 	//我们没配置mock，所以这里为false
     //Mock通常用于服务降级
     String value = directory.getUrl().getMethodParameter(invocation.getMethodName(), Constants.MOCK_KEY, Boolean.FALSE.toString()).trim(); 
     //没有使用mock
-    if (value.length() == 0 || value.equalsIgnoreCase(&quot;false&quot;)){
+    if (value.length() == 0 || value.equalsIgnoreCase(&#34;false&#34;)){
         //这里的invoker是FailoverClusterInvoker
         result = this.invoker.invoke(invocation);
-    } else if (value.startsWith(&quot;force&quot;)) {
+    } else if (value.startsWith(&#34;force&#34;)) {
     	//mock=force:return+null
         //表示消费方对方法的调用都直接返回null，不发起远程调用
         //可用于屏蔽不重要服务不可用的时候，对调用方的影响
@@ -235,7 +235,7 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
     return result;
 }
 </code></pre><p>我们这里么有配置mock属性。首先进入的是AbstractClusterInvoker的incoke方法：</p>
-<pre><code>public Result invoke(final Invocation invocation) throws RpcException {
+<pre tabindex="0"><code>public Result invoke(final Invocation invocation) throws RpcException {
 	//检查是否已经被销毁
     checkWheatherDestoried();
 	//可以看到这里该处理负载均衡的问题了
@@ -257,7 +257,7 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
     return doInvoke(invocation, invokers, loadbalance);
 }
 </code></pre><p>看下FailoverClusterInvoker的invoke方法：</p>
-<pre><code>public Result doInvoke(Invocation invocation, final List&lt;Invoker&lt;T&gt;&gt; invokers, LoadBalance loadbalance) throws RpcException {
+<pre tabindex="0"><code>public Result doInvoke(Invocation invocation, final List&lt;Invoker&lt;T&gt;&gt; invokers, LoadBalance loadbalance) throws RpcException {
 	//Invoker列表
     List&lt;Invoker&lt;T&gt;&gt; copyinvokers = invokers;
     //确认下Invoker列表不为空
@@ -295,10 +295,10 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
     throw new RpcException(。。。);
 }
 </code></pre><p>先看下使用loadbalance选择invoker的select方法：</p>
-<pre><code>protected Invoker&lt;T&gt; select(LoadBalance loadbalance, Invocation invocation, List&lt;Invoker&lt;T&gt;&gt; invokers, List&lt;Invoker&lt;T&gt;&gt; selected) throws RpcException {
+<pre tabindex="0"><code>protected Invoker&lt;T&gt; select(LoadBalance loadbalance, Invocation invocation, List&lt;Invoker&lt;T&gt;&gt; invokers, List&lt;Invoker&lt;T&gt;&gt; selected) throws RpcException {
     if (invokers == null || invokers.size() == 0)
         return null;
-    String methodName = invocation == null ? &quot;&quot; : invocation.getMethodName();
+    String methodName = invocation == null ? &#34;&#34; : invocation.getMethodName();
 
     //sticky，滞连接用于有状态服务，尽可能让客户端总是向同一提供者发起调用，除非该提供者挂了，再连另一台。
     boolean sticky = invokers.get(0).getUrl().getMethodParameter(methodName,Constants.CLUSTER_STICKY_KEY, Constants.DEFAULT_CLUSTER_STICKY) ;
@@ -322,7 +322,7 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
     return invoker;
 }
 </code></pre><p>doselect方法：</p>
-<pre><code>private Invoker&lt;T&gt; doselect(LoadBalance loadbalance, Invocation invocation, List&lt;Invoker&lt;T&gt;&gt; invokers, List&lt;Invoker&lt;T&gt;&gt; selected) throws RpcException {
+<pre tabindex="0"><code>private Invoker&lt;T&gt; doselect(LoadBalance loadbalance, Invocation invocation, List&lt;Invoker&lt;T&gt;&gt; invokers, List&lt;Invoker&lt;T&gt;&gt; selected) throws RpcException {
     if (invokers == null || invokers.size() == 0)
         return null;
     //只有一个invoker，直接返回，不需要处理
@@ -356,7 +356,7 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
     return invoker;
 } 
 </code></pre><p>接着看使用loadBalance进行选择，首先进入AbstractLoadBalance的select方法：</p>
-<pre><code> public &lt;T&gt; Invoker&lt;T&gt; select(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) {
+<pre tabindex="0"><code> public &lt;T&gt; Invoker&lt;T&gt; select(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) {
     if (invokers == null || invokers.size() == 0)
         return null;
     if (invokers.size() == 1)
@@ -365,7 +365,7 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
     return doSelect(invokers, url, invocation);
 }
 </code></pre><p>接着去RandomLoadBalance中查看：</p>
-<pre><code>protected &lt;T&gt; Invoker&lt;T&gt; doSelect(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) {
+<pre tabindex="0"><code>protected &lt;T&gt; Invoker&lt;T&gt; doSelect(List&lt;Invoker&lt;T&gt;&gt; invokers, URL url, Invocation invocation) {
     int length = invokers.size(); // 总个数
     int totalWeight = 0; // 总权重
     boolean sameWeight = true; // 权重是否都一样
@@ -395,14 +395,14 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
 <p>选择好了Invoker之后，就回去FailoverClusterInvoker的doInvoke方法，接着就是根据选中的Invoker调用invoke方法进行返回结果，接着就是到具体的Invoker进行调用的过程了。这部分的解析在消费者和提供者请求响应过程已经解析过了，不再重复。</p>
 <h2 id="路由">路由</h2>
 <p>回到AbstractClusterInvoker的invoke方法中，这里有一步是<code>List&lt;Invoker&lt;T&gt;&gt; invokers = list(invocation);</code>获取Invoker列表，这里同时也进行了路由的操作，看下list方法：</p>
-<pre><code>protected  List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException {
+<pre tabindex="0"><code>protected  List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException {
     List&lt;Invoker&lt;T&gt;&gt; invokers = directory.list(invocation);
     return invokers;
 }
 </code></pre><p>接着看AbstractDirectory的list方法：</p>
-<pre><code>public List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException {
+<pre tabindex="0"><code>public List&lt;Invoker&lt;T&gt;&gt; list(Invocation invocation) throws RpcException {
     if (destroyed){
-        throw new RpcException(&quot;Directory already destroyed .url: &quot;+ getUrl());
+        throw new RpcException(&#34;Directory already destroyed .url: &#34;+ getUrl());
     }
     //RegistryDirectory中的doList实现
     List&lt;Invoker&lt;T&gt;&gt; invokers = doList(invocation);
@@ -438,9 +438,9 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
 				
 				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
 				
-				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				<li><a href="/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/">DynamicConfigCenter中基于Spring的Schema扩展功能</a></li>
 				
-				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				<li><a href="/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/">基础之负载均衡算法简介</a></li>
 				
 			</ul>
 		</div>
@@ -449,10 +449,10 @@ public class Cluster$Adpative implements com.alibaba.dubbo.rpc.cluster.Cluster {
 
 
 	<footer>
-	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<p>&copy; 2023 <a href="https://cxis.me/"><b>cxis</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
-	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	<a href="https://github.com/pulllock"><b>Github</b></a>.
 	</p>
 </footer>
 

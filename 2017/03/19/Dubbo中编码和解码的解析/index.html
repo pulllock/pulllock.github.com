@@ -48,7 +48,7 @@
 			<div>
 				<p>（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2相关的内容是在服务端暴露服务的时候，根据具体的协议去暴露服务的步骤中，在DubboProtocol的createServer方法中：</p>
 <!-- raw HTML omitted -->
-<pre><code>private ExchangeServer createServer(URL url) {
+<pre tabindex="0"><code>private ExchangeServer createServer(URL url) {
 	。。。
     //这里url会添加codec=dubbo
     url = url.addParameter(Constants.CODEC_KEY, Version.isCompatibleVersion() ? COMPATIBLE_CODEC_NAME : DubboCodec.NAME);
@@ -60,20 +60,20 @@
     return server;
 }
 </code></pre><p>紧接着进入<code>Exchangers.bind(url, requestHandler);</code>：</p>
-<pre><code>public static ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
+<pre tabindex="0"><code>public static ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
 	//如果url中没有codec属性，就会添加codec=exchange
-    url = url.addParameterIfAbsent(Constants.CODEC_KEY, &quot;exchange&quot;);
+    url = url.addParameterIfAbsent(Constants.CODEC_KEY, &#34;exchange&#34;);
     return getExchanger(url).bind(url, handler);
 }
 </code></pre><p>然后会继续进入HeaderExchanger的bind方法：</p>
-<pre><code>public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
+<pre tabindex="0"><code>public ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException {
     return new HeaderExchangeServer(Transporters.bind(url, new DecodeHandler(new HeaderExchangeHandler(handler))));
 }
 </code></pre><p>在这里会创建一个DecodeHandler实例。继续跟踪Transporters的bind方法，会发现直接返回一个NettyServer实例，在NettyServer的父类AbstractEndpoint构造方法初始的时候，会根据url获取一个ChannelCodec，并将其赋值给codec存放到NettyServer的实例中。</p>
 <p>我们先看下<code>getChannelCodec(url);</code>方法：</p>
-<pre><code>protected static Codec2 getChannelCodec(URL url) {
+<pre tabindex="0"><code>protected static Codec2 getChannelCodec(URL url) {
 	//获取codecName，不存在的话，默认为telnet
-    String codecName = url.getParameter(Constants.CODEC_KEY, &quot;telnet&quot;);
+    String codecName = url.getParameter(Constants.CODEC_KEY, &#34;telnet&#34;);
     //先看下是不是Codec2的实现，是的话就根据SPI扩展机制获得Codec2扩展的实现
     //我们这里默认使用的是DubboCountCodec
     if (ExtensionLoader.getExtensionLoader(Codec2.class).hasExtension(codecName)) {
@@ -87,10 +87,10 @@
 }
 </code></pre><p>这里返回的是Codec2，而Codec这个接口已经被标记为过时。到这里的话，在NettyServer中就会存在一个Codec2的实例了。</p>
 <p>在继续往下看到NettyServer中的doOpen()方法，这里是使用Netty的逻辑打开服务并绑定监听服务的地方：</p>
-<pre><code>protected void doOpen() throws Throwable {
+<pre tabindex="0"><code>protected void doOpen() throws Throwable {
     NettyHelper.setNettyLoggerFactory();
-    ExecutorService boss = Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerBoss&quot;, true));
-    ExecutorService worker = Executors.newCachedThreadPool(new NamedThreadFactory(&quot;NettyServerWorker&quot;, true));
+    ExecutorService boss = Executors.newCachedThreadPool(new NamedThreadFactory(&#34;NettyServerBoss&#34;, true));
+    ExecutorService worker = Executors.newCachedThreadPool(new NamedThreadFactory(&#34;NettyServerWorker&#34;, true));
     ChannelFactory channelFactory = new NioServerSocketChannelFactory(boss, worker, getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS));
     bootstrap = new ServerBootstrap(channelFactory);
 
@@ -102,9 +102,9 @@
             //NettyCodecAdapter，适配器类
             NettyCodecAdapter adapter = new NettyCodecAdapter(getCodec() ,getUrl(), NettyServer.this);
             ChannelPipeline pipeline = Channels.pipeline();
-            pipeline.addLast(&quot;decoder&quot;, adapter.getDecoder());//SimpleChannelUpstreamHandler
-            pipeline.addLast(&quot;encoder&quot;, adapter.getEncoder());//OneToOneEncoder
-            pipeline.addLast(&quot;handler&quot;, nettyHandler);
+            pipeline.addLast(&#34;decoder&#34;, adapter.getDecoder());//SimpleChannelUpstreamHandler
+            pipeline.addLast(&#34;encoder&#34;, adapter.getEncoder());//OneToOneEncoder
+            pipeline.addLast(&#34;handler&#34;, nettyHandler);
             return pipeline;
         }
     });
@@ -151,7 +151,7 @@
 </ul>
 <h2 id="编码的过程">编码的过程</h2>
 <p>首先会判断是请求还是响应，代码在ExchangeCodec的encode方法：</p>
-<pre><code>public void encode(Channel channel, ChannelBuffer buffer, Object msg) throws IOException {
+<pre tabindex="0"><code>public void encode(Channel channel, ChannelBuffer buffer, Object msg) throws IOException {
     if (msg instanceof Request) {//Request类型
         encodeRequest(channel, buffer, (Request) msg);
     } else if (msg instanceof Response) {//Response类型
@@ -163,7 +163,7 @@
 </code></pre><h3 id="服务提供者对响应信息编码">服务提供者对响应信息编码</h3>
 <p>在服务提供者端一般是对响应来做编码，所以这里重点看下encodeResponse。</p>
 <p>encodeResponse：</p>
-<pre><code>protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException {
+<pre tabindex="0"><code>protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException {
     try {
     	//序列化方式
         //也是根据SPI扩展来获取，url中没指定的话默认使用hessian2
@@ -219,16 +219,16 @@
         if (! res.isEvent() &amp;&amp; res.getStatus() != Response.BAD_RESPONSE) {
             try {
                 // FIXME 在Codec中打印出错日志？在IoHanndler的caught中统一处理？
-                logger.warn(&quot;Fail to encode response: &quot; + res + &quot;, send bad_response info instead, cause: &quot; + t.getMessage(), t);
+                logger.warn(&#34;Fail to encode response: &#34; + res + &#34;, send bad_response info instead, cause: &#34; + t.getMessage(), t);
 
                 Response r = new Response(res.getId(), res.getVersion());
                 r.setStatus(Response.BAD_RESPONSE);
-                r.setErrorMessage(&quot;Failed to send response: &quot; + res + &quot;, cause: &quot; + StringUtils.toString(t));
+                r.setErrorMessage(&#34;Failed to send response: &#34; + res + &#34;, cause: &#34; + StringUtils.toString(t));
                 channel.send(r);
 
                 return;
             } catch (RemotingException e) {
-                logger.warn(&quot;Failed to send bad_response info back: &quot; + res + &quot;, cause: &quot; + e.getMessage(), e);
+                logger.warn(&#34;Failed to send bad_response info back: &#34; + res + &#34;, cause: &#34; + e.getMessage(), e);
             }
         }
 
@@ -249,7 +249,7 @@
 <h2 id="解码的过程">解码的过程</h2>
 <h3 id="服务提供者对请求消息的解码">服务提供者对请求消息的解码</h3>
 <p>decode方法一次只会解析一个完整的dubbo协议包，但是每次收到的协议包不一定是完整的，或者有可能是多个协议包。看下代码解析，首先看NettyCodecAdapter的内部类InternalDecoder的messageReceived方法：</p>
-<pre><code>public void messageReceived(ChannelHandlerContext ctx, MessageEvent event) throws Exception {
+<pre tabindex="0"><code>public void messageReceived(ChannelHandlerContext ctx, MessageEvent event) throws Exception {
     Object o = event.getMessage();
     if (! (o instanceof ChannelBuffer)) {
         ctx.sendUpstream(event);
@@ -302,7 +302,7 @@
             } else {//有多个协议包，触发messageReceived事件
                 if (saveReaderIndex == message.readerIndex()) {
                     buffer = com.alibaba.dubbo.remoting.buffer.ChannelBuffers.EMPTY_BUFFER;
-                    throw new IOException(&quot;Decode without read data.&quot;);
+                    throw new IOException(&#34;Decode without read data.&#34;);
                 }
                 if (msg != null) {
                     Channels.fireMessageReceived(ctx, msg, event.getRemoteAddress());
@@ -320,7 +320,7 @@
     }
 }
 </code></pre><p>继续看<code>codec.decode(channel, message);</code>这里是DubboCountCodec的decode方法：</p>
-<pre><code>public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
+<pre tabindex="0"><code>public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
 	//当前的读索引记录下来
     int save = buffer.readerIndex();
     //多消息
@@ -347,7 +347,7 @@
     return result;
 }
 </code></pre><p>继续看ExchangeCodec的decode方法：</p>
-<pre><code>public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
+<pre tabindex="0"><code>public Object decode(Channel channel, ChannelBuffer buffer) throws IOException {
 	//可读字节数
     int readable = buffer.readableBytes();
     byte[] header = new byte[Math.min(readable, HEADER_LENGTH)];
@@ -357,7 +357,7 @@
     return decode(channel, buffer, readable, header);
 }
 </code></pre><p>解码decode：</p>
-<pre><code>protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException {
+<pre tabindex="0"><code>protected Object decode(Channel channel, ChannelBuffer buffer, int readable, byte[] header) throws IOException {
     //检查魔数.
     if (readable &gt; 0 &amp;&amp; header[0] != MAGIC_HIGH 
             || readable &gt; 1 &amp;&amp; header[1] != MAGIC_LOW) {
@@ -405,7 +405,7 @@
     }
 }
 </code></pre><p>decodeBody解析数据部分：</p>
-<pre><code>protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException {
+<pre tabindex="0"><code>protected Object decodeBody(Channel channel, InputStream is, byte[] header) throws IOException {
     byte flag = header[2], proto = (byte) (flag &amp; SERIALIZATION_MASK);
     //获取序列化方式
     Serialization s = CodecSupport.getSerialization(channel.getUrl(), proto);
@@ -449,7 +449,7 @@
     } else {//这是解码请求数据
         // request的id
         Request req = new Request(id);
-        req.setVersion(&quot;2.0.0&quot;);
+        req.setVersion(&#34;2.0.0&#34;);
         req.setTwoWay((flag &amp; FLAG_TWOWAY) != 0);
         if ((flag &amp; FLAG_EVENT) != 0) {
             req.setEvent(Request.HEARTBEAT_EVENT);
@@ -496,9 +496,9 @@
 				
 				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
 				
-				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				<li><a href="/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/">DynamicConfigCenter中基于Spring的Schema扩展功能</a></li>
 				
-				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				<li><a href="/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/">基础之负载均衡算法简介</a></li>
 				
 			</ul>
 		</div>
@@ -507,10 +507,10 @@
 
 
 	<footer>
-	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<p>&copy; 2023 <a href="https://cxis.me/"><b>cxis</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
-	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	<a href="https://github.com/pulllock"><b>Github</b></a>.
 	</p>
 </footer>
 

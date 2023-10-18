@@ -47,62 +47,62 @@
 				<p>APIGateway需要调用各个业务系统的接口，但是不可能作为消费者依赖所有系统的接口jar包，可以使用Dubbo的泛化调用功能来实现。APIGateway作为消费者，连接到注册中心，拿到相应接口后可以使用泛化调用。</p>
 <p>泛化调用比较简单，可以直接参考dubbo官方文档：<a href="http://dubbo.apache.org/zh-cn/blog/dubbo-generic-invoke.html">Dubbo的泛化调用</a></p>
 <p>示例代码：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GenericInvokeDubbo</span> <span style="color:#f92672">{</span>
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String PROTOCOL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zookeeper&#34;</span><span style="color:#f92672">;</span>
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String REGISTRY_ADDRESS <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;127.0.0.1:2181&#34;</span><span style="color:#f92672">;</span>
-
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String APP_NAME <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;app-name&#34;</span><span style="color:#f92672">;</span>
-
-    <span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> ReferenceConfig<span style="color:#f92672">&gt;</span> referenceConfigMap <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> ReferenceConfig<span style="color:#f92672">&gt;();</span>
-
-    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">invokeService</span><span style="color:#f92672">(</span>String interfaceClass<span style="color:#f92672">,</span> String method<span style="color:#f92672">,</span> String<span style="color:#f92672">[]</span> paramTypes<span style="color:#f92672">,</span> Object<span style="color:#f92672">[]</span> params<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-        ReferenceConfigCache cache <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-        ReferenceConfig<span style="color:#f92672">&lt;</span>GenericService<span style="color:#f92672">&gt;</span> referenceConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
-            referenceConfig <span style="color:#f92672">=</span> referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
-            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>referenceConfig <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                referenceConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ReferenceConfig<span style="color:#f92672">&lt;&gt;();</span>
-
-                ApplicationConfig application <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ApplicationConfig<span style="color:#f92672">();</span>
-                application<span style="color:#f92672">.</span><span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span>APP_NAME<span style="color:#f92672">);</span>
-                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setApplication</span><span style="color:#f92672">(</span>application<span style="color:#f92672">);</span>
-
-                RegistryConfig registry <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RegistryConfig<span style="color:#f92672">();</span>
-                registry<span style="color:#f92672">.</span><span style="color:#a6e22e">setProtocol</span><span style="color:#f92672">(</span>PROTOCOL<span style="color:#f92672">);</span>
-                registry<span style="color:#f92672">.</span><span style="color:#a6e22e">setAddress</span><span style="color:#f92672">(</span>REGISTRY_ADDRESS<span style="color:#f92672">);</span>
-                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setRegistry</span><span style="color:#f92672">(</span>registry<span style="color:#f92672">);</span>
-
-                ConsumerConfig consumerConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConsumerConfig<span style="color:#f92672">();</span>
-                consumerConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setTimeout</span><span style="color:#f92672">(</span>5000<span style="color:#f92672">);</span>
-                consumerConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setRetries</span><span style="color:#f92672">(</span>0<span style="color:#f92672">);</span>
-                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setConsumer</span><span style="color:#f92672">(</span>consumerConfig<span style="color:#f92672">);</span>
-
-                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setGeneric</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
-                <span style="color:#75715e">// referenceConfig.setVersion();
-</span><span style="color:#75715e"></span>                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setInterface</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
-                referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">,</span> referenceConfig<span style="color:#f92672">);</span>
-            <span style="color:#f92672">}</span>
-            cache <span style="color:#f92672">=</span> ReferenceConfigCache<span style="color:#f92672">.</span><span style="color:#a6e22e">getCache</span><span style="color:#f92672">();</span>
-            GenericService genericService <span style="color:#f92672">=</span> cache<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>referenceConfig<span style="color:#f92672">);</span>
-            <span style="color:#66d9ef">return</span> genericService<span style="color:#f92672">.</span><span style="color:#a6e22e">$invoke</span><span style="color:#f92672">(</span>method<span style="color:#f92672">,</span> paramTypes<span style="color:#f92672">,</span> params<span style="color:#f92672">);</span>
-        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IllegalStateException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">remove</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
-            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>cache <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-                cache<span style="color:#f92672">.</span><span style="color:#a6e22e">destroy</span><span style="color:#f92672">(</span>referenceConfig<span style="color:#f92672">);</span>
-            <span style="color:#f92672">}</span>
-
-            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span>
-        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
-            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
-</code></pre></div><p>源码：<a href="https://github.com/dachengxi/APIGateway">https://github.com/dachengxi/APIGateway</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GenericInvokeDubbo</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String PROTOCOL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;zookeeper&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String REGISTRY_ADDRESS <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;127.0.0.1:2181&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">static</span> String APP_NAME <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;app-name&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> ReferenceConfig<span style="color:#f92672">&gt;</span> referenceConfigMap <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> ReferenceConfig<span style="color:#f92672">&gt;();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">invokeService</span><span style="color:#f92672">(</span>String interfaceClass<span style="color:#f92672">,</span> String method<span style="color:#f92672">,</span> String<span style="color:#f92672">[]</span> paramTypes<span style="color:#f92672">,</span> Object<span style="color:#f92672">[]</span> params<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        ReferenceConfigCache cache <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        ReferenceConfig<span style="color:#f92672">&lt;</span>GenericService<span style="color:#f92672">&gt;</span> referenceConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            referenceConfig <span style="color:#f92672">=</span> referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>referenceConfig <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                referenceConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ReferenceConfig<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                ApplicationConfig application <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ApplicationConfig<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>                application<span style="color:#f92672">.</span><span style="color:#a6e22e">setName</span><span style="color:#f92672">(</span>APP_NAME<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setApplication</span><span style="color:#f92672">(</span>application<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                RegistryConfig registry <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RegistryConfig<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>                registry<span style="color:#f92672">.</span><span style="color:#a6e22e">setProtocol</span><span style="color:#f92672">(</span>PROTOCOL<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                registry<span style="color:#f92672">.</span><span style="color:#a6e22e">setAddress</span><span style="color:#f92672">(</span>REGISTRY_ADDRESS<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setRegistry</span><span style="color:#f92672">(</span>registry<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                ConsumerConfig consumerConfig <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConsumerConfig<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>                consumerConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setTimeout</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5000</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                consumerConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setRetries</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setConsumer</span><span style="color:#f92672">(</span>consumerConfig<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setGeneric</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// referenceConfig.setVersion();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                referenceConfig<span style="color:#f92672">.</span><span style="color:#a6e22e">setInterface</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">,</span> referenceConfig<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            cache <span style="color:#f92672">=</span> ReferenceConfigCache<span style="color:#f92672">.</span><span style="color:#a6e22e">getCache</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            GenericService genericService <span style="color:#f92672">=</span> cache<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>referenceConfig<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> genericService<span style="color:#f92672">.</span><span style="color:#a6e22e">$invoke</span><span style="color:#f92672">(</span>method<span style="color:#f92672">,</span> paramTypes<span style="color:#f92672">,</span> params<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IllegalStateException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            referenceConfigMap<span style="color:#f92672">.</span><span style="color:#a6e22e">remove</span><span style="color:#f92672">(</span>interfaceClass<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>cache <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                cache<span style="color:#f92672">.</span><span style="color:#a6e22e">destroy</span><span style="color:#f92672">(</span>referenceConfig<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>源码：<a href="https://github.com/dachengxi/APIGateway">https://github.com/dachengxi/APIGateway</a></p>
 			</div>
 		</article>
 	</main>
@@ -120,9 +120,9 @@
 				
 				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
 				
-				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				<li><a href="/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/">DynamicConfigCenter中基于Spring的Schema扩展功能</a></li>
 				
-				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				<li><a href="/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/">基础之负载均衡算法简介</a></li>
 				
 			</ul>
 		</div>
@@ -131,10 +131,10 @@
 
 
 	<footer>
-	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<p>&copy; 2023 <a href="https://cxis.me/"><b>cxis</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
-	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	<a href="https://github.com/pulllock"><b>Github</b></a>.
 	</p>
 </footer>
 

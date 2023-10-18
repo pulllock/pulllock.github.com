@@ -60,6 +60,15 @@
 </ul>
 <p>MESI就是上面四种状态的缩写。</p>
 <p>MESI协议通过缓存行的四种状态和总线事务机制来实现高速缓存一致性协议，目的就是让对共享的内存的读写串行化。</p>
+<h2 id="消息类型">消息类型</h2>
+<ul>
+<li>Read：当一个Cache需要读取某个缓存行消息的时候会发起Read消息</li>
+<li>Read Response：Read Response是对Read的回应，Response可以来自其他CPU的缓存，也可以来自内存，当其他的CPU种对当前缓存行时M状态时，则会发起Read Response</li>
+<li>Invalidate：Invalidate消息包含对应的内存的地址，接受到这个消息的缓存需要将自己缓存行的内容失效并响应</li>
+<li>Invalidate Acknowledge：接收到Invalidate消息并删除缓存行中的数据后会向发起者回复Invalidate ACK</li>
+<li>Read Invalidate：这个消息包含两个操作Read和Invalidate，它需要接收Read Response和多个Invalidate ACK响应</li>
+<li>Write Back：该消息包含数据和地址，会将这个地址对应的数据刷到内存中</li>
+</ul>
 <h2 id="mesi四种状态">MESI四种状态</h2>
 <h3 id="modified">Modified</h3>
 <p>当前CPU的高速缓存中的数据是有效的，但是被当前CPU修改过，并且没有写回到内存，当前CPU高速缓存中数据和内存中数据不一致，数据只存在于当前CPU高速缓存中，其他CPU的高速缓存中没有这些数据。</p>
@@ -123,7 +132,7 @@
 <h2 id="存储缓存存在的问题">存储缓存存在的问题</h2>
 <ol>
 <li>存储缓存大小有限制，如果写事件很多导致存储缓存满了，CPU依然会阻塞。</li>
-<li>CPU将值写入到存储缓存后，如果存储缓存还没处理完，后续该CPU需要到高速缓存读这个值的时候，就会出问题。解决方案是：Store Fowarding，就是CPU需要读新值的时候，先看存储缓存中是否存在，如果存在就直接读取，如果存储缓存中不存在，则去高速缓存中读取。</li>
+<li>CPU将值写入到存储缓存后，如果存储缓存还没处理完，后续该CPU需要到高速缓存读这个值的时候，就会出问题。解决方案是：Store Forwarding，就是CPU需要读新值的时候，先看存储缓存中是否存在，如果存在就直接读取，如果存储缓存中不存在，则去高速缓存中读取。</li>
 </ol>
 <h1 id="失效队列invalid-queue">失效队列（Invalid Queue）</h1>
 <p>针对本地CPU需要响应远程CPU的写事件，可能导致远程CPU等待的问题，引入了失效队列（Invalid Queue）来解决。每个CPU都有一个失效队列，当有远程写事件到来时，直接将事件写入到失效队列中去，并直接返回响应给远程CPU，本地CPU会在空闲的时候处理失效队列中的事件。这也是将同步变为了异步操作，提升效率。</p>
@@ -155,6 +164,7 @@
 <li><a href="https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html">https://www.cnblogs.com/xiaoxiongcanguan/p/13184801.html</a></li>
 <li><a href="http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html">http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html</a></li>
 <li><a href="https://monkeysayhi.github.io/2017/12/28/%E4%B8%80%E6%96%87%E8%A7%A3%E5%86%B3%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C/">https://monkeysayhi.github.io/2017/12/28/%E4%B8%80%E6%96%87%E8%A7%A3%E5%86%B3%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C/</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/48157076">https://zhuanlan.zhihu.com/p/48157076</a></li>
 </ul>
 			</div>
 		</article>
@@ -173,9 +183,9 @@
 				
 				<li><a href="/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/">基础之IO的同步、异步、阻塞、非阻塞</a></li>
 				
-				<li><a href="/2020/11/02/MyBatis%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E4%BB%8B%E7%BB%8D/">MyBatis启动过程介绍</a></li>
+				<li><a href="/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/">DynamicConfigCenter中基于Spring的Schema扩展功能</a></li>
 				
-				<li><a href="/2020/10/26/SpringBoot%E4%B8%AD%E6%89%A9%E5%B1%95%E7%82%B9%E6%B1%87%E6%80%BB/">SpringBoot中扩展点汇总</a></li>
+				<li><a href="/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/">基础之负载均衡算法简介</a></li>
 				
 			</ul>
 		</div>
@@ -184,10 +194,10 @@
 
 
 	<footer>
-	<p>&copy; 2021 <a href="https://cxis.me/"><b>cxis</b></a>.
+	<p>&copy; 2023 <a href="https://cxis.me/"><b>cxis</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
-	<a href="https://github.com/dachengxi"><b>Github</b></a>.
+	<a href="https://github.com/pulllock"><b>Github</b></a>.
 	</p>
 </footer>
 

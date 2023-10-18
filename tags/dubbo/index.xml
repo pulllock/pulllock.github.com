@@ -26,14 +26,5 @@
       <description>&lt;p&gt;分析总结一下Dubbo的架构，通过对Dubbo、RocketMQ、Tair等架构的类比，从整体上来理解一般分布式框架、应用的组成。&lt;/p&gt;</description>
     </item>
     
-    <item>
-      <title>从头开始写一个迷你dubbo</title>
-      <link>https://cxis.me/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/</link>
-      <pubDate>Fri, 14 Apr 2017 19:14:24 +0000</pubDate>
-      
-      <guid>https://cxis.me/2017/04/14/%E4%BB%8E%E5%A4%B4%E5%BC%80%E5%A7%8B%E5%86%99%E4%B8%80%E4%B8%AA%E8%BF%B7%E4%BD%A0dubbo/</guid>
-      <description>&lt;p&gt;从头开始写一个迷你的dubbo，仅用作学习用，学习的过程中更深入的了解下dubbo，同时也补充下其他的知识。&lt;/p&gt;</description>
-    </item>
-    
   </channel>
 </rss>
