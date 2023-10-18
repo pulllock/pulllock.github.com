@@ -1,244 +1,244 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>cxis.me</title>
-    <link>https://cxis.me/</link>
-    <description>Recent content on cxis.me</description>
+    <title>Pullock</title>
+    <link>/</link>
+    <description>Recent content on Pullock</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <copyright>cxis</copyright>
-    <lastBuildDate>Thu, 18 Mar 2021 21:54:39 +0000</lastBuildDate><atom:link href="https://cxis.me/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>Pullock</copyright>
+    <lastBuildDate>Thu, 18 Mar 2021 21:54:39 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>基础之零拷贝相关知识总结记录</title>
-      <link>https://cxis.me/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
+      <link>/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Thu, 18 Mar 2021 21:54:39 +0000</pubDate>
       
-      <guid>https://cxis.me/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
+      <guid>/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
       <description>&lt;p&gt;IO操作方式、零拷贝等相关知识总结记录&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>基础之CPU、Cache、MESI等相关知识总结记录</title>
-      <link>https://cxis.me/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
+      <link>/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Wed, 17 Mar 2021 21:46:04 +0000</pubDate>
       
-      <guid>https://cxis.me/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
+      <guid>/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
       <description>&lt;p&gt;CPU、高速缓存、缓存行、MESI等相关知识总结记录&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>基础之IO的同步、异步、阻塞、非阻塞</title>
-      <link>https://cxis.me/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</link>
+      <link>/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</link>
       <pubDate>Mon, 15 Mar 2021 20:00:02 +0000</pubDate>
       
-      <guid>https://cxis.me/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</guid>
+      <guid>/2021/03/15/%E5%9F%BA%E7%A1%80%E4%B9%8BIO%E7%9A%84%E5%90%8C%E6%AD%A5%E5%BC%82%E6%AD%A5%E9%98%BB%E5%A1%9E%E9%9D%9E%E9%98%BB%E5%A1%9E/</guid>
       <description>&lt;p&gt;重新梳理同步IO、异步IO、阻塞IO、非阻塞IO等相关概念。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter中基于Spring的Schema扩展功能</title>
-      <link>https://cxis.me/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/</link>
+      <link>/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/</link>
       <pubDate>Mon, 04 May 2020 10:22:12 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/</guid>
+      <guid>/2020/05/04/DynamicConfigCenter%E4%B8%AD%E5%9F%BA%E4%BA%8ESpring%E7%9A%84Schema%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/</guid>
       <description>&lt;p&gt;集成Spring，使用Spring的scheme扩展机制。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>基础之负载均衡算法简介</title>
-      <link>https://cxis.me/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/</link>
+      <link>/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Wed, 29 Apr 2020 10:12:49 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/</guid>
+      <guid>/2020/04/29/%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%AE%97%E6%B3%95%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;负载均衡算法的基础知识记录。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter中的监听器模式</title>
-      <link>https://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%AD%E7%9A%84%E7%9B%91%E5%90%AC%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
+      <link>/2020/04/28/DynamicConfigCenter%E4%B8%AD%E7%9A%84%E7%9B%91%E5%90%AC%E5%99%A8%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Tue, 28 Apr 2020 14:17:16 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%AD%E7%9A%84%E7%9B%91%E5%90%AC%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
+      <guid>/2020/04/28/DynamicConfigCenter%E4%B8%AD%E7%9A%84%E7%9B%91%E5%90%AC%E5%99%A8%E6%A8%A1%E5%BC%8F/</guid>
       <description>&lt;p&gt;监听器模式运用。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter中Zookeeper监听机制使用</title>
-      <link>https://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6%E4%BD%BF%E7%94%A8/</link>
+      <link>/2020/04/28/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Tue, 28 Apr 2020 09:51:52 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/28/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6%E4%BD%BF%E7%94%A8/</guid>
+      <guid>/2020/04/28/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%91%E5%90%AC%E6%9C%BA%E5%88%B6%E4%BD%BF%E7%94%A8/</guid>
       <description>&lt;p&gt;重新温习一下Zookeeper监听机制。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter中Zookeeper相关操作</title>
-      <link>https://cxis.me/2020/04/27/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/</link>
+      <link>/2020/04/27/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/</link>
       <pubDate>Mon, 27 Apr 2020 21:13:46 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/27/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/</guid>
+      <guid>/2020/04/27/DynamicConfigCenter%E4%B8%ADZookeeper%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/</guid>
       <description>&lt;p&gt;重新温习一下操作Zookeeper的一些方法。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter设计文档</title>
-      <link>https://cxis.me/2020/04/26/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
+      <link>/2020/04/26/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
       <pubDate>Sun, 26 Apr 2020 20:07:40 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/26/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
+      <guid>/2020/04/26/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
       <description>&lt;p&gt;大概列一下动态配置中心需要实现的功能。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>DynamicConfigCenter设计的思路</title>
-      <link>https://cxis.me/2020/04/25/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
+      <link>/2020/04/25/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
       <pubDate>Sat, 25 Apr 2020 20:07:40 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/25/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
+      <guid>/2020/04/25/DynamicConfigCenter%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
       <description>&lt;p&gt;大概列一下动态配置中心需要实现的功能。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway总结</title>
-      <link>https://cxis.me/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</link>
+      <link>/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 13 Apr 2020 21:42:13 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</guid>
+      <guid>/2020/04/13/APIGateway%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;用了几天时间来设计和实现一个APIGateway，这里进行一下文档和代码的汇总。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中获取客户端IP的方法</title>
-      <link>https://cxis.me/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</link>
+      <link>/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</link>
       <pubDate>Sun, 12 Apr 2020 21:35:24 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</guid>
+      <guid>/2020/04/12/APIGateway%E4%B8%AD%E8%8E%B7%E5%8F%96%E5%AE%A2%E6%88%B7%E7%AB%AFIP%E7%9A%84%E6%96%B9%E6%B3%95/</guid>
       <description>&lt;p&gt;在使用ServletRequest获取客户端ip的时候，不仅仅只使用getRemoteHost来获取，还要使用XFF（X-Forwarded-For）。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中使用Dubbo泛化调用</title>
-      <link>https://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</link>
+      <link>/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</link>
       <pubDate>Thu, 09 Apr 2020 22:52:28 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</guid>
+      <guid>/2020/04/09/APIGateway%E4%B8%AD%E4%BD%BF%E7%94%A8Dubbo%E6%B3%9B%E5%8C%96%E8%B0%83%E7%94%A8/</guid>
       <description>&lt;p&gt;APIGateway需要调用各个业务系统的接口，但是不可能作为消费者依赖所有系统的接口jar包，可以使用Dubbo的泛化调用功能来实现。APIGateway作为消费者，连接到注册中心，拿到相应接口后可以使用泛化调用。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中流控介绍</title>
-      <link>https://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</link>
+      <link>/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Thu, 09 Apr 2020 21:29:14 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>/2020/04/09/APIGateway%E4%B8%AD%E6%B5%81%E6%8E%A7%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;流控或者叫限流，可以通过控制流量来保护我们的系统不被大流量或者异常流量冲垮，常用的限流算法有：计数器算法、令牌桶算法、漏桶算法。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中加密验签介绍</title>
-      <link>https://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</link>
+      <link>/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Wed, 08 Apr 2020 21:57:10 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>/2020/04/08/APIGateway%E4%B8%AD%E5%8A%A0%E5%AF%86%E9%AA%8C%E7%AD%BE%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;需要提供给接口调用方一个用来加密的key，调用方根据key、一些其他参数以及业务参数进行加密，还需要对报文进行签名，使用加密的参数请求接口。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway中责任链模式的使用</title>
-      <link>https://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
+      <link>/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Wed, 08 Apr 2020 20:49:22 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
+      <guid>/2020/04/08/APIGateway%E4%B8%AD%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
       <description>&lt;p&gt;重新看一下责任链模式，在APIGateway设计中要用到责任链模式。简单写了代码测试下Spring中使用以及Apache CommonsChain使用。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway设计文档</title>
-      <link>https://cxis.me/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
+      <link>/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
       <pubDate>Tue, 07 Apr 2020 23:49:05 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
+      <guid>/2020/04/07/APIGateway%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
       <description>&lt;p&gt;APIGateway的设计文档，包括整体架构和数据库设计。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>APIGateway设计的思路</title>
-      <link>https://cxis.me/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
+      <link>/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</link>
       <pubDate>Mon, 06 Apr 2020 21:53:08 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
+      <guid>/2020/04/06/APIGateway%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF/</guid>
       <description>&lt;p&gt;简述一下APIGateway的设计思路，准备从头写一个网关。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo启动以及服务调用的过程总结</title>
-      <link>https://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
+      <link>/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</link>
       <pubDate>Fri, 20 Mar 2020 23:25:44 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
+      <guid>/2020/03/20/Dubbo%E5%90%AF%E5%8A%A8%E4%BB%A5%E5%8F%8A%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E7%9A%84%E8%BF%87%E7%A8%8B%E6%80%BB%E7%BB%93/</guid>
       <description>&lt;p&gt;服务暴露过程、服务引用过程、服务调用过程、消费者调用底层通信过程、提供者接受请求底层通信过程简单总结。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo架构简单理解</title>
-      <link>https://cxis.me/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</link>
+      <link>/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</link>
       <pubDate>Thu, 19 Mar 2020 22:32:11 +0000</pubDate>
       
-      <guid>https://cxis.me/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</guid>
+      <guid>/2020/03/19/Dubbo%E6%9E%B6%E6%9E%84%E7%AE%80%E5%8D%95%E7%90%86%E8%A7%A3/</guid>
       <description>&lt;p&gt;分析总结一下Dubbo的架构，通过对Dubbo、RocketMQ、Tair等架构的类比，从整体上来理解一般分布式框架、应用的组成。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中SPI源码解析</title>
-      <link>https://cxis.me/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
+      <link>/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 20 Feb 2019 20:15:34 +0000</pubDate>
       
-      <guid>https://cxis.me/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
+      <guid>/2019/02/20/Dubbo%E4%B8%ADSPI%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;从两个示例代码，介绍dubbo的SPI的使用以及相关源码分析，分析了获取扩展实现和获取自适应扩展点实现的源码，最后简单说了下ExtensionFactory的流程，看完就可以理解为什么dubbo是自包含的了。从上往下看，再回头看，应该能看明白，文章比较长，希望能耐心读下去。如果有错误的地方希望能指出来，我也理解不是太完整或者表述不是太明白。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Elasticsearch的基础概念</title>
-      <link>https://cxis.me/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
+      <link>/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
       <pubDate>Sat, 16 Jun 2018 23:34:40 +0000</pubDate>
       
-      <guid>https://cxis.me/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
+      <guid>/2018/06/16/Elasticsearch%E7%9A%84%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
       <description>&lt;p&gt;Elasticsearch基础概念学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Elasticsearc之信息检索基础概念</title>
-      <link>https://cxis.me/2018/06/16/Elasticsearc%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
+      <link>/2018/06/16/Elasticsearc%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</link>
       <pubDate>Sat, 16 Jun 2018 13:56:43 +0000</pubDate>
       
-      <guid>https://cxis.me/2018/06/16/Elasticsearc%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
+      <guid>/2018/06/16/Elasticsearc%E4%B9%8B%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/</guid>
       <description>&lt;p&gt;信息检索基础概念学习，包括分词算法、倒排索引等等。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring定时器的配置从1.0到5.0的演进</title>
-      <link>https://cxis.me/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
+      <link>/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
       <pubDate>Wed, 19 Apr 2017 16:20:43 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
+      <guid>/2017/04/19/Spring%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
       <description>&lt;p&gt;这里主要是记录下从Spring1.0到现在的5.0中定时器的配置方式，关于源码，暂先不解释。主要用作自己记录用，如果有错误的还请指出一起改正学习，免得误导别人，谢谢。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Spring中AOP的配置从1.0到5.0的演进</title>
-      <link>https://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
+      <link>/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</link>
       <pubDate>Mon, 10 Apr 2017 16:17:35 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
+      <guid>/2017/04/10/Spring%E4%B8%ADAOP%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BB%8E1.0%E5%88%B05.0%E7%9A%84%E6%BC%94%E8%BF%9B/</guid>
       <description>&lt;p&gt;最近在学习Spring稍微深入一点的东西，在这过程中发现虽然有很多关于各种AOP，IOC原理配置等的文章，但是都只是针对某一版本或者压根儿就没有标明版本的解析配置等。或许是我理解力不够，为了方便自己以后快速找到这些东西去看，还是自己记录下。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中Directory解析</title>
-      <link>https://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/</link>
+      <link>/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 02 Apr 2017 23:38:55 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/</guid>
+      <guid>/2017/04/02/Dubbo%E4%B8%ADDirectory%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Directory代表多个Invoker，可以把它看成List&lt;!-- raw HTML omitted --&gt;，但与List不同的是，它的值可能是动态变化的，比如注册中心推送变更。Cluster将Directory中的多个Invoker伪装成一个Invoker，对上层透明，伪装过程包含了容错逻辑，调用失败后，重试另一个。&lt;/p&gt;
 &lt;/blockquote&gt;</description>
@@ -246,102 +246,102 @@
     
     <item>
       <title>Dubbo中订阅和通知解析</title>
-      <link>https://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/</link>
+      <link>/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 02 Apr 2017 20:02:46 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/</guid>
+      <guid>/2017/04/02/Dubbo%E4%B8%AD%E8%AE%A2%E9%98%85%E5%92%8C%E9%80%9A%E7%9F%A5%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;Dubbo中关于服务的订阅和通知主要发生在服务提供方暴露服务的过程和服务消费方初始化时候引用服务的过程中。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java基础之AQS简介</title>
-      <link>https://cxis.me/2017/03/27/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E7%AE%80%E4%BB%8B/</link>
+      <link>/2017/03/27/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E7%AE%80%E4%BB%8B/</link>
       <pubDate>Mon, 27 Mar 2017 16:25:44 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/27/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E7%AE%80%E4%BB%8B/</guid>
+      <guid>/2017/03/27/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E7%AE%80%E4%BB%8B/</guid>
       <description>&lt;p&gt;AQS并发包中的核心，了解其他类之前，需要先弄懂AQS，在弄懂AQS前需要先了解下管程、自选锁等基础知识。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java基础之AQS设计思路介绍</title>
-      <link>https://cxis.me/2017/03/26/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%BB%8B%E7%BB%8D/</link>
+      <link>/2017/03/26/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Sun, 26 Mar 2017 23:10:43 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/26/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>/2017/03/26/Java%E5%9F%BA%E7%A1%80%E4%B9%8BAQS%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;为了更好的学习Java中的AQS，先学习下AQS的设计思路。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中集群Cluster，负载均衡，容错，路由解析</title>
-      <link>https://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</link>
+      <link>/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 26 Mar 2017 12:12:49 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</guid>
+      <guid>/2017/03/26/Dubbo%E4%B8%AD%E9%9B%86%E7%BE%A4Cluster%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%AE%B9%E9%94%99%E8%B7%AF%E7%94%B1%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;Dubbo中的Cluster可以将多个服务提供方伪装成一个提供方，具体也就是将Directory中的多个Invoker伪装成一个Invoker，在伪装的过程中包含了容错的处理，负载均衡的处理和路由的处理。这篇文章介绍下集群相关的东西，开始先对着文档解释下容错模式，负载均衡，路由等概念，然后解析下源码的处理。（稍微有点乱，心情不太好，不适合分析源码。）&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java基础之自旋锁介绍</title>
-      <link>https://cxis.me/2017/03/24/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%87%AA%E6%97%8B%E9%94%81%E4%BB%8B%E7%BB%8D/</link>
+      <link>/2017/03/24/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%87%AA%E6%97%8B%E9%94%81%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Fri, 24 Mar 2017 23:20:07 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/24/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%87%AA%E6%97%8B%E9%94%81%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>/2017/03/24/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E8%87%AA%E6%97%8B%E9%94%81%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;为了更好的学习Java中的AQS，熟悉下自旋锁、排号自旋锁、MCS锁、CLH锁相关的知识。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java基础之管程介绍</title>
-      <link>https://cxis.me/2017/03/24/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%A1%E7%A8%8B%E4%BB%8B%E7%BB%8D/</link>
+      <link>/2017/03/24/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%A1%E7%A8%8B%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Fri, 24 Mar 2017 20:40:03 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/24/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%A1%E7%A8%8B%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>/2017/03/24/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E7%AE%A1%E7%A8%8B%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;为了更好的学习Java中的AQS，先熟悉下管程以及条件变量相关的知识。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Java基础之Mutex介绍</title>
-      <link>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/</link>
+      <link>/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Thu, 23 Mar 2017 17:00:43 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>/2017/03/23/Java%E5%9F%BA%E7%A1%80%E4%B9%8BMutex%E4%BB%8B%E7%BB%8D/</guid>
       <description>&lt;p&gt;为了更好的学习Java中的AQS，先回顾下基础知识mutex互斥锁。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中服务消费者和服务提供者之间的请求和响应过程</title>
-      <link>https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/</link>
+      <link>/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Tue, 21 Mar 2017 23:58:13 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/</guid>
+      <guid>/2017/03/21/Dubbo%E4%B8%AD%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E8%BF%87%E7%A8%8B/</guid>
       <description>&lt;p&gt;服务提供者初始化完成之后，对外暴露Exporter。服务消费者初始化完成之后，得到的是Proxy代理，方法调用的时候就是调用代理。&lt;/p&gt;
 &lt;p&gt;服务消费者经过初始化之后，得到的是一个动态代理类，InvokerInvocationHandler，包含MockClusterInvoker，MockClusterInvoker包含一个RegistryDirectory和FailoverClusterInvoker。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中消费者初始化的过程解析</title>
-      <link>https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
+      <link>/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Tue, 21 Mar 2017 20:30:29 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
+      <guid>/2017/03/21/Dubbo%E4%B8%AD%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%9D%E5%A7%8B%E5%8C%96%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;首先还是Spring碰到dubbo的标签之后，会使用parseCustomElement解析dubbo标签，使用的解析器是dubbo的DubboBeanDefinitionParser，解析完成之后返回BeanDefinition给Spring管理。&lt;/p&gt;
 &lt;p&gt;服务消费者端对应的是ReferenceBean，实现了ApplicationContextAware接口，Spring会在Bean的实例化那一步回调setApplicationContext方法。也实现了InitializingBean接口，接着会回调afterPropertySet方法。还实现了FactoryBean接口，实现FactoryBean可以在后期获取bean的时候做一些操作，dubbo在这个时候做初始化。另外ReferenceBean还实现了DisposableBean，会在bean销毁的时候调用destory方法。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Dubbo中编码和解码的解析</title>
-      <link>https://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
+      <link>/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 19 Mar 2017 23:25:51 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
+      <guid>/2017/03/19/Dubbo%E4%B8%AD%E7%BC%96%E7%A0%81%E5%92%8C%E8%A7%A3%E7%A0%81%E7%9A%84%E8%A7%A3%E6%9E%90/</guid>
       <description>（这里做的解析不是很详细，等到走完整个流程再来解析）Dubbo中编解码的工作由Codec2接口的实现来处理，回想一下第一次接触到Codec2</description>
     </item>
     
     <item>
       <title>Dubbo中暴露服务的过程解析</title>
-      <link>https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
+      <link>/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Sun, 19 Feb 2017 00:46:14 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
+      <guid>/2017/02/19/Dubbo%E4%B8%AD%E6%9A%B4%E9%9C%B2%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;p&gt;dubbo暴露服务有两种情况，一种是设置了延迟暴露（比如delay=&amp;ldquo;5000&amp;rdquo;），另外一种是没有设置延迟暴露或者延迟设置为-1（delay=&amp;quot;-1&amp;quot;）：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;设置了延迟暴露，dubbo在Spring实例化bean（initializeBean）的时候会对实现了InitializingBean的类进行回调，回调方法是afterPropertySet()，如果设置了延迟暴露，dubbo在这个方法中进行服务的发布。&lt;/li&gt;
@@ -352,46 +352,46 @@
     
     <item>
       <title>Dubbo中SPI扩展机制详解</title>
-      <link>https://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</link>
+      <link>/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</link>
       <pubDate>Sat, 18 Feb 2017 23:13:34 +0000</pubDate>
       
-      <guid>https://cxis.me/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</guid>
+      <guid>/2017/02/18/Dubbo%E4%B8%ADSPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</guid>
       <description>&lt;p&gt;前面我们了解过了Java的SPI扩展机制，对于Java扩展机制的原理以及优缺点也有了大概的了解，这里继续深入一下Dubbo的扩展点加载机制。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>LogCollector中JMX的应用</title>
-      <link>https://cxis.me/2010/05/24/LogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <link>/2010/05/24/LogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8/</link>
       <pubDate>Mon, 24 May 2010 15:32:57 +0000</pubDate>
       
-      <guid>https://cxis.me/2010/05/24/LogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <guid>/2010/05/24/LogCollector%E4%B8%ADJMX%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
       <description>&lt;p&gt;LogCollector中JMX的使用学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>LogCollector中ScheduledExecutorService的应用</title>
-      <link>https://cxis.me/2010/05/21/LogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <link>/2010/05/21/LogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8/</link>
       <pubDate>Fri, 21 May 2010 22:39:34 +0000</pubDate>
       
-      <guid>https://cxis.me/2010/05/21/LogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <guid>/2010/05/21/LogCollector%E4%B8%ADScheduledExecutorService%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
       <description>&lt;p&gt;LogCollector中ScheduledExecutorService的使用学习。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>LogCollector设计文档</title>
-      <link>https://cxis.me/2010/05/20/LogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
+      <link>/2010/05/20/LogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</link>
       <pubDate>Thu, 20 May 2010 17:30:52 +0000</pubDate>
       
-      <guid>https://cxis.me/2010/05/20/LogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
+      <guid>/2010/05/20/LogCollector%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3/</guid>
       <description>&lt;p&gt;LogCollector的模块和整体架构。&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>LogCollector的设计思路</title>
-      <link>https://cxis.me/2010/05/20/LogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</link>
+      <link>/2010/05/20/LogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</link>
       <pubDate>Thu, 20 May 2010 16:44:11 +0000</pubDate>
       
-      <guid>https://cxis.me/2010/05/20/LogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</guid>
+      <guid>/2010/05/20/LogCollector%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF/</guid>
       <description>&lt;p&gt;大概列一下日志收集系统需要实现的功能。&lt;/p&gt;</description>
     </item>
     
