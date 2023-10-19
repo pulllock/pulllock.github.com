@@ -2,27 +2,27 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>计算机基础 on Pullock</title>
-    <link>http://pullock.fun/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</link>
+    <link>http://www.pullock.fun/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/</link>
     <description>Recent content in 计算机基础 on Pullock</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <copyright>Pullock.fun</copyright>
-    <lastBuildDate>Thu, 18 Mar 2021 21:54:39 +0000</lastBuildDate><atom:link href="http://pullock.fun/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 18 Mar 2021 21:54:39 +0000</lastBuildDate><atom:link href="http://www.pullock.fun/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>基础之零拷贝相关知识总结记录</title>
-      <link>http://pullock.fun/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
+      <link>http://www.pullock.fun/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Thu, 18 Mar 2021 21:54:39 +0000</pubDate>
       
-      <guid>http://pullock.fun/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
+      <guid>http://www.pullock.fun/2021/03/18/%E5%9F%BA%E7%A1%80%E4%B9%8B%E9%9B%B6%E6%8B%B7%E8%B4%9D%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
       <description>&lt;p&gt;IO操作方式、零拷贝等相关知识总结记录&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>基础之CPU、Cache、MESI等相关知识总结记录</title>
-      <link>http://pullock.fun/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
+      <link>http://www.pullock.fun/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Wed, 17 Mar 2021 21:46:04 +0000</pubDate>
       
-      <guid>http://pullock.fun/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
+      <guid>http://www.pullock.fun/2021/03/17/%E5%9F%BA%E7%A1%80%E4%B9%8BCPUCacheMESI%E7%AD%89%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E8%AE%B0%E5%BD%95/</guid>
       <description>&lt;p&gt;CPU、高速缓存、缓存行、MESI等相关知识总结记录&lt;/p&gt;</description>
     </item>
     
