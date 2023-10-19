@@ -15,7 +15,7 @@
 <body>
 	<header>
 	=============<br>
-	== <a href="">Pullock</a> ==<br>
+	== <a href="https://pullock.fun">Pullock</a> ==<br>
 	=============
 	<div style="float: right;">脚踏实地</div><br>
 	<p>
@@ -111,7 +111,7 @@
     // bind
     channel = bootstrap.bind(getBindAddress());
 }
-</code></pre><p>这里就在Netty的pipeline中添加了编解码器。这里涉及到Netty的相关流程，可以先了解下<a href="http://cxis.me/2017/03/20/Netty3%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E7%AE%80%E4%BB%8B/">Netty3服务端流程简介</a>。</p>
+</code></pre><p>这里就在Netty的pipeline中添加了编解码器。这里涉及到Netty的相关流程，可以先了解下。</p>
 <p>decoder为解码器，是一个SimpleChannelUpstreamHandler，从Socket到Netty中的时候，需要解码，也就是服务提供端接收到消费者的请求的时候，需要解码。</p>
 <p>encoder是编码器，是OneToOneEncoder，这个类实现了ChannelDownstreamHandler，从服务提供端发送给服务消费者的时候，需要编码。</p>
 <p>nettyHandler实现了ChannelUpstreamHandler, ChannelDownstreamHandler两个，上下的时候都需要处理。</p>
@@ -507,7 +507,7 @@
 
 
 	<footer>
-	<p>&copy; 2023 <a href=""><b>Pullock</b></a>.
+	<p>&copy; 2023 <a href="https://pullock.fun"><b>Pullock.fun</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
 	<a href="https://github.com/pulllock"><b>Github</b></a>.

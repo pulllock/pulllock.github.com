@@ -15,7 +15,7 @@
 <body>
 	<header>
 	=============<br>
-	== <a href="">Pullock</a> ==<br>
+	== <a href="https://pullock.fun">Pullock</a> ==<br>
 	=============
 	<div style="float: right;">脚踏实地</div><br>
 	<p>
@@ -57,20 +57,14 @@
 </ol>
 <p>这就是Spring中AOP的配置，这种方式简单明了，往下接着看示例代码。</p>
 <p>我们的业务接口，LoginService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop;
+<pre tabindex="0"><code>package fun.pullock.spring.aop;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>业务接口的实现类，LoginServiceImpl：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop;
+<pre tabindex="0"><code>package fun.pullock.spring.aop;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -90,16 +84,16 @@ public class LogBeforeLogin implements MethodBeforeAdvice {
 &lt;!DOCTYPE beans PUBLIC &#34;-//SPRING//DTD BEAN//EN&#34; &#34;http://www.springframework.org/dtd/spring-beans.dtd&#34;&gt;
 &lt;beans&gt;
     &lt;!--业务处理类，也就是被代理的类--&gt;
-    &lt;bean id=&#34;loginServiceImpl&#34; class=&#34;me.cxis.spring.aop.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginServiceImpl&#34; class=&#34;fun.pullock.spring.aop.LoginServiceImpl&#34;/&gt;
 
     &lt;!--通知类--&gt;
-    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;me.cxis.spring.aop.LogBeforeLogin&#34;/&gt;
+    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;fun.pullock.spring.aop.LogBeforeLogin&#34;/&gt;
 
     &lt;!--代理类--&gt;
     &lt;bean id=&#34;loginProxy&#34; class=&#34;org.springframework.aop.framework.ProxyFactoryBean&#34;&gt;
         &lt;!--要代理的接口--&gt;
         &lt;property name=&#34;proxyInterfaces&#34;&gt;
-            &lt;value&gt;me.cxis.spring.aop.LoginService&lt;/value&gt;
+            &lt;value&gt;fun.pullock.spring.aop.LoginService&lt;/value&gt;
         &lt;/property&gt;
         &lt;!--拦截器名字，也就是我们定义的通知类--&gt;
         &lt;property name=&#34;interceptorNames&#34;&gt;
@@ -114,14 +108,11 @@ public class LogBeforeLogin implements MethodBeforeAdvice {
     &lt;/bean&gt;
 &lt;/beans&gt;
 </code></pre><p>测试方法，Main：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop;
+<pre tabindex="0"><code>package fun.pullock.spring.aop;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
 
@@ -141,10 +132,10 @@ public class Main {
 &lt;!DOCTYPE beans PUBLIC &#34;-//SPRING//DTD BEAN//EN&#34; &#34;http://www.springframework.org/dtd/spring-beans.dtd&#34;&gt;
 &lt;beans&gt;
     &lt;!--业务处理类，也就是被代理的类--&gt;
-    &lt;bean id=&#34;loginServiceImpl&#34; class=&#34;me.cxis.spring.aop.advisor.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginServiceImpl&#34; class=&#34;fun.pullock.spring.aop.advisor.LoginServiceImpl&#34;/&gt;
 
     &lt;!--通知类--&gt;
-    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;me.cxis.spring.aop.advisor.LogBeforeLogin&#34;/&gt;
+    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;fun.pullock.spring.aop.advisor.LogBeforeLogin&#34;/&gt;
 
     &lt;!--切面--&gt;
     &lt;bean id=&#34;loginAdvisor&#34; class=&#34;org.springframework.aop.support.RegexpMethodPointcutAdvisor&#34;&gt;
@@ -152,7 +143,7 @@ public class Main {
             &lt;ref bean=&#34;logBeforeLogin&#34;/&gt;
         &lt;/property&gt;
         &lt;property name=&#34;pattern&#34;&gt;
-            &lt;value&gt;me.cxis.spring.aop.advisor.LoginServiceImpl.login*&lt;/value&gt;
+            &lt;value&gt;fun.pullock.spring.aop.advisor.LoginServiceImpl.login*&lt;/value&gt;
         &lt;/property&gt;
     &lt;/bean&gt;
 
@@ -172,20 +163,14 @@ public class Main {
 <h2 id="使用proxyfactory编程的方式创建aop代理">使用ProxyFactory编程的方式创建AOP代理</h2>
 <p>也可以使用直接代码的方式，不依赖xml文件，来创建AOP代理，直接看示例代码。</p>
 <p>业务接口，LoginService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.proxyfactory;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.proxyfactory;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>业务接口实现类，LoginServiceImpl：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.proxyfactory;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.proxyfactory;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -194,30 +179,24 @@ public class LoginServiceImpl implements LoginService {
     }
 }
 </code></pre><p>通知类，LogBeforeLogin：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.proxyfactory;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.proxyfactory;
 
 import org.springframework.aop.MethodBeforeAdvice;
 
 import java.lang.reflect.Method;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:56.
- */
 public class LogBeforeLogin implements MethodBeforeAdvice {
     public void before(Method method, Object[] objects, Object o) throws Throwable {
         System.out.println(&#34;有人要登录了。。。&#34;);
     }
 }
 </code></pre><p>测试方法：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.proxyfactory;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.proxyfactory;
 
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
 
@@ -236,20 +215,14 @@ public class Main {
 <p>使用autoproxy也有两种方式：BeanNameAutoProxyCreator和DefaultAdvisorAutoProxyCreator。两种方式的差别直接看代码。</p>
 <h3 id="beannameautoproxycreator方式">BeanNameAutoProxyCreator方式</h3>
 <p>业务接口，LoginService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.autoproxy;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.autoproxy;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>业务接口实现类，LoginServiceImpl：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.autoproxy;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.autoproxy;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -258,15 +231,12 @@ public class LoginServiceImpl implements LoginService {
     }
 }
 </code></pre><p>通知类，LogBeforeLogin：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.autoproxy;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.autoproxy;
 
 import org.springframework.aop.MethodBeforeAdvice;
 
 import java.lang.reflect.Method;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:56.
- */
 public class LogBeforeLogin implements MethodBeforeAdvice {
     public void before(Method method, Object[] objects, Object o) throws Throwable {
         System.out.println(&#34;autoproxy:有人要登录了。。。&#34;);
@@ -277,10 +247,10 @@ public class LogBeforeLogin implements MethodBeforeAdvice {
 &lt;!DOCTYPE beans PUBLIC &#34;-//SPRING//DTD BEAN//EN&#34; &#34;http://www.springframework.org/dtd/spring-beans.dtd&#34;&gt;
 &lt;beans&gt;
     &lt;!--业务处理类，也就是被代理的类--&gt;
-    &lt;bean id=&#34;loginService&#34; class=&#34;me.cxis.spring.aop.autoproxy.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginService&#34; class=&#34;fun.pullock.spring.aop.autoproxy.LoginServiceImpl&#34;/&gt;
 
     &lt;!--通知类--&gt;
-    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;me.cxis.spring.aop.autoproxy.LogBeforeLogin&#34;/&gt;
+    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;fun.pullock.spring.aop.autoproxy.LogBeforeLogin&#34;/&gt;
 
     &lt;!--代理类--&gt;
     &lt;bean id=&#34;loginServiceProxy&#34; class=&#34;org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator&#34;&gt;
@@ -296,14 +266,11 @@ public class LogBeforeLogin implements MethodBeforeAdvice {
     &lt;/bean&gt;
 &lt;/beans&gt;
 </code></pre><p>测试方法，Main：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.autoproxy;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.autoproxy;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -316,20 +283,14 @@ public class Main {
 <p>另外也需要注意下在测试方法中我们对bean的调用方式，之前我们是调用代理类，现在我们直接调用的Bean。这种方式中也还是把业务类中的所有的方法都增强了。</p>
 <h3 id="defaultadvisorautoproxycreator方式">DefaultAdvisorAutoProxyCreator方式</h3>
 <p>业务接口，LoginService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.advisorautoproxy;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.advisorautoproxy;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>业务接口实现类，LoginServiceImpl：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.advisorautoproxy;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.advisorautoproxy;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -338,15 +299,12 @@ public class LoginServiceImpl implements LoginService {
     }
 }
 </code></pre><p>通知类，LogBeforeLogin：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.advisorautoproxy;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.advisorautoproxy;
 
 import org.springframework.aop.MethodBeforeAdvice;
 
 import java.lang.reflect.Method;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:56.
- */
 public class LogBeforeLogin implements MethodBeforeAdvice {
     public void before(Method method, Object[] objects, Object o) throws Throwable {
         System.out.println(&#34;advisorautoproxy:有人要登录了。。。&#34;);
@@ -357,17 +315,17 @@ public class LogBeforeLogin implements MethodBeforeAdvice {
 &lt;!DOCTYPE beans PUBLIC &#34;-//SPRING//DTD BEAN//EN&#34; &#34;http://www.springframework.org/dtd/spring-beans.dtd&#34;&gt;
 &lt;beans&gt;
     &lt;!--业务处理类，也就是被代理的类--&gt;
-    &lt;bean id=&#34;loginService&#34; class=&#34;me.cxis.spring.aop.advisorautoproxy.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginService&#34; class=&#34;fun.pullock.spring.aop.advisorautoproxy.LoginServiceImpl&#34;/&gt;
 
     &lt;!--通知类--&gt;
-    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;me.cxis.spring.aop.advisorautoproxy.LogBeforeLogin&#34;/&gt;
+    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;fun.pullock.spring.aop.advisorautoproxy.LogBeforeLogin&#34;/&gt;
 
     &lt;bean id=&#34;logBeforeAdvisor&#34; class=&#34;org.springframework.aop.support.RegexpMethodPointcutAdvisor&#34;&gt;
         &lt;property name=&#34;advice&#34;&gt;
             &lt;ref bean=&#34;logBeforeLogin&#34;/&gt;
         &lt;/property&gt;
         &lt;property name=&#34;pattern&#34;&gt;
-            &lt;value&gt;me.cxis.spring.aop.advisorautoproxy.*&lt;/value&gt;
+            &lt;value&gt;fun.pullock.spring.aop.advisorautoproxy.*&lt;/value&gt;
         &lt;/property&gt;
     &lt;/bean&gt;
 
@@ -376,14 +334,11 @@ public class LogBeforeLogin implements MethodBeforeAdvice {
     &lt;/bean&gt;
 &lt;/beans&gt;
 </code></pre><p>测试方法：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.advisorautoproxy;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.advisorautoproxy;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
 
@@ -397,20 +352,14 @@ public class Main {
 <h2 id="引介增强introduction">引介增强Introduction</h2>
 <p>上面所有AOP的代理都是对方法的增强，而引介增强则是对类的增强，所谓对类的增强就是，我是A类，实现了接口B，但是我没有实现接口C，那么通过引介增强的方式，我没有实现接口C，但是我可以调用C中的方法。</p>
 <p>业务接口，LoginService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>业务接口实现类：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -419,16 +368,13 @@ public class LoginServiceImpl implements LoginService {
     }
 }
 </code></pre><p>另外一个业务接口，SendEmailService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
-/**
- * Created by cheng.xi on 2017-03-30 23:45.
- */
 public interface SendEmailService {
     void sendEmail();
 }
 </code></pre><p>增强，LogAndSendEmailBeforeLogin：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.MethodBeforeAdvice;
@@ -436,9 +382,6 @@ import org.springframework.aop.support.DelegatingIntroductionInterceptor;
 
 import java.lang.reflect.Method;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:56.
- */
 public class LogAndSendEmailBeforeLogin extends DelegatingIntroductionInterceptor implements SendEmailService {
 
 
@@ -457,15 +400,15 @@ public class LogAndSendEmailBeforeLogin extends DelegatingIntroductionIntercepto
 &lt;!DOCTYPE beans PUBLIC &#34;-//SPRING//DTD BEAN//EN&#34; &#34;http://www.springframework.org/dtd/spring-beans.dtd&#34;&gt;
 &lt;beans&gt;
     &lt;!--业务处理类，也就是被代理的类--&gt;
-    &lt;bean id=&#34;loginServiceImpl&#34; class=&#34;me.cxis.spring.aop.introduction.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginServiceImpl&#34; class=&#34;fun.pullock.spring.aop.introduction.LoginServiceImpl&#34;/&gt;
 
     &lt;!--通知类--&gt;
-    &lt;bean id=&#34;logAndSendEmailBeforeLogin&#34; class=&#34;me.cxis.spring.aop.introduction.LogAndSendEmailBeforeLogin&#34;/&gt;
+    &lt;bean id=&#34;logAndSendEmailBeforeLogin&#34; class=&#34;fun.pullock.spring.aop.introduction.LogAndSendEmailBeforeLogin&#34;/&gt;
 
     &lt;!--代理类--&gt;
     &lt;bean id=&#34;loginProxy&#34; class=&#34;org.springframework.aop.framework.ProxyFactoryBean&#34;&gt;
         &lt;property name=&#34;interfaces&#34;&gt;
-            &lt;value&gt;me.cxis.spring.aop.introduction.SendEmailService&lt;/value&gt;
+            &lt;value&gt;fun.pullock.spring.aop.introduction.SendEmailService&lt;/value&gt;
         &lt;/property&gt;
         &lt;property name=&#34;interceptorNames&#34;&gt;
             &lt;list&gt;
@@ -481,14 +424,11 @@ public class LogAndSendEmailBeforeLogin extends DelegatingIntroductionIntercepto
     &lt;/bean&gt;
 &lt;/beans&gt;
 </code></pre><p>测试方法：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -517,20 +457,14 @@ public class Main {
 </ol>
 <p>还是看代码。</p>
 <p>业务接口，LoginService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop;
+<pre tabindex="0"><code>package fun.pullock.spring.aop;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>业务接口实现，LoginServiceImpl：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop;
+<pre tabindex="0"><code>package fun.pullock.spring.aop;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -539,19 +473,16 @@ public class LoginServiceImpl implements LoginService {
     }
 }
 </code></pre><p>增强类，LogBeforeLogin，请注意这里面使用了注解：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop;
+<pre tabindex="0"><code>package fun.pullock.spring.aop;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:56.
- */
 @Aspect
 public class LogBeforeLogin {
 
-    @Pointcut(&#34;execution(* me.cxis.spring.aop.*.login(..))&#34;)
+    @Pointcut(&#34;execution(* fun.pullock.spring.aop.*.login(..))&#34;)
     public void loginMethod(){}
 
     @Before(&#34;loginMethod()&#34;)
@@ -569,22 +500,19 @@ public class LogBeforeLogin {
     &lt;aop:aspectj-autoproxy/&gt;
 
     &lt;!--业务实现--&gt;
-    &lt;bean id=&#34;loginService&#34; class=&#34;me.cxis.spring.aop.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginService&#34; class=&#34;fun.pullock.spring.aop.LoginServiceImpl&#34;/&gt;
 
     &lt;!--Aspect--&gt;
-    &lt;bean id=&#34;logBeforeLoginAspect&#34; class=&#34;me.cxis.spring.aop.LogBeforeLogin&#34;&gt;
+    &lt;bean id=&#34;logBeforeLoginAspect&#34; class=&#34;fun.pullock.spring.aop.LogBeforeLogin&#34;&gt;
     &lt;/bean&gt;
 
 &lt;/beans&gt;
 </code></pre><p>测试方法：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop;
+<pre tabindex="0"><code>package fun.pullock.spring.aop;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -597,7 +525,7 @@ public class Main {
 <h3 id="使用自定义注解作为execution的表达式">使用自定义注解作为execution的表达式</h3>
 <p>上面使用普通的execution表达式来声明对那些方法进行增强，也可以使用注解的方式，其实就是把表达式换成了注解，只有添加了注解的方法才能被增强。</p>
 <p>先定义一个注解UseAop：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.customannotation;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.customannotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -605,7 +533,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by cheng.xi on 2017-03-31 11:29.
  * 标注此注解的方法，需要使用AOP代理
  */
 @Target(ElementType.METHOD)
@@ -613,20 +540,14 @@ import java.lang.annotation.Target;
 public @interface UseAop {
 }
 </code></pre><p>业务接口，LoginService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.customannotation;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.customannotation;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>业务接口的实现，LoginServiceImpl：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.customannotation;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.customannotation;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     @UseAop
@@ -640,7 +561,7 @@ public class LoginServiceImpl implements LoginService {
 <pre tabindex="0"><code>@Aspect
 public class LogBeforeLogin {
 	
-    @Pointcut(&#34;@annotation(me.cxis.spring.aop.customannotation.UseAop)&#34;)
+    @Pointcut(&#34;@annotation(fun.pullock.spring.aop.customannotation.UseAop)&#34;)
     public void loginMethod(){}
 
     @Before(&#34;loginMethod()&#34;)
@@ -659,23 +580,20 @@ public class LogBeforeLogin {
     &lt;aop:aspectj-autoproxy/&gt;
     
     &lt;!--业务实现--&gt;
-    &lt;bean id=&#34;loginService&#34; class=&#34;me.cxis.spring.aop.customannotation.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginService&#34; class=&#34;fun.pullock.spring.aop.customannotation.LoginServiceImpl&#34;/&gt;
 
     &lt;!--Aspect--&gt;
-    &lt;bean id=&#34;logBeforeLoginAspect&#34; class=&#34;me.cxis.spring.aop.customannotation.LogBeforeLogin&#34;&gt;
+    &lt;bean id=&#34;logBeforeLoginAspect&#34; class=&#34;fun.pullock.spring.aop.customannotation.LogBeforeLogin&#34;&gt;
     &lt;/bean&gt;
 
 &lt;/beans&gt;
 </code></pre><p>xml配置文件并没有改变。同样下面的测试方法也没有变。</p>
 <p>测试方法：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.customannotation;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.customannotation;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -687,20 +605,14 @@ public class Main {
 </code></pre><h2 id="使用基于schema的方式配置aop代理">使用基于schema的方式配置AOP代理</h2>
 <p>基于schema的方式配置，可以不使用注解，而是完全基于xml配置。</p>
 <p>业务接口，实现类，增强如下：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.config;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.config;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 
-package me.cxis.spring.aop.config;
+package fun.pullock.spring.aop.config;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -709,11 +621,8 @@ public class LoginServiceImpl implements LoginService {
     }
 }
 
-package me.cxis.spring.aop.config;
+package fun.pullock.spring.aop.config;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:56.
- */
 public class LogBeforeLogin {
 
     public void beforeLogin(){
@@ -728,14 +637,14 @@ public class LogBeforeLogin {
        xsi:schemaLocation=&#34;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&#34;&gt;
 
     &lt;!--业务实现类--&gt;
-    &lt;bean id=&#34;loginService&#34; class=&#34;me.cxis.spring.aop.config.LoginServiceImpl&#34;&gt;&lt;/bean&gt;
+    &lt;bean id=&#34;loginService&#34; class=&#34;fun.pullock.spring.aop.config.LoginServiceImpl&#34;&gt;&lt;/bean&gt;
 
     &lt;!--增强类--&gt;
-    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;me.cxis.spring.aop.config.LogBeforeLogin&#34;&gt;&lt;/bean&gt;
+    &lt;bean id=&#34;logBeforeLogin&#34; class=&#34;fun.pullock.spring.aop.config.LogBeforeLogin&#34;&gt;&lt;/bean&gt;
 
     &lt;aop:config&gt;
         &lt;aop:aspect id=&#34;loginAspect&#34; ref=&#34;logBeforeLogin&#34;&gt;
-            &lt;aop:pointcut expression=&#34;execution(* me.cxis.spring.aop.config.*.*(..))&#34; id=&#34;beforeLoginPointCut&#34;/&gt;
+            &lt;aop:pointcut expression=&#34;execution(* fun.pullock.spring.aop.config.*.*(..))&#34; id=&#34;beforeLoginPointCut&#34;/&gt;
             &lt;aop:before method=&#34;beforeLogin&#34; pointcut-ref=&#34;beforeLoginPointCut&#34;/&gt;
         &lt;/aop:aspect&gt;
     &lt;/aop:config&gt;
@@ -743,14 +652,11 @@ public class LogBeforeLogin {
 &lt;/beans&gt;
 </code></pre><p>可以类比下上面@AspectJ的方式，其实是一样的，只不过把注解的东西都放到了xml中。</p>
 <p>测试方法：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.config;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.config;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -770,30 +676,24 @@ public class Main {
     &lt;bean class=&#34;org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator&#34;/&gt;
 
     &lt;!--业务实现--&gt;
-    &lt;bean id=&#34;loginService&#34; class=&#34;me.cxis.spring.aop.dtd.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginService&#34; class=&#34;fun.pullock.spring.aop.dtd.LoginServiceImpl&#34;/&gt;
 
     &lt;!--Aspect--&gt;
-    &lt;bean id=&#34;logBeforeLoginAspect&#34; class=&#34;me.cxis.spring.aop.dtd.LogBeforeLogin&#34;&gt;
+    &lt;bean id=&#34;logBeforeLoginAspect&#34; class=&#34;fun.pullock.spring.aop.dtd.LogBeforeLogin&#34;&gt;
     &lt;/bean&gt;
 
 &lt;/beans&gt;
 </code></pre><p>就是将<code>&lt;aop:aspectj-autoproxy/&gt;</code>替换成<code>&lt;bean class=&quot;org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator&quot;/&gt;</code>，Spring文档上也有说明。</p>
 <h2 id="编程的方式使用aspectj">编程的方式使用@AspectJ</h2>
 <p>业务接口LoginService：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.programmatic;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.programmatic;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>业务实现类：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.programmatic;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.programmatic;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -802,20 +702,16 @@ public class LoginServiceImpl implements LoginService {
     }
 }
 </code></pre><p>增强类：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.programmatic;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.programmatic;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
-
-/**
- * Created by cheng.xi on 2017-03-29 10:56.
- */
 @Aspect
 public class LogBeforeLogin {
 
-    @Pointcut(&#34;execution(* me.cxis.spring.aop.programmatic.*.login(..))&#34;)
+    @Pointcut(&#34;execution(* fun.pullock.spring.aop.programmatic.*.login(..))&#34;)
     public void loginMethod(){}
 
     @Before(&#34;loginMethod()&#34;)
@@ -824,13 +720,10 @@ public class LogBeforeLogin {
     }
 }
 </code></pre><p>测试方法：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.programmatic;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.programmatic;
 
 import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
 
@@ -847,20 +740,14 @@ public class Main {
 <h2 id="引介增强introduction-1">引介增强Introduction</h2>
 <p>感觉引介增强比1.0更强大了点，直接看代码，对比1.0的引介就知道了。</p>
 <p>业务接口：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
-/**
- * Created by cheng.xi on 2017-03-29 12:02.
- */
 public interface LoginService {
     String login(String userName);
 }
 </code></pre><p>接口实现：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:36.
- */
 public class LoginServiceImpl implements LoginService {
 
     public String login(String userName){
@@ -869,38 +756,29 @@ public class LoginServiceImpl implements LoginService {
     }
 }
 </code></pre><p>另外一个业务接口：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
-/**
- * Created by cheng.xi on 2017-03-30 23:45.
- */
 public interface SendEmailService {
     void sendEmail();
 }
 </code></pre><p>接口实现：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
-/**
- * Created by cheng.xi on 2017-03-31 13:46.
- */
 public class SendMailServiceImpl implements SendEmailService {
     public void sendEmail() {
         System.out.println(&#34;发送邮件。。。。&#34;);
     }
 }
 </code></pre><p>增强，也就是把上面两个接口关联起来的地方：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.DeclareParents;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:56.
- */
 @Aspect
 public class LogAndSendEmailBeforeLogin {
 
-    @DeclareParents(value = &#34;me.cxis.spring.aop.introduction.LoginServiceImpl&#34;,defaultImpl = SendMailServiceImpl.class)
+    @DeclareParents(value = &#34;fun.pullock.spring.aop.introduction.LoginServiceImpl&#34;,defaultImpl = SendMailServiceImpl.class)
     private SendEmailService sendEmailService;
 }
 </code></pre><p>xml配置：</p>
@@ -913,22 +791,19 @@ public class LogAndSendEmailBeforeLogin {
     &lt;aop:aspectj-autoproxy/&gt;
 
     &lt;!--业务实现--&gt;
-    &lt;bean id=&#34;loginService&#34; class=&#34;me.cxis.spring.aop.introduction.LoginServiceImpl&#34;/&gt;
+    &lt;bean id=&#34;loginService&#34; class=&#34;fun.pullock.spring.aop.introduction.LoginServiceImpl&#34;/&gt;
 
     &lt;!--Aspect--&gt;
-    &lt;bean id=&#34;logBeforeLoginAspect&#34; class=&#34;me.cxis.spring.aop.introduction.LogAndSendEmailBeforeLogin&#34;&gt;
+    &lt;bean id=&#34;logBeforeLoginAspect&#34; class=&#34;fun.pullock.spring.aop.introduction.LogAndSendEmailBeforeLogin&#34;&gt;
     &lt;/bean&gt;
 
 &lt;/beans&gt;
 </code></pre><p>测试方法：</p>
-<pre tabindex="0"><code>package me.cxis.spring.aop.introduction;
+<pre tabindex="0"><code>package fun.pullock.spring.aop.introduction;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * Created by cheng.xi on 2017-03-29 10:34.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -972,7 +847,7 @@ public class Main {
 
 
 	<footer>
-	<p>&copy; 2023 <a href=""><b>Pullock</b></a>.
+	<p>&copy; 2023 <a href="https://pullock.fun"><b>Pullock.fun</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
 	<a href="https://github.com/pulllock"><b>Github</b></a>.

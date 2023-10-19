@@ -15,7 +15,7 @@
 <body>
 	<header>
 	=============<br>
-	== <a href="">Pullock</a> ==<br>
+	== <a href="https://pullock.fun">Pullock</a> ==<br>
 	=============
 	<div style="float: right;">脚踏实地</div><br>
 	<p>
@@ -62,16 +62,16 @@
 </ul>
 <h2 id="具体实现">具体实现</h2>
 <p>定义spring.schemas文件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">https\</span><span style="color:#f92672">:</span><span style="color:#e6db74">//www.cxis.me/schema/dcc/dcc-config-1.0.xsd=me/cxis/dcc/spring/config/dcc-config.xsd</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">https\</span><span style="color:#f92672">:</span><span style="color:#e6db74">//www.pullock.fun/schema/dcc/dcc-config-1.0.xsd=fun/pullock/dcc/spring/config/dcc-config.xsd</span>
 </span></span></code></pre></div><p>定义spring.handlers文件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">https\</span><span style="color:#f92672">:</span><span style="color:#e6db74">//www.cxis.me/schema/dcc=me.cxis.dcc.spring.DccConfigNamespaceHandler</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">https\</span><span style="color:#f92672">:</span><span style="color:#e6db74">//www.pullock.fun/schema/dcc=fun.pullock.dcc.spring.DccConfigNamespaceHandler</span>
 </span></span></code></pre></div><p>定义dcc-config.xsd文件</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;xsd:schema</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;https://www.cxis.me/schema/dcc&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;xsd:schema</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;https://www.pullock.fun/schema/dcc&#34;</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">xmlns:xsd=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema&#34;</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">xmlns:beans=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
-</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">targetNamespace=</span><span style="color:#e6db74">&#34;https://www.cxis.me/schema/dcc&#34;</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">targetNamespace=</span><span style="color:#e6db74">&#34;https://www.pullock.fun/schema/dcc&#34;</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">elementFormDefault=</span><span style="color:#e6db74">&#34;qualified&#34;</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">attributeFormDefault=</span><span style="color:#e6db74">&#34;unqualified&#34;</span><span style="color:#f92672">&gt;</span>
 </span></span><span style="display:flex;"><span>
@@ -104,8 +104,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
 </span></span></code></pre></div><p>运行时监听zookeeper的变更，使用反射更新@Value注解的字段值。</p>
-<p>具体代码参照https://github.com/dachengxi/DynamicConfigCenter中DynamicConfigCenter-client下的<code>me.cxis.dcc.spring.DccConfigPlaceholderConfigurer</code>。</p>
-<p>源码：<a href="https://github.com/dachengxi/DynamicConfigCenter">https://github.com/dachengxi/DynamicConfigCenter</a></p>
+<p>具体代码参照https://github.com/pulllock/DynamicConfigCenter中DynamicConfigCenter-client下的<code>fun.pullock.dcc.spring.DccConfigPlaceholderConfigurer</code>。</p>
+<p>源码：<a href="https://github.com/pulllock/DynamicConfigCenter">https://github.com/pulllock/DynamicConfigCenter</a></p>
 			</div>
 		</article>
 	</main>
@@ -134,7 +134,7 @@
 
 
 	<footer>
-	<p>&copy; 2023 <a href=""><b>Pullock</b></a>.
+	<p>&copy; 2023 <a href="https://pullock.fun"><b>Pullock.fun</b></a>.
 	<a href="https://gohugo.io/"><b>Hugo</b></a>.
 	<a href="https://github.com/colorchestra/smol"><b>Smol</b></a>.
 	<a href="https://github.com/pulllock"><b>Github</b></a>.
